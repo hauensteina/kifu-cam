@@ -517,6 +517,12 @@ static BlackWhiteEmpty classifier;
             draw_point( p, drawing, 5, cv::Scalar(255,0,0,255));
         }
     }
+    NSString *sgf = [self get_sgf]; //@@@
+    cv::Mat m;
+    draw_sgf( [sgf UTF8String], m, 500);
+    NSString *fname = getFullPath( @"diagram.png");
+    save_img( m, [fname UTF8String]);
+    
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f09_classify()

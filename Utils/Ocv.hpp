@@ -154,6 +154,8 @@ double diff_quads( const Points2f &q1, const Points2f &q2);
 
 // Image
 //========
+// Save image to file
+bool save_img( const cv::Mat &img, const std::string &fname);
 // Rotate image by angle. Does not adjust image size.
 void rot_img( const cv::Mat &img, double angle, cv::Mat &dst);
 // Resize image such that min(width,height) = sz

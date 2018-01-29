@@ -579,6 +579,16 @@ double diff_quads( const Points2f &q1, const Points2f &q2)
 // Image
 //=========
 
+// Save image to file
+//-----------------------------------------------------------
+bool save_img( const cv::Mat &img, const std::string &fname)
+{
+    std::vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(0);
+    return cv::imwrite( fname, img);
+}
+
 // Rotate image by angle. Adjusts image size.
 // From PyImageSearch.
 //----------------------------------------------------------------

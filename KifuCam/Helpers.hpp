@@ -163,7 +163,7 @@ inline std::vector<int> sgf2vec( const std::string &sgf_)
     return res;
 } // sgf2vec
 
-// Draw sgf on a square single channel Mat
+// Draw gray sgf on a square single channel Mat
 //----------------------------------------------------------------------
 inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
 {
