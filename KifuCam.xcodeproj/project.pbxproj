@@ -1,0 +1,852 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */; };
+		AC0BC39D1FE2E26F0066C542 /* DrawBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC0BC39B1FE2E26F0066C542 /* DrawBoard.cpp */; };
+		AC0FFB011FEB4AD7009A02FD /* board07.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC0FFAFB1FEB4AD6009A02FD /* board07.jpg */; };
+		AC0FFB021FEB4AD7009A02FD /* board10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC0FFAFC1FEB4AD6009A02FD /* board10.jpg */; };
+		AC0FFB031FEB4AD7009A02FD /* board09.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC0FFAFD1FEB4AD7009A02FD /* board09.jpg */; };
+		AC0FFB041FEB4AD7009A02FD /* board11.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC0FFAFE1FEB4AD7009A02FD /* board11.jpg */; };
+		AC0FFB051FEB4AD7009A02FD /* board12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC0FFAFF1FEB4AD7009A02FD /* board12.jpg */; };
+		AC0FFB061FEB4AD7009A02FD /* board08.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC0FFB001FEB4AD7009A02FD /* board08.jpg */; };
+		AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */; };
+		AC13BB29200BD38600369CAE /* LGSideMenuHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */; };
+		AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1E200BD38500369CAE /* UIViewController+LGSideMenuController.m */; };
+		AC13BB2B200BD38600369CAE /* LGSideMenuGesturesHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB20200BD38600369CAE /* LGSideMenuGesturesHandler.m */; };
+		AC13BB2C200BD38700369CAE /* LGSideMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB25200BD38600369CAE /* LGSideMenuController.m */; };
+		AC13BB2D200BD38700369CAE /* LGSideMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB26200BD38600369CAE /* LGSideMenuView.m */; };
+		AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB27200BD38600369CAE /* LGSideMenuSegue.m */; };
+		AC13BB3B200BD6C600369CAE /* LeftMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB2F200BD6C200369CAE /* LeftMenuController.m */; };
+		AC13BB3C200BD6C600369CAE /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB31200BD6C300369CAE /* NavigationController.m */; };
+		AC13BB3D200BD6C600369CAE /* TopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB34200BD6C400369CAE /* TopViewController.m */; };
+		AC13BB3E200BD6C600369CAE /* RightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB38200BD6C500369CAE /* RightViewController.m */; };
+		AC13BB3F200BD6C600369CAE /* RightViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB39200BD6C500369CAE /* RightViewCell.m */; };
+		AC13BB40200BD6C600369CAE /* LeftMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB3A200BD6C600369CAE /* LeftMenuCell.m */; };
+		AC3274412016836D009BEFD2 /* photo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC32743F2016836B009BEFD2 /* photo_icon.png */; };
+		AC3274422016836D009BEFD2 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC3274402016836C009BEFD2 /* video_icon.png */; };
+		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
+		AC3CC3561FFECD2300ED79D6 /* board14.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC3CC3541FFECD2200ED79D6 /* board14.jpg */; };
+		AC3CC3571FFECD2300ED79D6 /* board13.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC3CC3551FFECD2300ED79D6 /* board13.jpg */; };
+		AC5540741F9BE6AD00922557 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC5540731F9BE6AD00922557 /* opencv2.framework */; };
+		AC5540771F9BE71900922557 /* CppInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC5540761F9BE71800922557 /* CppInterface.mm */; };
+		AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */; };
+		AC5F33A720128576002FEF06 /* TestResultsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F33A620128576002FEF06 /* TestResultsVC.m */; };
+		AC5F340E20151C41002FEF06 /* S3.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F340D20151C41002FEF06 /* S3.m */; };
+		AC61AD571FBCCB0B00DEBCDA /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC61AD551FBCCB0B00DEBCDA /* Common.cpp */; };
+		AC628C181F9A7D3F0043FCEE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AC628C171F9A7D3F0043FCEE /* main.m */; };
+		AC628C1B1F9A7D3F0043FCEE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AC628C1A1F9A7D3F0043FCEE /* AppDelegate.m */; };
+		AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC628C221F9A7D3F0043FCEE /* Assets.xcassets */; };
+		AC628C341F9A80150043FCEE /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC628C331F9A80150043FCEE /* MainVC.m */; };
+		AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC8040091FA92604000088D2 /* Accelerate.framework */; };
+		AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */; };
+		AC8ACF8E1FC1EC12005D5722 /* board01.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC8ACF8D1FC1EC12005D5722 /* board01.jpg */; };
+		AC8ACF901FC1F6E6005D5722 /* board02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC8ACF8F1FC1F6E6005D5722 /* board02.jpg */; };
+		AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC9702171FBC87DF0057C4C2 /* Globals.mm */; };
+		AC99ECED200968E200EDF097 /* board_full.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC99ECEB200968E200EDF097 /* board_full.jpg */; };
+		AC99ECEE200968E200EDF097 /* board_full_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC99ECEC200968E200EDF097 /* board_full_1.jpg */; };
+		AC9DB02F1FE0581F008723CE /* board06.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB02E1FE0581F008723CE /* board06.jpg */; };
+		AC9DB0331FE09DFA008723CE /* black_templ.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB0321FE09DFA008723CE /* black_templ.yml */; };
+		AC9DB0351FE09E02008723CE /* empty_templ.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB0341FE09E02008723CE /* empty_templ.yml */; };
+		AC9DB0371FE09E0F008723CE /* white_templ.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB0361FE09E0F008723CE /* white_templ.yml */; };
+		ACA185D8201BEA7100A3501E /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA185D7201BEA7000A3501E /* demo.png */; };
+		ACA69E4C1F9D077B00F5E068 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = ACA69E4B1F9D077B00F5E068 /* Common.m */; };
+		ACAC40BE1FC3321A00B6968B /* board04.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BB1FC3321A00B6968B /* board04.jpg */; };
+		ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BC1FC3321A00B6968B /* board05.jpg */; };
+		ACAC40C01FC3321A00B6968B /* board03.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BD1FC3321A00B6968B /* board03.jpg */; };
+		ACC91313201694C700B62682 /* SaveDiscardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC91312201694C600B62682 /* SaveDiscardVC.m */; };
+		ACC913162017F4F400B62682 /* ImagesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC913142017F4F300B62682 /* ImagesVC.m */; };
+		ACD6C84520152B3000759875 /* AWSPolly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82420152B1C00759875 /* AWSPolly.framework */; };
+		ACD6C84620152B3000759875 /* AWSPolly.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82420152B1C00759875 /* AWSPolly.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C84720152B3000759875 /* AWSAutoScaling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82520152B1D00759875 /* AWSAutoScaling.framework */; };
+		ACD6C84820152B3000759875 /* AWSAutoScaling.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82520152B1D00759875 /* AWSAutoScaling.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C84920152B3000759875 /* AWSEC2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82620152B1D00759875 /* AWSEC2.framework */; };
+		ACD6C84A20152B3000759875 /* AWSEC2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82620152B1D00759875 /* AWSEC2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C84B20152B3000759875 /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82720152B1E00759875 /* AWSS3.framework */; };
+		ACD6C84C20152B3000759875 /* AWSS3.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82720152B1E00759875 /* AWSS3.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C84D20152B3000759875 /* AWSLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82820152B1E00759875 /* AWSLex.framework */; };
+		ACD6C84E20152B3000759875 /* AWSLex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82820152B1E00759875 /* AWSLex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C84F20152B3000759875 /* AWSAuthCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82920152B1F00759875 /* AWSAuthCore.framework */; };
+		ACD6C85020152B3000759875 /* AWSAuthCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82920152B1F00759875 /* AWSAuthCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85120152B3000759875 /* AWSLogs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82A20152B1F00759875 /* AWSLogs.framework */; };
+		ACD6C85220152B3000759875 /* AWSLogs.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82A20152B1F00759875 /* AWSLogs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85320152B3000759875 /* AWSSES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82B20152B2000759875 /* AWSSES.framework */; };
+		ACD6C85420152B3000759875 /* AWSSES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82B20152B2000759875 /* AWSSES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85520152B3000759875 /* AWSGoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82C20152B2000759875 /* AWSGoogleSignIn.framework */; };
+		ACD6C85620152B3000759875 /* AWSGoogleSignIn.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82C20152B2000759875 /* AWSGoogleSignIn.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85720152B3000759875 /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82D20152B2100759875 /* AWSCore.framework */; };
+		ACD6C85820152B3000759875 /* AWSCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82D20152B2100759875 /* AWSCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85920152B3000759875 /* AWSCognitoAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82E20152B2200759875 /* AWSCognitoAuth.framework */; };
+		ACD6C85A20152B3000759875 /* AWSCognitoAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82E20152B2200759875 /* AWSCognitoAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85B20152B3000759875 /* AWSIoT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82F20152B2200759875 /* AWSIoT.framework */; };
+		ACD6C85C20152B3000759875 /* AWSIoT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82F20152B2200759875 /* AWSIoT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85D20152B3000759875 /* AWSCognitoIdentityProviderASF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83020152B2300759875 /* AWSCognitoIdentityProviderASF.framework */; };
+		ACD6C85E20152B3000759875 /* AWSCognitoIdentityProviderASF.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83020152B2300759875 /* AWSCognitoIdentityProviderASF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C85F20152B3000759875 /* AWSLambda.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83120152B2300759875 /* AWSLambda.framework */; };
+		ACD6C86020152B3000759875 /* AWSLambda.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83120152B2300759875 /* AWSLambda.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86120152B3000759875 /* AWSCognitoIdentityProvider.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83220152B2400759875 /* AWSCognitoIdentityProvider.framework */; };
+		ACD6C86220152B3000759875 /* AWSCognitoIdentityProvider.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83220152B2400759875 /* AWSCognitoIdentityProvider.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86320152B3000759875 /* AWSRekognition.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83320152B2500759875 /* AWSRekognition.framework */; };
+		ACD6C86420152B3000759875 /* AWSRekognition.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83320152B2500759875 /* AWSRekognition.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86520152B3000759875 /* AWSAuthUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83420152B2500759875 /* AWSAuthUI.framework */; };
+		ACD6C86620152B3000759875 /* AWSAuthUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83420152B2500759875 /* AWSAuthUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86720152B3000759875 /* AWSPinpoint.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83520152B2600759875 /* AWSPinpoint.framework */; };
+		ACD6C86820152B3000759875 /* AWSPinpoint.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83520152B2600759875 /* AWSPinpoint.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86920152B3000759875 /* AWSUserPoolsSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83620152B2600759875 /* AWSUserPoolsSignIn.framework */; };
+		ACD6C86A20152B3000759875 /* AWSUserPoolsSignIn.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83620152B2600759875 /* AWSUserPoolsSignIn.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86B20152B3000759875 /* AWSDynamoDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83720152B2700759875 /* AWSDynamoDB.framework */; };
+		ACD6C86C20152B3000759875 /* AWSDynamoDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83720152B2700759875 /* AWSDynamoDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86D20152B3000759875 /* AWSAPIGateway.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83820152B2800759875 /* AWSAPIGateway.framework */; };
+		ACD6C86E20152B3000759875 /* AWSAPIGateway.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83820152B2800759875 /* AWSAPIGateway.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C86F20152B3000759875 /* AWSSQS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83920152B2800759875 /* AWSSQS.framework */; };
+		ACD6C87020152B3000759875 /* AWSSQS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83920152B2800759875 /* AWSSQS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87120152B3000759875 /* AWSElasticLoadBalancing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83A20152B2900759875 /* AWSElasticLoadBalancing.framework */; };
+		ACD6C87220152B3000759875 /* AWSElasticLoadBalancing.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83A20152B2900759875 /* AWSElasticLoadBalancing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87320152B3000759875 /* AWSSimpleDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83B20152B2900759875 /* AWSSimpleDB.framework */; };
+		ACD6C87420152B3000759875 /* AWSSimpleDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83B20152B2900759875 /* AWSSimpleDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87520152B3000759875 /* AWSFacebookSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83C20152B2A00759875 /* AWSFacebookSignIn.framework */; };
+		ACD6C87620152B3000759875 /* AWSFacebookSignIn.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83C20152B2A00759875 /* AWSFacebookSignIn.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87720152B3000759875 /* AWSKinesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83D20152B2A00759875 /* AWSKinesis.framework */; };
+		ACD6C87820152B3000759875 /* AWSKinesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83D20152B2A00759875 /* AWSKinesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87920152B3000759875 /* AWSMobileAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83E20152B2B00759875 /* AWSMobileAnalytics.framework */; };
+		ACD6C87A20152B3000759875 /* AWSMobileAnalytics.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83E20152B2B00759875 /* AWSMobileAnalytics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87B20152B3000759875 /* AWSCognito.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83F20152B2C00759875 /* AWSCognito.framework */; };
+		ACD6C87C20152B3000759875 /* AWSCognito.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C83F20152B2C00759875 /* AWSCognito.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87D20152B3000759875 /* AWSMachineLearning.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84020152B2C00759875 /* AWSMachineLearning.framework */; };
+		ACD6C87E20152B3000759875 /* AWSMachineLearning.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84020152B2C00759875 /* AWSMachineLearning.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C87F20152B3000759875 /* AWSSNS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84120152B2D00759875 /* AWSSNS.framework */; };
+		ACD6C88020152B3000759875 /* AWSSNS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84120152B2D00759875 /* AWSSNS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C88120152B3000759875 /* AWSMobileClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84220152B2E00759875 /* AWSMobileClient.framework */; };
+		ACD6C88220152B3000759875 /* AWSMobileClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84220152B2E00759875 /* AWSMobileClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C88320152B3000759875 /* AWSCloudWatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */; };
+		ACD6C88420152B3000759875 /* AWSCloudWatch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACD6C88520152B3000759875 /* AWSKMS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84420152B2F00759875 /* AWSKMS.framework */; };
+		ACD6C88620152B3000759875 /* AWSKMS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84420152B2F00759875 /* AWSKMS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AC5F340B201513F8002FEF06 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ACD6C87020152B3000759875 /* AWSSQS.framework in Embed Frameworks */,
+				ACD6C88020152B3000759875 /* AWSSNS.framework in Embed Frameworks */,
+				ACD6C87820152B3000759875 /* AWSKinesis.framework in Embed Frameworks */,
+				ACD6C84C20152B3000759875 /* AWSS3.framework in Embed Frameworks */,
+				ACD6C87220152B3000759875 /* AWSElasticLoadBalancing.framework in Embed Frameworks */,
+				ACD6C85820152B3000759875 /* AWSCore.framework in Embed Frameworks */,
+				ACD6C87420152B3000759875 /* AWSSimpleDB.framework in Embed Frameworks */,
+				ACD6C87C20152B3000759875 /* AWSCognito.framework in Embed Frameworks */,
+				ACD6C84620152B3000759875 /* AWSPolly.framework in Embed Frameworks */,
+				ACD6C85620152B3000759875 /* AWSGoogleSignIn.framework in Embed Frameworks */,
+				ACD6C88620152B3000759875 /* AWSKMS.framework in Embed Frameworks */,
+				ACD6C86620152B3000759875 /* AWSAuthUI.framework in Embed Frameworks */,
+				ACD6C85420152B3000759875 /* AWSSES.framework in Embed Frameworks */,
+				ACD6C88420152B3000759875 /* AWSCloudWatch.framework in Embed Frameworks */,
+				ACD6C86E20152B3000759875 /* AWSAPIGateway.framework in Embed Frameworks */,
+				ACD6C86A20152B3000759875 /* AWSUserPoolsSignIn.framework in Embed Frameworks */,
+				ACD6C86020152B3000759875 /* AWSLambda.framework in Embed Frameworks */,
+				ACD6C88220152B3000759875 /* AWSMobileClient.framework in Embed Frameworks */,
+				ACD6C84820152B3000759875 /* AWSAutoScaling.framework in Embed Frameworks */,
+				ACD6C87E20152B3000759875 /* AWSMachineLearning.framework in Embed Frameworks */,
+				ACD6C85220152B3000759875 /* AWSLogs.framework in Embed Frameworks */,
+				ACD6C86420152B3000759875 /* AWSRekognition.framework in Embed Frameworks */,
+				ACD6C85020152B3000759875 /* AWSAuthCore.framework in Embed Frameworks */,
+				ACD6C86820152B3000759875 /* AWSPinpoint.framework in Embed Frameworks */,
+				ACD6C85A20152B3000759875 /* AWSCognitoAuth.framework in Embed Frameworks */,
+				ACD6C87A20152B3000759875 /* AWSMobileAnalytics.framework in Embed Frameworks */,
+				ACD6C86C20152B3000759875 /* AWSDynamoDB.framework in Embed Frameworks */,
+				ACD6C87620152B3000759875 /* AWSFacebookSignIn.framework in Embed Frameworks */,
+				ACD6C84A20152B3000759875 /* AWSEC2.framework in Embed Frameworks */,
+				ACD6C84E20152B3000759875 /* AWSLex.framework in Embed Frameworks */,
+				ACD6C85E20152B3000759875 /* AWSCognitoIdentityProviderASF.framework in Embed Frameworks */,
+				ACD6C86220152B3000759875 /* AWSCognitoIdentityProvider.framework in Embed Frameworks */,
+				ACD6C85C20152B3000759875 /* AWSIoT.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameExtractor.h; sourceTree = "<group>"; };
+		AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameExtractor.m; sourceTree = "<group>"; };
+		AC043D331F9BB9AB006CF7F0 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		AC0BC39B1FE2E26F0066C542 /* DrawBoard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawBoard.cpp; sourceTree = "<group>"; };
+		AC0BC39C1FE2E26F0066C542 /* DrawBoard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DrawBoard.hpp; sourceTree = "<group>"; };
+		AC0FFAFB1FEB4AD6009A02FD /* board07.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board07.jpg; path = Assets/board07.jpg; sourceTree = SOURCE_ROOT; };
+		AC0FFAFC1FEB4AD6009A02FD /* board10.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board10.jpg; path = Assets/board10.jpg; sourceTree = SOURCE_ROOT; };
+		AC0FFAFD1FEB4AD7009A02FD /* board09.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board09.jpg; path = Assets/board09.jpg; sourceTree = SOURCE_ROOT; };
+		AC0FFAFE1FEB4AD7009A02FD /* board11.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board11.jpg; path = Assets/board11.jpg; sourceTree = SOURCE_ROOT; };
+		AC0FFAFF1FEB4AD7009A02FD /* board12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board12.jpg; path = Assets/board12.jpg; sourceTree = SOURCE_ROOT; };
+		AC0FFB001FEB4AD7009A02FD /* board08.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board08.jpg; path = Assets/board08.jpg; sourceTree = SOURCE_ROOT; };
+		AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuBorderView.m; path = LGSideMenuController/LGSideMenuBorderView.m; sourceTree = "<group>"; };
+		AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuHelper.m; path = LGSideMenuController/LGSideMenuHelper.m; sourceTree = "<group>"; };
+		AC13BB1C200BD38500369CAE /* LGSideMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuView.h; path = LGSideMenuController/LGSideMenuView.h; sourceTree = "<group>"; };
+		AC13BB1D200BD38500369CAE /* LGSideMenuBorderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuBorderView.h; path = LGSideMenuController/LGSideMenuBorderView.h; sourceTree = "<group>"; };
+		AC13BB1E200BD38500369CAE /* UIViewController+LGSideMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIViewController+LGSideMenuController.m"; path = "LGSideMenuController/UIViewController+LGSideMenuController.m"; sourceTree = "<group>"; };
+		AC13BB1F200BD38500369CAE /* LGSideMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuController.h; path = LGSideMenuController/LGSideMenuController.h; sourceTree = "<group>"; };
+		AC13BB20200BD38600369CAE /* LGSideMenuGesturesHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuGesturesHandler.m; path = LGSideMenuController/LGSideMenuGesturesHandler.m; sourceTree = "<group>"; };
+		AC13BB21200BD38600369CAE /* LGSideMenuGesturesHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuGesturesHandler.h; path = LGSideMenuController/LGSideMenuGesturesHandler.h; sourceTree = "<group>"; };
+		AC13BB22200BD38600369CAE /* UIViewController+LGSideMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIViewController+LGSideMenuController.h"; path = "LGSideMenuController/UIViewController+LGSideMenuController.h"; sourceTree = "<group>"; };
+		AC13BB23200BD38600369CAE /* LGSideMenuHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuHelper.h; path = LGSideMenuController/LGSideMenuHelper.h; sourceTree = "<group>"; };
+		AC13BB24200BD38600369CAE /* LGSideMenuSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuSegue.h; path = LGSideMenuController/LGSideMenuSegue.h; sourceTree = "<group>"; };
+		AC13BB25200BD38600369CAE /* LGSideMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuController.m; path = LGSideMenuController/LGSideMenuController.m; sourceTree = "<group>"; };
+		AC13BB26200BD38600369CAE /* LGSideMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuView.m; path = LGSideMenuController/LGSideMenuView.m; sourceTree = "<group>"; };
+		AC13BB27200BD38600369CAE /* LGSideMenuSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuSegue.m; path = LGSideMenuController/LGSideMenuSegue.m; sourceTree = "<group>"; };
+		AC13BB2F200BD6C200369CAE /* LeftMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftMenuController.m; sourceTree = "<group>"; };
+		AC13BB30200BD6C200369CAE /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
+		AC13BB31200BD6C300369CAE /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
+		AC13BB32200BD6C300369CAE /* RightViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RightViewCell.h; sourceTree = "<group>"; };
+		AC13BB33200BD6C300369CAE /* RightViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RightViewController.h; sourceTree = "<group>"; };
+		AC13BB34200BD6C400369CAE /* TopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopViewController.m; sourceTree = "<group>"; };
+		AC13BB35200BD6C400369CAE /* LeftMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftMenuCell.h; sourceTree = "<group>"; };
+		AC13BB36200BD6C400369CAE /* TopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopViewController.h; sourceTree = "<group>"; };
+		AC13BB37200BD6C500369CAE /* LeftMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftMenuController.h; sourceTree = "<group>"; };
+		AC13BB38200BD6C500369CAE /* RightViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RightViewController.m; sourceTree = "<group>"; };
+		AC13BB39200BD6C500369CAE /* RightViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RightViewCell.m; sourceTree = "<group>"; };
+		AC13BB3A200BD6C600369CAE /* LeftMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftMenuCell.m; sourceTree = "<group>"; };
+		AC1756CB200527770069EE99 /* Helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Helpers.hpp; sourceTree = "<group>"; };
+		AC32743F2016836B009BEFD2 /* photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = photo_icon.png; path = Assets/photo_icon.png; sourceTree = SOURCE_ROOT; };
+		AC3274402016836C009BEFD2 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = video_icon.png; path = Assets/video_icon.png; sourceTree = SOURCE_ROOT; };
+		AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ocv.cpp; sourceTree = "<group>"; };
+		AC3C5EBB1FBC942000BB8B4F /* Ocv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Ocv.hpp; sourceTree = "<group>"; };
+		AC3CC3541FFECD2200ED79D6 /* board14.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board14.jpg; sourceTree = "<group>"; };
+		AC3CC3551FFECD2300ED79D6 /* board13.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board13.jpg; sourceTree = "<group>"; };
+		AC5540731F9BE6AD00922557 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = SOURCE_ROOT; };
+		AC5540751F9BE71800922557 /* CppInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppInterface.h; sourceTree = "<group>"; };
+		AC5540761F9BE71800922557 /* CppInterface.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CppInterface.mm; sourceTree = "<group>"; };
+		AC5F339E200FD370002FEF06 /* EditTestCaseVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditTestCaseVC.h; sourceTree = "<group>"; };
+		AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditTestCaseVC.m; sourceTree = "<group>"; };
+		AC5F33A520128576002FEF06 /* TestResultsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestResultsVC.h; sourceTree = "<group>"; };
+		AC5F33A620128576002FEF06 /* TestResultsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestResultsVC.m; sourceTree = "<group>"; };
+		AC5F340D20151C41002FEF06 /* S3.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = S3.m; sourceTree = "<group>"; };
+		AC5F340F20151C59002FEF06 /* S3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = S3.h; sourceTree = "<group>"; };
+		AC61AD551FBCCB0B00DEBCDA /* Common.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
+		AC61AD561FBCCB0B00DEBCDA /* Common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Common.hpp; sourceTree = "<group>"; };
+		AC628C131F9A7D3F0043FCEE /* KifuCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KifuCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC628C171F9A7D3F0043FCEE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		AC628C191F9A7D3F0043FCEE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		AC628C1A1F9A7D3F0043FCEE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		AC628C221F9A7D3F0043FCEE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AC628C271F9A7D3F0043FCEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC628C321F9A80150043FCEE /* MainVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainVC.h; sourceTree = "<group>"; };
+		AC628C331F9A80150043FCEE /* MainVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainVC.m; sourceTree = "<group>"; };
+		AC8040091FA92604000088D2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobFinder.cpp; sourceTree = "<group>"; };
+		AC8ACF8B1FBF5553005D5722 /* BlobFinder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlobFinder.hpp; sourceTree = "<group>"; };
+		AC8ACF8D1FC1EC12005D5722 /* board01.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board01.jpg; sourceTree = "<group>"; };
+		AC8ACF8F1FC1F6E6005D5722 /* board02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = board02.jpg; path = Assets/board02.jpg; sourceTree = SOURCE_ROOT; };
+		AC9702171FBC87DF0057C4C2 /* Globals.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Globals.mm; sourceTree = "<group>"; };
+		AC9702191FBC88050057C4C2 /* Globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
+		AC99ECEB200968E200EDF097 /* board_full.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board_full.jpg; sourceTree = "<group>"; };
+		AC99ECEC200968E200EDF097 /* board_full_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board_full_1.jpg; sourceTree = "<group>"; };
+		AC9DB02E1FE0581F008723CE /* board06.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board06.jpg; sourceTree = "<group>"; };
+		AC9DB0321FE09DFA008723CE /* black_templ.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = black_templ.yml; sourceTree = "<group>"; };
+		AC9DB0341FE09E02008723CE /* empty_templ.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = empty_templ.yml; sourceTree = "<group>"; };
+		AC9DB0361FE09E0F008723CE /* white_templ.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = white_templ.yml; sourceTree = "<group>"; };
+		ACA185D7201BEA7000A3501E /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
+		ACA69E4B1F9D077B00F5E068 /* Common.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
+		ACAC40BB1FC3321A00B6968B /* board04.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board04.jpg; sourceTree = "<group>"; };
+		ACAC40BC1FC3321A00B6968B /* board05.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board05.jpg; sourceTree = "<group>"; };
+		ACAC40BD1FC3321A00B6968B /* board03.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board03.jpg; sourceTree = "<group>"; };
+		ACC91311201694C500B62682 /* SaveDiscardVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveDiscardVC.h; sourceTree = "<group>"; };
+		ACC91312201694C600B62682 /* SaveDiscardVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveDiscardVC.m; sourceTree = "<group>"; };
+		ACC913142017F4F300B62682 /* ImagesVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagesVC.m; sourceTree = "<group>"; };
+		ACC913152017F4F300B62682 /* ImagesVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagesVC.h; sourceTree = "<group>"; };
+		ACD6C82420152B1C00759875 /* AWSPolly.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSPolly.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSPolly.framework"; sourceTree = "<group>"; };
+		ACD6C82520152B1D00759875 /* AWSAutoScaling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSAutoScaling.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSAutoScaling.framework"; sourceTree = "<group>"; };
+		ACD6C82620152B1D00759875 /* AWSEC2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSEC2.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSEC2.framework"; sourceTree = "<group>"; };
+		ACD6C82720152B1E00759875 /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSS3.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSS3.framework"; sourceTree = "<group>"; };
+		ACD6C82820152B1E00759875 /* AWSLex.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSLex.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSLex.framework"; sourceTree = "<group>"; };
+		ACD6C82920152B1F00759875 /* AWSAuthCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSAuthCore.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSAuthCore.framework"; sourceTree = "<group>"; };
+		ACD6C82A20152B1F00759875 /* AWSLogs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSLogs.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSLogs.framework"; sourceTree = "<group>"; };
+		ACD6C82B20152B2000759875 /* AWSSES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSES.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSSES.framework"; sourceTree = "<group>"; };
+		ACD6C82C20152B2000759875 /* AWSGoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSGoogleSignIn.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSGoogleSignIn.framework"; sourceTree = "<group>"; };
+		ACD6C82D20152B2100759875 /* AWSCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCore.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCore.framework"; sourceTree = "<group>"; };
+		ACD6C82E20152B2200759875 /* AWSCognitoAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCognitoAuth.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCognitoAuth.framework"; sourceTree = "<group>"; };
+		ACD6C82F20152B2200759875 /* AWSIoT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSIoT.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSIoT.framework"; sourceTree = "<group>"; };
+		ACD6C83020152B2300759875 /* AWSCognitoIdentityProviderASF.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCognitoIdentityProviderASF.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCognitoIdentityProviderASF.framework"; sourceTree = "<group>"; };
+		ACD6C83120152B2300759875 /* AWSLambda.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSLambda.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSLambda.framework"; sourceTree = "<group>"; };
+		ACD6C83220152B2400759875 /* AWSCognitoIdentityProvider.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCognitoIdentityProvider.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCognitoIdentityProvider.framework"; sourceTree = "<group>"; };
+		ACD6C83320152B2500759875 /* AWSRekognition.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSRekognition.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSRekognition.framework"; sourceTree = "<group>"; };
+		ACD6C83420152B2500759875 /* AWSAuthUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSAuthUI.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSAuthUI.framework"; sourceTree = "<group>"; };
+		ACD6C83520152B2600759875 /* AWSPinpoint.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSPinpoint.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSPinpoint.framework"; sourceTree = "<group>"; };
+		ACD6C83620152B2600759875 /* AWSUserPoolsSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSUserPoolsSignIn.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSUserPoolsSignIn.framework"; sourceTree = "<group>"; };
+		ACD6C83720152B2700759875 /* AWSDynamoDB.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSDynamoDB.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSDynamoDB.framework"; sourceTree = "<group>"; };
+		ACD6C83820152B2800759875 /* AWSAPIGateway.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSAPIGateway.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSAPIGateway.framework"; sourceTree = "<group>"; };
+		ACD6C83920152B2800759875 /* AWSSQS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSQS.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSSQS.framework"; sourceTree = "<group>"; };
+		ACD6C83A20152B2900759875 /* AWSElasticLoadBalancing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSElasticLoadBalancing.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSElasticLoadBalancing.framework"; sourceTree = "<group>"; };
+		ACD6C83B20152B2900759875 /* AWSSimpleDB.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSimpleDB.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSSimpleDB.framework"; sourceTree = "<group>"; };
+		ACD6C83C20152B2A00759875 /* AWSFacebookSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSFacebookSignIn.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSFacebookSignIn.framework"; sourceTree = "<group>"; };
+		ACD6C83D20152B2A00759875 /* AWSKinesis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSKinesis.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSKinesis.framework"; sourceTree = "<group>"; };
+		ACD6C83E20152B2B00759875 /* AWSMobileAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSMobileAnalytics.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSMobileAnalytics.framework"; sourceTree = "<group>"; };
+		ACD6C83F20152B2C00759875 /* AWSCognito.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCognito.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCognito.framework"; sourceTree = "<group>"; };
+		ACD6C84020152B2C00759875 /* AWSMachineLearning.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSMachineLearning.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSMachineLearning.framework"; sourceTree = "<group>"; };
+		ACD6C84120152B2D00759875 /* AWSSNS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSSNS.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSSNS.framework"; sourceTree = "<group>"; };
+		ACD6C84220152B2E00759875 /* AWSMobileClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSMobileClient.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSMobileClient.framework"; sourceTree = "<group>"; };
+		ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCloudWatch.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCloudWatch.framework"; sourceTree = "<group>"; };
+		ACD6C84420152B2F00759875 /* AWSKMS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSKMS.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSKMS.framework"; sourceTree = "<group>"; };
+		ACEF735F1FBDF53200DA4AD8 /* Clust1D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clust1D.hpp; sourceTree = "<group>"; };
+		ACEF73621FBE3BA200DA4AD8 /* BlackWhiteEmpty.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlackWhiteEmpty.hpp; sourceTree = "<group>"; };
+		ACF862D31FE95AF200EEC707 /* Boardness.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Boardness.hpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AC628C101F9A7D3F0043FCEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */,
+				ACD6C87120152B3000759875 /* AWSElasticLoadBalancing.framework in Frameworks */,
+				ACD6C85B20152B3000759875 /* AWSIoT.framework in Frameworks */,
+				ACD6C84920152B3000759875 /* AWSEC2.framework in Frameworks */,
+				ACD6C86920152B3000759875 /* AWSUserPoolsSignIn.framework in Frameworks */,
+				ACD6C86B20152B3000759875 /* AWSDynamoDB.framework in Frameworks */,
+				ACD6C88120152B3000759875 /* AWSMobileClient.framework in Frameworks */,
+				ACD6C86120152B3000759875 /* AWSCognitoIdentityProvider.framework in Frameworks */,
+				ACD6C85D20152B3000759875 /* AWSCognitoIdentityProviderASF.framework in Frameworks */,
+				ACD6C85320152B3000759875 /* AWSSES.framework in Frameworks */,
+				ACD6C88520152B3000759875 /* AWSKMS.framework in Frameworks */,
+				ACD6C87520152B3000759875 /* AWSFacebookSignIn.framework in Frameworks */,
+				ACD6C85520152B3000759875 /* AWSGoogleSignIn.framework in Frameworks */,
+				ACD6C87F20152B3000759875 /* AWSSNS.framework in Frameworks */,
+				ACD6C86D20152B3000759875 /* AWSAPIGateway.framework in Frameworks */,
+				ACD6C84B20152B3000759875 /* AWSS3.framework in Frameworks */,
+				ACD6C85720152B3000759875 /* AWSCore.framework in Frameworks */,
+				ACD6C85120152B3000759875 /* AWSLogs.framework in Frameworks */,
+				ACD6C86520152B3000759875 /* AWSAuthUI.framework in Frameworks */,
+				ACD6C86320152B3000759875 /* AWSRekognition.framework in Frameworks */,
+				ACD6C87720152B3000759875 /* AWSKinesis.framework in Frameworks */,
+				ACD6C84D20152B3000759875 /* AWSLex.framework in Frameworks */,
+				ACD6C86720152B3000759875 /* AWSPinpoint.framework in Frameworks */,
+				ACD6C84720152B3000759875 /* AWSAutoScaling.framework in Frameworks */,
+				ACD6C87920152B3000759875 /* AWSMobileAnalytics.framework in Frameworks */,
+				ACD6C85F20152B3000759875 /* AWSLambda.framework in Frameworks */,
+				AC5540741F9BE6AD00922557 /* opencv2.framework in Frameworks */,
+				ACD6C87B20152B3000759875 /* AWSCognito.framework in Frameworks */,
+				ACD6C85920152B3000759875 /* AWSCognitoAuth.framework in Frameworks */,
+				ACD6C84520152B3000759875 /* AWSPolly.framework in Frameworks */,
+				ACD6C86F20152B3000759875 /* AWSSQS.framework in Frameworks */,
+				ACD6C88320152B3000759875 /* AWSCloudWatch.framework in Frameworks */,
+				ACD6C87320152B3000759875 /* AWSSimpleDB.framework in Frameworks */,
+				ACD6C84F20152B3000759875 /* AWSAuthCore.framework in Frameworks */,
+				ACD6C87D20152B3000759875 /* AWSMachineLearning.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AC13BB19200BD32900369CAE /* LGSideMenuController */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BB1D200BD38500369CAE /* LGSideMenuBorderView.h */,
+				AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */,
+				AC13BB1F200BD38500369CAE /* LGSideMenuController.h */,
+				AC13BB25200BD38600369CAE /* LGSideMenuController.m */,
+				AC13BB21200BD38600369CAE /* LGSideMenuGesturesHandler.h */,
+				AC13BB20200BD38600369CAE /* LGSideMenuGesturesHandler.m */,
+				AC13BB23200BD38600369CAE /* LGSideMenuHelper.h */,
+				AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */,
+				AC13BB24200BD38600369CAE /* LGSideMenuSegue.h */,
+				AC13BB27200BD38600369CAE /* LGSideMenuSegue.m */,
+				AC13BB1C200BD38500369CAE /* LGSideMenuView.h */,
+				AC13BB26200BD38600369CAE /* LGSideMenuView.m */,
+				AC13BB22200BD38600369CAE /* UIViewController+LGSideMenuController.h */,
+				AC13BB1E200BD38500369CAE /* UIViewController+LGSideMenuController.m */,
+			);
+			name = LGSideMenuController;
+			sourceTree = "<group>";
+		};
+		AC13BB41200BD6D400369CAE /* UIStuff */ = {
+			isa = PBXGroup;
+			children = (
+				AC628C191F9A7D3F0043FCEE /* AppDelegate.h */,
+				AC628C1A1F9A7D3F0043FCEE /* AppDelegate.m */,
+				AC5F339E200FD370002FEF06 /* EditTestCaseVC.h */,
+				AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */,
+				ACC913152017F4F300B62682 /* ImagesVC.h */,
+				ACC913142017F4F300B62682 /* ImagesVC.m */,
+				AC628C321F9A80150043FCEE /* MainVC.h */,
+				AC628C331F9A80150043FCEE /* MainVC.m */,
+				AC13BB35200BD6C400369CAE /* LeftMenuCell.h */,
+				AC13BB3A200BD6C600369CAE /* LeftMenuCell.m */,
+				AC13BB37200BD6C500369CAE /* LeftMenuController.h */,
+				AC13BB2F200BD6C200369CAE /* LeftMenuController.m */,
+				AC13BB30200BD6C200369CAE /* NavigationController.h */,
+				AC13BB31200BD6C300369CAE /* NavigationController.m */,
+				AC13BB32200BD6C300369CAE /* RightViewCell.h */,
+				AC13BB39200BD6C500369CAE /* RightViewCell.m */,
+				AC13BB33200BD6C300369CAE /* RightViewController.h */,
+				AC13BB38200BD6C500369CAE /* RightViewController.m */,
+				ACC91311201694C500B62682 /* SaveDiscardVC.h */,
+				ACC91312201694C600B62682 /* SaveDiscardVC.m */,
+				AC5F33A520128576002FEF06 /* TestResultsVC.h */,
+				AC5F33A620128576002FEF06 /* TestResultsVC.m */,
+				AC13BB36200BD6C400369CAE /* TopViewController.h */,
+				AC13BB34200BD6C400369CAE /* TopViewController.m */,
+			);
+			path = UIStuff;
+			sourceTree = "<group>";
+		};
+		AC5F33A12010FD48002FEF06 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				AC043D331F9BB9AB006CF7F0 /* Common.h */,
+				ACA69E4B1F9D077B00F5E068 /* Common.m */,
+				AC61AD551FBCCB0B00DEBCDA /* Common.cpp */,
+				AC61AD561FBCCB0B00DEBCDA /* Common.hpp */,
+				AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */,
+				AC3C5EBB1FBC942000BB8B4F /* Ocv.hpp */,
+				AC5F340F20151C59002FEF06 /* S3.h */,
+				AC5F340D20151C41002FEF06 /* S3.m */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		AC628C0A1F9A7D3F0043FCEE = {
+			isa = PBXGroup;
+			children = (
+				AC13BB41200BD6D400369CAE /* UIStuff */,
+				AC628C151F9A7D3F0043FCEE /* KifuCam */,
+				AC5F33A12010FD48002FEF06 /* Utils */,
+				AC13BB19200BD32900369CAE /* LGSideMenuController */,
+				ACD9EB161FAD0B160049BBDE /* Assets */,
+				ACD6C83820152B2800759875 /* AWSAPIGateway.framework */,
+				ACD6C82920152B1F00759875 /* AWSAuthCore.framework */,
+				ACD6C83420152B2500759875 /* AWSAuthUI.framework */,
+				ACD6C82520152B1D00759875 /* AWSAutoScaling.framework */,
+				ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */,
+				ACD6C83F20152B2C00759875 /* AWSCognito.framework */,
+				ACD6C82E20152B2200759875 /* AWSCognitoAuth.framework */,
+				ACD6C83220152B2400759875 /* AWSCognitoIdentityProvider.framework */,
+				ACD6C83020152B2300759875 /* AWSCognitoIdentityProviderASF.framework */,
+				ACD6C82D20152B2100759875 /* AWSCore.framework */,
+				ACD6C83720152B2700759875 /* AWSDynamoDB.framework */,
+				ACD6C82620152B1D00759875 /* AWSEC2.framework */,
+				ACD6C83A20152B2900759875 /* AWSElasticLoadBalancing.framework */,
+				ACD6C83C20152B2A00759875 /* AWSFacebookSignIn.framework */,
+				ACD6C82C20152B2000759875 /* AWSGoogleSignIn.framework */,
+				ACD6C82F20152B2200759875 /* AWSIoT.framework */,
+				ACD6C83D20152B2A00759875 /* AWSKinesis.framework */,
+				ACD6C84420152B2F00759875 /* AWSKMS.framework */,
+				ACD6C83120152B2300759875 /* AWSLambda.framework */,
+				ACD6C82820152B1E00759875 /* AWSLex.framework */,
+				ACD6C82A20152B1F00759875 /* AWSLogs.framework */,
+				ACD6C84020152B2C00759875 /* AWSMachineLearning.framework */,
+				ACD6C83E20152B2B00759875 /* AWSMobileAnalytics.framework */,
+				ACD6C84220152B2E00759875 /* AWSMobileClient.framework */,
+				ACD6C83520152B2600759875 /* AWSPinpoint.framework */,
+				ACD6C82420152B1C00759875 /* AWSPolly.framework */,
+				ACD6C83320152B2500759875 /* AWSRekognition.framework */,
+				ACD6C82720152B1E00759875 /* AWSS3.framework */,
+				ACD6C82B20152B2000759875 /* AWSSES.framework */,
+				ACD6C83B20152B2900759875 /* AWSSimpleDB.framework */,
+				ACD6C84120152B2D00759875 /* AWSSNS.framework */,
+				ACD6C83920152B2800759875 /* AWSSQS.framework */,
+				ACD6C83620152B2600759875 /* AWSUserPoolsSignIn.framework */,
+				AC628C141F9A7D3F0043FCEE /* Products */,
+				AC8040081FA92604000088D2 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		AC628C141F9A7D3F0043FCEE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AC628C131F9A7D3F0043FCEE /* KifuCam.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AC628C151F9A7D3F0043FCEE /* KifuCam */ = {
+			isa = PBXGroup;
+			children = (
+				ACEF73621FBE3BA200DA4AD8 /* BlackWhiteEmpty.hpp */,
+				AC8ACF8B1FBF5553005D5722 /* BlobFinder.hpp */,
+				AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */,
+				ACF862D31FE95AF200EEC707 /* Boardness.hpp */,
+				ACEF735F1FBDF53200DA4AD8 /* Clust1D.hpp */,
+				AC5540751F9BE71800922557 /* CppInterface.h */,
+				AC5540761F9BE71800922557 /* CppInterface.mm */,
+				AC0BC39B1FE2E26F0066C542 /* DrawBoard.cpp */,
+				AC0BC39C1FE2E26F0066C542 /* DrawBoard.hpp */,
+				AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */,
+				AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */,
+				AC9702191FBC88050057C4C2 /* Globals.h */,
+				AC9702171FBC87DF0057C4C2 /* Globals.mm */,
+				AC1756CB200527770069EE99 /* Helpers.hpp */,
+				AC628C221F9A7D3F0043FCEE /* Assets.xcassets */,
+				AC628C271F9A7D3F0043FCEE /* Info.plist */,
+				AC628C161F9A7D3F0043FCEE /* Supporting Files */,
+			);
+			path = KifuCam;
+			sourceTree = "<group>";
+		};
+		AC628C161F9A7D3F0043FCEE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AC628C171F9A7D3F0043FCEE /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AC8040081FA92604000088D2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AC5540731F9BE6AD00922557 /* opencv2.framework */,
+				AC8040091FA92604000088D2 /* Accelerate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ACD9EB161FAD0B160049BBDE /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				ACA185D7201BEA7000A3501E /* demo.png */,
+				AC3274402016836C009BEFD2 /* video_icon.png */,
+				AC32743F2016836B009BEFD2 /* photo_icon.png */,
+				AC9DB0361FE09E0F008723CE /* white_templ.yml */,
+				AC9DB0321FE09DFA008723CE /* black_templ.yml */,
+				AC9DB0341FE09E02008723CE /* empty_templ.yml */,
+				AC99ECEB200968E200EDF097 /* board_full.jpg */,
+				AC99ECEC200968E200EDF097 /* board_full_1.jpg */,
+				AC8ACF8D1FC1EC12005D5722 /* board01.jpg */,
+				AC8ACF8F1FC1F6E6005D5722 /* board02.jpg */,
+				ACAC40BD1FC3321A00B6968B /* board03.jpg */,
+				ACAC40BB1FC3321A00B6968B /* board04.jpg */,
+				ACAC40BC1FC3321A00B6968B /* board05.jpg */,
+				AC9DB02E1FE0581F008723CE /* board06.jpg */,
+				AC0FFAFB1FEB4AD6009A02FD /* board07.jpg */,
+				AC0FFB001FEB4AD7009A02FD /* board08.jpg */,
+				AC0FFAFD1FEB4AD7009A02FD /* board09.jpg */,
+				AC0FFAFC1FEB4AD6009A02FD /* board10.jpg */,
+				AC0FFAFE1FEB4AD7009A02FD /* board11.jpg */,
+				AC0FFAFF1FEB4AD7009A02FD /* board12.jpg */,
+				AC3CC3551FFECD2300ED79D6 /* board13.jpg */,
+				AC3CC3541FFECD2200ED79D6 /* board14.jpg */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AC628C121F9A7D3F0043FCEE /* KifuCam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC628C2A1F9A7D3F0043FCEE /* Build configuration list for PBXNativeTarget "KifuCam" */;
+			buildPhases = (
+				AC628C0F1F9A7D3F0043FCEE /* Sources */,
+				AC628C101F9A7D3F0043FCEE /* Frameworks */,
+				AC628C111F9A7D3F0043FCEE /* Resources */,
+				AC5F340B201513F8002FEF06 /* Embed Frameworks */,
+				AC5F340C2015141A002FEF06 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KifuCam;
+			productName = KifuCam;
+			productReference = AC628C131F9A7D3F0043FCEE /* KifuCam.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AC628C0B1F9A7D3F0043FCEE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = AHN;
+				TargetAttributes = {
+					AC628C121F9A7D3F0043FCEE = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = J26TJ8F6WP;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = AC628C0E1F9A7D3F0043FCEE /* Build configuration list for PBXProject "KifuCam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AC628C0A1F9A7D3F0043FCEE;
+			productRefGroup = AC628C141F9A7D3F0043FCEE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AC628C121F9A7D3F0043FCEE /* KifuCam */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AC628C111F9A7D3F0043FCEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC99ECED200968E200EDF097 /* board_full.jpg in Resources */,
+				AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */,
+				AC8ACF8E1FC1EC12005D5722 /* board01.jpg in Resources */,
+				AC3CC3571FFECD2300ED79D6 /* board13.jpg in Resources */,
+				AC0FFB031FEB4AD7009A02FD /* board09.jpg in Resources */,
+				ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */,
+				AC0FFB041FEB4AD7009A02FD /* board11.jpg in Resources */,
+				ACA185D8201BEA7100A3501E /* demo.png in Resources */,
+				AC9DB0371FE09E0F008723CE /* white_templ.yml in Resources */,
+				AC0FFB011FEB4AD7009A02FD /* board07.jpg in Resources */,
+				AC99ECEE200968E200EDF097 /* board_full_1.jpg in Resources */,
+				AC3274422016836D009BEFD2 /* video_icon.png in Resources */,
+				AC3CC3561FFECD2300ED79D6 /* board14.jpg in Resources */,
+				ACAC40BE1FC3321A00B6968B /* board04.jpg in Resources */,
+				AC0FFB051FEB4AD7009A02FD /* board12.jpg in Resources */,
+				AC9DB02F1FE0581F008723CE /* board06.jpg in Resources */,
+				AC0FFB061FEB4AD7009A02FD /* board08.jpg in Resources */,
+				AC9DB0331FE09DFA008723CE /* black_templ.yml in Resources */,
+				AC9DB0351FE09E02008723CE /* empty_templ.yml in Resources */,
+				AC8ACF901FC1F6E6005D5722 /* board02.jpg in Resources */,
+				AC3274412016836D009BEFD2 /* photo_icon.png in Resources */,
+				ACAC40C01FC3321A00B6968B /* board03.jpg in Resources */,
+				AC0FFB021FEB4AD7009A02FD /* board10.jpg in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AC5F340C2015141A002FEF06 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework/strip-frameworks.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AC628C0F1F9A7D3F0043FCEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC13BB2B200BD38600369CAE /* LGSideMenuGesturesHandler.m in Sources */,
+				AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */,
+				AC13BB2C200BD38700369CAE /* LGSideMenuController.m in Sources */,
+				AC13BB29200BD38600369CAE /* LGSideMenuHelper.m in Sources */,
+				ACC91313201694C700B62682 /* SaveDiscardVC.m in Sources */,
+				ACA69E4C1F9D077B00F5E068 /* Common.m in Sources */,
+				AC61AD571FBCCB0B00DEBCDA /* Common.cpp in Sources */,
+				AC13BB2D200BD38700369CAE /* LGSideMenuView.m in Sources */,
+				AC13BB40200BD6C600369CAE /* LeftMenuCell.m in Sources */,
+				AC5F340E20151C41002FEF06 /* S3.m in Sources */,
+				AC5540771F9BE71900922557 /* CppInterface.mm in Sources */,
+				AC13BB3B200BD6C600369CAE /* LeftMenuController.m in Sources */,
+				AC0BC39D1FE2E26F0066C542 /* DrawBoard.cpp in Sources */,
+				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
+				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
+				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
+				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
+				AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */,
+				AC628C341F9A80150043FCEE /* MainVC.m in Sources */,
+				AC13BB3E200BD6C600369CAE /* RightViewController.m in Sources */,
+				AC628C1B1F9A7D3F0043FCEE /* AppDelegate.m in Sources */,
+				AC5F33A720128576002FEF06 /* TestResultsVC.m in Sources */,
+				AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */,
+				AC13BB3D200BD6C600369CAE /* TopViewController.m in Sources */,
+				ACC913162017F4F400B62682 /* ImagesVC.m in Sources */,
+				AC13BB3C200BD6C600369CAE /* NavigationController.m in Sources */,
+				AC13BB3F200BD6C600369CAE /* RightViewCell.m in Sources */,
+				AC628C181F9A7D3F0043FCEE /* main.m in Sources */,
+				AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AC628C281F9A7D3F0043FCEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = "-w";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC628C291F9A7D3F0043FCEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				"OTHER_LDFLAGS[arch=*]" = "-w";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AC628C2B1F9A7D3F0043FCEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = J26TJ8F6WP;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/aws-ios-sdk-2.6.11/frameworks",
+					"$(PROJECT_DIR)/AWS/frameworks",
+				);
+				INFOPLIST_FILE = KifuCam/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AC628C2C1F9A7D3F0043FCEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = J26TJ8F6WP;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/aws-ios-sdk-2.6.11/frameworks",
+					"$(PROJECT_DIR)/AWS/frameworks",
+				);
+				INFOPLIST_FILE = KifuCam/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AC628C0E1F9A7D3F0043FCEE /* Build configuration list for PBXProject "KifuCam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC628C281F9A7D3F0043FCEE /* Debug */,
+				AC628C291F9A7D3F0043FCEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC628C2A1F9A7D3F0043FCEE /* Build configuration list for PBXNativeTarget "KifuCam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC628C2B1F9A7D3F0043FCEE /* Debug */,
+				AC628C2C1F9A7D3F0043FCEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AC628C0B1F9A7D3F0043FCEE /* Project object */;
+}
