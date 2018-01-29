@@ -33,7 +33,7 @@
 {
     self = [super init];
     if (self) {
-        self.title = @"SgfGrabber";
+        self.title = @"Kifu Cam";
         self.view.backgroundColor = BGCOLOR;
         self.navigationItem.leftBarButtonItem =
         [[UIBarButtonItem alloc] initWithTitle:@"Menu"
