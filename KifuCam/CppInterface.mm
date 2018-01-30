@@ -727,6 +727,19 @@ static BlackWhiteEmpty classifier;
     return errcount;
 } // runTestImg()
 
+// Check for the debug mode trigger position to show right menu.
+// A clump of 4 black stones in the top left corner.
+//----------------------------------------------------------------
+- (bool) check_debug_trigger
+{
+    std::vector<int> templ( SQR(_board_sz), EEMPTY);
+    templ[0] = BBLACK;
+    templ[1] = BBLACK;
+    templ[_board_sz] = BBLACK;
+    templ[_board_sz+1] = BBLACK;
+    bool res = templ == _diagram;
+    return res;
+} // check_debug_trigger()
 
 @end
 

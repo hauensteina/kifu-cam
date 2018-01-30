@@ -16,8 +16,9 @@
 
 @implementation TopViewController
 
-//--------------
-- (void)setup
+// Also show debug menu on the right
+//-------------------------------------
+- (void)setupLeftAndRight
 {
     self.leftViewController = [LeftMenuController new];
     self.rightViewController = [RightViewController new];
@@ -31,24 +32,59 @@
     self.rightViewBackgroundImage = [UIImage imageNamed:@"imageRight"];
     self.rightViewBackgroundColor = [UIColor colorWithRed:0.65 green:0.5 blue:0.5 alpha:0.95];
     self.rootViewCoverColorForRightView = [UIColor colorWithRed:1.0 green:0.0 blue:1.0 alpha:0.05];
-
+    
     // -----
-
+    
     UIColor *grayCoverColor = [UIColor colorWithRed:0.1 green:0.0 blue:0.0 alpha:0.3];
     UIBlurEffectStyle regularStyle;
-
+    
     if (UIDevice.currentDevice.systemVersion.floatValue >= 10.0) {
         regularStyle = UIBlurEffectStyleRegular;
     }
     else {
         regularStyle = UIBlurEffectStyleLight;
     }
-
+    
     // -----
-
+    
     self.leftViewPresentationStyle = LGSideMenuPresentationStyleSlideAbove;
     self.rootViewCoverColorForLeftView = grayCoverColor;
-} // setup()
+} // setupLeftAndRight()
+
+// Only show left menu
+//-------------------------
+- (void)setupLeftOnly
+{
+    self.leftViewController = [LeftMenuController new];
+    //self.rightViewController = [RightViewController new];
+    
+    self.leftViewWidth = 250.0;
+    self.leftViewBackgroundImage = [UIImage imageNamed:@"imageLeft"];
+    self.leftViewBackgroundColor = [UIColor colorWithRed:0.65 green:0.65 blue:0.65 alpha:0.95];
+    self.rootViewCoverColorForLeftView = [UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:0.05];
+    
+    //    self.rightViewWidth = 250.0;
+    //    self.rightViewBackgroundImage = [UIImage imageNamed:@"imageRight"];
+    //    self.rightViewBackgroundColor = [UIColor colorWithRed:0.65 green:0.5 blue:0.5 alpha:0.95];
+    //    self.rootViewCoverColorForRightView = [UIColor colorWithRed:1.0 green:0.0 blue:1.0 alpha:0.05];
+    
+    // -----
+    
+    UIColor *grayCoverColor = [UIColor colorWithRed:0.1 green:0.0 blue:0.0 alpha:0.3];
+    UIBlurEffectStyle regularStyle;
+    
+    if (UIDevice.currentDevice.systemVersion.floatValue >= 10.0) {
+        regularStyle = UIBlurEffectStyleRegular;
+    }
+    else {
+        regularStyle = UIBlurEffectStyleLight;
+    }
+    
+    // -----
+    
+    self.leftViewPresentationStyle = LGSideMenuPresentationStyleSlideAbove;
+    self.rootViewCoverColorForLeftView = grayCoverColor;
+} // setupLeftOnly()
 
 //--------------------------------------------------------
 - (void)leftViewWillLayoutSubviewsWithSize:(CGSize)size

@@ -32,7 +32,7 @@
     self.navVC = [[NavigationController alloc] initWithRootViewController:self.mainVC];
     self.topVC = [TopViewController new];
     self.topVC.rootViewController = self.navVC;
-    [self.topVC setup];
+    [self.topVC setupLeftOnly];
     self.menuVC  = (LeftMenuController *) self.topVC.leftViewController;
     self.rightVC = (RightViewController *) self.topVC.rightViewController;
 

@@ -176,8 +176,6 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 //---------------------
 - (void)gotoDebugMode
 {
-    //[self unselectAll];
-    //[self setState:ITEM_SELECTED forMenuItem:@"Debug Mode"];
     _mode = DEBUG_MODE;
     g_app.mainVC.btnCam.hidden = YES;
     [g_app.mainVC doLayout];

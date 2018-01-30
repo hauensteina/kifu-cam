@@ -251,6 +251,12 @@
         g_app.saveDiscardVC.sgf = [g_app.mainVC.cppInterface get_sgf];
         [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
     } // photoMode
+    // Enable debug menu on the right if trigger position seen
+    if ([_cppInterface check_debug_trigger]) {
+        [g_app.topVC setupLeftAndRight];
+        g_app.menuVC  = (LeftMenuController *) g_app.topVC.leftViewController;
+        g_app.rightVC = (RightViewController *) g_app.topVC.rightViewController;
+    }
 } // btnCam
 
 // FrameExtractorDelegate protocol

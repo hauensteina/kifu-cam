@@ -10,6 +10,10 @@
 
 @interface TopViewController : LGSideMenuController
 
-- (void)setup;
+// Only show left menu
+- (void)setupLeftOnly;
+// Also show debug menu on the right
+- (void)setupLeftAndRight;
+
 
 @end
