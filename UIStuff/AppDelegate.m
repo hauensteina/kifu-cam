@@ -91,5 +91,14 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+// Enable right side debug menu
+//-------------------------------
+- (void) enableDebugMenu
+{
+    [_topVC setupLeftAndRight];
+    _menuVC  = (LeftMenuController *) _topVC.leftViewController;
+    _rightVC = (RightViewController *) _topVC.rightViewController;
+}
+
 
 @end

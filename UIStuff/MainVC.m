@@ -253,9 +253,7 @@
     } // photoMode
     // Enable debug menu on the right if trigger position seen
     if ([_cppInterface check_debug_trigger]) {
-        [g_app.topVC setupLeftAndRight];
-        g_app.menuVC  = (LeftMenuController *) g_app.topVC.leftViewController;
-        g_app.rightVC = (RightViewController *) g_app.topVC.rightViewController;
+        [g_app enableDebugMenu];
     }
 } // btnCam
 

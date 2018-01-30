@@ -36,5 +36,7 @@
 @property (nonatomic, strong) SaveDiscardVC *saveDiscardVC;
 @property (nonatomic, strong) ImagesVC *imagesVC;
 
+- (void) enableDebugMenu;
+
 @end
 
