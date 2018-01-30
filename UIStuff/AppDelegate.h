@@ -16,6 +16,7 @@
 #import "ImagesVC.h"
 #import "TestResultsVC.h"
 #import "SaveDiscardVC.h"
+#import "AboutVC.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -35,6 +36,7 @@
 @property (nonatomic, strong) TestResultsVC *testResultsVC;
 @property (nonatomic, strong) SaveDiscardVC *saveDiscardVC;
 @property (nonatomic, strong) ImagesVC *imagesVC;
+@property (nonatomic, strong) AboutVC *aboutVC;
 
 - (void) enableDebugMenu;
 

@@ -37,6 +37,9 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
                        @{ @"txt": @"Demo Mode", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Saved Images", @"state": @(ITEM_NOT_SELECTED) },
+                       @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
+                       @{ @"txt": @"Settings", @"state": @(ITEM_NOT_SELECTED) },
+                       @{ @"txt": @"About", @"state": @(ITEM_NOT_SELECTED) },
                        ];
         _titlesArray = [NSMutableArray new];
         for (NSDictionary *x in d) { [_titlesArray addObject:[x mutableCopy]]; }
@@ -167,6 +170,9 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         }
         else if ([menuItem hasPrefix:@"Saved Images"]) {
             [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
+        }
+        else if ([menuItem hasPrefix:@"About"]) {
+            [g_app.navVC pushViewController:g_app.aboutVC animated:YES];
         }
         [self.tableView reloadData];
     } while(0);

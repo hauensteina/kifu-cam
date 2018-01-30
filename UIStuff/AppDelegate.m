@@ -41,6 +41,7 @@
     self.testResultsVC = [TestResultsVC new];
     self.saveDiscardVC = [SaveDiscardVC new];
     self.imagesVC = [ImagesVC new];
+    self.aboutVC = [AboutVC new];
     
     self.window.rootViewController = self.topVC;
     [self.window makeKeyAndVisible];
