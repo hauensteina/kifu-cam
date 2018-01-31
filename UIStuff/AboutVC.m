@@ -44,8 +44,7 @@
         _tv.editable = NO ;
         
         NSString *msg =
-        @"\n"
-        "About"
+        @"About"
         "\n======\n"
         "Use Kifu Cam to take photos of Go boards and recognize the position. "
         "If you do not own a Go board, you should buy one. Seriously."
@@ -75,7 +74,11 @@
         "\nThanks to Adrian Rosebrock for his great tutorials on"
         "\nwww.pyimagesearch.com"
         "\n"
-        "\nThanks to Mike Wallstedt for doing the same thing on Android."
+        "\nThanks to Mike Wallstedt for doing the same thing on Android"
+        "\n"
+        "\nAuthor"
+        "\n=========\n"
+        "Andreas Hauenstein, 2018"
         "\n"
         "\nBuild Date"
         "\n=========\n"
