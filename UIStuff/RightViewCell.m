@@ -1,6 +1,6 @@
 //
 //  RightViewCell.m
-//  LGSideMenuControllerDemo
+//  KifuCam
 //
 
 #import "RightViewCell.h"
