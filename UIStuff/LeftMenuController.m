@@ -174,6 +174,9 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         else if ([menuItem hasPrefix:@"About"]) {
             [g_app.navVC pushViewController:g_app.aboutVC animated:YES];
         }
+        else if ([menuItem hasPrefix:@"Settings"]) {
+            [g_app.navVC pushViewController:g_app.settingsVC animated:YES];
+        }
         [self.tableView reloadData];
     } while(0);
     [topViewController hideLeftViewAnimated:YES completionHandler:nil];

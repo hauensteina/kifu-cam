@@ -63,6 +63,13 @@ extern "C" {
     void popup (NSString *msg, NSString *title);
     // Alert with several choices
     void choicePopup (NSArray *choices, NSString *title, void(^callback)(UIAlertAction *));
+    
+    // Persisted settings
+    //=====================
+    // Set a string property in the user defaults
+    void setProp( NSString *key, NSString *value);
+    // Get a string property in the user defaults.
+    NSString* getProp( NSString *key, NSString *defaultVal);
 
 #ifdef __cplusplus
 }

@@ -239,3 +239,61 @@ bool fileExists( NSString *path_)
     return (fileExists && !isDir);
 }
 
+//=====================
+// Persisted settings
+//=====================
+
+// Set a string property in the user defaults
+//-----------------------------------------------------------------------
+void setProp( NSString *key, NSString *value)
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:value forKey:key];
+} // setProp()
+
+// Get a string property in the user defaults.
+// Return default if not found.
+//-----------------------------------------------------------------------
+NSString* getProp( NSString *key, NSString *defaultVal)
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *val = [defaults objectForKey:key];
+    if (!val) {
+        return defaultVal;
+    }
+    return val;
+} // getProp()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

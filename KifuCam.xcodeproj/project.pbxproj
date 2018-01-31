@@ -49,6 +49,7 @@
 		AC8ACF901FC1F6E6005D5722 /* board02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC8ACF8F1FC1F6E6005D5722 /* board02.jpg */; };
 		AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC9702171FBC87DF0057C4C2 /* Globals.mm */; };
 		AC98149C2021167B004375DD /* AboutVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC98149B2021167B004375DD /* AboutVC.m */; };
+		AC9814A220214F6B004375DD /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC9814A120214F6B004375DD /* SettingsVC.m */; };
 		AC99ECED200968E200EDF097 /* board_full.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC99ECEB200968E200EDF097 /* board_full.jpg */; };
 		AC99ECEE200968E200EDF097 /* board_full_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC99ECEC200968E200EDF097 /* board_full_1.jpg */; };
 		AC9DB02F1FE0581F008723CE /* board06.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB02E1FE0581F008723CE /* board06.jpg */; };
@@ -263,6 +264,8 @@
 		AC9702191FBC88050057C4C2 /* Globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
 		AC98149A2021167A004375DD /* AboutVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutVC.h; sourceTree = "<group>"; };
 		AC98149B2021167B004375DD /* AboutVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AboutVC.m; sourceTree = "<group>"; };
+		AC9814A020214F6B004375DD /* SettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
+		AC9814A120214F6B004375DD /* SettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		AC99ECEB200968E200EDF097 /* board_full.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board_full.jpg; sourceTree = "<group>"; };
 		AC99ECEC200968E200EDF097 /* board_full_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board_full_1.jpg; sourceTree = "<group>"; };
 		AC9DB02E1FE0581F008723CE /* board06.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board06.jpg; sourceTree = "<group>"; };
@@ -422,6 +425,8 @@
 				AC13BB38200BD6C500369CAE /* RightViewController.m */,
 				ACC91311201694C500B62682 /* SaveDiscardVC.h */,
 				ACC91312201694C600B62682 /* SaveDiscardVC.m */,
+				AC9814A020214F6B004375DD /* SettingsVC.h */,
+				AC9814A120214F6B004375DD /* SettingsVC.m */,
 				AC5F33A520128576002FEF06 /* TestResultsVC.h */,
 				AC5F33A620128576002FEF06 /* TestResultsVC.m */,
 				AC13BB36200BD6C400369CAE /* TopViewController.h */,
@@ -729,6 +734,7 @@
 				AC628C341F9A80150043FCEE /* MainVC.m in Sources */,
 				AC13BB3E200BD6C600369CAE /* RightViewController.m in Sources */,
 				AC628C1B1F9A7D3F0043FCEE /* AppDelegate.m in Sources */,
+				AC9814A220214F6B004375DD /* SettingsVC.m in Sources */,
 				AC5F33A720128576002FEF06 /* TestResultsVC.m in Sources */,
 				AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */,
 				AC13BB3D200BD6C600369CAE /* TopViewController.m in Sources */,

@@ -42,7 +42,8 @@
     self.saveDiscardVC = [SaveDiscardVC new];
     self.imagesVC = [ImagesVC new];
     self.aboutVC = [AboutVC new];
-    
+    self.settingsVC = [SettingsVC new];
+
     self.window.rootViewController = self.topVC;
     [self.window makeKeyAndVisible];
     
