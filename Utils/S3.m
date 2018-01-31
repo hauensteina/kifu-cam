@@ -55,13 +55,13 @@ void S3_upload_file( NSString *fname, NSString *target, void(^completion)(NSErro
                          break;
                      default:
                          NSLog(@"Error: %@", task.error);
-                         popup( nsprintf( @"S3 upload failed for %@. Error:%@", uploadRequest.key, task.error), @"Error");
+                         //popup( nsprintf( @"S3 upload failed for %@. Error:%@", uploadRequest.key, task.error), @"Error");
                          break;
                  }
              }
              else {
                  // Unknown error.
-                 popup( nsprintf( @"S3 upload failed for %@. Error:%@", uploadRequest.key, task.error), @"Error");
+                 //popup( nsprintf( @"S3 upload failed for %@. Error:%@", uploadRequest.key, task.error), @"Error");
                  NSLog(@"Error: %@", task.error);
              }
          } // if (task.error)
@@ -90,7 +90,7 @@ void S3_glob( NSString *prefix, NSString *ext, NSMutableArray *res, void(^comple
     req.prefix = prefix;
     [[s3 listObjectsV2:req] continueWithBlock:^id(AWSTask *task) {
         if (task.error) {
-            popup( nsprintf( @"S3_glob failed: %@", task.error), @"Error");
+            //popup( nsprintf( @"S3_glob failed: %@", task.error), @"Error");
         }
         else {
             AWSS3ListObjectsOutput *listObjectsOutput = task.result;
@@ -131,13 +131,13 @@ void S3_download_file( NSString *key, NSString *fname, void(^completion)(NSError
                          
                      default:
                          NSLog(@"Error: %@", task.error);
-                         popup( nsprintf( @"S3 downl failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
+                         //popup( nsprintf( @"S3 downl failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
                          break;
                  }
              }
              else {
                  // Unknown error.
-                 popup( nsprintf( @"S3 download failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
+                 //popup( nsprintf( @"S3 download failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
                  NSLog(@"Error: %@", task.error);
              }
          } // if (task.error)
