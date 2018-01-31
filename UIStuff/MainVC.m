@@ -149,12 +149,13 @@
     if ([g_app.menuVC videoMode]) {
         [self.btnCam setBackgroundImage:self.imgVideoBtn forState:UIControlStateNormal];
     }
-    
     // Info Label
     self.lbBottom.textAlignment = NSTextAlignmentCenter;
 
     // Small Label
     self.lbSmall.textAlignment = NSTextAlignmentLeft;
+    
+    [self.view setNeedsDisplay];
 } // doLayout
 
 // Position camera button and labels when first image comes in.
@@ -279,9 +280,9 @@
         UIImage *processedImg = [self.cppInterface video_mode:image];
         self.img = processedImg;
         [self.cameraView setImage:self.img];
-        [self positionButtonAndLabels];
         [self.frameExtractor resume];
     } // videoMode
+    [self positionButtonAndLabels];
 } // captured()
 
 // LGSideMenuController Callbacks

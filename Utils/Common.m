@@ -249,6 +249,7 @@ void setProp( NSString *key, NSString *value)
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:value forKey:key];
+    [defaults synchronize];
 } // setProp()
 
 // Get a string property in the user defaults.

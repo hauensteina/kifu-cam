@@ -35,7 +35,7 @@
     [self.topVC setupLeftOnly];
     self.menuVC  = (LeftMenuController *) self.topVC.leftViewController;
     self.rightVC = (RightViewController *) self.topVC.rightViewController;
-
+    
     // Other view controllers
     self.editTestCaseVC = [EditTestCaseVC new];
     self.testResultsVC = [TestResultsVC new];
@@ -55,14 +55,6 @@
     if (!dirExists( @SAVED_FOLDER)) {
         makeDir( @SAVED_FOLDER);
     }
-    
-    // CLean up garbage in the file system
-//    NSArray *files = glob_files(@"", @"", @"jpg");
-//    for (NSString *f in files) {
-//        rm_file( f);
-//    }
-//    files = glob_files(@"", @"", @"jpg");
-    
     return YES;
 }
 

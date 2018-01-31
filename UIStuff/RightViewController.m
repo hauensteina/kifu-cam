@@ -134,7 +134,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
 // The new nnnnn is one higher than the largest one found in the
 // file systm.
 //---------------------------
-- (void)mnuAddTestCase //@@@
+- (void)mnuAddTestCase 
 {
     NSArray *testfiles = globFiles(@TESTCASE_FOLDER, @TESTCASE_PREFIX, @"*.png");
     NSString *last = changeExtension( [testfiles lastObject], @"");

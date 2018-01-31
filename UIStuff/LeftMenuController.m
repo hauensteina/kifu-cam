@@ -29,12 +29,6 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
-        NSString *modeStr = getProp( @"opt_mode", @"video");
-        _mode = PHOTO_MODE;
-        if ([modeStr isEqualToString:@"video"]) {
-            _mode = VIDEO_MODE;
-        }
-        
         _selectedFont = [UIFont fontWithName:@"Verdana-Bold" size:16 ];
         _normalFont = [UIFont fontWithName:@"Verdana" size:16 ];
         NSArray *d = @[
@@ -57,9 +51,23 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         self.tableView.contentInset = UIEdgeInsetsMake(44.0, 0.0, 44.0, 0.0);
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];
+        
+        NSString *modeStr = getProp( @"opt_mode", @"video");
+        if ([modeStr isEqualToString:@"video"]) {
+            [self gotoVideoMode];
+        }
+        else {
+            [self gotoPhotoMode];
+        }
     }
     return self;
 } // init()
+
+//----------------------
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+}
 
 //-------------------------------
 - (BOOL)prefersStatusBarHidden
@@ -137,10 +145,14 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
     }
 } // setState: forMenuItem:
 
-- (bool) videoMode { return _mode == VIDEO_MODE; }
-- (bool) photoMode { return _mode == PHOTO_MODE; }
-- (bool) debugMode { return _mode == DEBUG_MODE; }
-- (bool) demoMode  { return _mode == DEMO_MODE; }
+- (bool) videoMode {
+    return _mode == VIDEO_MODE; }
+- (bool) photoMode {
+    return _mode == PHOTO_MODE; }
+- (bool) debugMode {
+    return _mode == DEBUG_MODE; }
+- (bool) demoMode  {
+    return _mode == DEMO_MODE; }
 
 // Handle left menu choice
 //--------------------------------------------------------------------------------------------
@@ -151,24 +163,10 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 
     do {
         if ([menuItem hasPrefix:@"Video Mode"]) {
-            if (_mode == VIDEO_MODE) break;
-            [self unselectAll];
-            [self setState:ITEM_SELECTED forRow:indexPath.row];
-            _mode = VIDEO_MODE;
-            g_app.mainVC.btnCam.hidden = NO;
-            [g_app.mainVC.frameExtractor resume];
-            g_app.mainVC.lbBottom.text = @"Point the camera at a Go board";
-            [g_app.mainVC doLayout];
+            [self gotoVideoMode];
         }
         else if ([menuItem hasPrefix:@"Photo Mode"]) {
-            if (_mode == PHOTO_MODE) break;
-            [self unselectAll];
-            [self setState:ITEM_SELECTED forRow:indexPath.row];
-            _mode = PHOTO_MODE;
-            g_app.mainVC.btnCam.hidden = NO;
-            [g_app.mainVC.frameExtractor resume];
-            g_app.mainVC.lbBottom.text = @"Take a photo of a Go board";
-            [g_app.mainVC doLayout];
+            [self gotoPhotoMode];
         }
         else if ([menuItem hasPrefix:@"Demo Mode"]) {
             if (_mode == DEBUG_MODE) break;
@@ -187,6 +185,32 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
     } while(0);
     [topViewController hideLeftViewAnimated:YES completionHandler:nil];
 } // didSelectRowAtIndexPath()
+
+//---------------------
+- (void)gotoPhotoMode
+{
+    if (_mode == PHOTO_MODE) return;
+    [self unselectAll];
+    [self setState:ITEM_SELECTED forMenuItem:@"Photo Mode"];
+    _mode = PHOTO_MODE;
+    g_app.mainVC.btnCam.hidden = NO;
+    [g_app.mainVC.frameExtractor resume];
+    g_app.mainVC.lbBottom.text = @"Take a photo of a Go board";
+    [g_app.mainVC doLayout];
+} // gotoPhotoMode()
+
+//---------------------
+- (void)gotoVideoMode
+{
+    if (_mode == VIDEO_MODE) return;
+    [self unselectAll];
+    [self setState:ITEM_SELECTED forMenuItem:@"Video Mode"];
+    _mode = VIDEO_MODE;
+    g_app.mainVC.btnCam.hidden = NO;
+    [g_app.mainVC.frameExtractor resume];
+    g_app.mainVC.lbBottom.text = @"Point the camera at a Go board";
+    [g_app.mainVC doLayout];
+} // gotoVideoMode()
 
 //---------------------
 - (void)gotoDebugMode

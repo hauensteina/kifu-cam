@@ -32,7 +32,7 @@
 {
     self = [super init];
     if (self) {
-        CGRect frame = self.view.bounds;
+        //CGRect frame = self.view.bounds;
         self.title = @"Settings";
         self.view.backgroundColor = BGCOLOR;
     }
