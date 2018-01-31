@@ -218,26 +218,26 @@ static BlackWhiteEmpty classifier;
     switch (state) {
         case 0:
         {
-            g_app.mainVC.lbBottom.text = @"verts";
+            g_app.mainVC.lbBottom.text = @"Find verticals";
             _vertical_lines = homegrown_vert_lines( _stone_or_empty);
             all_vert_lines = _vertical_lines;
             break;
         }
         case 1:
         {
-            g_app.mainVC.lbBottom.text = @"dedup";
+            g_app.mainVC.lbBottom.text = @"Remove duplicates";
             dedup_verticals( _vertical_lines, _gray);
             break;
         }
         case 2:
         {
-            g_app.mainVC.lbBottom.text = @"filter";
+            g_app.mainVC.lbBottom.text = @"Filter";
             filter_vert_lines( _vertical_lines);
             break;
         }
         case 3:
         {
-            g_app.mainVC.lbBottom.text = @"fix";
+            g_app.mainVC.lbBottom.text = @"Generate";
             const double x_thresh = 4.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
@@ -270,25 +270,25 @@ static BlackWhiteEmpty classifier;
     switch (state) {
         case 0:
         {
-            g_app.mainVC.lbBottom.text = @"horizontals";
+            g_app.mainVC.lbBottom.text = @"Find horizontals";
             _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
             break;
         }
         case 1:
         {
-            g_app.mainVC.lbBottom.text = @"dedup";
+            g_app.mainVC.lbBottom.text = @"Remove duplicates";
             dedup_horizontals( _horizontal_lines, _gray);
             break;
         }
         case 2:
         {
-            g_app.mainVC.lbBottom.text = @"filter";
+            g_app.mainVC.lbBottom.text = @"Filter";
             filter_horiz_lines( _horizontal_lines);
             break;
         }
         case 3:
         {
-            g_app.mainVC.lbBottom.text = @"fix";
+            g_app.mainVC.lbBottom.text = @"Generate";
             fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
             break;
         }
@@ -315,7 +315,7 @@ static BlackWhiteEmpty classifier;
 //----------------------------
 - (UIImage *) f03_corners
 {
-    g_app.mainVC.lbBottom.text = @"find corners";
+    g_app.mainVC.lbBottom.text = @"Find corners";
     
     _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     _corners.clear();
@@ -338,7 +338,7 @@ static BlackWhiteEmpty classifier;
 //----------------------------
 - (UIImage *) f04_zoom_in
 {
-    g_app.mainVC.lbBottom.text = @"zoom";
+    g_app.mainVC.lbBottom.text = @"Perspective transform";
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
@@ -356,8 +356,8 @@ static BlackWhiteEmpty classifier;
         thresh_dilate( _gray_zoomed, _gz_threshed, 4);
     }
     // Show results
-    cv::Mat drawing;
-    cv::cvtColor( _gz_threshed, drawing, cv::COLOR_GRAY2RGB);
+    cv::Mat drawing = _small_zoomed.clone();
+    //cv::cvtColor( _gz_threshed, drawing, cv::COLOR_GRAY2RGB);
     ISLOOP (_intersections_zoomed) {
         Point2f p = _intersections_zoomed[i];
         draw_square( p, 3, drawing, cv::Scalar(255,0,0));
@@ -370,7 +370,7 @@ static BlackWhiteEmpty classifier;
 //-----------------------------------------------------------
 - (UIImage *) f05_dark_places
 {
-    g_app.mainVC.lbBottom.text = @"adaptive dark";
+    g_app.mainVC.lbBottom.text = @"Adaptive threshold dark";
     //_corners = _corners_zoomed;
     
     cv::Mat dark_places;
@@ -392,7 +392,7 @@ static BlackWhiteEmpty classifier;
 //-----------------------------------------------------------------------
 - (UIImage *) f06_mask_dark
 {
-    g_app.mainVC.lbBottom.text = @"hide dark";
+    g_app.mainVC.lbBottom.text = @"Hide dark places";
     
     uint8_t mean = cv::mean( _pyr_gray)[0];
     cv::Mat black_places;
@@ -422,7 +422,7 @@ static BlackWhiteEmpty classifier;
 //-------------------------------
 - (UIImage *) f07_white_holes
 {
-    g_app.mainVC.lbBottom.text = @"adaptive bright";
+    g_app.mainVC.lbBottom.text = @"Adaptive threshold bright";
     
     // The White stones become black holes, all else is white
     int nhood_sz =  25;
@@ -481,7 +481,7 @@ static BlackWhiteEmpty classifier;
 //-----------------------------------------------------------
 - (UIImage *) f09_classify
 {
-    g_app.mainVC.lbBottom.text = @"classify";
+    g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
     
     //std::vector<int> diagram;

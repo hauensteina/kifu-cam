@@ -43,6 +43,9 @@
         "The camera icon by Daniel Bruce was taken from "
         "\nhttps://www.flaticon.com/free-icon/photo-camera_3901"
         "\n"
+        "\nThe sliding menu is done with LGSideMenuController, by Grigory Lutkov"
+        "\nhttps://github.com/Friend-LGA/LGSideMenuController"
+        "\n"
         "\nAll image processing was done with OpenCV 3"
         "\nhttps://opencv.org/opencv-3-3.html"
         "\n"
@@ -61,7 +64,6 @@
         "\n"
         "\n=== The End ==="
         "\n";
-
 
         _tv.text = msg;
         [self.view addSubview:_tv];
