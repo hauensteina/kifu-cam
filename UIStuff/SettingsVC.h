@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface SettingsVC : UIViewController
-@property UITextView *tv;
+- (bool) defaultToVideo;
+- (bool) uploadEnabled;
 @end

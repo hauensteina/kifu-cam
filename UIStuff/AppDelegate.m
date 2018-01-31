@@ -27,7 +27,8 @@
     g_app = self;
         
     self.mainVC = [MainVC new];
-    
+    self.settingsVC = [SettingsVC new]; // don't move this
+
     // Left and right side menu with Navigation underneath
     self.navVC = [[NavigationController alloc] initWithRootViewController:self.mainVC];
     self.topVC = [TopViewController new];
@@ -42,7 +43,6 @@
     self.saveDiscardVC = [SaveDiscardVC new];
     self.imagesVC = [ImagesVC new];
     self.aboutVC = [AboutVC new];
-    self.settingsVC = [SettingsVC new];
 
     self.window.rootViewController = self.topVC;
     [self.window makeKeyAndVisible];

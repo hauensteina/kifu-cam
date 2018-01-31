@@ -52,8 +52,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];
         
-        NSString *modeStr = getProp( @"opt_mode", @"video");
-        if ([modeStr isEqualToString:@"video"]) {
+        if ([g_app.settingsVC defaultToVideo]) {
             [self gotoVideoMode];
         }
         else {

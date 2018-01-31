@@ -77,7 +77,7 @@
     [_btnDefaultPhoto setImage:_imgChecked forState:UIControlStateSelected];
     [_btnDefaultVideo setImage:_imgUnChecked forState:UIControlStateNormal];
     [_btnDefaultVideo setImage:_imgChecked forState:UIControlStateSelected];
-    _lbDefaultVideo.text = @"Default to video vode";
+    _lbDefaultVideo.text = @"Default to video mode";
     _lbDefaultPhoto.text = @"Default to photo mode";
     [_btnDefaultPhoto addTarget:self action:@selector(btnDefaultPhoto:) forControlEvents: UIControlEventTouchUpInside];
     [_btnDefaultVideo addTarget:self action:@selector(btnDefaultVideo:) forControlEvents: UIControlEventTouchUpInside];
@@ -125,12 +125,8 @@
 //----------------------------------------
 - (void) doLayout
 {
-    // Get saved state of settings
-    NSString *optMode =  getProp( @"opt_mode", @"video");
-    NSString *optUpload =  getProp( @"opt_upload", @"yes");
-
     // Set button states accordingly
-    if ([optMode isEqualToString:@"video"]) {
+    if ([self defaultToVideo]) {
         _btnDefaultVideo.selected = YES;
         _btnDefaultPhoto.selected = NO;
     }
@@ -138,7 +134,7 @@
         _btnDefaultVideo.selected = NO;
         _btnDefaultPhoto.selected = YES;
     }
-    if ([optUpload isEqualToString:@"yes"]) {
+    if ([self uploadEnabled]) {
         _btnUploadYes.selected = YES;
         _btnUploadNo.selected = NO;
     }
@@ -211,7 +207,25 @@
     setProp( @"opt_mode", @"video");
 } // btnDefaultVideo()
 
+//=========
+// Public
+//=========
 
+//------------------------
+- (bool) defaultToVideo
+{
+    NSString *optMode =  getProp( @"opt_mode", @"video");
+    bool res = [optMode isEqualToString:@"video"];
+    return res;
+}
+
+//----------------------
+- (bool) uploadEnabled
+{
+    NSString *optUpload =  getProp( @"opt_upload", @"yes");
+    bool res = [optUpload isEqualToString:@"yes"];
+    return res;
+}
 
 @end
 
