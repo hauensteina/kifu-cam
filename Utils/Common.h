@@ -34,7 +34,7 @@ extern "C" {
     // Get current local timestamp in a dictionary
     NSDictionary* dateAsDict(void);
     // Make a filename from current date and time
-    NSString *tstampFname(void);
+    NSString* tstampFname(void);
 
     // Files
     //=========

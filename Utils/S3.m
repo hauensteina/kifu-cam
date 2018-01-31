@@ -30,8 +30,8 @@ void S3_login()
 } // S3_login()
 
 // Upload a file to kifu-cam bucket
-//----------------------------------------------------------------------
-void S3_upload_file( NSString *fname, void(^completion)(NSError *err))
+//-----------------------------------------------------------------------------------------
+void S3_upload_file( NSString *fname, NSString *target, void(^completion)(NSError *err))
 {
     S3_login();
     NSString *fullfname = getFullPath( fname);
@@ -40,7 +40,7 @@ void S3_upload_file( NSString *fname, void(^completion)(NSError *err))
     AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
     
     uploadRequest.bucket = BUCKET_NAME;
-    uploadRequest.key = fname;
+    uploadRequest.key = target;
     uploadRequest.body = uploadingFileURL;
     
     AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
@@ -74,6 +74,8 @@ void S3_upload_file( NSString *fname, void(^completion)(NSError *err))
          return nil;
      }];
 } // S3_upload_file()
+
+
 
 // List files in kifu-cam bucket. Filter by prefix and extension.
 // Returns at most 1000 keys.

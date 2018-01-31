@@ -31,6 +31,7 @@ enum { BBLACK=0, EEMPTY=1, WWHITE=2, DDONTKNOW=3 };
 #define TESTCASE_PREFIX "testcase_"
 #define TESTCASE_FOLDER "testcases"
 #define SAVED_FOLDER "saved"
+#define S3_UPLOAD_FOLDER "uploads"
 #define IMG_WIDTH 350
 
 #endif /* Globals_h */

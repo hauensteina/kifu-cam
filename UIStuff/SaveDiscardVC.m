@@ -8,6 +8,7 @@
 
 #import "SaveDiscardVC.h"
 #import "Common.h"
+#import "S3.h"
 #import "Globals.h"
 #import "ImagesVC.h"
 
@@ -22,7 +23,7 @@
 
 @implementation SaveDiscardVC
 //-----------------------------
-- (id)init
+- (id) init
 {
     self = [super init];
     if (self) {
@@ -71,7 +72,7 @@
 } // init()
 
 //----------------------
-- (void)viewDidLoad
+- (void) viewDidLoad
 {
     [super viewDidLoad];
 }
@@ -84,7 +85,7 @@
  }
 
 //----------------------------------
-- (void)didReceiveMemoryWarning
+- (void) didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
 }
@@ -93,7 +94,7 @@
 //============
 
 //--------------------------
-- (void) savePhotoAndSgf
+- (NSString*) savePhotoAndSgf
 {
     // Make filename from date
     NSString *fname = nscat( tstampFname(), @".png");
@@ -106,7 +107,27 @@
     NSError *error;
     [_sgf writeToFile:fname
            atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    return fname;
 }
+
+// Upload image and sgf to S3
+//-------------------------------------
+- (void) uploadToS3:(NSString*)fname
+{
+    if (![g_app.settingsVC uploadEnabled]) return;
+    
+    NSString *uuid = nsprintf( @"%@", [UIDevice currentDevice].identifierForVendor);
+    NSArray *parts = [uuid componentsSeparatedByString:@"-"];
+    NSString *s3name;
+    // Photo
+    fname = changeExtension( fname, @".png");
+    s3name = nsprintf( @"%@/%@-%@.png", @S3_UPLOAD_FOLDER, parts[0], tstampFname());
+    S3_upload_file( fname, s3name , ^(NSError *err) {});
+    // Sgf
+    fname = changeExtension( fname, @".sgf");
+    s3name = nsprintf( @"%@/%@-%@.sgf", @S3_UPLOAD_FOLDER, parts[0], tstampFname());
+    S3_upload_file( fname, s3name , ^(NSError *err) {});
+} // uploadToS3()
 
 // Button Callbacks
 //======================
@@ -119,7 +140,8 @@
     NSString *templ = @"$1 PL[B] $2";
     _sgf = replaceRegex( re, _sgf, templ);
     
-    [self savePhotoAndSgf];
+    NSString *fname = [self savePhotoAndSgf];
+    [self uploadToS3:fname];
     
     // Show saved images
     [g_app.navVC popViewControllerAnimated:NO];
@@ -134,7 +156,8 @@
     NSString *templ = @"$1 PL[W] $2";
     _sgf = replaceRegex( re, _sgf, templ);
 
-    [self savePhotoAndSgf];
+    NSString *fname = [self savePhotoAndSgf];
+    [self uploadToS3:fname];
 
     // Show saved images
     [g_app.navVC popViewControllerAnimated:NO];

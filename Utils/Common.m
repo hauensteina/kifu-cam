@@ -151,7 +151,10 @@ NSString* getFullPath( NSString *fname)
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fname];
+    NSString *filePath = fname;
+    if (![fname hasPrefix:documentsDirectory]) {
+        filePath = [documentsDirectory stringByAppendingPathComponent:fname];
+    }
     return filePath;
 }
 

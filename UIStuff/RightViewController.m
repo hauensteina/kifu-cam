@@ -209,14 +209,16 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
     idx = -1;
     for (id fname in testfiles ) {
         idx++;
-        S3_upload_file( nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname) , ^(NSError *err) {});
+        NSString *fullfname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname);
+        S3_upload_file( fullfname, fullfname, ^(NSError *err) {});
     } // for
     testfiles = globFiles(@TESTCASE_FOLDER, @TESTCASE_PREFIX, @"*.sgf");
     NSInteger fcount = [testfiles count];
     idx = -1;
     for (id fname in testfiles ) {
         idx++;
-        S3_upload_file( nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname),
+        NSString *fullfname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname);
+        S3_upload_file( fullfname, fullfname,
                        ^(NSError *err) {
                            if (idx == fcount - 1) {
                                popup( @"Testcases uploaded", @"");
