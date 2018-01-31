@@ -65,9 +65,9 @@ inline std::string generate_sgf( const std::string &title, const std::vector<int
              " CA[UTF-8]"
              " AP[KifuCam]"
              " RU[Chinese]"
-             " PB[COMLv5d]"
-             " PW[COMLv5d]"
-             " BS[20]WS[20]"
+             " PB[Black]"
+             " PW[White]"
+             " BS[0]WS[0]"
              " SZ[%d]"
              " KM[%f]",
              title.c_str(), boardsz, komi);
@@ -86,6 +86,7 @@ inline std::string generate_sgf( const std::string &title, const std::vector<int
     }
     return buf + moves + ")\n";
 } // generate_sgf()
+
 
 // e.g for board size, call get_sgf_tag( sgf, "SZ")
 //----------------------------------------------------------------------------------------
