@@ -29,11 +29,17 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
+        NSString *modeStr = getProp( @"opt_mode", @"video");
+        _mode = PHOTO_MODE;
+        if ([modeStr isEqualToString:@"video"]) {
+            _mode = VIDEO_MODE;
+        }
+        
         _selectedFont = [UIFont fontWithName:@"Verdana-Bold" size:16 ];
         _normalFont = [UIFont fontWithName:@"Verdana" size:16 ];
         NSArray *d = @[
-                       @{ @"txt": @"Video Mode", @"state": @(ITEM_SELECTED) },
-                       @{ @"txt": @"Photo Mode", @"state": @(ITEM_NOT_SELECTED) },
+                       @{ @"txt": @"Video Mode", @"state": @(_mode == VIDEO_MODE) },
+                       @{ @"txt": @"Photo Mode", @"state": @(_mode == PHOTO_MODE) },
                        @{ @"txt": @"Demo Mode", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Saved Images", @"state": @(ITEM_NOT_SELECTED) },
