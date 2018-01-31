@@ -70,6 +70,7 @@
 {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
+        self.title = @"Saved Images";
         self.view.backgroundColor = [UIColor clearColor];
         
         [self.tableView registerClass:[ImagesCell class] forCellReuseIdentifier:@"cell"];

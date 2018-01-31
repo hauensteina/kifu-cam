@@ -127,7 +127,7 @@
 //=========
 
 // Put UI elements into the right place
-//----------------------------------------------------------------------
+//----------------------------------------
 - (void) doLayout
 {
     //float W = SCREEN_WIDTH;
@@ -159,7 +159,7 @@
 
 // Position camera button and labels when first image comes in.
 // We don't know the image size until we get one.
-//---------------------------------------------------
+//---------------------------------------------------------------
 - (void) positionButtonAndLabels
 {
     static bool called = false;
