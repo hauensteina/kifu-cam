@@ -1,5 +1,5 @@
 # Kifu Cam
-Use Kifu Cam to take photos of Go boards and recognize the position.
+Use your iPhone to take a picture of a Go board and export the sgf.
 
 Export to SmartGo or CrazyStone for editing or counting, or send the sgf as email.
 
