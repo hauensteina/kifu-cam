@@ -99,6 +99,7 @@
     if (!self.permissionGranted) return;
     [self.captureSession setSessionPreset:self.quality];
     AVCaptureDevice *captureDevice = [self selectCaptureDevice];
+        
     AVCaptureDeviceInput *captureDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:nil];
     if (![self.captureSession canAddInput:captureDeviceInput]) {
         return;

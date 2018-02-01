@@ -33,7 +33,7 @@
 #import "CppInterface.h"
 
 #define IMGWIDTH SCREEN_WIDTH/3
-#define ROWHEIGHT IMGWIDTH*1.6
+#define ROWHEIGHT IMGWIDTH*1.5
 
 
 // Table View Cell
@@ -61,7 +61,7 @@
 {
     [super layoutSubviews];
     CGRect frame = self.frame;
-    frame.size.height = ROWHEIGHT - 10;
+    frame.size.height = ROWHEIGHT; // * 0.95; // - 10;
     self.frame = frame;
 }
 

@@ -34,6 +34,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+    //=========
+    // System
+    //=========
+    // Get device platform, eg @"iPhone8,1" or @"iPad4,8"
+    NSString* platform(void);
+    // @"iPhone8,1" -> 8, @"iPad4,8" -> 0
+    int iPhoneVersion(void);
+    
     // Drawing
     //==========
     // Draw a massive rectangle on a view

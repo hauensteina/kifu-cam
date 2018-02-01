@@ -30,6 +30,40 @@
 #import <UIKit/UIKit.h>
 #import "Common.h"
 
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
+//=========
+// System
+//=========
+
+// Get device platform, eg @"iPhone8,1" or @"iPad4,8"
+//----------------------------------------------------
+NSString* platform()
+{
+    size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char *machine = malloc(size);
+    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    NSString *platform = [NSString stringWithUTF8String:machine];
+    free(machine);
+    return platform;
+}
+
+// @"iPhone8,1" -> 8, @"iPad4,8" -> 0
+//-------------------------------------
+int iPhoneVersion()
+{
+    NSString *platf = platform();
+    if (![platf hasPrefix:@"iPhone"]) {
+        return 0;
+    }
+    NSString *tstr = replaceRegex( @"[a-zA-Z]*", platf, @"");
+    tstr = replaceRegex( @",.*", tstr, @"");
+    int res = atoi([tstr UTF8String]);
+    return res;
+}
+
 //==========
 // Drawing
 //==========

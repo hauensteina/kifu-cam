@@ -159,7 +159,8 @@
     v.bounds = bounds;
 
     CGRect camFrame = v.bounds;
-    camFrame.origin.y = g_app.navVC.navigationBar.frame.size.height;
+    camFrame.origin.y = 0.12 * H; // 2 * g_app.navVC.navigationBar.frame.size.height;
+    camFrame.size.height = 0.85 * H;
     self.cameraView.frame = camFrame;
     self.cameraView.hidden = NO;
     //int bottomOfCam = camFrame.origin.y + camFrame.size.height;

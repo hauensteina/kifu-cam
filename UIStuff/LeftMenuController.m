@@ -42,6 +42,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 @property UIFont *normalFont;
 @property UIFont *selectedFont;
 @property int mode; // debug, video, photo mode
+@property int iphoneVersion;
 @end
 
 @implementation LeftMenuController
@@ -52,6 +53,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
+        _iphoneVersion = iPhoneVersion();
         _selectedFont = [UIFont fontWithName:@"Verdana-Bold" size:16 ];
         _normalFont = [UIFont fontWithName:@"Verdana" size:16 ];
         NSArray *d = @[
@@ -75,7 +77,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];
         
-        if ([g_app.settingsVC defaultToVideo]) {
+        if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 9) {
             [self gotoVideoMode];
         }
         else {
@@ -225,6 +227,10 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
 - (void)gotoVideoMode
 {
     if (_mode == VIDEO_MODE) return;
+    if (_iphoneVersion < 8) {
+        popup( @"Your device is too slow for video mode", @"Sorry");
+        return;
+    }
     [self unselectAll];
     [self setState:ITEM_SELECTED forMenuItem:@"Video Mode"];
     _mode = VIDEO_MODE;
