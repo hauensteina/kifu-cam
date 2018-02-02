@@ -44,7 +44,6 @@
 		AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC628C221F9A7D3F0043FCEE /* Assets.xcassets */; };
 		AC628C341F9A80150043FCEE /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC628C331F9A80150043FCEE /* MainVC.m */; };
 		AC7402FB2023E81F0036ABC2 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC7402FA2023E81F0036ABC2 /* Launch.storyboard */; };
-		AC74030B2023FDD80036ABC2 /* Icon-167.png in Resources */ = {isa = PBXBuildFile; fileRef = AC74030A2023FDD80036ABC2 /* Icon-167.png */; };
 		AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC8040091FA92604000088D2 /* Accelerate.framework */; };
 		AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */; };
 		AC8ACF8E1FC1EC12005D5722 /* board01.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC8ACF8D1FC1EC12005D5722 /* board01.jpg */; };
@@ -65,20 +64,7 @@
 		ACAC40BE1FC3321A00B6968B /* board04.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BB1FC3321A00B6968B /* board04.jpg */; };
 		ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BC1FC3321A00B6968B /* board05.jpg */; };
 		ACAC40C01FC3321A00B6968B /* board03.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BD1FC3321A00B6968B /* board03.jpg */; };
-		ACAFE419201FD1AB00E26773 /* Icon-152.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE40B201FD1A800E26773 /* Icon-152.png */; };
-		ACAFE41A201FD1AB00E26773 /* Icon-29.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE40C201FD1A900E26773 /* Icon-29.png */; };
-		ACAFE41B201FD1AB00E26773 /* Icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE40D201FD1A900E26773 /* Icon-180.png */; };
-		ACAFE41C201FD1AB00E26773 /* Icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE40E201FD1AA00E26773 /* Icon-120.png */; };
-		ACAFE41D201FD1AB00E26773 /* Icon-60.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE40F201FD1AA00E26773 /* Icon-60.png */; };
-		ACAFE41E201FD1AB00E26773 /* Icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE410201FD1AA00E26773 /* Icon-40.png */; };
-		ACAFE41F201FD1AB00E26773 /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE411201FD1AA00E26773 /* Icon-76.png */; };
-		ACAFE420201FD1AB00E26773 /* Icon-58.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE412201FD1AA00E26773 /* Icon-58.png */; };
-		ACAFE421201FD1AB00E26773 /* Icon-57.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE413201FD1AA00E26773 /* Icon-57.png */; };
-		ACAFE422201FD1AB00E26773 /* Icon-80.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE414201FD1AA00E26773 /* Icon-80.png */; };
-		ACAFE423201FD1AB00E26773 /* Icon-144.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE415201FD1AB00E26773 /* Icon-144.png */; };
 		ACAFE424201FD1AB00E26773 /* kifu-cam.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE416201FD1AB00E26773 /* kifu-cam.png */; };
-		ACAFE425201FD1AB00E26773 /* Icon-114.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE417201FD1AB00E26773 /* Icon-114.png */; };
-		ACAFE426201FD1AB00E26773 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE418201FD1AB00E26773 /* Icon-72.png */; };
 		ACC91313201694C700B62682 /* SaveDiscardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC91312201694C600B62682 /* SaveDiscardVC.m */; };
 		ACC913162017F4F400B62682 /* ImagesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC913142017F4F300B62682 /* ImagesVC.m */; };
 		ACD6C84520152B3000759875 /* AWSPolly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82420152B1C00759875 /* AWSPolly.framework */; };
@@ -260,7 +246,6 @@
 		AC628C321F9A80150043FCEE /* MainVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainVC.h; sourceTree = "<group>"; };
 		AC628C331F9A80150043FCEE /* MainVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainVC.m; sourceTree = "<group>"; };
 		AC7402FA2023E81F0036ABC2 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
-		AC74030A2023FDD80036ABC2 /* Icon-167.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-167.png"; sourceTree = "<group>"; };
 		AC8040091FA92604000088D2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobFinder.cpp; sourceTree = "<group>"; };
 		AC8ACF8B1FBF5553005D5722 /* BlobFinder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlobFinder.hpp; sourceTree = "<group>"; };
@@ -285,20 +270,7 @@
 		ACAC40BB1FC3321A00B6968B /* board04.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board04.jpg; sourceTree = "<group>"; };
 		ACAC40BC1FC3321A00B6968B /* board05.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board05.jpg; sourceTree = "<group>"; };
 		ACAC40BD1FC3321A00B6968B /* board03.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board03.jpg; sourceTree = "<group>"; };
-		ACAFE40B201FD1A800E26773 /* Icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-152.png"; sourceTree = "<group>"; };
-		ACAFE40C201FD1A900E26773 /* Icon-29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-29.png"; sourceTree = "<group>"; };
-		ACAFE40D201FD1A900E26773 /* Icon-180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-180.png"; sourceTree = "<group>"; };
-		ACAFE40E201FD1AA00E26773 /* Icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-120.png"; sourceTree = "<group>"; };
-		ACAFE40F201FD1AA00E26773 /* Icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60.png"; sourceTree = "<group>"; };
-		ACAFE410201FD1AA00E26773 /* Icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40.png"; sourceTree = "<group>"; };
-		ACAFE411201FD1AA00E26773 /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
-		ACAFE412201FD1AA00E26773 /* Icon-58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-58.png"; sourceTree = "<group>"; };
-		ACAFE413201FD1AA00E26773 /* Icon-57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-57.png"; sourceTree = "<group>"; };
-		ACAFE414201FD1AA00E26773 /* Icon-80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-80.png"; sourceTree = "<group>"; };
-		ACAFE415201FD1AB00E26773 /* Icon-144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-144.png"; sourceTree = "<group>"; };
 		ACAFE416201FD1AB00E26773 /* kifu-cam.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kifu-cam.png"; sourceTree = "<group>"; };
-		ACAFE417201FD1AB00E26773 /* Icon-114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-114.png"; sourceTree = "<group>"; };
-		ACAFE418201FD1AB00E26773 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		ACC91311201694C500B62682 /* SaveDiscardVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveDiscardVC.h; sourceTree = "<group>"; };
 		ACC91312201694C600B62682 /* SaveDiscardVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveDiscardVC.m; sourceTree = "<group>"; };
 		ACC913142017F4F300B62682 /* ImagesVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagesVC.m; sourceTree = "<group>"; };
@@ -559,20 +531,6 @@
 			children = (
 				AC9814A3202152CD004375DD /* checked.png */,
 				AC9814A4202152CD004375DD /* unchecked.png */,
-				ACAFE40C201FD1A900E26773 /* Icon-29.png */,
-				ACAFE410201FD1AA00E26773 /* Icon-40.png */,
-				ACAFE413201FD1AA00E26773 /* Icon-57.png */,
-				ACAFE412201FD1AA00E26773 /* Icon-58.png */,
-				ACAFE40F201FD1AA00E26773 /* Icon-60.png */,
-				ACAFE418201FD1AB00E26773 /* Icon-72.png */,
-				ACAFE411201FD1AA00E26773 /* Icon-76.png */,
-				ACAFE414201FD1AA00E26773 /* Icon-80.png */,
-				ACAFE417201FD1AB00E26773 /* Icon-114.png */,
-				ACAFE40E201FD1AA00E26773 /* Icon-120.png */,
-				ACAFE415201FD1AB00E26773 /* Icon-144.png */,
-				ACAFE40B201FD1A800E26773 /* Icon-152.png */,
-				AC74030A2023FDD80036ABC2 /* Icon-167.png */,
-				ACAFE40D201FD1A900E26773 /* Icon-180.png */,
 				ACAFE416201FD1AB00E26773 /* kifu-cam.png */,
 				ACA185D7201BEA7000A3501E /* demo.png */,
 				AC3274402016836C009BEFD2 /* video_icon.png */,
@@ -661,7 +619,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ACAFE421201FD1AB00E26773 /* Icon-57.png in Resources */,
 				AC99ECED200968E200EDF097 /* board_full.jpg in Resources */,
 				AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */,
 				ACAFE424201FD1AB00E26773 /* kifu-cam.png in Resources */,
@@ -669,10 +626,7 @@
 				AC8ACF8E1FC1EC12005D5722 /* board01.jpg in Resources */,
 				AC9814A5202152CD004375DD /* checked.png in Resources */,
 				AC3CC3571FFECD2300ED79D6 /* board13.jpg in Resources */,
-				ACAFE41A201FD1AB00E26773 /* Icon-29.png in Resources */,
-				ACAFE425201FD1AB00E26773 /* Icon-114.png in Resources */,
 				AC0FFB031FEB4AD7009A02FD /* board09.jpg in Resources */,
-				AC74030B2023FDD80036ABC2 /* Icon-167.png in Resources */,
 				AC7402FB2023E81F0036ABC2 /* Launch.storyboard in Resources */,
 				ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */,
 				AC0FFB041FEB4AD7009A02FD /* board11.jpg in Resources */,
@@ -680,28 +634,18 @@
 				AC9DB0371FE09E0F008723CE /* white_templ.yml in Resources */,
 				AC0FFB011FEB4AD7009A02FD /* board07.jpg in Resources */,
 				AC99ECEE200968E200EDF097 /* board_full_1.jpg in Resources */,
-				ACAFE420201FD1AB00E26773 /* Icon-58.png in Resources */,
 				AC3274422016836D009BEFD2 /* video_icon.png in Resources */,
 				AC3CC3561FFECD2300ED79D6 /* board14.jpg in Resources */,
-				ACAFE419201FD1AB00E26773 /* Icon-152.png in Resources */,
 				ACAC40BE1FC3321A00B6968B /* board04.jpg in Resources */,
-				ACAFE41B201FD1AB00E26773 /* Icon-180.png in Resources */,
-				ACAFE41F201FD1AB00E26773 /* Icon-76.png in Resources */,
-				ACAFE423201FD1AB00E26773 /* Icon-144.png in Resources */,
 				AC0FFB051FEB4AD7009A02FD /* board12.jpg in Resources */,
 				AC9DB02F1FE0581F008723CE /* board06.jpg in Resources */,
 				AC0FFB061FEB4AD7009A02FD /* board08.jpg in Resources */,
 				AC9DB0331FE09DFA008723CE /* black_templ.yml in Resources */,
 				AC9DB0351FE09E02008723CE /* empty_templ.yml in Resources */,
 				AC8ACF901FC1F6E6005D5722 /* board02.jpg in Resources */,
-				ACAFE426201FD1AB00E26773 /* Icon-72.png in Resources */,
-				ACAFE41E201FD1AB00E26773 /* Icon-40.png in Resources */,
 				AC3274412016836D009BEFD2 /* photo_icon.png in Resources */,
 				ACAC40C01FC3321A00B6968B /* board03.jpg in Resources */,
-				ACAFE41C201FD1AB00E26773 /* Icon-120.png in Resources */,
-				ACAFE41D201FD1AB00E26773 /* Icon-60.png in Resources */,
 				AC0FFB021FEB4AD7009A02FD /* board10.jpg in Resources */,
-				ACAFE422201FD1AB00E26773 /* Icon-80.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -878,6 +822,7 @@
 		AC628C2B1F9A7D3F0043FCEE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -889,12 +834,14 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		AC628C2C1F9A7D3F0043FCEE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -906,6 +853,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
