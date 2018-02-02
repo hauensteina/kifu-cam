@@ -44,6 +44,7 @@
 		AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC628C221F9A7D3F0043FCEE /* Assets.xcassets */; };
 		AC628C341F9A80150043FCEE /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC628C331F9A80150043FCEE /* MainVC.m */; };
 		AC7402FB2023E81F0036ABC2 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC7402FA2023E81F0036ABC2 /* Launch.storyboard */; };
+		AC74030B2023FDD80036ABC2 /* Icon-167.png in Resources */ = {isa = PBXBuildFile; fileRef = AC74030A2023FDD80036ABC2 /* Icon-167.png */; };
 		AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC8040091FA92604000088D2 /* Accelerate.framework */; };
 		AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */; };
 		AC8ACF8E1FC1EC12005D5722 /* board01.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC8ACF8D1FC1EC12005D5722 /* board01.jpg */; };
@@ -259,6 +260,7 @@
 		AC628C321F9A80150043FCEE /* MainVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainVC.h; sourceTree = "<group>"; };
 		AC628C331F9A80150043FCEE /* MainVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainVC.m; sourceTree = "<group>"; };
 		AC7402FA2023E81F0036ABC2 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
+		AC74030A2023FDD80036ABC2 /* Icon-167.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-167.png"; sourceTree = "<group>"; };
 		AC8040091FA92604000088D2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobFinder.cpp; sourceTree = "<group>"; };
 		AC8ACF8B1FBF5553005D5722 /* BlobFinder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlobFinder.hpp; sourceTree = "<group>"; };
@@ -569,6 +571,7 @@
 				ACAFE40E201FD1AA00E26773 /* Icon-120.png */,
 				ACAFE415201FD1AB00E26773 /* Icon-144.png */,
 				ACAFE40B201FD1A800E26773 /* Icon-152.png */,
+				AC74030A2023FDD80036ABC2 /* Icon-167.png */,
 				ACAFE40D201FD1A900E26773 /* Icon-180.png */,
 				ACAFE416201FD1AB00E26773 /* kifu-cam.png */,
 				ACA185D7201BEA7000A3501E /* demo.png */,
@@ -669,6 +672,7 @@
 				ACAFE41A201FD1AB00E26773 /* Icon-29.png in Resources */,
 				ACAFE425201FD1AB00E26773 /* Icon-114.png in Resources */,
 				AC0FFB031FEB4AD7009A02FD /* board09.jpg in Resources */,
+				AC74030B2023FDD80036ABC2 /* Icon-167.png in Resources */,
 				AC7402FB2023E81F0036ABC2 /* Launch.storyboard in Resources */,
 				ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */,
 				AC0FFB041FEB4AD7009A02FD /* board11.jpg in Resources */,
@@ -874,7 +878,6 @@
 		AC628C2B1F9A7D3F0043FCEE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -892,7 +895,6 @@
 		AC628C2C1F9A7D3F0043FCEE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
