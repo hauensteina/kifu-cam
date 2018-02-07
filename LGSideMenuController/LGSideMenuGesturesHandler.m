@@ -68,16 +68,12 @@
                                            CGRectGetMinY(self.rootViewContainer.frame),
                                            CGRectGetWidth(self.sideMenuController.view.frame),
                                            CGRectGetHeight(self.rootViewContainer.frame));
+            if (CGRectContainsPoint(leftAvailableRect, location)) {
+                return YES;
+            }
         }
-        else {
-            leftAvailableRect = CGRectMake(-self.sideMenuController.leftViewSwipeGestureRange.left,
-                                           CGRectGetMinY(self.rootViewContainer.frame),
-                                           self.sideMenuController.leftViewSwipeGestureRange.left + self.sideMenuController.leftViewSwipeGestureRange.right,
-                                           CGRectGetHeight(self.rootViewContainer.frame));
-        }
-
-        if (CGRectContainsPoint(leftAvailableRect, location)) {
-            return YES;
+        else { // swipe in disabled for left menu
+            return NO;
         }
     }
 

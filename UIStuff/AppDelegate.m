@@ -52,6 +52,7 @@
     // Left and right side menu with Navigation underneath
     self.navVC = [[NavigationController alloc] initWithRootViewController:self.mainVC];
     self.topVC = [TopViewController new];
+    //self.topVC.leftViewSwipeGestureEnabled = NO;
     self.topVC.rootViewController = self.navVC;
     [self.topVC setupLeftOnly];
     self.menuVC  = (LeftMenuController *) self.topVC.leftViewController;
