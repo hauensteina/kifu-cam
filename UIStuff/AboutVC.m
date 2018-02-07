@@ -51,7 +51,7 @@
         "\n"
         "\nExport to SmartGo or CrazyStone for editing or counting, or send the sgf as email."
         "\n"
-        "\nPlease send comments and suggestions to \nkifu-cam@gmail.com."
+        "\nPlease send comments and suggestions to \nkifucam@gmail.com."
         "\n"
         "\nSource Code"
         "\n============\n"
