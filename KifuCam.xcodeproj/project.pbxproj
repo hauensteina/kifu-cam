@@ -44,6 +44,8 @@
 		AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC628C221F9A7D3F0043FCEE /* Assets.xcassets */; };
 		AC628C341F9A80150043FCEE /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC628C331F9A80150043FCEE /* MainVC.m */; };
 		AC7402FB2023E81F0036ABC2 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC7402FA2023E81F0036ABC2 /* Launch.storyboard */; };
+		AC785345202B6D0400E565F3 /* radio_on.png in Resources */ = {isa = PBXBuildFile; fileRef = AC785343202B6D0400E565F3 /* radio_on.png */; };
+		AC785346202B6D0400E565F3 /* radio_off.png in Resources */ = {isa = PBXBuildFile; fileRef = AC785344202B6D0400E565F3 /* radio_off.png */; };
 		AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC8040091FA92604000088D2 /* Accelerate.framework */; };
 		AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */; };
 		AC8ACF8E1FC1EC12005D5722 /* board01.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC8ACF8D1FC1EC12005D5722 /* board01.jpg */; };
@@ -249,6 +251,8 @@
 		AC628C321F9A80150043FCEE /* MainVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainVC.h; sourceTree = "<group>"; };
 		AC628C331F9A80150043FCEE /* MainVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainVC.m; sourceTree = "<group>"; };
 		AC7402FA2023E81F0036ABC2 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
+		AC785343202B6D0400E565F3 /* radio_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radio_on.png; sourceTree = "<group>"; };
+		AC785344202B6D0400E565F3 /* radio_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radio_off.png; sourceTree = "<group>"; };
 		AC8040091FA92604000088D2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobFinder.cpp; sourceTree = "<group>"; };
 		AC8ACF8B1FBF5553005D5722 /* BlobFinder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlobFinder.hpp; sourceTree = "<group>"; };
@@ -535,6 +539,8 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AC785344202B6D0400E565F3 /* radio_off.png */,
+				AC785343202B6D0400E565F3 /* radio_on.png */,
 				ACA86B71202508E700939F1A /* Icon-120.png */,
 				ACA86B70202508E700939F1A /* Icon-152.png */,
 				ACA86B72202508E700939F1A /* Icon-167.png */,
@@ -628,6 +634,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC785345202B6D0400E565F3 /* radio_on.png in Resources */,
 				AC99ECED200968E200EDF097 /* board_full.jpg in Resources */,
 				AC628C231F9A7D3F0043FCEE /* Assets.xcassets in Resources */,
 				ACAFE424201FD1AB00E26773 /* kifu-cam.png in Resources */,
@@ -636,6 +643,7 @@
 				AC9814A5202152CD004375DD /* checked.png in Resources */,
 				AC3CC3571FFECD2300ED79D6 /* board13.jpg in Resources */,
 				AC0FFB031FEB4AD7009A02FD /* board09.jpg in Resources */,
+				AC785346202B6D0400E565F3 /* radio_off.png in Resources */,
 				AC7402FB2023E81F0036ABC2 /* Launch.storyboard in Resources */,
 				ACA86B73202508E800939F1A /* Icon-152.png in Resources */,
 				ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */,

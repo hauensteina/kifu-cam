@@ -69,8 +69,8 @@
     v.backgroundColor = BGCOLOR;
 
     // Instantiate stuff
-    _imgChecked = [UIImage imageNamed:@"checked.png"];
-    _imgUnChecked = [UIImage imageNamed:@"unchecked.png"];
+    _imgChecked = [UIImage imageNamed:@"radio_on.png"];
+    _imgUnChecked = [UIImage imageNamed:@"radio_off.png"];
     _btnUploadYes = [UIButton new];
     _btnUploadNo = [UIButton new];
     _lbUploadYes = [UILabel new];
