@@ -91,7 +91,9 @@ extern "C" {
     void popup (NSString *msg, NSString *title);
     // Alert with several choices
     void choicePopup (NSArray *choices, NSString *title, void(^callback)(UIAlertAction *));
-    
+    // Make a text label clickable
+    void makeLabelClickable (UILabel *lb, id target, SEL action);
+
     // Persisted settings
     //=====================
     // Set a string property in the user defaults

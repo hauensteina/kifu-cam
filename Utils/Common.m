@@ -194,6 +194,16 @@ void choicePopup (NSArray *choices, NSString *title, void(^callback)(UIAlertActi
     [vc presentViewController:alert animated:YES completion:nil];
 } // choicePopup()
 
+// Make a text label clickable
+//-----------------------------------------------------------
+void makeLabelClickable (UILabel *lb, id target, SEL action)
+{
+    UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc] initWithTarget:target action:action];
+    // if labelView is not set userInteractionEnabled, you must do so
+    [lb setUserInteractionEnabled:YES];
+    [lb addGestureRecognizer:gesture];
+}
+
 //=============
 // File Stuff
 //=============

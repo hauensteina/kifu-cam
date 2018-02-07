@@ -89,17 +89,20 @@
     _lbUploadNo.text = @"I don't want to help";
     [_btnUploadYes addTarget:self action:@selector(btnUploadYes:) forControlEvents: UIControlEventTouchUpInside];
     [_btnUploadNo addTarget:self action:@selector(btnUploadNo:) forControlEvents: UIControlEventTouchUpInside];
-
+    makeLabelClickable( _lbUploadYes, self, @selector(btnUploadYes:));
+    makeLabelClickable( _lbUploadNo, self, @selector(btnUploadNo:));
 
     // Config mode radio button
     [_btnDefaultPhoto setImage:_imgUnChecked forState:UIControlStateNormal];
     [_btnDefaultPhoto setImage:_imgChecked forState:UIControlStateSelected];
     [_btnDefaultVideo setImage:_imgUnChecked forState:UIControlStateNormal];
     [_btnDefaultVideo setImage:_imgChecked forState:UIControlStateSelected];
-    _lbDefaultVideo.text = @"Default to video mode";
     _lbDefaultPhoto.text = @"Default to photo mode";
+    _lbDefaultVideo.text = @"Default to video mode";
     [_btnDefaultPhoto addTarget:self action:@selector(btnDefaultPhoto:) forControlEvents: UIControlEventTouchUpInside];
     [_btnDefaultVideo addTarget:self action:@selector(btnDefaultVideo:) forControlEvents: UIControlEventTouchUpInside];
+    makeLabelClickable( _lbDefaultPhoto, self, @selector(btnDefaultPhoto:));
+    makeLabelClickable( _lbDefaultVideo, self, @selector(btnDefaultVideo:));
 
     // Add controls as subviews
     [v addSubview: _btnUploadYes];
