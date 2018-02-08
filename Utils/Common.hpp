@@ -150,6 +150,24 @@ double bisect( Func f, double lower, double upper, int target, int maxiter=10)
     return res;
 }
 
+// Date
+//=========
+
+// Get current local date as yyyy-mm-dd
+//-----------------------------------------
+inline std::string local_date_stamp()
+{
+    const int BUFSZ = 100;
+    char buf[BUFSZ+1];
+    time_t rawtime;
+    struct tm *info;
+    rawtime = time(NULL);
+    info = localtime( &rawtime );
+    snprintf( buf, BUFSZ, "%04d-%02d-%02d", info->tm_year + 1900, info->tm_mon + 1, info->tm_mday);
+    std::string res = buf;
+    return res;
+} // local_date_stamp()
+
 // String
 //=========
 

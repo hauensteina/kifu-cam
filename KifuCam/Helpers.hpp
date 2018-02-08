@@ -69,7 +69,7 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
  PB[ahnb]
  AB[aa][ba][ja][sa][aj][jj][sj][as][js][ss])
 */
-//----------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------
 inline std::string generate_sgf( const std::string &title, const std::vector<int> diagram,
                          double komi=7.5)
 {
@@ -88,8 +88,9 @@ inline std::string generate_sgf( const std::string &title, const std::vector<int
              " PW[White]"
              " BS[0]WS[0]"
              " SZ[%d]"
+             " DT[%s]"
              " KM[%f]",
-             title.c_str(), boardsz, komi);
+             title.c_str(), boardsz, local_date_stamp().c_str(), komi);
 
     std::string moves="";
     ISLOOP (diagram) {

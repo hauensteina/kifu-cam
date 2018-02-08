@@ -59,6 +59,8 @@ extern "C" {
 
     // Date
     //=========
+    // Get current local date as yyyy-mm-dd
+    NSString *localDateStamp(void);
     // Get current local timestamp in a dictionary
     NSDictionary* dateAsDict(void);
     // Make a filename from current date and time

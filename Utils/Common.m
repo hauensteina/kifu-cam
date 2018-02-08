@@ -118,6 +118,18 @@ NSString* replaceRegex( NSString *re, NSString *str, NSString *newStr)
 // Date
 //=========
 
+// Get current local date as yyyy-mm-dd
+//----------------------------------------------
+NSString *localDateStamp()
+{
+    time_t rawtime;
+    struct tm *info;
+    rawtime = time(NULL);
+    info = localtime( &rawtime );
+    NSString *res = nsprintf( @"%04d-%02d-%02d", info->tm_year + 1900, info->tm_mon + 1, info->tm_mday);
+    return res;
+} // localDateStamp()
+
 // Get current local timestamp in a dictionary
 //----------------------------------------------
 NSDictionary* dateAsDict()
