@@ -156,6 +156,47 @@ static BlackWhiteEmpty classifier;
     return ofs.good();
 }
 
+// Save intersections as training material
+//------------------------------------------
+- (void) save_intersections
+{
+    int delta_h = 21;
+    int delta_v = 21;
+    const cv::Mat &img = _gz_threshed;
+    NSString *tstamp = tstampFname();
+
+    ILOOP( _intersections_zoomed.size())
+    {
+        int x = _intersections_zoomed[i].x;
+        int y = _intersections_zoomed[i].y;
+        int dx = round(delta_h/2.0); int dy = round(delta_v/2.0);
+        cv::Rect rect( x - dx, y - dy, 2*dx+1, 2*dy+1 );
+        if (0 <= rect.x &&
+            0 <= rect.width &&
+            rect.x + rect.width <= img.cols &&
+            0 <= rect.y &&
+            0 <= rect.height &&
+            rect.y + rect.height <= img.rows)
+        {
+            // Find Black, White, Empty
+            NSString *col;
+            switch (_diagram[i]) {
+                case BBLACK:
+                    col = @"B"; break;
+                case WWHITE:
+                    col = @"W"; break;
+                default:
+                    col = @"E";
+            }
+            // Save as jpg
+            const cv::Mat &hood( img(rect));
+            NSString *fname = nsprintf(@"%@_%@_hood_%03d.jpg", col, tstamp, i);
+            fname = getFullPath( fname);
+            cv::imwrite( [fname UTF8String], hood);
+        }
+    } // ILOOP
+} // save_intersections()
+
 // Get current diagram as sgf
 //----------------------------------
 - (NSString *) get_sgf

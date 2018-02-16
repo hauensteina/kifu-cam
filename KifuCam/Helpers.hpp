@@ -1005,7 +1005,7 @@ inline void viz_feature( const cv::Mat &img, const Points2f &intersections, cons
 } // viz_feature()
 
 // Translate a bunch of points
-//--------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 inline void translate_points( const Points2f &pts, int dx, int dy, Points2f &dst)
 {
     dst = Points2f(SZ(pts));
@@ -1029,7 +1029,7 @@ void fix_diagram( std::vector<int> &diagram, const Points2f intersections, const
 } // fix_diagram()
 
 // Save small crops around intersections for inspection
-//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
 inline void save_intersections( const cv::Mat img,
                                const Points &intersections, int delta_v, int delta_h)
 {

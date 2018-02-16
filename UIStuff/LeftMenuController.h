@@ -36,6 +36,7 @@
 - (bool) demoMode;
 
 - (void) gotoDebugMode;
-- (void)gotoPhotoMode;
+- (void) gotoPhotoMode;
+- (void) gotoVideoMode;
 
 @end

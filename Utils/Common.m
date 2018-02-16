@@ -130,6 +130,20 @@ NSString *localDateStamp()
     return res;
 } // localDateStamp()
 
+// Get current local time as yyyy-mm-dd-hhmmss
+//----------------------------------------------
+NSString *localTimeStamp()
+{
+    time_t rawtime;
+    struct tm *info;
+    rawtime = time(NULL);
+    info = localtime( &rawtime );
+    NSString *res = nsprintf( @"%04d-%02d-%02d-%02d%02d%02d",
+                             info->tm_year + 1900, info->tm_mon + 1, info->tm_mday,
+                             info->tm_hour, info->tm_min, info->tm_sec);
+    return res;
+} // localTimeStamp()
+
 // Get current local timestamp in a dictionary
 //----------------------------------------------
 NSDictionary* dateAsDict()
@@ -148,7 +162,7 @@ NSDictionary* dateAsDict()
 } // dateAsDict()
 
 // Make a filename from current date and time
-//---------------------------------------------------------------
+//-----------------------------------------------
 NSString *tstampFname()
 {
     NSDictionary *tstamp = dateAsDict();

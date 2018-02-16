@@ -219,6 +219,7 @@
     _btnDefaultPhoto.selected = YES;
     _btnDefaultVideo.selected = NO;
     setProp( @"opt_mode", @"photo");
+    [g_app.menuVC gotoPhotoMode];
 } // btnDefaultPhoto()
 
 //-----------------------------------
@@ -227,6 +228,7 @@
     _btnDefaultPhoto.selected = NO;
     _btnDefaultVideo.selected = YES;
     setProp( @"opt_mode", @"video");
+    [g_app.menuVC gotoVideoMode];
 } // btnDefaultVideo()
 
 //=========

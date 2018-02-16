@@ -56,6 +56,8 @@
 - (bool) save_small_img:(NSString *)fname;
 // Save the cuurently detected position to sgf
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title;
+// Save intersections as trining material
+- (void) save_intersections;
 // Put an image into a buffer q. We pick the best one later.
 - (void) qImg:(UIImage *)img;
 // Make a diagram from sgf
