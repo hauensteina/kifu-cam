@@ -86,6 +86,11 @@
     [_topVC setupLeftAndRight];
     _menuVC  = (LeftMenuController *) _topVC.leftViewController;
     _rightVC = (RightViewController *) _topVC.rightViewController;
+    _mainVC.navigationItem.rightBarButtonItem =
+    [[UIBarButtonItem alloc] initWithTitle:@"Dbg"
+                                     style:UIBarButtonItemStylePlain
+                                    target:_mainVC
+                                    action:@selector(showRightView)];
 }
 
 
