@@ -211,7 +211,7 @@
     _selected_row = indexPath.row;
     //_highlighted_row = _selected_row;
     [self.tableView reloadData];
-    NSArray *choices = @[@"Export", @"Delete", @"Cancel"];
+    NSArray *choices = @[@"Export Sgf", @"Export Photo", @"Delete", @"Cancel"];
     choicePopup( choices, @"Action",
                 ^(UIAlertAction *action) {
                     [self handleEditAction:action.title];
@@ -225,8 +225,11 @@
 //---------------------------------------------
 - (void)handleEditAction:(NSString *)action
 {
-    if ([action hasPrefix:@"Export"]) {
-        [self handleExportAction];
+    if ([action hasPrefix:@"Export Sgf"]) {
+        [self handleExportSgf];
+    }
+    else if ([action hasPrefix:@"Export Photo"]) {
+        [self handleExportPhoto];
     }
     else if ([action hasPrefix:@"Delete"]) {
         NSString *fname = _titlesArray[_selected_row];
@@ -255,7 +258,7 @@
 
 // Export sgf
 //---------------------------
-- (void)handleExportAction
+- (void)handleExportSgf
 {
     NSString *fname = _titlesArray[_selected_row];
     fname = changeExtension( fname, @".sgf");
@@ -264,7 +267,23 @@
     _documentController = [UIDocumentInteractionController
                            interactionControllerWithURL:[NSURL fileURLWithPath:fullfname]];
     [_documentController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
-} // handleExportAction()
+} // handleExportSgf()
+
+// Export Photo //@@@
+//---------------------------
+- (void)handleExportPhoto
+{
+    NSString *fname = _titlesArray[_selected_row];
+    fname = changeExtension( fname, @".png");
+    NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @SAVED_FOLDER, fname));
+    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    NSData *jpgData = UIImageJPEGRepresentation( img, 1.0);
+    fname = changeExtension( fullfname, @".jpg");
+    [jpgData writeToFile:fname atomically:YES];
+    _documentController = [UIDocumentInteractionController
+                           interactionControllerWithURL:[NSURL fileURLWithPath:fname]];
+    [_documentController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
+} // handleExportPhoto()
 
 // Other
 //===========

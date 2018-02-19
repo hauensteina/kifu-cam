@@ -69,6 +69,8 @@ static BlackWhiteEmpty classifier;
 @property cv::Mat pyr_masked;    // pyr_gray with black stones masked out
 
 @property cv::Mat gz_threshed; // gray_zoomed with inv_thresh and dilation
+@property cv::Mat dark_places; // adaptive thresh for dark places
+@property cv::Mat white_holes; // adaptive thresh for bright places
 @property Contours cont; // Current set of contours
 @property int board_sz; // board size, 9 or 19
 @property Points stone_or_empty; // places where we suspect stones or empty
@@ -162,7 +164,15 @@ static BlackWhiteEmpty classifier;
 {
     int delta_h = 21;
     int delta_v = 21;
-    const cv::Mat &img = _gz_threshed;
+    const cv::Mat rgbimg = _small_zoomed.clone();
+    cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
+    std::vector<cv::Mat> channels;
+    channels.push_back( _white_holes);
+    channels.push_back( _dark_places);
+    channels.push_back( _gz_threshed);
+    cv::Mat bdtimg;
+    cv::merge( channels, bdtimg);
+
     NSString *tstamp = tstampFname();
 
     ILOOP( _intersections_zoomed.size())
@@ -173,10 +183,10 @@ static BlackWhiteEmpty classifier;
         cv::Rect rect( x - dx, y - dy, 2*dx+1, 2*dy+1 );
         if (0 <= rect.x &&
             0 <= rect.width &&
-            rect.x + rect.width <= img.cols &&
+            rect.x + rect.width <= rgbimg.cols &&
             0 <= rect.y &&
             0 <= rect.height &&
-            rect.y + rect.height <= img.rows)
+            rect.y + rect.height <= rgbimg.rows)
         {
             // Find Black, White, Empty
             NSString *col;
@@ -188,11 +198,17 @@ static BlackWhiteEmpty classifier;
                 default:
                     col = @"E";
             }
-            // Save as jpg
-            const cv::Mat &hood( img(rect));
-            NSString *fname = nsprintf(@"%@_%@_hood_%03d.jpg", col, tstamp, i);
+            NSString *fname;
+            // Save rgb as jpg
+            const cv::Mat &rgbhood( rgbimg(rect));
+            fname = nsprintf(@"%@_rgb_%@_hood_%03d.jpg", col, tstamp, i);
             fname = getFullPath( fname);
-            cv::imwrite( [fname UTF8String], hood);
+            cv::imwrite( [fname UTF8String], rgbhood);
+            // Save wdt as jpg
+            const cv::Mat &wdthood( bdtimg(rect));
+            fname = nsprintf(@"%@_bdt_%@_hood_%03d.jpg", col, tstamp, i);
+            fname = getFullPath( fname);
+            cv::imwrite( [fname UTF8String], wdthood);
         }
     } // ILOOP
 } // save_intersections()
@@ -455,14 +471,15 @@ static BlackWhiteEmpty classifier;
     g_app.mainVC.lbBottom.text = @"Hide dark places";
     
     uint8_t mean = cv::mean( _pyr_gray)[0];
-    cv::Mat black_places;
-    cv::adaptiveThreshold( _pyr_gray, black_places, mean, CV_ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 50);
+    //cv::Mat black_places;
+    cv::adaptiveThreshold( _pyr_gray, _dark_places, mean, CV_ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 50);
     _pyr_masked = _pyr_gray.clone();
     // Copy over if not zero
-    _pyr_masked.forEach<uint8_t>( [&black_places](uint8_t &v, const int *p)
+    cv::Mat m = _dark_places.clone();
+    _pyr_masked.forEach<uint8_t>( [&m](uint8_t &v, const int *p)
                                  {
                                      int row = p[0]; int col = p[1];
-                                     if (auto p = black_places.at<uint8_t>( row,col)) {
+                                     if (auto p = m.at<uint8_t>( row,col)) {
                                          v = p;
                                      }
                                  });
@@ -487,13 +504,13 @@ static BlackWhiteEmpty classifier;
     // The White stones become black holes, all else is white
     int nhood_sz =  25;
     double thresh = -32;
-    cv::Mat white_holes;
-    cv::adaptiveThreshold( _pyr_masked, white_holes, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV,
+    //cv::Mat white_holes;
+    cv::adaptiveThreshold( _pyr_masked, _white_holes, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV,
                           nhood_sz, thresh);
     
     // Show results
     cv::Mat drawing;
-    cv::cvtColor( white_holes, drawing, cv::COLOR_GRAY2RGB);
+    cv::cvtColor( _white_holes, drawing, cv::COLOR_GRAY2RGB);
     ISLOOP (_intersections_zoomed) {
         Point2f p = _intersections_zoomed[i];
         draw_square( p, 3, drawing, cv::Scalar(255,0,0));
