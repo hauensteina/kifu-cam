@@ -825,7 +825,7 @@ static BlackWhiteEmpty classifier;
 
 #pragma mark - iOS Glue
 
-// Convert a cv::Mat to a CGImageRef
+// Convert a cv::Mat to a CIImage
 //----------------------------------------------
 - (CIImage *) CIImageFromCVMat:(cv::Mat)cvMat
 {
@@ -857,7 +857,7 @@ static BlackWhiteEmpty classifier;
     
     CIImage *res = [CIImage imageWithCGImage:imageRef];
     return res;
-} // CGImageFromCVMat
+} // CIImageFromCVMat()
 
 // Classify intersections with Keras Model
 //--------------------------------------------
@@ -878,23 +878,25 @@ static BlackWhiteEmpty classifier;
 
     ILOOP( _intersections_zoomed.size())
     {
-        int x = _intersections_zoomed[i].x;
-        int y = _intersections_zoomed[i].y;
-        int clazz = EEMPTY;
-        cv::Rect rect( x - r, y - r, 2*r+1, 2*r+1 );
-        if (0 <= rect.x &&
-            0 <= rect.width &&
-            rect.x + rect.width <= rgbimg.cols &&
-            0 <= rect.y &&
-            0 <= rect.height &&
-            rect.y + rect.height <= rgbimg.rows)
-        {
-            CIImage *crop = [self CIImageFromCVMat:rgbimg(rect)];
-//            if (i == 360) {
-//                res = [[UIImage alloc] initWithCIImage:crop];
-//                break;
-//            }
-            [g_app.stoneModel classify:crop];
+        if (i == 360) {
+            int x = _intersections_zoomed[i].x;
+            int y = _intersections_zoomed[i].y;
+            int clazz = EEMPTY;
+            cv::Rect rect( x - r, y - r, 2*r+1, 2*r+1 );
+            if (0 <= rect.x &&
+                0 <= rect.width &&
+                rect.x + rect.width <= rgbimg.cols &&
+                0 <= rect.y &&
+                0 <= rect.height &&
+                rect.y + rect.height <= rgbimg.rows)
+            {
+                CIImage *crop = [self CIImageFromCVMat:rgbimg(rect)];
+                //            if (i == 360) {
+                //                res = [[UIImage alloc] initWithCIImage:crop];
+                //                break;
+                //            }
+                [g_app.stoneModel classify:crop];
+            }
         }
     } // ILOOP
     return res;
