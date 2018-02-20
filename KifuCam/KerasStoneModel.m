@@ -42,7 +42,11 @@
                        //self.numberOfResults = request.results.count;
                        NSArray *results = [request.results copy];
                        VNClassificationObservation *topResult = ((VNClassificationObservation *)(results[0]));
+                       NSString *identifier = topResult.identifier;
+                       NSLog( @"id:%@", identifier);
                        int tt = 42;
+                       int xx = 43;
+                       xx += 1;
                    });
                }];
     } // if (self)

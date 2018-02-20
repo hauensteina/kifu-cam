@@ -563,7 +563,7 @@ static BlackWhiteEmpty classifier;
     
 #define KERAS
 #ifdef KERAS
-    [self keras_classify_intersections];
+    UIImage *res = [self keras_classify_intersections];
 #else
     //std::vector<int> diagram;
     if (_small_zoomed.rows > 0) {
@@ -572,7 +572,6 @@ static BlackWhiteEmpty classifier;
         const int TIME_BUF_SZ = 1;
         _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, TIME_BUF_SZ);
     }
-#endif
     fix_diagram( _diagram, _intersections, _small_img);
     
     // Show results
@@ -600,6 +599,7 @@ static BlackWhiteEmpty classifier;
         }
     }
     UIImage *res = MatToUIImage( drawing);
+#endif
     return res;
 } // f09_classify()
 
@@ -861,13 +861,14 @@ static BlackWhiteEmpty classifier;
 
 // Classify intersections with Keras Model
 //--------------------------------------------
-- (void) keras_classify_intersections
+- (UIImage *) keras_classify_intersections
 {
+    UIImage *res;
     int cropsize = 23;
     int r = cropsize/2;
     
     const cv::Mat rgbimg = _small_zoomed.clone();
-    cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
+    //cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
 //    std::vector<cv::Mat> channels;
 //    channels.push_back( _white_holes);
 //    channels.push_back( _dark_places);
@@ -889,9 +890,14 @@ static BlackWhiteEmpty classifier;
             rect.y + rect.height <= rgbimg.rows)
         {
             CIImage *crop = [self CIImageFromCVMat:rgbimg(rect)];
+//            if (i == 360) {
+//                res = [[UIImage alloc] initWithCIImage:crop];
+//                break;
+//            }
             [g_app.stoneModel classify:crop];
         }
     } // ILOOP
+    return res;
 } // keras_classify_intersections()
 
 @end
