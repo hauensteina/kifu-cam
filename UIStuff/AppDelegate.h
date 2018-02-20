@@ -38,6 +38,8 @@
 #import "SaveDiscardVC.h"
 #import "AboutVC.h"
 #import "SettingsVC.h"
+#import "nn_bew.h"
+#import "KerasStoneModel.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -59,6 +61,10 @@
 @property (nonatomic, strong) ImagesVC *imagesVC;
 @property (nonatomic, strong) AboutVC *aboutVC;
 @property (nonatomic, strong) SettingsVC *settingsVC;
+
+// NN models
+@property nn_bew *bewmodel; // Keras model to classifiy intersections as Black, White, Empty
+@property KerasStoneModel *stoneModel; // wrapper around bewmodel
 
 - (void) enableDebugMenu;
 

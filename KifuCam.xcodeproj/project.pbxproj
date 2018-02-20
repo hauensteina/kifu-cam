@@ -30,6 +30,8 @@
 		AC13BB40200BD6C600369CAE /* LeftMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB3A200BD6C600369CAE /* LeftMenuCell.m */; };
 		AC3274412016836D009BEFD2 /* photo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC32743F2016836B009BEFD2 /* photo_icon.png */; };
 		AC3274422016836D009BEFD2 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC3274402016836C009BEFD2 /* video_icon.png */; };
+		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
+		AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */; };
 		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
 		AC3CC3561FFECD2300ED79D6 /* board14.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC3CC3541FFECD2200ED79D6 /* board14.jpg */; };
 		AC3CC3571FFECD2300ED79D6 /* board13.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC3CC3551FFECD2300ED79D6 /* board13.jpg */; };
@@ -227,6 +229,9 @@
 		AC1756CB200527770069EE99 /* Helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Helpers.hpp; sourceTree = "<group>"; };
 		AC32743F2016836B009BEFD2 /* photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = photo_icon.png; path = Assets/photo_icon.png; sourceTree = SOURCE_ROOT; };
 		AC3274402016836C009BEFD2 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = video_icon.png; path = Assets/video_icon.png; sourceTree = SOURCE_ROOT; };
+		AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasStoneModel.h; sourceTree = "<group>"; };
+		AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasStoneModel.m; sourceTree = "<group>"; };
+		AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ocv.cpp; sourceTree = "<group>"; };
 		AC3C5EBB1FBC942000BB8B4F /* Ocv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Ocv.hpp; sourceTree = "<group>"; };
 		AC3CC3541FFECD2200ED79D6 /* board14.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board14.jpg; sourceTree = "<group>"; };
@@ -512,6 +517,8 @@
 				AC9702191FBC88050057C4C2 /* Globals.h */,
 				AC9702171FBC87DF0057C4C2 /* Globals.mm */,
 				AC1756CB200527770069EE99 /* Helpers.hpp */,
+				AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */,
+				AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */,
 				AC628C221F9A7D3F0043FCEE /* Assets.xcassets */,
 				AC628C271F9A7D3F0043FCEE /* Info.plist */,
 				AC628C161F9A7D3F0043FCEE /* Supporting Files */,
@@ -539,6 +546,7 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
 				AC785343202B6D0400E565F3 /* radio_on.png */,
 				ACA86B71202508E700939F1A /* Icon-120.png */,
@@ -711,6 +719,7 @@
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
 				AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */,
+				AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */,
 				AC628C341F9A80150043FCEE /* MainVC.m in Sources */,
 				AC13BB3E200BD6C600369CAE /* RightViewController.m in Sources */,
 				AC628C1B1F9A7D3F0043FCEE /* AppDelegate.m in Sources */,
@@ -723,6 +732,7 @@
 				AC13BB3F200BD6C600369CAE /* RightViewCell.m in Sources */,
 				AC628C181F9A7D3F0043FCEE /* main.m in Sources */,
 				AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */,
+				AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

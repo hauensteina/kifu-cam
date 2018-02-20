@@ -65,8 +65,12 @@
     self.saveDiscardVC = [SaveDiscardVC new];
     self.imagesVC = [ImagesVC new];
     self.aboutVC = [AboutVC new];
-
     self.window.rootViewController = self.topVC;
+
+    // NN Models
+    _bewmodel = [nn_bew new];
+    _stoneModel = [[KerasStoneModel alloc] initWithModel:[_bewmodel model]];
+    
     [self.window makeKeyAndVisible];
     
     // Folder for test cases
@@ -77,6 +81,8 @@
     if (!dirExists( @SAVED_FOLDER)) {
         makeDir( @SAVED_FOLDER);
     }
+    
+    
     return YES;
 } // didFinishLaunchingWithOptions()
 

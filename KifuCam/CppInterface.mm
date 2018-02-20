@@ -561,6 +561,10 @@ static BlackWhiteEmpty classifier;
     g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
     
+#define KERAS
+#ifdef KERAS
+    [self keras_classify_intersections];
+#else
     //std::vector<int> diagram;
     if (_small_zoomed.rows > 0) {
         //cv::Mat gray_blurred;
@@ -568,6 +572,7 @@ static BlackWhiteEmpty classifier;
         const int TIME_BUF_SZ = 1;
         _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, TIME_BUF_SZ);
     }
+#endif
     fix_diagram( _diagram, _intersections, _small_img);
     
     // Show results
@@ -817,6 +822,77 @@ static BlackWhiteEmpty classifier;
     bool res = templ == _diagram;
     return res;
 } // check_debug_trigger()
+
+#pragma mark - iOS Glue
+
+// Convert a cv::Mat to a CGImageRef
+//----------------------------------------------
+- (CIImage *) CIImageFromCVMat:(cv::Mat)cvMat
+{
+    cv::Mat m = cvMat.clone();
+    NSData *data = [NSData dataWithBytes:m.data length:m.elemSize()*m.total()];
+    CGColorSpaceRef colorSpace;
+    
+    if (m.elemSize() == 1) {
+        colorSpace = CGColorSpaceCreateDeviceGray();
+    } else {
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+    }
+    
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
+    
+    // Creating CGImage from cv::Mat
+    CGImageRef imageRef = CGImageCreate(m.cols,                                 //width
+                                        m.rows,                                 //height
+                                        8,                                          //bits per component
+                                        8 * m.elemSize(),                       //bits per pixel
+                                        m.step[0],                            //bytesPerRow
+                                        colorSpace,                                 //colorspace
+                                        kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
+                                        provider,                                   //CGDataProviderRef
+                                        NULL,                                       //decode
+                                        false,                                      //should interpolate
+                                        kCGRenderingIntentDefault                   //intent
+                                        );
+    
+    CIImage *res = [CIImage imageWithCGImage:imageRef];
+    return res;
+} // CGImageFromCVMat
+
+// Classify intersections with Keras Model
+//--------------------------------------------
+- (void) keras_classify_intersections
+{
+    int cropsize = 23;
+    int r = cropsize/2;
+    
+    const cv::Mat rgbimg = _small_zoomed.clone();
+    cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
+//    std::vector<cv::Mat> channels;
+//    channels.push_back( _white_holes);
+//    channels.push_back( _dark_places);
+//    channels.push_back( _gz_threshed);
+//    cv::Mat bdtimg;
+//    cv::merge( channels, bdtimg);
+
+    ILOOP( _intersections_zoomed.size())
+    {
+        int x = _intersections_zoomed[i].x;
+        int y = _intersections_zoomed[i].y;
+        int clazz = EEMPTY;
+        cv::Rect rect( x - r, y - r, 2*r+1, 2*r+1 );
+        if (0 <= rect.x &&
+            0 <= rect.width &&
+            rect.x + rect.width <= rgbimg.cols &&
+            0 <= rect.y &&
+            0 <= rect.height &&
+            rect.y + rect.height <= rgbimg.rows)
+        {
+            CIImage *crop = [self CIImageFromCVMat:rgbimg(rect)];
+            [g_app.stoneModel classify:crop];
+        }
+    } // ILOOP
+} // keras_classify_intersections()
 
 @end
 

@@ -31,6 +31,8 @@
 #import <UIKit/UIKit.h>
 #import "Common.hpp"
 
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
