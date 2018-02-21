@@ -19,7 +19,8 @@
 
 - (nonnull instancetype)initWithModel:(nullable MLModel *) kerasModel;
 // Classify a crop with one intersection at the center
-- (void) classify: (nullable CIImage *)image;
+// Returns one of BBLACK, EEMPTY, WWHITE
+- (int) classify: (nullable CIImage *)image;
 
 @end
 

@@ -50,6 +50,8 @@
 #define COLORRAD    30
 #define MAXPYRLEVEL 2
 
+#define USE_KERAS
+
 extern cv::Mat mat_dbg;
 static BlackWhiteEmpty classifier;
 
@@ -561,16 +563,16 @@ static BlackWhiteEmpty classifier;
     g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
     
-#define KERAS
-#ifdef KERAS
-    UIImage *res = [self keras_classify_intersections];
-#else
     //std::vector<int> diagram;
     if (_small_zoomed.rows > 0) {
+#ifdef USE_KERAS
+        [self keras_classify_intersections];
+#else
         //cv::Mat gray_blurred;
         //cv::GaussianBlur( _gray_zoomed, gray_blurred, cv::Size(5, 5), 2, 2 );
         const int TIME_BUF_SZ = 1;
         _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, TIME_BUF_SZ);
+#endif
     }
     fix_diagram( _diagram, _intersections, _small_img);
     
@@ -599,7 +601,6 @@ static BlackWhiteEmpty classifier;
         }
     }
     UIImage *res = MatToUIImage( drawing);
-#endif
     return res;
 } // f09_classify()
 
@@ -673,7 +674,12 @@ static BlackWhiteEmpty classifier;
         fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
         
         // Classify
+#ifdef USE_KERAS
+        zoom_in( _small_img, _corners, _small_zoomed, M);
+        [self keras_classify_intersections];
+#else
         _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, timeVotes);
+#endif
         fix_diagram( _diagram, _intersections, _small_img);
         
         // Copy diagram to NSMutableArray
@@ -867,7 +873,8 @@ static BlackWhiteEmpty classifier;
     int cropsize = 23;
     int r = cropsize/2;
     
-    const cv::Mat rgbimg = _small_zoomed.clone();
+    //const cv::Mat rgbimg = _small_zoomed.clone();
+    const cv::Mat &rgbimg( _small_zoomed);
     //cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
 //    std::vector<cv::Mat> channels;
 //    channels.push_back( _white_holes);
@@ -875,30 +882,30 @@ static BlackWhiteEmpty classifier;
 //    channels.push_back( _gz_threshed);
 //    cv::Mat bdtimg;
 //    cv::merge( channels, bdtimg);
-
+    std::vector<int> diagram( SZ(_intersections_zoomed), EEMPTY);
+    CIImage *crop = nil;
     ILOOP( _intersections_zoomed.size())
     {
-        if (i == 360) {
-            int x = _intersections_zoomed[i].x;
-            int y = _intersections_zoomed[i].y;
-            int clazz = EEMPTY;
-            cv::Rect rect( x - r, y - r, 2*r+1, 2*r+1 );
-            if (0 <= rect.x &&
-                0 <= rect.width &&
-                rect.x + rect.width <= rgbimg.cols &&
-                0 <= rect.y &&
-                0 <= rect.height &&
-                rect.y + rect.height <= rgbimg.rows)
-            {
-                CIImage *crop = [self CIImageFromCVMat:rgbimg(rect)];
-                //            if (i == 360) {
-                //                res = [[UIImage alloc] initWithCIImage:crop];
-                //                break;
-                //            }
-                [g_app.stoneModel classify:crop];
-            }
+        int x = _intersections_zoomed[i].x;
+        int y = _intersections_zoomed[i].y;
+        int clazz = EEMPTY;
+        cv::Rect rect( x - r, y - r, 2*r+1, 2*r+1 );
+        if (0 <= rect.x &&
+            0 <= rect.width &&
+            rect.x + rect.width <= rgbimg.cols &&
+            0 <= rect.y &&
+            0 <= rect.height &&
+            rect.y + rect.height <= rgbimg.rows)
+        {
+            //if (!crop) {
+                crop = [self CIImageFromCVMat:rgbimg(rect)];
+            //}
+            clazz = [g_app.stoneModel classify:crop];
+            diagram[i] = clazz;
         }
+        //}
     } // ILOOP
+    _diagram = diagram;
     return res;
 } // keras_classify_intersections()
 

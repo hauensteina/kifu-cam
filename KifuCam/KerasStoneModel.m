@@ -10,6 +10,7 @@
 // stones into Bleck, Empty, White
 
 #import "KerasStoneModel.h"
+#import "Globals.h"
 #import <Vision/Vision.h>
 
 @interface KerasStoneModel()
@@ -17,6 +18,7 @@
 @property MLModel *model;
 @property VNCoreMLModel *m;    // The Vision framework wrapper for Keras model
 @property VNCoreMLRequest *rq; // The request to the classifier
+@property int classification_result;
 @end
 
 @implementation KerasStoneModel
@@ -32,22 +34,15 @@
                                    completionHandler:
                (VNRequestCompletionHandler) ^(VNRequest *request, NSError *error)
                {
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                       //NSTimeInterval start, stop;
-                       //stop = [[NSDate date] timeIntervalSince1970];
-                       //start = [[startTimes objectAtIndex: 0] doubleValue];
-                       //[startTimes removeObjectAtIndex: 0];
-                       // NSLog(@"diff: %ld, %f\n", [startTimes count], (stop - start) * 1000);
-                       //self.messageLabel.text = @"done";
-                       //self.numberOfResults = request.results.count;
-                       NSArray *results = [request.results copy];
-                       VNClassificationObservation *topResult = ((VNClassificationObservation *)(results[0]));
-                       NSString *identifier = topResult.identifier;
-                       NSLog( @"id:%@", identifier);
-                       int tt = 42;
-                       int xx = 43;
-                       xx += 1;
-                   });
+                   NSArray *results = request.results; // [request.results copy];
+                   VNClassificationObservation *topResult = ((VNClassificationObservation *)(results[0]));
+                   NSString *identifier = topResult.identifier;
+                   char class = [identifier characterAtIndex:0];
+                   if (class == 'b') _classification_result = BBLACK;
+                   else if (class == 'e') _classification_result = EEMPTY;
+                   else if (class == 'w') _classification_result = WWHITE;
+                   else _classification_result = DDONTKNOW;
+                   //NSLog( @"id:%@", identifier);
                }];
     } // if (self)
     return self;
@@ -55,17 +50,13 @@
 
 // Classify a crop with one intersection at the center
 //---------------------------------------------------------
-- (void) classify: (CIImage *)image
+- (int) classify: (CIImage *)image
 {
-    //NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-    //[startTimes addObject: [NSNumber numberWithDouble: start]];
     NSArray *a = @[_rq];
     NSDictionary *d = [[NSDictionary alloc] init];
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:image options:d];
-    //dispatch_sync(dispatch_get_main_queue(), ^{
-        [handler performRequests:a error:nil];
-    //});
-    int tt = 42;
+    [handler performRequests:a error:nil];
+    return _classification_result;
 } // classify()
 
 @end
