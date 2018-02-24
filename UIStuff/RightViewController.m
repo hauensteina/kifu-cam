@@ -207,6 +207,8 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
         NSString *sgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
         // Classify
         int nerrs = [g_app.mainVC.cppInterface runTestImg:img withSgf: sgf];
+        // Temporary kludge to overwrite test case sgf if the format changed
+        // [g_app.mainVC.cppInterface save_current_sgf:fullfname withTitle:@""];
         [errCounts addObject:@(nerrs)];
     } // for
     // Show error counts in a separate View Controller

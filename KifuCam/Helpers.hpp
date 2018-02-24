@@ -82,9 +82,10 @@ inline std::string generate_sgf( const std::string &title,
     int boardsz = ROUND( sqrt( SZ(diagram)));
     
     // Intersection coordinate string
-    std::string coords = "GC[intersections:(";
+    std::string coords = "intersections:(";
     ISLOOP( intersections) {
         snprintf( buf, BUFSZ, "(%d,%d)", ROUND( intersections[i].x), ROUND( intersections[i].y));
+        if (i>0) { coords += ","; }
         coords += buf;
     }
     coords += ")";
