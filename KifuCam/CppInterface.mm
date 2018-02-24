@@ -50,7 +50,7 @@
 #define COLORRAD    30
 #define MAXPYRLEVEL 2
 
-#define USE_KERAS
+//#define USE_KERAS
 
 extern cv::Mat mat_dbg;
 static BlackWhiteEmpty classifier;
@@ -152,7 +152,7 @@ static BlackWhiteEmpty classifier;
 //-----------------------------------------------------------------------
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
 {
-    auto sgf = generate_sgf( [title UTF8String], _diagram);
+    auto sgf = generate_sgf( [title UTF8String], _diagram, _intersections);
     std::ofstream ofs;
     ofs.open( [fname UTF8String]);
     ofs << sgf;
@@ -215,11 +215,48 @@ static BlackWhiteEmpty classifier;
     } // ILOOP
 } // save_intersections()
 
+//// Convert intersection coords and diagram to json as used by Mike
+////------------------------------------------------------------------
+//- (NSString *) intersections_to_json
+//{
+//    // [[{"x":113.65218764808085,"y":168.64307422165194,"val":"EMPTY"},...
+//    // Intersections and color (BEW) as json
+//    NSMutableArray *columns = [NSMutableArray new];
+//    CLOOP( _board_sz) {
+//        NSMutableArray *column = [NSMutableArray new];
+//        RLOOP( _board_sz) {
+//            int idx = r * _board_sz + c;
+//            int x = ROUND( _intersections[idx].x);
+//            int y = ROUND( _intersections[idx].y);
+//            int color = _diagram[idx];
+//            NSString *colstr = @"UNKNOWN";
+//            if (color == BBLACK) {
+//                colstr = @"BLACK";
+//            }
+//            else if (color == EEMPTY) {
+//                colstr = @"EMPTY";
+//            }
+//            else if (color == WWHITE) {
+//                colstr = @"WHITE";
+//            }
+//            [column addObject:@{@"x":@(x),
+//                                @"y":@(y),
+//                                @"val":colstr}];
+//        } // RLOOP
+//        [columns addObject:column];
+//    } // CLOOP
+//    // Convert to json
+//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:columns options:NSJSONWritingPrettyPrinted error:nil];
+//    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//    return jsonString;
+//} // save_img_and_json()
+//
+
 // Get current diagram as sgf
 //----------------------------------
 - (NSString *) get_sgf
 {
-    return @(generate_sgf( "", self.diagram).c_str());
+    return @(generate_sgf( "", _diagram, _intersections).c_str());
 }
 
 // Queue image frames. The newest one is often shaky.
@@ -565,14 +602,15 @@ static BlackWhiteEmpty classifier;
     
     //std::vector<int> diagram;
     if (_small_zoomed.rows > 0) {
-#ifdef USE_KERAS
-        [self keras_classify_intersections];
-#else
-        //cv::Mat gray_blurred;
-        //cv::GaussianBlur( _gray_zoomed, gray_blurred, cv::Size(5, 5), 2, 2 );
-        const int TIME_BUF_SZ = 1;
-        _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, TIME_BUF_SZ);
-#endif
+        if ([g_app.settingsVC useNN]) {
+            [self keras_classify_intersections];
+        }
+        else {
+            //cv::Mat gray_blurred;
+            //cv::GaussianBlur( _gray_zoomed, gray_blurred, cv::Size(5, 5), 2, 2 );
+            const int TIME_BUF_SZ = 1;
+            _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, TIME_BUF_SZ);
+        }
     }
     fix_diagram( _diagram, _intersections, _small_img);
     
@@ -674,12 +712,13 @@ static BlackWhiteEmpty classifier;
         fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
         
         // Classify
-#ifdef USE_KERAS
-        zoom_in( _small_img, _corners, _small_zoomed, M);
-        [self keras_classify_intersections];
-#else
-        _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, timeVotes);
-#endif
+        if ([g_app.settingsVC useNN]) {
+            zoom_in( _small_img, _corners, _small_zoomed, M);
+            [self keras_classify_intersections];
+        }
+        else {
+            _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, timeVotes);
+        }
         fix_diagram( _diagram, _intersections, _small_img);
         
         // Copy diagram to NSMutableArray

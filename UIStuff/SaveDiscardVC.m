@@ -112,15 +112,16 @@
 // Helpers
 //============
 
+// Save photo, sgf, json
 //--------------------------
-- (NSString*) savePhotoAndSgf
+- (NSString*) savePhotoAndSgf //@@@
 {
     // Make filename from date
-    NSString *fname = nscat( tstampFname(), @".png");
+    NSString *fname = nscat( tstampFname(), @".jpg");
     fname = nsprintf( @"%@/%@", @SAVED_FOLDER, fname);
     fname = getFullPath( fname);
     // Save png
-    [UIImagePNGRepresentation(_photo) writeToFile:fname atomically:YES];
+    [UIImageJPEGRepresentation( _photo, 1.0) writeToFile:fname atomically:YES];
     // Save sgf
     fname = changeExtension( fname, @".sgf");
     NSError *error;
@@ -129,7 +130,7 @@
     return fname;
 }
 
-// Upload image and sgf to S3
+// Upload image,sgf,json to S3
 //-------------------------------------
 - (void) uploadToS3:(NSString*)fname
 {

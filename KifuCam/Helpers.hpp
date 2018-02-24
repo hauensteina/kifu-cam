@@ -64,19 +64,32 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
  RU[Chinese]
  SZ[19]
  KM[7.5]
- GC[Super great game]
+ GC[intersections:((13,47),...)]
  PW[w]
  PB[ahnb]
  AB[aa][ba][ja][sa][aj][jj][sj][as][js][ss])
-*/
-//-------------------------------------------------------------------------------------------
-inline std::string generate_sgf( const std::string &title, const std::vector<int> diagram,
-                         double komi=7.5)
+ */
+// The GC tag has the pixel coordinates of the intersections.
+// Couldn't use json because sgf chokes on brackets.
+//---------------------------------------------------------------------------------------------
+inline std::string generate_sgf( const std::string &title,
+                                const std::vector<int> diagram, const Points2f &intersections,
+                                double komi=7.5)
 {
     const int BUFSZ = 10000;
     char buf[BUFSZ+1];
     if (!SZ(diagram)) return "";
     int boardsz = ROUND( sqrt( SZ(diagram)));
+    
+    // Intersection coordinate string
+    std::string coords = "GC[intersections:(";
+    ISLOOP( intersections) {
+        snprintf( buf, BUFSZ, "(%d,%d)", ROUND( intersections[i].x), ROUND( intersections[i].y));
+        coords += buf;
+    }
+    coords += ")";
+    
+    // Generate sgf
     snprintf( buf, BUFSZ,
              "(;GM[1]"
              " GN[%s]"
@@ -89,8 +102,9 @@ inline std::string generate_sgf( const std::string &title, const std::vector<int
              " BS[0]WS[0]"
              " SZ[%d]"
              " DT[%s]"
-             " KM[%f]",
-             title.c_str(), boardsz, local_date_stamp().c_str(), komi);
+             " KM[%f]"
+             " GC[%s]"
+             ,title.c_str(), boardsz, local_date_stamp().c_str(), komi, coords.c_str());
 
     std::string moves="";
     ISLOOP (diagram) {
@@ -109,7 +123,7 @@ inline std::string generate_sgf( const std::string &title, const std::vector<int
 
 
 // e.g for board size, call get_sgf_tag( sgf, "SZ")
-//----------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 inline std::string get_sgf_tag( const std::string &sgf, const std::string &tag)
 {
     std::string res;
@@ -1027,32 +1041,6 @@ void fix_diagram( std::vector<int> &diagram, const Points2f intersections, const
         }
     }
 } // fix_diagram()
-
-// Save small crops around intersections for inspection
-//-------------------------------------------------------------------------------------
-inline void save_intersections( const cv::Mat img,
-                               const Points &intersections, int delta_v, int delta_h)
-{
-    ILOOP( intersections.size())
-    {
-        int x = intersections[i].x;
-        int y = intersections[i].y;
-        int dx = round(delta_h/2.0); int dy = round(delta_v/2.0);
-        cv::Rect rect( x - dx, y - dy, 2*dx+1, 2*dy+1 );
-        if (0 <= rect.x &&
-            0 <= rect.width &&
-            rect.x + rect.width <= img.cols &&
-            0 <= rect.y &&
-            0 <= rect.height &&
-            rect.y + rect.height <= img.rows)
-        {
-            const cv::Mat &hood( img(rect));
-            NSString *fname = nsprintf(@"hood_%03d.jpg",i);
-            fname = getFullPath( fname);
-            cv::imwrite( [fname UTF8String], hood);
-        }
-    } // ILOOP
-} // save_intersections()
 
 // Find all intersections from corners and boardsize
 //---------------------------------------------------------------------------------------------
