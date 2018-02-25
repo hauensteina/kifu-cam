@@ -59,6 +59,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
                        @{ @"txt": @"Edit Test Cases", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Add Test Case", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Run Test Cases", @"state": @(ITEM_NOT_SELECTED) },
+                       @{ @"txt": @"Overwrite Test Cases", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Save Intersections", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Upload Test Cases", @"state": @(ITEM_NOT_SELECTED) },
@@ -136,7 +137,10 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
             [self mnuAddTestCase];
         }
         else if ([menuItem hasPrefix:@"Run Test Cases"]) {
-            dispatch_async( dispatch_get_main_queue(), ^{ [self mnuRunTestCases]; });
+            dispatch_async( dispatch_get_main_queue(), ^{ [self mnuRunTestCases:NO]; });
+        }
+        else if ([menuItem hasPrefix:@"Overwrite Test Cases"]) {
+            dispatch_async( dispatch_get_main_queue(), ^{ [self mnuRunTestCases:YES]; });
         }
         else if ([menuItem hasPrefix:@"Upload Test Cases"]) {
             [self mnuUploadTestCases];
@@ -191,8 +195,8 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
 } // mnuSetCurrentTestCase()
 
 // Run all test cases
-//-------------------------
-- (void)mnuRunTestCases
+//---------------------------------------
+- (void)mnuRunTestCases:(bool)overwrite
 {
     NSArray *testfiles = globFiles(@TESTCASE_FOLDER , @TESTCASE_PREFIX, @"*.png");
     NSMutableArray *errCounts = [NSMutableArray new];
@@ -207,8 +211,9 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
         NSString *sgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
         // Classify
         int nerrs = [g_app.mainVC.cppInterface runTestImg:img withSgf: sgf];
-        // Temporary kludge to overwrite test case sgf if the format changed
-        // [g_app.mainVC.cppInterface save_current_sgf:fullfname withTitle:@""];
+        if (overwrite) {
+            [g_app.mainVC.cppInterface save_current_sgf:fullfname withTitle:@""];
+        }
         [errCounts addObject:@(nerrs)];
     } // for
     // Show error counts in a separate View Controller

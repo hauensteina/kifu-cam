@@ -42,7 +42,7 @@
                    else if (class == 'e') _classification_result = EEMPTY;
                    else if (class == 'w') _classification_result = WWHITE;
                    else _classification_result = DDONTKNOW;
-                   //NSLog( @"id:%@", identifier);
+                   NSLog( @"req completed id:%@", identifier);
                }];
     } // if (self)
     return self;
@@ -55,6 +55,7 @@
     NSArray *a = @[_rq];
     NSDictionary *d = [[NSDictionary alloc] init];
     VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:image options:d];
+    NSLog( @"request");
     [handler performRequests:a error:nil];
     return _classification_result;
 } // classify()
