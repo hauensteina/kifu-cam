@@ -25,12 +25,15 @@
 // SOFTWARE.
 //
 
+// View Controller to edit/run/upload/download test cases
+
 
 #import "Globals.h"
 #import "EditTestCaseVC.h"
 #import "CppInterface.h"
 
-#define ROWHEIGHT 140
+#define IMGWIDTH SCREEN_WIDTH/3
+#define ROWHEIGHT IMGWIDTH*1.5
 
 // Table View Cell
 //=============================================
@@ -56,7 +59,7 @@
 {
     [super layoutSubviews];
     CGRect frame = self.frame;
-    frame.size.height = ROWHEIGHT - 10;
+    frame.size.height = ROWHEIGHT;
     self.frame = frame;
 }
 
@@ -152,24 +155,28 @@
 //------------------------------------------------------------------------------------------------------
 - (EditTestCaseCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    int leftMarg = 40;
+    int topMarg = 20;
+    int space = 20;
+
     EditTestCaseCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     [[cell subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     NSString *fname = self.titlesArray[indexPath.row];
     // Photo
-    UIImageView *imgView1 = [[UIImageView alloc] initWithFrame:CGRectMake(40,20,70,70)];
+    UIImageView *imgView1 = [[UIImageView alloc] initWithFrame:CGRectMake(leftMarg,topMarg,IMGWIDTH,IMGWIDTH)];
     NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname));
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     imgView1.image = img;
     [cell addSubview: imgView1];
     // Diagram
-    UIImageView *imgView2 = [[UIImageView alloc] initWithFrame:CGRectMake(140,20,70,70)];
+    UIImageView *imgView2 = [[UIImageView alloc] initWithFrame:CGRectMake(leftMarg + IMGWIDTH + space, topMarg, IMGWIDTH, IMGWIDTH)];
     fullfname = changeExtension( fullfname, @".sgf");
     NSString *sgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
     UIImage *sgfImg = [CppInterface sgf2img:sgf];
     imgView2.image = sgfImg;
     [cell addSubview: imgView2];
     // Name
-    UILabel *lb = [[UILabel alloc] initWithFrame:CGRectMake(40,70,250,70)];
+    UILabel *lb = [[UILabel alloc] initWithFrame:CGRectMake(leftMarg, IMGWIDTH, 250,70)];
     lb.text = fname;
     [cell addSubview:lb];
     //cell.backgroundColor = self.view.tintColor;
