@@ -211,7 +211,8 @@
     _selected_row = indexPath.row;
     //_highlighted_row = _selected_row;
     [self.tableView reloadData];
-    NSArray *choices = @[@"Export Sgf", @"Export Photo", @"Delete", @"Cancel"];
+    NSMutableArray *choices = [@[@"Export Sgf", @"Export Photo", @"Delete", @"Cancel"] mutableCopy];
+    [choices addObject:@"Rerun"];
     choicePopup( choices, @"Action",
                 ^(UIAlertAction *action) {
                     [self handleEditAction:action.title];
@@ -238,6 +239,9 @@
                     ^(UIAlertAction *action) {
                         [self handleDeleteAction:action.title];
                     });
+    }
+    else if ([action hasPrefix:@"Rerun"]) {
+        [self handleRerun];
     }
     else {}
 } // handleEditAction()
@@ -269,7 +273,7 @@
     [_documentController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
 } // handleExportSgf()
 
-// Export Photo //@@@
+// Export Photo
 //---------------------------
 - (void)handleExportPhoto
 {
@@ -284,6 +288,23 @@
                            interactionControllerWithURL:[NSURL fileURLWithPath:fname]];
     [_documentController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
 } // handleExportPhoto()
+
+// Reun recognition on a saved photo
+//--------------------------------------
+- (void)handleRerun
+{
+    NSString *fname = _titlesArray[_selected_row];
+    fname = changeExtension( fname, @".png");
+    NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @SAVED_FOLDER, fname));
+    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    [g_app.mainVC.cppInterface recognize_position:img timeVotes:1 breakIfBad:NO];
+    NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
+    fname = changeExtension( fullfname, @".sgf");
+    NSError *error;
+    [sgf writeToFile:fname
+           atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    [self refresh];
+} // handleRerun()
 
 // Other
 //===========
