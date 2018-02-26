@@ -603,7 +603,7 @@ static BlackWhiteEmpty classifier;
     //std::vector<int> diagram;
     if (_small_zoomed.rows > 0) {
         if ([g_app.settingsVC useNN]) {
-            [self keras_classify_intersections];
+            /* return */ [self keras_classify_intersections];
         }
         else {
             //cv::Mat gray_blurred;
@@ -940,6 +940,9 @@ static BlackWhiteEmpty classifier;
                 crop = [self CIImageFromCVMat:rgbimg(rect)];
             //}
             clazz = [g_app.stoneModel classify:crop];
+            if (i == 0) {
+                res = g_app.stoneModel.dbgimg;
+            }
             diagram[i] = clazz;
         }
         //}

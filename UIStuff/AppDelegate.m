@@ -69,7 +69,7 @@
 
     // NN Models
     _bewmodel = [nn_bew new];
-    _stoneModel = [[KerasStoneModel alloc] initWithModel:[_bewmodel model]];
+    _stoneModel = [[KerasStoneModel alloc] initWithModel:_bewmodel];
     
     [self.window makeKeyAndVisible];
     

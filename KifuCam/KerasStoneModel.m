@@ -15,49 +15,80 @@
 
 @interface KerasStoneModel()
 //================================
-@property MLModel *model;
-@property VNCoreMLModel *m;    // The Vision framework wrapper for Keras model
-@property VNCoreMLRequest *rq; // The request to the classifier
-@property int classification_result;
+@property nn_bew *model;
 @end
 
 @implementation KerasStoneModel
 
 //------------------------------------------------------------
-- (nonnull instancetype)initWithModel:(MLModel *)kerasModel
+- (nonnull instancetype)initWithModel:(nn_bew *)kerasModel
 {
     self = [super init];
     if (self) {
         _model = kerasModel;
-        _m = [VNCoreMLModel modelForMLModel: _model error:nil];
-        _rq = [[VNCoreMLRequest alloc] initWithModel: _m
-                                   completionHandler:
-               (VNRequestCompletionHandler) ^(VNRequest *request, NSError *error)
-               {
-                   NSArray *results = request.results; // [request.results copy];
-                   VNClassificationObservation *topResult = ((VNClassificationObservation *)(results[0]));
-                   NSString *identifier = topResult.identifier;
-                   char class = [identifier characterAtIndex:0];
-                   if (class == 'b') _classification_result = BBLACK;
-                   else if (class == 'e') _classification_result = EEMPTY;
-                   else if (class == 'w') _classification_result = WWHITE;
-                   else _classification_result = DDONTKNOW;
-                   NSLog( @"req completed id:%@", identifier);
-               }];
     } // if (self)
     return self;
 } // initWithModel()
+
+//-----------------------------------------------------------
+- (UIImage *) pixbuf2UIImg:(CVPixelBufferRef)pixelBuffer
+{
+    CIImage *ciImage = [CIImage imageWithCVPixelBuffer:pixelBuffer];
+    
+    CIContext *temporaryContext = [CIContext contextWithOptions:nil];
+    CGImageRef videoImage = [temporaryContext
+                             createCGImage:ciImage
+                             fromRect:CGRectMake(0, 0,
+                                                 CVPixelBufferGetWidth(pixelBuffer),
+                                                 CVPixelBufferGetHeight(pixelBuffer))];
+    
+    UIImage *uiImage = [UIImage imageWithCGImage:videoImage];
+    CGImageRelease(videoImage);
+    return uiImage;
+} // pixbuf2UIImg()
+
+//---------------------------------------------------
+- (CVPixelBufferRef) img2pixbuf:(CIImage *)img
+{
+    CVPixelBufferRef res = NULL;
+    CVReturn status = CVPixelBufferCreate( kCFAllocatorDefault,
+                                          img.extent.size.width,
+                                          img.extent.size.height,
+                                          kCVPixelFormatType_32BGRA,
+                                          (__bridge CFDictionaryRef) @{(__bridge NSString *) kCVPixelBufferIOSurfacePropertiesKey: @{}},
+                                          &res);
+    
+    if (status != kCVReturnSuccess) {
+        NSLog( @"failed to make pixelbuf. Status: %d", status);
+        return nil;
+    }
+    CIContext *ciContext = [CIContext contextWithOptions:nil];
+    [ciContext render:img toCVPixelBuffer:res];
+    return res;
+}
 
 // Classify a crop with one intersection at the center
 //---------------------------------------------------------
 - (int) classify: (CIImage *)image
 {
-    NSArray *a = @[_rq];
-    NSDictionary *d = [[NSDictionary alloc] init];
-    VNImageRequestHandler *handler = [[VNImageRequestHandler alloc] initWithCIImage:image options:d];
-    NSLog( @"request");
-    [handler performRequests:a error:nil];
-    return _classification_result;
+    CVPixelBufferRef pixbuf = [self img2pixbuf:image];
+    //_dbgimg = [self pixbuf2UIImg:pixbuf];
+    nn_bewInput *nninput = [[nn_bewInput alloc] initWithImage:pixbuf];
+    NSError *err;
+    nn_bewOutput *nnoutput = [_model predictionFromFeatures:nninput error:&err];
+    CVPixelBufferRelease( pixbuf);
+    NSString *clazz = nnoutput.bew;
+    int res = DDONTKNOW;
+    if ([clazz isEqualToString:@"b"]) {
+        res = BBLACK;
+    }
+    else if ([clazz isEqualToString:@"e"]) {
+        res = EEMPTY;
+    }
+    else if ([clazz isEqualToString:@"w"]) {
+        res = WWHITE;
+    }
+    return res;
 } // classify()
 
 @end
