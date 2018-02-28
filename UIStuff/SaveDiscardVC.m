@@ -117,10 +117,10 @@
 - (NSString*) savePhotoAndSgf //@@@
 {
     // Make filename from date
-    NSString *fname = nscat( tstampFname(), @".jpg");
+    NSString *fname = nscat( tstampFname(), @".png");
     fname = nsprintf( @"%@/%@", @SAVED_FOLDER, fname);
     fname = getFullPath( fname);
-    // Save png
+    // Save img
     [UIImageJPEGRepresentation( _photo, 1.0) writeToFile:fname atomically:YES];
     // Save sgf
     fname = changeExtension( fname, @".sgf");
