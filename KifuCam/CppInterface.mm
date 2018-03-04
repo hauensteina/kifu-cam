@@ -228,43 +228,6 @@ static BlackWhiteEmpty classifier;
     } // ILOOP
 } // save_intersections()
 
-//// Convert intersection coords and diagram to json as used by Mike
-////------------------------------------------------------------------
-//- (NSString *) intersections_to_json
-//{
-//    // [[{"x":113.65218764808085,"y":168.64307422165194,"val":"EMPTY"},...
-//    // Intersections and color (BEW) as json
-//    NSMutableArray *columns = [NSMutableArray new];
-//    CLOOP( _board_sz) {
-//        NSMutableArray *column = [NSMutableArray new];
-//        RLOOP( _board_sz) {
-//            int idx = r * _board_sz + c;
-//            int x = ROUND( _intersections[idx].x);
-//            int y = ROUND( _intersections[idx].y);
-//            int color = _diagram[idx];
-//            NSString *colstr = @"UNKNOWN";
-//            if (color == BBLACK) {
-//                colstr = @"BLACK";
-//            }
-//            else if (color == EEMPTY) {
-//                colstr = @"EMPTY";
-//            }
-//            else if (color == WWHITE) {
-//                colstr = @"WHITE";
-//            }
-//            [column addObject:@{@"x":@(x),
-//                                @"y":@(y),
-//                                @"val":colstr}];
-//        } // RLOOP
-//        [columns addObject:column];
-//    } // CLOOP
-//    // Convert to json
-//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:columns options:NSJSONWritingPrettyPrinted error:nil];
-//    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-//    return jsonString;
-//} // save_img_and_json()
-//
-
 // Get current diagram as sgf
 //----------------------------------
 - (NSString *) get_sgf
@@ -959,17 +922,8 @@ static BlackWhiteEmpty classifier;
                        crop[i].ptr<double>(0),
                        sizeof(double) * CROPSIZE * CROPSIZE);
             }
-//            double chan0[9];
-//            ILOOP(9) { chan0[i] = crop.at<cv::Vec3b>(i)[0]; }
-//            double chan1[9];
-//            ILOOP(9) { chan1[i] = crop.at<cv::Vec3b>(i)[1]; }
-//            double chan2[9];
-//            ILOOP(9) { chan2[i] = crop.at<cv::Vec3b>(i)[2]; }
-//            int tt =42;
             clazz = [g_app.stoneModel classify:_nn_input];
-//            if (i == 0) {
-//                res = g_app.stoneModel.dbgimg;
-//            }
+//            if (i == 0) { res = g_app.stoneModel.dbgimg; }
             diagram[i] = clazz;
         }
         //}
