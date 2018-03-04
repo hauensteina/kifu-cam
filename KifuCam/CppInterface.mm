@@ -622,10 +622,10 @@ static BlackWhiteEmpty classifier;
 #pragma mark - Real time implementation
 //========================================
 
-// Recognize position in image. Result goes into _diagram.
-// Returns true on success.
-//----------------------------------------------------------------------------------------------
-- (bool)recognize_position:(UIImage *)img timeVotes:(int)timeVotes breakIfBad:(bool)breakIfBad
+// Try to find the board and the intersections.
+// Return true on success.
+//---------------------------------------------------------------
+- (bool)find_board:(UIImage *)img breakIfBad:(bool)breakIfBad
 {
     _board_sz = 19;
     bool success = false;
@@ -678,6 +678,21 @@ static BlackWhiteEmpty classifier;
         if (breakIfBad && !board_valid( _corners, _gray)) {
             break;
         }
+        success = true;
+    } while(0);
+    return success;
+} // find_board()
+
+// Recognize position in image. Result goes into _diagram.
+// Returns true on success.
+//----------------------------------------------------------------------------------------------
+- (bool)recognize_position:(UIImage *)img timeVotes:(int)timeVotes breakIfBad:(bool)breakIfBad
+{
+    _board_sz = 19;
+    bool success = false;
+    do {
+        success = [self find_board:img breakIfBad:breakIfBad];
+        if (breakIfBad and !success) break;
         // Zoom in
         cv::Mat M;
         zoom_in( _gray,  _corners, _gray_zoomed, M);
@@ -713,7 +728,8 @@ static BlackWhiteEmpty classifier;
 {
     static std::vector<Points> boards; // Some history for averaging
     cv::Mat drawing;
-    bool success = [self recognize_position:img timeVotes:10 breakIfBad:YES];
+    //bool success = [self recognize_position:img timeVotes:10 breakIfBad:YES];
+    bool success = [self find_board:img breakIfBad:YES];
 
     // Draw real time results on screen
     //------------------------------------
@@ -750,16 +766,16 @@ static BlackWhiteEmpty classifier;
         draw_polar_line( _horizontal_lines[SZ(_horizontal_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
         draw_polar_line( _vertical_lines[SZ(_vertical_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
         
-        // Show classification result
-        ISLOOP (_diagram) {
-            cv::Point p(ROUND(_intersections[i].x), ROUND(_intersections[i].y));
-            if (_diagram[i] == BBLACK) {
-                draw_point( p, *canvas, 5, cv::Scalar(255,0,0,255));
-            }
-            else if (_diagram[i] == WWHITE) {
-                draw_point( p, *canvas, 5, cv::Scalar(0,255,0,255));
-            }
-        }
+//        // Show classification result
+//        ISLOOP (_diagram) {
+//            cv::Point p(ROUND(_intersections[i].x), ROUND(_intersections[i].y));
+//            if (_diagram[i] == BBLACK) {
+//                draw_point( p, *canvas, 5, cv::Scalar(255,0,0,255));
+//            }
+//            else if (_diagram[i] == WWHITE) {
+//                draw_point( p, *canvas, 5, cv::Scalar(0,255,0,255));
+//            }
+//        }
         ISLOOP (_intersections) {
             draw_point( _intersections[i], *canvas, 2, cv::Scalar(0,0,255,255));
         }
