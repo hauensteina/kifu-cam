@@ -98,6 +98,9 @@ static BlackWhiteEmpty classifier;
 @end
 
 @implementation CppInterface
+{
+    double m_cropdata[3*CROPSIZE*CROPSIZE];
+}
 //=========================
 
 //----------------------
@@ -122,9 +125,14 @@ static BlackWhiteEmpty classifier;
         cv::FileStorage fse( [fpath UTF8String], cv::FileStorage::READ);
         fse["empty_template"] >> _empty_templ;
         
-        _nn_input = [[MLMultiArray alloc] initWithShape:@[@(3),@(23),@(23)]
-                                              dataType:MLMultiArrayDataTypeDouble
-                                                 error:nil];
+        NSArray *shape = @[@(3), @(CROPSIZE), @(CROPSIZE)];
+        NSArray *strides = @[@(CROPSIZE*CROPSIZE), @(CROPSIZE), @(1)];
+        _nn_input = [[MLMultiArray alloc] initWithDataPointer:m_cropdata
+                                                        shape:shape
+                                                     dataType:MLMultiArrayDataTypeDouble
+                                                      strides:strides
+                                                  deallocator:^(void * _Nonnull bytes) {}
+                                                        error:nil];
     }
     return self;
 }
@@ -914,18 +922,19 @@ static BlackWhiteEmpty classifier;
 - (UIImage *) keras_classify_intersections
 {
     UIImage *res;
-#define CROPSIZE 23
     int r = CROPSIZE/2;
     
-    //const cv::Mat rgbimg = _small_zoomed.clone();
     const cv::Mat &rgbimg( _small_zoomed);
-    //cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
-//    std::vector<cv::Mat> channels;
-//    channels.push_back( _white_holes);
-//    channels.push_back( _dark_places);
-//    channels.push_back( _gz_threshed);
-//    cv::Mat bdtimg;
-//    cv::merge( channels, bdtimg);
+    
+    cv::Mat channels[3];
+    cv::split( rgbimg, channels);
+    channels[0].convertTo( channels[0], CV_64FC1);
+    channels[0] -= 128.0; channels[0] /= 128.0;
+    channels[1].convertTo( channels[1], CV_64FC1);
+    channels[1] -= 128.0; channels[1] /= 128.0;
+    channels[2].convertTo( channels[2], CV_64FC1);
+    channels[2] -= 128.0; channels[2] /= 128.0;
+
     std::vector<int> diagram( SZ(_intersections_zoomed), EEMPTY);
     ILOOP( _intersections_zoomed.size())
     {
@@ -940,16 +949,15 @@ static BlackWhiteEmpty classifier;
             0 <= rect.height &&
             rect.y + rect.height <= rgbimg.rows)
         {
-            //static double ddata [ 3 * CROPSIZE * CROPSIZE ];
-            cv::Mat crop = rgbimg( rect);
-            int k = 0;
+            // rgb,rgb,... => r,r,...,g,g,...,b,b,...
+            cv::Mat crop[3];
+            crop[0] = channels[0]( rect).clone(); // R
+            crop[1] = channels[1]( rect).clone(); // G
+            crop[2] = channels[2]( rect).clone(); // B
             ILOOP(3) {
-                RLOOP(CROPSIZE) {
-                    CLOOP(CROPSIZE) {
-                        auto bgr = crop.at<cv::Vec3b>( r, c);
-                        _nn_input[k++] = @((double(bgr[i]) - 128.0) / 128.0);
-                    }
-                }
+                memcpy( m_cropdata + i * CROPSIZE * CROPSIZE,
+                       crop[i].ptr<double>(0),
+                       sizeof(double) * CROPSIZE * CROPSIZE);
             }
 //            double chan0[9];
 //            ILOOP(9) { chan0[i] = crop.at<cv::Vec3b>(i)[0]; }
