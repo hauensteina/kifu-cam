@@ -19,6 +19,9 @@
 @end
 
 @implementation KerasStoneModel
+{
+    nn_bewInput *m_nninput;
+}
 
 //------------------------------------------------------------
 - (nonnull instancetype)initWithModel:(nn_bew *)kerasModel
@@ -68,16 +71,21 @@
 }
 
 // Classify a crop with one intersection at the center
+// We assume the MLMultiArray is always the same and just
+// the data get swapped out
 //---------------------------------------------------------
 - (int) classify: (MLMultiArray *)image
 {
     //CVPixelBufferRef pixbuf = [self img2pixbuf:image];
     //(void)(pixbuf);
     //_dbgimg = [self pixbuf2UIImg:pixbuf];
-    nn_bewInput *nninput = [[nn_bewInput alloc] initWithInput1:image];
+    if (!m_nninput) {
+        m_nninput = [[nn_bewInput alloc] initWithInput1:image];
+    }
+    //nn_bewInput *nninput = [[nn_bewInput alloc] initWithInput1:image];
     //(void)(nninput);
     NSError *err;
-    nn_bewOutput *nnoutput = [_model predictionFromFeatures:nninput error:&err];
+    nn_bewOutput *nnoutput = [_model predictionFromFeatures:m_nninput error:&err];
     //CVPixelBufferRelease( pixbuf);
     NSString *clazz = nnoutput.bew;
     int res = DDONTKNOW;
