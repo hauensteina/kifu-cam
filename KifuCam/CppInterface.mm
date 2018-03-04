@@ -93,6 +93,7 @@ static BlackWhiteEmpty classifier;
 @property std::vector<cv::Mat> imgQ;
 // Remember most recent video frame with a Go board
 @property cv::Mat last_frame_with_board;
+@property MLMultiArray *nn_input;
 
 @end
 
@@ -120,6 +121,10 @@ static BlackWhiteEmpty classifier;
         fpath = findInBundle( @"empty_templ", @"yml");
         cv::FileStorage fse( [fpath UTF8String], cv::FileStorage::READ);
         fse["empty_template"] >> _empty_templ;
+        
+        _nn_input = [[MLMultiArray alloc] initWithShape:@[@(3),@(23),@(23)]
+                                              dataType:MLMultiArrayDataTypeDouble
+                                                 error:nil];
     }
     return self;
 }
@@ -293,7 +298,7 @@ static BlackWhiteEmpty classifier;
     UIImageToMat( img, _orig_img);
     
     resize( _orig_img, _small_img, IMG_WIDTH);
-    cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB); // Yes, RGBA not BGR
+    cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB); 
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed);
     _stone_or_empty.clear();
@@ -654,7 +659,7 @@ static BlackWhiteEmpty classifier;
     _board_sz = 19;
     bool success = false;
     do {
-        UIImageToMat( img, _orig_img, false);
+        UIImageToMat( img, _orig_img, false); // Makes a cv::Mat in RGBA order
         resize( _orig_img, _small_img, IMG_WIDTH);
         cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB);
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -909,8 +914,8 @@ static BlackWhiteEmpty classifier;
 - (UIImage *) keras_classify_intersections
 {
     UIImage *res;
-    int cropsize = 23;
-    int r = cropsize/2;
+#define CROPSIZE 23
+    int r = CROPSIZE/2;
     
     //const cv::Mat rgbimg = _small_zoomed.clone();
     const cv::Mat &rgbimg( _small_zoomed);
@@ -922,7 +927,6 @@ static BlackWhiteEmpty classifier;
 //    cv::Mat bdtimg;
 //    cv::merge( channels, bdtimg);
     std::vector<int> diagram( SZ(_intersections_zoomed), EEMPTY);
-    CIImage *crop = nil;
     ILOOP( _intersections_zoomed.size())
     {
         int x = _intersections_zoomed[i].x;
@@ -936,13 +940,28 @@ static BlackWhiteEmpty classifier;
             0 <= rect.height &&
             rect.y + rect.height <= rgbimg.rows)
         {
-            //if (!crop) {
-                crop = [self CIImageFromCVMat:rgbimg(rect)];
-            //}
-            clazz = [g_app.stoneModel classify:crop];
-            if (i == 0) {
-                res = g_app.stoneModel.dbgimg;
+            //static double ddata [ 3 * CROPSIZE * CROPSIZE ];
+            cv::Mat crop = rgbimg( rect);
+            int k = 0;
+            ILOOP(3) {
+                RLOOP(CROPSIZE) {
+                    CLOOP(CROPSIZE) {
+                        auto bgr = crop.at<cv::Vec3b>( r, c);
+                        _nn_input[k++] = @((double(bgr[i]) - 128.0) / 128.0);
+                    }
+                }
             }
+//            double chan0[9];
+//            ILOOP(9) { chan0[i] = crop.at<cv::Vec3b>(i)[0]; }
+//            double chan1[9];
+//            ILOOP(9) { chan1[i] = crop.at<cv::Vec3b>(i)[1]; }
+//            double chan2[9];
+//            ILOOP(9) { chan2[i] = crop.at<cv::Vec3b>(i)[2]; }
+//            int tt =42;
+            clazz = [g_app.stoneModel classify:_nn_input];
+//            if (i == 0) {
+//                res = g_app.stoneModel.dbgimg;
+//            }
             diagram[i] = clazz;
         }
         //}

@@ -69,14 +69,16 @@
 
 // Classify a crop with one intersection at the center
 //---------------------------------------------------------
-- (int) classify: (CIImage *)image
+- (int) classify: (MLMultiArray *)image
 {
-    CVPixelBufferRef pixbuf = [self img2pixbuf:image];
+    //CVPixelBufferRef pixbuf = [self img2pixbuf:image];
+    //(void)(pixbuf);
     //_dbgimg = [self pixbuf2UIImg:pixbuf];
-    nn_bewInput *nninput = [[nn_bewInput alloc] initWithImage:pixbuf];
+    nn_bewInput *nninput = [[nn_bewInput alloc] initWithInput1:image];
+    //(void)(nninput);
     NSError *err;
     nn_bewOutput *nnoutput = [_model predictionFromFeatures:nninput error:&err];
-    CVPixelBufferRelease( pixbuf);
+    //CVPixelBufferRelease( pixbuf);
     NSString *clazz = nnoutput.bew;
     int res = DDONTKNOW;
     if ([clazz isEqualToString:@"b"]) {
