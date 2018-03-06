@@ -68,6 +68,7 @@
 		ACA86B73202508E800939F1A /* Icon-152.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B70202508E700939F1A /* Icon-152.png */; };
 		ACA86B74202508E800939F1A /* Icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B71202508E700939F1A /* Icon-120.png */; };
 		ACA86B75202508E800939F1A /* Icon-167.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B72202508E700939F1A /* Icon-167.png */; };
+		ACAB4571204F0E7E00958AC6 /* nn_io.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */; };
 		ACAC40BE1FC3321A00B6968B /* board04.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BB1FC3321A00B6968B /* board04.jpg */; };
 		ACAC40BF1FC3321A00B6968B /* board05.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BC1FC3321A00B6968B /* board05.jpg */; };
 		ACAC40C01FC3321A00B6968B /* board03.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ACAC40BD1FC3321A00B6968B /* board03.jpg */; };
@@ -282,6 +283,7 @@
 		ACA86B70202508E700939F1A /* Icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-152.png"; sourceTree = "<group>"; };
 		ACA86B71202508E700939F1A /* Icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-120.png"; sourceTree = "<group>"; };
 		ACA86B72202508E700939F1A /* Icon-167.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-167.png"; sourceTree = "<group>"; };
+		ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_io.mlmodel; sourceTree = "<group>"; };
 		ACAC40BB1FC3321A00B6968B /* board04.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board04.jpg; sourceTree = "<group>"; };
 		ACAC40BC1FC3321A00B6968B /* board05.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board05.jpg; sourceTree = "<group>"; };
 		ACAC40BD1FC3321A00B6968B /* board03.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board03.jpg; sourceTree = "<group>"; };
@@ -546,6 +548,7 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */,
 				AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
 				AC785343202B6D0400E565F3 /* radio_on.png */,
@@ -730,6 +733,7 @@
 				ACC913162017F4F400B62682 /* ImagesVC.m in Sources */,
 				AC13BB3C200BD6C600369CAE /* NavigationController.m in Sources */,
 				AC13BB3F200BD6C600369CAE /* RightViewCell.m in Sources */,
+				ACAB4571204F0E7E00958AC6 /* nn_io.mlmodel in Sources */,
 				AC628C181F9A7D3F0043FCEE /* main.m in Sources */,
 				AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */,
 				AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */,
