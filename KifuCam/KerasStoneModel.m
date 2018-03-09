@@ -34,8 +34,6 @@
 } // initWithModel()
 
 // Classify a crop with one intersection at the center
-// We assume the MLMultiArray is always the same and just
-// the data get swapped out
 //---------------------------------------------------------
 - (int) classify: (MLMultiArray *)image
 {

@@ -74,7 +74,7 @@ public:
         RSLOOP (horiz_lines) {
             CSLOOP (vert_lines) {
                 Point2f pf = intersections[i++];
-                const int rad = 2;
+                const int rad = 16;
                 auto hood = make_hood( pf, rad, rad);
                 if (check_rect( hood, pyr.rows, pyr.cols)) {
                     cv::Scalar m = cv::mean( pyr(hood));

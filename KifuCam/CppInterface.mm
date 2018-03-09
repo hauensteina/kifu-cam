@@ -95,7 +95,6 @@ static BlackWhiteEmpty classifier;
 // Remember most recent video frame with a Go board
 @property cv::Mat last_frame_with_board;
 // NN models
-@property MLMultiArray *nn_bew_input;
 @property nn_io *iomodel; // Keras model to get boardness per pixel
 @property KerasBoardModel *boardModel; // wrapper around iomodel
 
@@ -130,16 +129,6 @@ static BlackWhiteEmpty classifier;
         cv::FileStorage fse( [fpath UTF8String], cv::FileStorage::READ);
         fse["empty_template"] >> _empty_templ;
 
-        NSArray *shape, *strides;
-        // Input MLMultiArray for stone model
-        shape = @[@(3), @(CROPSIZE), @(CROPSIZE)];
-        strides = @[@(CROPSIZE*CROPSIZE), @(CROPSIZE), @(1)];
-        _nn_bew_input = [[MLMultiArray alloc] initWithDataPointer:m_cropdata
-                                                            shape:shape
-                                                         dataType:MLMultiArrayDataTypeDouble
-                                                          strides:strides
-                                                      deallocator:^(void * _Nonnull bytes) {}
-                                                            error:nil];
         // The io model
         _iomodel = [nn_io new];
         _boardModel = [[KerasBoardModel alloc] initWithModel:_iomodel];
@@ -948,17 +937,6 @@ static BlackWhiteEmpty classifier;
 {
     UIImage *res;
     int r = CROPSIZE/2;
-    
-    const cv::Mat &rgbimg( _small_zoomed);
-    
-    cv::Mat channels[3];
-    cv::split( rgbimg, channels);
-    channels[0].convertTo( channels[0], CV_64FC1);
-    channels[0] -= 128.0; channels[0] /= 128.0;
-    channels[1].convertTo( channels[1], CV_64FC1);
-    channels[1] -= 128.0; channels[1] /= 128.0;
-    channels[2].convertTo( channels[2], CV_64FC1);
-    channels[2] -= 128.0; channels[2] /= 128.0;
 
     std::vector<int> diagram( SZ(_intersections_zoomed), EEMPTY);
     ILOOP( _intersections_zoomed.size())
@@ -969,26 +947,15 @@ static BlackWhiteEmpty classifier;
         cv::Rect rect( x - r, y - r, 2*r+1, 2*r+1 );
         if (0 <= rect.x &&
             0 <= rect.width &&
-            rect.x + rect.width <= rgbimg.cols &&
+            rect.x + rect.width <= _small_zoomed.cols &&
             0 <= rect.y &&
             0 <= rect.height &&
-            rect.y + rect.height <= rgbimg.rows)
+            rect.y + rect.height <= _small_zoomed.rows)
         {
-            // rgb,rgb,... => r,r,...,g,g,...,b,b,...
-            cv::Mat crop[3];
-            crop[0] = channels[0]( rect).clone(); // R
-            crop[1] = channels[1]( rect).clone(); // G
-            crop[2] = channels[2]( rect).clone(); // B
-            ILOOP(3) {
-                memcpy( m_cropdata + i * CROPSIZE * CROPSIZE,
-                       crop[i].ptr<double>(0),
-                       sizeof(double) * CROPSIZE * CROPSIZE);
-            }
-            clazz = [g_app.stoneModel classify:_nn_bew_input];
-//            if (i == 0) { res = g_app.stoneModel.dbgimg; }
+            MLMultiArray *nn_bew_input = [self MultiArrayFromCVMat:_small_zoomed( rect) memId:@"bew_input"];
+            clazz = [g_app.stoneModel classify:nn_bew_input];
             diagram[i] = clazz;
         }
-        //}
     } // ILOOP
     _diagram = diagram;
     return res;
