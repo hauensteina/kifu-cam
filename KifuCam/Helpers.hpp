@@ -990,9 +990,9 @@ Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vect
     } // RSLOOP
     auto rc2pf = [&](int r, int c) { return intersections[r * SZ(vert_lines) + c]; };
     Point2f tl = rc2pf( best_r, best_c);
-    Point2f tr = rc2pf( best_r, best_c + board_sz);
-    Point2f br = rc2pf( best_r + board_sz, best_c + board_sz);
-    Point2f bl = rc2pf( best_r + board_sz, best_c);
+    Point2f tr = rc2pf( best_r, best_c + board_sz - 1);
+    Point2f br = rc2pf( best_r + board_sz - 1, best_c + board_sz - 1);
+    Point2f bl = rc2pf( best_r + board_sz - 1, best_c);
     Points2f corners = { tl, tr, br, bl };
     // Return the board lines only
     horiz_lines = vec_slice( horiz_lines, best_r, board_sz);

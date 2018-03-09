@@ -435,7 +435,15 @@ static BlackWhiteEmpty classifier;
     } while(0);
     
     //UIImage *res = MatToUIImage( mat_dbg);
-    UIImage *res = MatToUIImage( boardness);
+    cv::Mat disp = _small_img.clone();
+    if (SZ( _corners) == 4) {
+        int rad = 3;
+        draw_point( _corners[0], disp, rad, cv::Scalar(255,0,0));
+        draw_point( _corners[1], disp, rad, cv::Scalar(255,0,0));
+        draw_point( _corners[2], disp, rad, cv::Scalar(255,0,0));
+        draw_point( _corners[3], disp, rad, cv::Scalar(255,0,0));
+    }
+    UIImage *res = MatToUIImage( disp);
     return res;
 } // f03_corners()
 
@@ -684,8 +692,11 @@ static BlackWhiteEmpty classifier;
         cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
         _corners.clear();
         if (SZ(_horizontal_lines) && SZ(_vertical_lines)) {
-            _corners = find_corners( _stone_or_empty, _horizontal_lines, _vertical_lines,
-                                    _intersections, _small_pyr, _gray_threshed);
+            cv::Mat boardness;
+            [self nn_boardness:_small_img dst:boardness];
+            _corners = find_corners_from_score( _horizontal_lines, _vertical_lines, _intersections, boardness);
+//            _corners = find_corners( _stone_or_empty, _horizontal_lines, _vertical_lines,
+//                                    _intersections, _small_pyr, _gray_threshed);
         }
         // Intersections for only the board lines
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
