@@ -205,6 +205,7 @@ public:
         return m_blobness;
     } // blobness
     
+    
 private:
     // Fill m_blobflags. For each intersection, is there a blob.
     //------------------------------------------------------------

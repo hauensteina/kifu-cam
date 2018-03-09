@@ -941,6 +941,67 @@ Points2f find_corners( const Points blobs, std::vector<cv::Vec2f> &horiz_lines, 
     return corners;
 } // find_corners()
 
+// Find corners by pixelwise boardness score, typically from a neural network
+//-------------------------------------------------------------------------------------------------------------------
+inline
+Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vector<cv::Vec2f> &vert_lines,
+                                 const Points2f &intersections, const cv::Mat &pixel_boardness, int board_sz = 19)
+{
+    int i;
+    if (SZ(horiz_lines) < 3 || SZ(vert_lines) < 3) return Points2f();
+    
+    // Compute boardness for each intersection
+    cv::Mat isec_boardness = cv::Mat::zeros( SZ(horiz_lines), SZ(vert_lines), CV_8UC1);
+    i = -1;
+    RSLOOP (horiz_lines) {
+        CSLOOP (vert_lines) {
+            i++;
+            Point2f pf = intersections[i];
+            const int rad = 2;
+            auto hood = make_hood( pf, rad, rad);
+            if (check_rect( hood, pixel_boardness.rows, pixel_boardness.cols)) {
+                cv::Scalar m = cv::mean( pixel_boardness(hood));
+                isec_boardness.at<uchar>(r,c) = m[0];
+            }
+        } // CSLOOP
+    } // RSLOOP
+    // Find top left for board_sz * board_sz region with highest score
+    double mmax = -1E9;
+    i = -1; int best_r = -1; int best_c = -1;
+    RSLOOP (horiz_lines) {
+        CSLOOP (vert_lines) {
+            i++;
+            double ssum = 0;
+            for (int rr = r; rr < r + board_sz; rr++) {
+                for (int cc = c; cc < c + board_sz; cc++) {
+                    if (!p_on_img( cv::Point( cc, rr), isec_boardness)) {
+                        ssum = mmax;
+                        goto OUTER;
+                    }
+                    ssum += isec_boardness.at<uchar>(rr,cc);
+                } // for(cc)
+            } // for(rr)
+        OUTER:
+            if (ssum > mmax) {
+                mmax = ssum;
+                best_r = r; best_c = c;
+            }
+        } // CSLOOP
+    } // RSLOOP
+    auto rc2pf = [&](int r, int c) { return intersections[r * SZ(vert_lines) + c]; };
+    Point2f tl = rc2pf( best_r, best_c);
+    Point2f tr = rc2pf( best_r, best_c + board_sz);
+    Point2f br = rc2pf( best_r + board_sz, best_c + board_sz);
+    Point2f bl = rc2pf( best_r + board_sz, best_c);
+    Points2f corners = { tl, tr, br, bl };
+    // Return the board lines only
+    horiz_lines = vec_slice( horiz_lines, best_r, board_sz);
+    vert_lines  = vec_slice( vert_lines, best_c, board_sz);
+
+    return corners;
+} // find_corners_from_score()
+
+
 // Get intersections of two sets of lines
 //--------------------------------------------------------------------------
 inline Points2f get_intersections( const std::vector<cv::Vec2f> &hlines,

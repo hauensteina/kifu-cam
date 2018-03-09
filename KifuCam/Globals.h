@@ -52,6 +52,9 @@ enum { BBLACK=0, EEMPTY=1, WWHITE=2, DDONTKNOW=3 };
 #define SAVED_FOLDER "saved"
 #define S3_UPLOAD_FOLDER "uploads"
 #define IMG_WIDTH 350
+// The height you get on iPhone7plus for width 350
+#define IMG_HEIGHT 466
 #define CROPSIZE 23
+
 
 #endif /* Globals_h */

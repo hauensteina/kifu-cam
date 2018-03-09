@@ -179,6 +179,10 @@ bool save_img( const cv::Mat &img, const std::string &fname);
 void rot_img( const cv::Mat &img, double angle, cv::Mat &dst);
 // Resize image such that min(width,height) = sz
 void resize(const cv::Mat &src, cv::Mat &dst, int sz);
+// Perspective transform src to Size(width,height).
+// Return the transform matrix for later use like
+// cv::perspectiveTransform( _intersections, _intersections_zoomed, M)
+cv::Mat resize_transform( const cv::Mat &src, cv::Mat &dst, int width, int height);
 // Automatic edge detection without parameters (from PyImageSearch)
 void auto_canny( const cv::Mat &src, cv::Mat &dst, double sigma=0.33);
 // Dilate then erode for some iterations

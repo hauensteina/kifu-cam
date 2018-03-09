@@ -39,6 +39,7 @@
 #import "AboutVC.h"
 #import "SettingsVC.h"
 #import "nn_bew.h"
+#import "nn_io.h"
 #import "KerasStoneModel.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>

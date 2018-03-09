@@ -33,60 +33,17 @@
     return self;
 } // initWithModel()
 
-//-----------------------------------------------------------
-- (UIImage *) pixbuf2UIImg:(CVPixelBufferRef)pixelBuffer
-{
-    CIImage *ciImage = [CIImage imageWithCVPixelBuffer:pixelBuffer];
-    
-    CIContext *temporaryContext = [CIContext contextWithOptions:nil];
-    CGImageRef videoImage = [temporaryContext
-                             createCGImage:ciImage
-                             fromRect:CGRectMake(0, 0,
-                                                 CVPixelBufferGetWidth(pixelBuffer),
-                                                 CVPixelBufferGetHeight(pixelBuffer))];
-    
-    UIImage *uiImage = [UIImage imageWithCGImage:videoImage];
-    CGImageRelease(videoImage);
-    return uiImage;
-} // pixbuf2UIImg()
-
-//---------------------------------------------------
-- (CVPixelBufferRef) img2pixbuf:(CIImage *)img
-{
-    CVPixelBufferRef res = NULL;
-    CVReturn status = CVPixelBufferCreate( kCFAllocatorDefault,
-                                          img.extent.size.width,
-                                          img.extent.size.height,
-                                          kCVPixelFormatType_32BGRA,
-                                          (__bridge CFDictionaryRef) @{(__bridge NSString *) kCVPixelBufferIOSurfacePropertiesKey: @{}},
-                                          &res);
-    
-    if (status != kCVReturnSuccess) {
-        NSLog( @"failed to make pixelbuf. Status: %d", status);
-        return nil;
-    }
-    CIContext *ciContext = [CIContext contextWithOptions:nil];
-    [ciContext render:img toCVPixelBuffer:res];
-    return res;
-}
-
 // Classify a crop with one intersection at the center
 // We assume the MLMultiArray is always the same and just
 // the data get swapped out
 //---------------------------------------------------------
 - (int) classify: (MLMultiArray *)image
 {
-    //CVPixelBufferRef pixbuf = [self img2pixbuf:image];
-    //(void)(pixbuf);
-    //_dbgimg = [self pixbuf2UIImg:pixbuf];
     if (!m_nninput) {
         m_nninput = [[nn_bewInput alloc] initWithInput1:image];
     }
-    //nn_bewInput *nninput = [[nn_bewInput alloc] initWithInput1:image];
-    //(void)(nninput);
     NSError *err;
     nn_bewOutput *nnoutput = [_model predictionFromFeatures:m_nninput error:&err];
-    //CVPixelBufferRelease( pixbuf);
     NSString *clazz = nnoutput.bew;
     int res = DDONTKNOW;
     if ([clazz isEqualToString:@"b"]) {

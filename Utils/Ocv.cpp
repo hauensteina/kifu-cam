@@ -699,7 +699,7 @@ void auto_canny( const cv::Mat &src, cv::Mat &dst, double sigma)
 
 // Resize image such that min(width,height) = sz
 //------------------------------------------------------
-void resize(const cv::Mat &src, cv::Mat &dst, int sz)
+void resize( const cv::Mat &src, cv::Mat &dst, int sz)
 {
     if (sz == MIN( src.cols, src.rows)) {
         dst = src.clone();
@@ -713,6 +713,27 @@ void resize(const cv::Mat &src, cv::Mat &dst, int sz)
     else scale = sz / (double) height;
     cv::resize( src, dst, cv::Size(int(width*scale),int(height*scale)), 0, 0, cv::INTER_AREA);
 }
+
+// Perspective transform src to Size(width,height).
+// Return the transform matrix for later use like
+// cv::perspectiveTransform( _intersections, _intersections_zoomed, M)
+//--------------------------------------------------------------------------------------
+cv::Mat resize_transform( const cv::Mat &src, cv::Mat &dst, int width, int height)
+{
+    Points2f srect = {
+        cv::Point( 0, 0),
+        cv::Point( src.cols - 1, 0),
+        cv::Point( src.cols - 1, src.rows - 1),
+        cv::Point( 0, src.rows - 1) };
+    Points2f drect = {
+        cv::Point( 0, 0),
+        cv::Point( width - 1, 0),
+        cv::Point( width - 1, height - 1),
+        cv::Point( 0, height - 1) };
+    cv::Mat M = cv::getPerspectiveTransform( srect, drect);
+    cv::warpPerspective( src, dst, M, cv::Size( width, height));
+    return M;
+} // resize_transform()
 
 // Dilate then erode for some iterations
 //---------------------------------------------------------------------------------------

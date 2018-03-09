@@ -44,6 +44,7 @@
 #import "Clust1D.hpp"
 #import "CppInterface.h"
 #import "DrawBoard.hpp"
+#import "KerasBoardModel.h"
 
 // Pyramid filter params
 #define SPATIALRAD  5
@@ -93,13 +94,17 @@ static BlackWhiteEmpty classifier;
 @property std::vector<cv::Mat> imgQ;
 // Remember most recent video frame with a Go board
 @property cv::Mat last_frame_with_board;
-@property MLMultiArray *nn_input;
+// NN models
+@property MLMultiArray *nn_bew_input;
+@property nn_io *iomodel; // Keras model to get boardness per pixel
+@property KerasBoardModel *boardModel; // wrapper around iomodel
 
 @end
 
 @implementation CppInterface
 {
     double m_cropdata[3*CROPSIZE*CROPSIZE];
+    //double m_imagedata[3*IMG_WIDTH*IMG_HEIGHT];
 }
 //=========================
 
@@ -124,15 +129,20 @@ static BlackWhiteEmpty classifier;
         fpath = findInBundle( @"empty_templ", @"yml");
         cv::FileStorage fse( [fpath UTF8String], cv::FileStorage::READ);
         fse["empty_template"] >> _empty_templ;
-        
-        NSArray *shape = @[@(3), @(CROPSIZE), @(CROPSIZE)];
-        NSArray *strides = @[@(CROPSIZE*CROPSIZE), @(CROPSIZE), @(1)];
-        _nn_input = [[MLMultiArray alloc] initWithDataPointer:m_cropdata
-                                                        shape:shape
-                                                     dataType:MLMultiArrayDataTypeDouble
-                                                      strides:strides
-                                                  deallocator:^(void * _Nonnull bytes) {}
-                                                        error:nil];
+
+        NSArray *shape, *strides;
+        // Input MLMultiArray for stone model
+        shape = @[@(3), @(CROPSIZE), @(CROPSIZE)];
+        strides = @[@(CROPSIZE*CROPSIZE), @(CROPSIZE), @(1)];
+        _nn_bew_input = [[MLMultiArray alloc] initWithDataPointer:m_cropdata
+                                                            shape:shape
+                                                         dataType:MLMultiArrayDataTypeDouble
+                                                          strides:strides
+                                                      deallocator:^(void * _Nonnull bytes) {}
+                                                            error:nil];
+        // The io model
+        _iomodel = [nn_io new];
+        _boardModel = [[KerasBoardModel alloc] initWithModel:_iomodel];
     }
     return self;
 }
@@ -410,18 +420,22 @@ static BlackWhiteEmpty classifier;
     
     _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     _corners.clear();
+    cv::Mat boardness;
     do {
         if (SZ( _horizontal_lines) > 55) break;
         if (SZ( _horizontal_lines) < 5) break;
         if (SZ( _vertical_lines) > 55) break;
         if (SZ( _vertical_lines) < 5) break;
-        _corners = find_corners( _stone_or_empty, _horizontal_lines, _vertical_lines,
-                                _intersections, _small_pyr, _gray_threshed );
+//        _corners = find_corners( _stone_or_empty, _horizontal_lines, _vertical_lines,
+//                                _intersections, _small_pyr, _gray_threshed );
+        [self nn_boardness:_small_img dst:boardness];
+        _corners = find_corners_from_score( _horizontal_lines, _vertical_lines, _intersections, boardness);
         // Intersections for only the board lines
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     } while(0);
     
-    UIImage *res = MatToUIImage( mat_dbg);
+    //UIImage *res = MatToUIImage( mat_dbg);
+    UIImage *res = MatToUIImage( boardness);
     return res;
 } // f03_corners()
 
@@ -862,39 +876,94 @@ static BlackWhiteEmpty classifier;
 
 #pragma mark - iOS Glue
 
-// Convert a cv::Mat to a CIImage
-//----------------------------------------------
-- (CIImage *) CIImageFromCVMat:(cv::Mat)cvMat
+//// Convert a cv::Mat to a CIImage
+////----------------------------------------------
+//- (CIImage *) CIImageFromCVMat:(cv::Mat)cvMat
+//{
+//    cv::Mat m = cvMat.clone();
+//    NSData *data = [NSData dataWithBytes:m.data length:m.elemSize()*m.total()];
+//    CGColorSpaceRef colorSpace;
+//    
+//    if (m.elemSize() == 1) {
+//        colorSpace = CGColorSpaceCreateDeviceGray();
+//    } else {
+//        colorSpace = CGColorSpaceCreateDeviceRGB();
+//    }
+//    
+//    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
+//    
+//    // Creating CGImage from cv::Mat
+//    CGImageRef imageRef = CGImageCreate(m.cols,                                 //width
+//                                        m.rows,                                 //height
+//                                        8,                                          //bits per component
+//                                        8 * m.elemSize(),                       //bits per pixel
+//                                        m.step[0],                            //bytesPerRow
+//                                        colorSpace,                                 //colorspace
+//                                        kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
+//                                        provider,                                   //CGDataProviderRef
+//                                        NULL,                                       //decode
+//                                        false,                                      //should interpolate
+//                                        kCGRenderingIntentDefault                   //intent
+//                                        );
+//    
+//    CIImage *res = [CIImage imageWithCGImage:imageRef];
+//    return res;
+//} // CIImageFromCVMat()
+
+// Make an MLMultiArray from a 3 channel cv::Mat with values 0..255
+// cvMat will be converted to double and scaled to [-1,1]
+// memId is a string used to find and reuse previously allocated memory.
+// Same memId, same memory. Allocated only once, never released.
+//------------------------------------------------------------------------------
+- (MLMultiArray *) MultiArrayFromCVMat:(cv::Mat)cvMat memId:(NSString *)memId
 {
-    cv::Mat m = cvMat.clone();
-    NSData *data = [NSData dataWithBytes:m.data length:m.elemSize()*m.total()];
-    CGColorSpaceRef colorSpace;
-    
-    if (m.elemSize() == 1) {
-        colorSpace = CGColorSpaceCreateDeviceGray();
-    } else {
-        colorSpace = CGColorSpaceCreateDeviceRGB();
+    // Get target memory
+    static NSMutableDictionary *memDict = [NSMutableDictionary new];
+    if (memDict[memId] == nil) {
+        int size = 3 * cvMat.rows * cvMat.cols * sizeof(double);
+        void *mem = malloc(size);
+        memDict[memId] = [NSValue valueWithPointer:mem];
     }
+    void *mem = [memDict[memId] pointerValue];
     
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
+    // Split and normalize
+    cv::Mat channels[3];
+    cv::split( cvMat, channels);
+    channels[0].convertTo( channels[0], CV_64FC1);
+    channels[0] -= 128.0; channels[0] /= 128.0;
+    channels[1].convertTo( channels[1], CV_64FC1);
+    channels[1] -= 128.0; channels[1] /= 128.0;
+    channels[2].convertTo( channels[2], CV_64FC1);
+    channels[2] -= 128.0; channels[2] /= 128.0;
     
-    // Creating CGImage from cv::Mat
-    CGImageRef imageRef = CGImageCreate(m.cols,                                 //width
-                                        m.rows,                                 //height
-                                        8,                                          //bits per component
-                                        8 * m.elemSize(),                       //bits per pixel
-                                        m.step[0],                            //bytesPerRow
-                                        colorSpace,                                 //colorspace
-                                        kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
-                                        provider,                                   //CGDataProviderRef
-                                        NULL,                                       //decode
-                                        false,                                      //should interpolate
-                                        kCGRenderingIntentDefault                   //intent
-                                        );
-    
-    CIImage *res = [CIImage imageWithCGImage:imageRef];
+    // Make MLMultiArray
+    NSArray *shape = @[@(3), @(cvMat.rows), @(cvMat.cols)];
+    NSArray *strides = @[@(cvMat.cols*cvMat.rows), @(cvMat.cols), @(1)];
+    MLMultiArray *res = [[MLMultiArray alloc] initWithDataPointer:mem
+                                                            shape:shape
+                                                         dataType:MLMultiArrayDataTypeDouble
+                                                          strides:strides
+                                                      deallocator:^(void * _Nonnull bytes) {}
+                                                            error:nil];
+    ILOOP(3) {
+        memcpy( (double*)mem + i * cvMat.cols*cvMat.rows,
+               channels[i].ptr<double>(0),
+               sizeof(double) * cvMat.cols*cvMat.rows);
+    }
     return res;
-} // CIImageFromCVMat()
+} // MultiArrayFromCVMat()
+
+// Get one channel out of a MultiArray into a single channel float32 cv::Mat
+//----------------------------------------------------------------------------------------
+- (void) CVMatFromMultiArray:(MLMultiArray *)src channel:(int)channel dst:(cv::Mat &)dst
+{
+    int rows = [src.shape[1] intValue];
+    int cols = [src.shape[2] intValue];
+    int offset = rows*cols*sizeof(double) * channel;
+    void *data = src.dataPointer;
+    dst = cv::Mat( rows, cols, CV_64FC1, (char*)data + offset);
+    dst.convertTo( dst, CV_32FC1);
+} // CVMatFromMultiArray()
 
 // Classify intersections with Keras Model
 //--------------------------------------------
@@ -938,7 +1007,7 @@ static BlackWhiteEmpty classifier;
                        crop[i].ptr<double>(0),
                        sizeof(double) * CROPSIZE * CROPSIZE);
             }
-            clazz = [g_app.stoneModel classify:_nn_input];
+            clazz = [g_app.stoneModel classify:_nn_bew_input];
 //            if (i == 0) { res = g_app.stoneModel.dbgimg; }
             diagram[i] = clazz;
         }
@@ -947,6 +1016,33 @@ static BlackWhiteEmpty classifier;
     _diagram = diagram;
     return res;
 } // keras_classify_intersections()
+
+// Compute an image giving on-board probability per pixel.
+// Use a convolutional network to do that.
+//--------------------------------------------------------------
+- (void) nn_boardness: (const cv::Mat&)src dst:(cv::Mat&)dst
+{
+    // Rescale img to 350x466
+    cv::Mat src_resized;
+    resize_transform( src, src_resized, IMG_WIDTH, IMG_HEIGHT);
+    //  Feed it to the model
+    MLMultiArray *nn_io_input = [self MultiArrayFromCVMat:src_resized memId:@"io_input"];
+    MLMultiArray *featMap = [_boardModel featureMap:nn_io_input];
+    // Back to cv::Mat
+    cv::Mat feat;
+    [self CVMatFromMultiArray:featMap channel:0 dst:feat];
+    // Scale to [0..255]
+    double mmin, mmax;
+    cv::minMaxLoc( feat, &mmin, &mmax);
+    feat -= mmin;
+    feat *= 255.0 / (mmax - mmin);
+    // Resize to original size
+    resize_transform( feat, dst, src.cols, src.rows);
+    // Back to uint8
+    dst.convertTo( dst, CV_8UC1);
+} // nn_boardness()
+
+
 
 @end
 
