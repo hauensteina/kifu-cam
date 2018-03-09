@@ -788,8 +788,8 @@ static BlackWhiteEmpty classifier;
                   *canvas, cv::Scalar( 255,0,0,255));
         
         // One horiz and vert line
-        draw_polar_line( _horizontal_lines[SZ(_horizontal_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
-        draw_polar_line( _vertical_lines[SZ(_vertical_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
+        //draw_polar_line( _horizontal_lines[SZ(_horizontal_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
+        //draw_polar_line( _vertical_lines[SZ(_vertical_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
         
 //        // Show classification result
 //        ISLOOP (_diagram) {
@@ -886,40 +886,6 @@ static BlackWhiteEmpty classifier;
 } // check_debug_trigger()
 
 #pragma mark - iOS Glue
-
-//// Convert a cv::Mat to a CIImage
-////----------------------------------------------
-//- (CIImage *) CIImageFromCVMat:(cv::Mat)cvMat
-//{
-//    cv::Mat m = cvMat.clone();
-//    NSData *data = [NSData dataWithBytes:m.data length:m.elemSize()*m.total()];
-//    CGColorSpaceRef colorSpace;
-//    
-//    if (m.elemSize() == 1) {
-//        colorSpace = CGColorSpaceCreateDeviceGray();
-//    } else {
-//        colorSpace = CGColorSpaceCreateDeviceRGB();
-//    }
-//    
-//    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
-//    
-//    // Creating CGImage from cv::Mat
-//    CGImageRef imageRef = CGImageCreate(m.cols,                                 //width
-//                                        m.rows,                                 //height
-//                                        8,                                          //bits per component
-//                                        8 * m.elemSize(),                       //bits per pixel
-//                                        m.step[0],                            //bytesPerRow
-//                                        colorSpace,                                 //colorspace
-//                                        kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
-//                                        provider,                                   //CGDataProviderRef
-//                                        NULL,                                       //decode
-//                                        false,                                      //should interpolate
-//                                        kCGRenderingIntentDefault                   //intent
-//                                        );
-//    
-//    CIImage *res = [CIImage imageWithCGImage:imageRef];
-//    return res;
-//} // CIImageFromCVMat()
 
 // Make an MLMultiArray from a 3 channel cv::Mat with values 0..255
 // cvMat will be converted to double and scaled to [-1,1]
