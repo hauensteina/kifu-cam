@@ -76,6 +76,32 @@ void drawRect( UIView *view, UIColor *color, int x, int y, int width, int height
     [view addSubview:myBox];
 }
 
+// Draw a filled circle on a UIImage. On main thread because using UIKit
+//-------------------------------------------------------------------------------
+UIImage* drawCircleOnImg( UIImage *image, int x, int y, int d, UIColor *col)
+{
+    // begin a graphics context of sufficient size
+    UIGraphicsBeginImageContext(image.size);
+    // draw original image into the context
+    [image drawAtPoint:CGPointZero];
+    // get the context for CoreGraphics
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    // set stroking color and draw circle
+    [col setStroke];
+    CGRect circleRect = CGRectMake( x - d/2, y - d/2,
+                                   d, d);
+    //circleRect = CGRectInset(circleRect, x, y);
+    // draw filled circle
+    CGContextSetFillColorWithColor(ctx, col.CGColor);
+    CGContextFillEllipseInRect(ctx, circleRect);
+    // make image out of bitmap context
+    UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
+    // free the context
+    UIGraphicsEndImageContext();
+    
+    return retImage;
+} // drawCircleOnImg()
+
 //==========
 // Strings
 //==========

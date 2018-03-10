@@ -49,6 +49,8 @@ extern "C" {
     //==========
     // Draw a massive rectangle on a view
     void drawRect( UIView *view, UIColor *color, int x, int y, int width, int height);
+    // Draw a filled circle on a UIImage. On main thread because using UIKit
+    UIImage* drawCircleOnImg( UIImage *image, int x, int y, int d, UIColor *col);
 
     // Strings
     //==========
