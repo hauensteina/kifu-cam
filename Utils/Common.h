@@ -106,6 +106,11 @@ extern "C" {
     void setProp( NSString *key, NSString *value);
     // Get a string property in the user defaults.
     NSString* getProp( NSString *key, NSString *defaultVal);
+    
+    // Json
+    //=========
+    // Parse Json into an NSObject
+    id parseJSON( NSString *json);
 
 #ifdef __cplusplus
 }

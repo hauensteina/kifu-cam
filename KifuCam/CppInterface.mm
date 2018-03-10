@@ -820,6 +820,7 @@ static BlackWhiteEmpty classifier;
 {
     // Pick best frame from Q
     cv::Mat best;
+    Points2f bestCorners;
     int maxBlobs = -1E9;
     int bestidx = -1;
     ILOOP (SZ(_imgQ) - 1) { // ignore newest frame
@@ -833,6 +834,7 @@ static BlackWhiteEmpty classifier;
         if (SZ(_stone_or_empty) > maxBlobs) {
             maxBlobs = SZ(_stone_or_empty);
             best = _small_img;
+            bestCorners = _corners;
             bestidx = i;
         }
     }
@@ -875,6 +877,9 @@ static BlackWhiteEmpty classifier;
 } // check_debug_trigger()
 
 #pragma mark - iOS Glue
+
+//=== iOS Glue ===
+//================
 
 // Make an MLMultiArray from a 3 channel cv::Mat with values 0..255
 // cvMat will be converted to double and scaled to [-1,1]
@@ -986,7 +991,36 @@ static BlackWhiteEmpty classifier;
     dst.convertTo( dst, CV_8UC1);
 } // nn_boardness()
 
+//=== Sgf ===
+//===========
 
+// Return the four corner coords as an array of 4 pairs [[x0,y0],[x1,y1],...]
+// Ordered clockwise tl,tr,br,bl
+//-----------------------------------------------------------------------------
+- (NSArray *) corners_from_sgf:(NSString *)sgf_
+{
+    std::string sgf = [sgf_ UTF8String];
+    NSMutableArray *res = [NSMutableArray new];
+    std::string gc = get_sgf_tag( sgf, "GC");
+    std::regex re( ".*:(\\(.*\\))");
+    std::string tstr = std::regex_replace( gc, re, "$1" );
+    // Turn it into json
+    std::regex re1( "\\(");
+    tstr = std::regex_replace( tstr, re1, "[" );
+    std::regex re2( "\\)");
+    tstr = std::regex_replace( tstr, re2, "]" );
+    // Parse it
+    NSArray *points = parseJSON( @(tstr.c_str()));
+    long len = [points count];
+    int boardsz = 19;
+    if (len == 13*13) boardsz = 13;
+    else if (len == 9*9) boardsz = 9;
+    [res addObject:points[0]];
+    [res addObject:points[boardsz-1]];
+    [res addObject:points[boardsz*boardsz-1]];
+    [res addObject:points[boardsz*boardsz-boardsz]];
+    return res;
+} // corners_from_sgf()
 
 @end
 

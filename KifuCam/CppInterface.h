@@ -70,6 +70,8 @@
 - (UIImage *) get_last_frame_with_board;
 // Check for the debug mode trigger position to show right menu.
 - (bool) check_debug_trigger;
+// Get the corner coords fom GC tag of sgf
+- (NSArray *) corners_from_sgf:(NSString *)sgf;
 
 
 @end

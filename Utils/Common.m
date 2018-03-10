@@ -357,8 +357,24 @@ NSString* getProp( NSString *key, NSString *defaultVal)
     return val;
 } // getProp()
 
+//=====================
+// JSON
+//=====================
 
-
+// Parse Json into an NSObject
+//-----------------------------------------
+id parseJSON( NSString *json)
+{
+    NSData *data = [json dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err = nil;
+    id objFromJson = [NSJSONSerialization JSONObjectWithData:data
+                                                     options:0
+                                                       error:&err];
+    if (!objFromJson) {
+        NSLog( @"Error parsing JSON: %@", json);
+    }
+    return objFromJson;
+} // parseJSON()
 
 
 

@@ -114,7 +114,7 @@
 
 // Save photo, sgf, json
 //--------------------------
-- (NSString*) savePhotoAndSgf //@@@
+- (NSString*) savePhotoAndSgf 
 {
     // Make filename from date
     NSString *fname = nscat( tstampFname(), @".png");
