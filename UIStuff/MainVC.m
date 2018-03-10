@@ -144,6 +144,12 @@
     [self.frameExtractor resume];
 }
 
+//-----------------------------------------
+- (void) viewWillDisappear:(BOOL) animated
+{
+    [self.frameExtractor suspend];
+}
+
 //-------------------------------
 - (BOOL)prefersStatusBarHidden
 {
@@ -311,7 +317,9 @@
         UIImage *processedImg = [self.cppInterface video_mode:image];
         self.img = processedImg;
         [self.cameraView setImage:self.img];
-        [self.frameExtractor resume];
+        if (self.view.window) {
+            [self.frameExtractor resume];
+        }
     } // videoMode
     [self positionButtonAndLabels];
 } // captured()
