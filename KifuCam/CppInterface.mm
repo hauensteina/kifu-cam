@@ -978,8 +978,10 @@ static BlackWhiteEmpty classifier;
     MLMultiArray *nn_io_input = [self MultiArrayFromCVMat:src_resized memId:@"io_input"];
     MLMultiArray *featMap = [_boardModel featureMap:nn_io_input];
     // Back to cv::Mat
-    cv::Mat feat;
-    [self CVMatFromMultiArray:featMap channel:0 dst:feat];
+    cv::Mat feat_on, feat_off, feat;
+    [self CVMatFromMultiArray:featMap channel:0 dst:feat_on];
+    [self CVMatFromMultiArray:featMap channel:1 dst:feat_off];
+    feat = feat_on - feat_off;
     // Scale to [0..255]
     double mmin, mmax;
     cv::minMaxLoc( feat, &mmin, &mmax);
