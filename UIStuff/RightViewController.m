@@ -166,13 +166,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
 // file systm.
 //---------------------------
 - (void)mnuAddTestCase 
-{
-    NSArray *testfiles = globFiles(@TESTCASE_FOLDER, @TESTCASE_PREFIX, @"*.png");
-    //NSString *last = changeExtension( [testfiles lastObject], @"");
-    //NSArray *parts = [last componentsSeparatedByString: @"_"];
-    //int fnum = [[parts lastObject] intValue] + 1;
-    NSString *tstamp = tstampFname();
-    
+{    
     // Get selected file from ImagesVC
     NSString *selFile = [g_app.imagesVC selectedFname];
     // Copy image
