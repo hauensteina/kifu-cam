@@ -203,7 +203,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     _selected_row = indexPath.row;
-    NSArray *choices = @[@"Select", @"Pair with current position", @"Delete", @"Cancel"];
+    NSArray *choices = @[@"Select", @"Pair with current position", @"Rerun", @"Delete", @"Cancel"];
     choicePopup( choices, @"Action",
                 ^(UIAlertAction *action) {
                     [self handleEditAction:action.title];
@@ -219,6 +219,9 @@
     }
     else if ([action hasPrefix:@"Pair with current position"]) {
         [self handlePairWithCurrent];
+    }
+    else if ([action hasPrefix:@"Rerun"]) {
+        [self handleRerun];
     }
     else if ([action hasPrefix:@"Delete"]) {
         NSString *fname = _titlesArray[_selected_row];
@@ -278,6 +281,39 @@
     copyFile( selectedFname, testFname);
     [self refresh];
 } // handlePairWithCurrent()
+
+// Rerun recognition on a testcase
+//-----------------------------------
+- (void)handleRerun
+{
+    NSString *fname = _titlesArray[_selected_row];
+    fname = changeExtension( fname, @".png");
+    NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname));
+    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    [g_app.mainVC.cppInterface recognize_position:img timeVotes:1 breakIfBad:NO];
+    NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
+    fname = changeExtension( fullfname, @".sgf");
+    NSError *error;
+    [sgf writeToFile:fname
+          atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    [self refresh];
+} // handleRerun()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
