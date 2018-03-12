@@ -168,15 +168,17 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
 - (void)mnuAddTestCase 
 {
     NSArray *testfiles = globFiles(@TESTCASE_FOLDER, @TESTCASE_PREFIX, @"*.png");
-    NSString *last = changeExtension( [testfiles lastObject], @"");
-    NSArray *parts = [last componentsSeparatedByString: @"_"];
-    int fnum = [[parts lastObject] intValue] + 1;
+    //NSString *last = changeExtension( [testfiles lastObject], @"");
+    //NSArray *parts = [last componentsSeparatedByString: @"_"];
+    //int fnum = [[parts lastObject] intValue] + 1;
+    NSString *tstamp = tstampFname();
     
     // Get selected file from ImagesVC
     NSString *selFile = [g_app.imagesVC selectedFname];
     // Copy image
     NSString *source = nsprintf( @"%@/%@", @SAVED_FOLDER, selFile);
-    NSString *target = nsprintf( @"%@/%@%05d.png", @TESTCASE_FOLDER, @TESTCASE_PREFIX, fnum);
+    NSString *fname = nscat( @TESTCASE_PREFIX, selFile);
+    NSString *target = nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname);
     copyFile( source, target);
     // Copy sgf
     source = changeExtension( source, @".sgf");
@@ -184,7 +186,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
     copyFile( source, target);
     
     [g_app.editTestCaseVC refresh];
-    popup( nsprintf( @"Image %@ added as Test Case %d", selFile, fnum), @"");
+    popup( nsprintf( @"Added %@", fname), @"");
 } // mnuAddTestCase()
 
 // Show test cases from filesystem in a tableview, pick one.
