@@ -17,6 +17,7 @@ import numpy as np
 from numpy.random import random
 import argparse
 import matplotlib as mpl
+import matplotlib.patches as patches
 # mpl.use('Agg') # This makes matplotlib work without a display
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons
@@ -24,6 +25,10 @@ from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons
 # Where am I
 SCRIPTPATH = os.path.dirname(os.path.realpath(__file__))
 SELECTED_CORNER = 'TL'
+CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
+AX_IMAGE = None
+FIG = None
+IMG = None
 
 #---------------------------
 def usage(printmsg=False):
@@ -45,8 +50,23 @@ def usage(printmsg=False):
 
 #----------------------
 def onclick( event):
+    global SELECTED_CORNER
+    global CORNER_COORDS
+    global AX_IMAGE
+    global FIG
     if not event.xdata: return
     if event.xdata < 1: return # The click was on the button, not the image
+    CORNER_COORDS[SELECTED_CORNER][0] = event.xdata
+    CORNER_COORDS[SELECTED_CORNER][1] = event.ydata
+
+    s = 15
+    r = s / 2.0
+    ell = patches.Ellipse( (event.xdata, event.ydata), s, s, edgecolor='r', facecolor='none')
+    #rect = patches.Rectangle((event.xdata, event.ydata), s, s, linewidth=1, edgecolor='r', facecolor='none')
+    #rect = patches.Rectangle((100, 100), s, s, linewidth=1, edgecolor='r', facecolor='none')
+    AX_IMAGE.add_patch( ell)
+    FIG.canvas.draw()
+    #plt.show()
     print( '%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
            ('double' if event.dblclick else 'single', event.button,
             event.x, event.y, event.xdata, event.ydata))
@@ -54,6 +74,10 @@ def onclick( event):
 #----------------------------
 def cb_btn_reset( event):
     print( 'btn_reset')
+    AX_IMAGE.cla()
+    AX_IMAGE.imshow( IMG, origin='upper')
+    FIG.canvas.draw()
+
 
 #----------------------------
 def cb_rbtn_corner( label):
@@ -64,6 +88,10 @@ def cb_rbtn_corner( label):
 #-----------
 def main():
     global SELECTED_CORNER
+    global AX_IMAGE
+    global CORNER_COORDS
+    global FIG
+    global IMG
 
     if len(sys.argv) == 1:
         usage(True)
@@ -71,21 +99,22 @@ def main():
     parser = argparse.ArgumentParser(usage=usage())
     parser.add_argument( '--fname',      required=True)
     args = parser.parse_args()
-    fig = plt.figure()
+
+    FIG = plt.figure()
 
     # Image
-    img = mpl.image.imread( args.fname)
-    ax_img = fig.add_axes( [0.07, 0.06, 0.5, 0.9] )
-    ax_img.imshow( img, origin='upper')
-    cid = fig.canvas.mpl_connect('button_press_event', onclick)
+    IMG = mpl.image.imread( args.fname)
+    AX_IMAGE = FIG.add_axes( [0.07, 0.06, 0.5, 0.9] )
+    AX_IMAGE.imshow( IMG, origin='upper')
+    cid = FIG.canvas.mpl_connect('button_press_event', onclick)
 
     # Reset button
-    ax_reset = fig.add_axes( [0.70, 0.1, 0.1, 0.05] )
+    ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
     btn_reset = Button( ax_reset, 'Reset')
     btn_reset.on_clicked( cb_btn_reset)
 
     # Radiobutton for corner
-    ax_radio = fig.add_axes( [0.70, 0.5, 0.2, 0.2] )
+    ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
     rbtn_corner = RadioButtons( ax_radio, ('TL', 'TR', 'BR', 'BL' ))
     rbtn_corner.on_clicked( cb_rbtn_corner)
 
