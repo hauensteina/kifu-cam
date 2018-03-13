@@ -12,7 +12,8 @@
 
 from __future__ import division, print_function
 from pdb import set_trace as BP
-import os,sys,re,json
+import os,sys,re,json,copy
+from StringIO import StringIO
 import numpy as np
 from numpy.random import random
 import argparse
@@ -47,6 +48,83 @@ def usage(printmsg=False):
         exit(1)
     else:
         return msg
+
+# Read and sgf file and linearize it into a list
+# ['b','w','e',...]
+#-------------------------------------------------
+def linearize_sgf( sgf):
+    boardsz = int( get_sgf_tag( 'SZ', sgf))
+    if not 'KifuCam' in sgf:
+        # The AW[ab][ce]... case
+        match = re.search ( 'AW(\[[a-s][a-s]\])*', sgf)
+        whites = match.group(0)
+        whites = re.sub( 'AW', '', whites)
+        whites = re.sub( '\[', 'AW[', whites)
+        whites = re.findall( 'AW' + '\[[^\]]*', whites)
+        match = re.search ( 'AB(\[[a-s][a-s]\])*', sgf)
+        blacks = match.group(0)
+        blacks = re.sub( 'AB', '', blacks)
+        blacks = re.sub( '\[', 'AB[', blacks)
+        blacks = re.findall( 'AB' + '\[[^\]]*', blacks)
+    else:
+        # The AW[ab]AW[ce]... case
+        whites = re.findall( 'AW' + '\[[^\]]*', sgf)
+        blacks = re.findall( 'AB' + '\[[^\]]*', sgf)
+
+    res = ['EMPTY'] * boardsz * boardsz
+    for w in whites:
+        pos = w.split( '[')[1]
+        col = ord( pos[0]) - ord( 'a')
+        row = ord( pos[1]) - ord( 'a')
+        idx = col + row * boardsz
+        res[idx] = 'WHITE'
+
+    for b in blacks:
+        pos = b.split( '[')[1]
+        col = ord( pos[0]) - ord( 'a')
+        row = ord( pos[1]) - ord( 'a')
+        idx = col + row * boardsz
+        res[idx] = 'BLACK'
+
+    return res
+
+# e.g for board size, call get_sgf_tag( sgf, "SZ")
+#---------------------------------------------------
+def get_sgf_tag( tag, sgf):
+    m = re.search( tag + '\[[^\]]*', sgf)
+    if not m: return ''
+    mstr = m.group(0)
+    res = mstr.split( '[')[1]
+    res = res.split( ']')[0]
+    return res
+
+# Get list of intersection coords fro sgf GC tag
+#-------------------------------------------------
+def get_isec_coords( sgffile):
+    with open( sgffile) as f: sgf = f.read()
+    sgf = sgf.replace( '\\','')
+    if not 'intersections:' in sgf and not 'intersections\:' in sgf:
+        print('no intersections in ' + sgffile)
+        return
+    boardsz = int( get_sgf_tag( 'SZ', sgf))
+    diagram = linearize_sgf( sgf)
+    intersections = get_sgf_tag( 'GC', sgf)
+    intersections = re.sub( '\(','[',intersections)
+    intersections = re.sub( '\)',']',intersections)
+    intersections = re.sub( 'intersections','"intersections"',intersections)
+    intersections = '{' + intersections + '}'
+    intersections = json.loads( intersections)
+    intersections = intersections[ 'intersections']
+    elt = {'x':0, 'y':0, 'val':'EMPTY'}
+    coltempl = [ copy.deepcopy(elt) for _ in range(boardsz) ]
+    res = [ copy.deepcopy(coltempl) for _ in range(boardsz) ]
+    for col in range(boardsz):
+        for row in range(boardsz):
+            idx = row * boardsz + col
+            res[col][row]['val'] = diagram[idx]
+            res[col][row]['x'] = intersections[idx][0]
+            res[col][row]['y'] = intersections[idx][1]
+    return res
 
 #----------------------
 def onclick( event):
@@ -119,6 +197,10 @@ def main():
     AX_IMAGE = FIG.add_axes( [0.07, 0.06, 0.5, 0.9] )
     AX_IMAGE.imshow( IMG, origin='upper')
     cid = FIG.canvas.mpl_connect('button_press_event', onclick)
+
+    # Sgf
+    sgffname = os.path.splitext(args.fname)[0]+'.sgf'
+    intersections = get_isec_coords( sgffname)
 
     # Reset button
     ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
