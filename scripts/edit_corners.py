@@ -32,6 +32,7 @@ AX_IMAGE = None
 FIG = None
 IMG = None
 BOARDSZ = 19
+NEW_INTERSECTIONS=[]
 
 #---------------------------
 def usage(printmsg=False):
@@ -100,7 +101,7 @@ def get_sgf_tag( tag, sgf):
     res = res.split( ']')[0]
     return res
 
-# Get list of intersection coords fro sgf GC tag
+# Get list of intersection coords from sgf GC tag
 #-------------------------------------------------
 def get_isec_coords( sgffile):
     with open( sgffile) as f: sgf = f.read()
@@ -127,6 +128,21 @@ def get_isec_coords( sgffile):
             res[col][row]['x'] = intersections[idx][0]
             res[col][row]['y'] = intersections[idx][1]
     return res
+
+# Read sgf, replace intersections, write back
+#-------------------------------------------------------------
+def isecs2sgf( sgffile, intersections):
+    sgf  = open( sgffile).read()
+    tstr = json.dumps( intersections)
+    tstr = re.sub( '\[','(',tstr)
+    tstr = re.sub( '\]',')',tstr)
+    tstr = 'GC[intersections:' + tstr + ']'
+    res = sgf
+    res = re.sub( '(GC\[[^\]]*\])', '', res)
+    res = re.sub( '(SZ\[[^\]]*\])', r'\1' + tstr, res)
+    res = re.sub( r'\s*','', res)
+    BP()
+    open( sgffile, 'w').write( res)
 
 #----------------------
 def onclick( event):
@@ -163,16 +179,17 @@ def cb_btn_reset( event):
     AX_IMAGE.imshow( IMG, origin='upper')
     FIG.canvas.draw()
 
-#----------------------------
+# Write the sgf back, with the intersections swapped out
+#----------------------------------------------------------
 def cb_btn_save( event):
-    print( 'btn_save')
-    AX_IMAGE.cla()
-    AX_IMAGE.imshow( IMG, origin='upper')
-    FIG.canvas.draw()
+    isecs2sgf( SGF_FILE, np.round(NEW_INTERSECTIONS).tolist())
+    print( 'saved')
 
 # Compute intersections from corners
 #-------------------------------------
 def cb_btn_done( event):
+    global NEW_INTERSECTIONS
+
     tl = CORNER_COORDS['TL']
     tr = CORNER_COORDS['TR']
     br = CORNER_COORDS['BR']
@@ -202,6 +219,7 @@ def cb_btn_done( event):
     M = cv2.getPerspectiveTransform( target_square, src_quad)
     intersections = cv2.perspectiveTransform( extra, M)
     intersections = intersections.reshape( len(intersections_zoomed), 2)
+    NEW_INTERSECTIONS = intersections.tolist()
 
     # Show
     AX_IMAGE.cla()
@@ -225,6 +243,7 @@ def main():
     global CORNER_COORDS
     global FIG
     global IMG
+    global SGF_FILE
 
     if len(sys.argv) == 1:
         usage(True)
@@ -242,8 +261,8 @@ def main():
     cid = FIG.canvas.mpl_connect('button_press_event', onclick)
 
     # Sgf
-    sgffname = os.path.splitext(args.fname)[0]+'.sgf'
-    intersections = get_isec_coords( sgffname)
+    SGF_FILE = os.path.splitext(args.fname)[0]+'.sgf'
+    intersections = get_isec_coords( SGF_FILE)
 
     # Reset button
     ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
