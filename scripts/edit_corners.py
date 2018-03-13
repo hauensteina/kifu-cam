@@ -110,7 +110,7 @@ def get_isec_coords( sgffile):
         print('no intersections in ' + sgffile)
         return
     boardsz = int( get_sgf_tag( 'SZ', sgf))
-    diagram = linearize_sgf( sgf)
+    #diagram = linearize_sgf( sgf)
     intersections = get_sgf_tag( 'GC', sgf)
     intersections = re.sub( '\(','[',intersections)
     intersections = re.sub( '\)',']',intersections)
@@ -118,16 +118,7 @@ def get_isec_coords( sgffile):
     intersections = '{' + intersections + '}'
     intersections = json.loads( intersections)
     intersections = intersections[ 'intersections']
-    elt = {'x':0, 'y':0, 'val':'EMPTY'}
-    coltempl = [ copy.deepcopy(elt) for _ in range(boardsz) ]
-    res = [ copy.deepcopy(coltempl) for _ in range(boardsz) ]
-    for col in range(boardsz):
-        for row in range(boardsz):
-            idx = row * boardsz + col
-            res[col][row]['val'] = diagram[idx]
-            res[col][row]['x'] = intersections[idx][0]
-            res[col][row]['y'] = intersections[idx][1]
-    return res
+    return intersections
 
 # Read sgf, replace intersections, write back
 #-------------------------------------------------------------
@@ -141,7 +132,6 @@ def isecs2sgf( sgffile, intersections):
     res = re.sub( '(GC\[[^\]]*\])', '', res)
     res = re.sub( '(SZ\[[^\]]*\])', r'\1' + tstr, res)
     res = re.sub( r'\s*','', res)
-    BP()
     open( sgffile, 'w').write( res)
 
 #----------------------
@@ -224,11 +214,16 @@ def cb_btn_done( event):
     # Show
     AX_IMAGE.cla()
     AX_IMAGE.imshow( IMG, origin='upper')
-    r=5
+    draw_intersections( intersections, 5, 'r')
+
+# Draw circles on intersections
+#----------------------------------
+def draw_intersections( intersections, r, col):
     for isec in intersections:
-        ell = patches.Ellipse( isec, r, r, edgecolor='r', facecolor='none')
+        ell = patches.Ellipse( isec, r, r, edgecolor=col, facecolor='none')
         AX_IMAGE.add_patch( ell)
     FIG.canvas.draw()
+
 
 #----------------------------
 def cb_rbtn_corner( label):
@@ -263,6 +258,7 @@ def main():
     # Sgf
     SGF_FILE = os.path.splitext(args.fname)[0]+'.sgf'
     intersections = get_isec_coords( SGF_FILE)
+    draw_intersections( intersections, 5, 'g')
 
     # Reset button
     ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
