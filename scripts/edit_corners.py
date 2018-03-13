@@ -22,6 +22,7 @@ import matplotlib.patches as patches
 # mpl.use('Agg') # This makes matplotlib work without a display
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons, CheckButtons
+import cv2
 
 # Where am I
 SCRIPTPATH = os.path.dirname(os.path.realpath(__file__))
@@ -30,6 +31,7 @@ CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0
 AX_IMAGE = None
 FIG = None
 IMG = None
+BOARDSZ = 19
 
 #---------------------------
 def usage(printmsg=False):
@@ -156,7 +158,7 @@ def onclick( event):
 
 #----------------------------
 def cb_btn_reset( event):
-    print( 'btn_reset')
+    CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
     AX_IMAGE.cla()
     AX_IMAGE.imshow( IMG, origin='upper')
     FIG.canvas.draw()
@@ -168,6 +170,47 @@ def cb_btn_save( event):
     AX_IMAGE.imshow( IMG, origin='upper')
     FIG.canvas.draw()
 
+# Compute intersections from corners
+#-------------------------------------
+def cb_btn_done( event):
+    tl = CORNER_COORDS['TL']
+    tr = CORNER_COORDS['TR']
+    br = CORNER_COORDS['BR']
+    bl = CORNER_COORDS['BL']
+    src_quad = np.array( [tl,tr,br,bl]).astype('float32')
+    width = IMG.shape[1]
+    height = IMG.shape[0]
+    marg = width / 20.0
+
+    # Transform corners to be a square
+    s = width-2*marg
+    target_square = np.array( [[marg,marg], [marg+s,marg], [marg+s,marg+s], [marg,marg+s]]).astype('float32')
+
+    # Compute the grid
+    intersections_zoomed = []
+    ss = s / (BOARDSZ-1.0)
+    for r in range(BOARDSZ):
+        for c in range(BOARDSZ):
+            x = marg + c*ss
+            y = marg + r*ss
+            intersections_zoomed.append([x,y])
+
+    intersections_zoomed = np.array( intersections_zoomed).astype('float32')
+    # Needs extra dimension
+    extra = intersections_zoomed.reshape( 1,len(intersections_zoomed), 2)
+    # Transform back
+    M = cv2.getPerspectiveTransform( target_square, src_quad)
+    intersections = cv2.perspectiveTransform( extra, M)
+    intersections = intersections.reshape( len(intersections_zoomed), 2)
+
+    # Show
+    AX_IMAGE.cla()
+    AX_IMAGE.imshow( IMG, origin='upper')
+    r=5
+    for isec in intersections:
+        ell = patches.Ellipse( isec, r, r, edgecolor='r', facecolor='none')
+        AX_IMAGE.add_patch( ell)
+    FIG.canvas.draw()
 
 #----------------------------
 def cb_rbtn_corner( label):
@@ -211,6 +254,11 @@ def main():
     ax_save  = FIG.add_axes( [0.70, 0.16, 0.1, 0.05] )
     btn_save = Button( ax_save, 'Save')
     btn_save.on_clicked( cb_btn_save)
+
+    # Done button computes and shows intersections
+    ax_done  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
+    btn_done = Button( ax_done, 'Done')
+    btn_done.on_clicked( cb_btn_done)
 
     # Radiobutton for corner
     ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
