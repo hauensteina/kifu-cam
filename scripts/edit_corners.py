@@ -66,6 +66,7 @@ def onclick( event):
     elif SELECTED_CORNER == 'BR': col = 'b'
     elif SELECTED_CORNER == 'BL': col = 'c'
     ell = patches.Ellipse( (event.xdata, event.ydata), s, s, edgecolor=col, facecolor='none')
+    CORNER_COORDS['SELECTED_CORNER'] = [event.xdata, event.ydata]
     #rect = patches.Rectangle((event.xdata, event.ydata), s, s, linewidth=1, edgecolor='r', facecolor='none')
     #rect = patches.Rectangle((100, 100), s, s, linewidth=1, edgecolor='r', facecolor='none')
     AX_IMAGE.add_patch( ell)
@@ -78,6 +79,13 @@ def onclick( event):
 #----------------------------
 def cb_btn_reset( event):
     print( 'btn_reset')
+    AX_IMAGE.cla()
+    AX_IMAGE.imshow( IMG, origin='upper')
+    FIG.canvas.draw()
+
+#----------------------------
+def cb_btn_save( event):
+    print( 'btn_save')
     AX_IMAGE.cla()
     AX_IMAGE.imshow( IMG, origin='upper')
     FIG.canvas.draw()
@@ -116,6 +124,11 @@ def main():
     ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
     btn_reset = Button( ax_reset, 'Reset')
     btn_reset.on_clicked( cb_btn_reset)
+
+    # Save button
+    ax_save  = FIG.add_axes( [0.70, 0.16, 0.1, 0.05] )
+    btn_save = Button( ax_save, 'Save')
+    btn_save.on_clicked( cb_btn_save)
 
     # Radiobutton for corner
     ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
