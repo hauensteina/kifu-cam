@@ -61,7 +61,11 @@ def onclick( event):
 
     s = 15
     r = s / 2.0
-    ell = patches.Ellipse( (event.xdata, event.ydata), s, s, edgecolor='r', facecolor='none')
+    col = 'r'
+    if SELECTED_CORNER == 'TR': col = 'g'
+    elif SELECTED_CORNER == 'BR': col = 'b'
+    elif SELECTED_CORNER == 'BL': col = 'c'
+    ell = patches.Ellipse( (event.xdata, event.ydata), s, s, edgecolor=col, facecolor='none')
     #rect = patches.Rectangle((event.xdata, event.ydata), s, s, linewidth=1, edgecolor='r', facecolor='none')
     #rect = patches.Rectangle((100, 100), s, s, linewidth=1, edgecolor='r', facecolor='none')
     AX_IMAGE.add_patch( ell)
@@ -100,7 +104,7 @@ def main():
     parser.add_argument( '--fname',      required=True)
     args = parser.parse_args()
 
-    FIG = plt.figure()
+    FIG = plt.figure( figsize=(12,12))
 
     # Image
     IMG = mpl.image.imread( args.fname)
