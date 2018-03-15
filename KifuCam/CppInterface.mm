@@ -359,7 +359,7 @@ static BlackWhiteEmpty classifier;
     cv::Mat drawing;
     
     double theta, phi, gamma, scale, fovy;
-    gamma = 0; scale = 2; fovy = 30;
+    gamma = 0; scale = 1; fovy = 30;
     cv::Mat M;
     Points2f corners;
     switch (state) {
@@ -381,7 +381,7 @@ static BlackWhiteEmpty classifier;
         }
         case 2:
         {
-            theta = 0; phi = -10;
+            theta = 0; phi = -30;
             g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
             warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
                       drawing, M, corners); // out
