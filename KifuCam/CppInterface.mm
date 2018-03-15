@@ -45,6 +45,7 @@
 #import "CppInterface.h"
 #import "DrawBoard.hpp"
 #import "KerasBoardModel.h"
+#import "WarpMatrix.hpp"
 
 // Pyramid filter params
 #define SPATIALRAD  5
@@ -357,45 +358,83 @@ static BlackWhiteEmpty classifier;
 
     cv::Mat drawing;
     
+    double theta, phi, gamma, scale, fovy;
+    gamma = 0; scale = 2; fovy = 30;
+    cv::Mat M;
+    Points2f corners;
     switch (state) {
         case 0:
         {
-            g_app.mainVC.lbBottom.text = @"Find horizontals";
-            _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+            theta = 0; phi = 0;
+            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
+            warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
+                      drawing, M, corners); // out
             break;
         }
         case 1:
         {
-            g_app.mainVC.lbBottom.text = @"Remove duplicates";
-            dedup_horizontals( _horizontal_lines, _gray);
+            theta = 0; phi = 30;
+            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
+            warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
+                      drawing, M, corners); // out
             break;
         }
         case 2:
         {
-            g_app.mainVC.lbBottom.text = @"Filter";
-            filter_horiz_lines( _horizontal_lines);
-            break;
-        }
-        case 3:
-        {
-            g_app.mainVC.lbBottom.text = @"Generate";
-            fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+            theta = 0; phi = -10;
+            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
+            warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
+                      drawing, M, corners); // out
             break;
         }
         default:
             state = 0;
             return NULL;
-    } // switch
+    } // switch()
     state++;
+    _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+    dedup_horizontals( _horizontal_lines, _gray);
+    filter_horiz_lines( _horizontal_lines);
+    fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+
+//    switch (state) {
+//        case 0:
+//        {
+//            g_app.mainVC.lbBottom.text = @"Find horizontals";
+//            _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+//            break;
+//        }
+//        case 1:
+//        {
+//            g_app.mainVC.lbBottom.text = @"Remove duplicates";
+//            dedup_horizontals( _horizontal_lines, _gray);
+//            break;
+//        }
+//        case 2:
+//        {
+//            g_app.mainVC.lbBottom.text = @"Filter";
+//            filter_horiz_lines( _horizontal_lines);
+//            break;
+//        }
+//        case 3:
+//        {
+//            g_app.mainVC.lbBottom.text = @"Generate";
+//            fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+//            break;
+//        }
+//        default:
+//            state = 0;
+//            return NULL;
+//    } // switch
+//    state++;
     
     // Show results
-    cv::cvtColor( _gray, drawing, cv::COLOR_GRAY2RGB);
-    get_color( true);
-    ISLOOP (_horizontal_lines) {
-        cv::Scalar col = get_color();
-        draw_polar_line( _horizontal_lines[i], drawing, col);
-    }
-    //draw_polar_line( ratline, drawing, cv::Scalar( 255,128,64));
+//    cv::cvtColor( _gray, drawing, cv::COLOR_GRAY2RGB);
+//    get_color( true);
+//    ISLOOP (_horizontal_lines) {
+//        cv::Scalar col = get_color();
+//        draw_polar_line( _horizontal_lines[i], drawing, col);
+//    }
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f02_horiz_lines()
