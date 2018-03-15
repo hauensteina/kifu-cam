@@ -358,6 +358,32 @@ static BlackWhiteEmpty classifier;
 
     cv::Mat drawing;
     
+    Points2f p1s, p2s;
+    ISLOOP( _vertical_lines) {
+        cv::Vec4f seg = polar2segment( _vertical_lines[i]);
+        p1s.push_back( Point2f( seg[0],seg[1]));
+        p2s.push_back( Point2f( seg[1],seg[2]));
+    }
+    std::vector<cv::Vec2f> vert_proj;
+    auto rotlines = [&](const cv::Mat &M) {
+        Points2f p1srot, p2srot;
+        cv::perspectiveTransform( p1s, p1srot, M);
+        cv::perspectiveTransform( p2s, p2srot, M);
+        std::vector<cv::Vec2f> res;
+        ISLOOP( p1srot) {
+            res.push_back( segment2polar( cv::Vec4f( p1srot[i].x, p1srot[i].y,  p2srot[i].x,  p2srot[i].y)));
+        }
+        return res;
+    }; // rotlines()
+    auto paralellity = [&]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> plines = rotlines( M);
+        auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
+        double q1 = vec_q1( thetas);
+        double q3 = vec_q3( thetas);
+        double dq = q3 - q1;
+        return dq;
+    };
+    
     double theta, phi, gamma, scale, fovy;
     gamma = 0; scale = 1; fovy = 30;
     cv::Mat M;
@@ -366,9 +392,10 @@ static BlackWhiteEmpty classifier;
         case 0:
         {
             theta = 0; phi = 0;
-            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
             warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
                       drawing, M, corners); // out
+            double pary = paralellity( M);
+            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f; pary: %.2f", theta, phi, pary);
             break;
         }
         case 1:
@@ -377,6 +404,8 @@ static BlackWhiteEmpty classifier;
             g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
             warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
                       drawing, M, corners); // out
+            double pary = paralellity( M);
+            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f; pary: %.2f", theta, phi, pary);
             break;
         }
         case 2:
@@ -385,6 +414,8 @@ static BlackWhiteEmpty classifier;
             g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
             warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
                       drawing, M, corners); // out
+            double pary = paralellity( M);
+            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f; pary: %.2f", theta, phi, pary);
             break;
         }
         default:

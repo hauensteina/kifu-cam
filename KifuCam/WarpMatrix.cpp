@@ -136,7 +136,7 @@ void warpImage(const cv::Mat &src,
     warpMatrix( src.size(), theta, phi, gamma, scale, fovy, M, &corners); // Compute warp matrix
     cv::Rect bounding = cv::boundingRect( corners);
     warpPerspective( src, dst, M, cv::Size(sideLength,sideLength)); // Do actual image warp
-    dst = dst(bounding).clone();
+    dst = dst(bounding);
 
 } // warpImage()
 
