@@ -19,6 +19,20 @@
 #import "Ocv.hpp"
 #include <stdio.h>
 
+// Easy projection matrix for angle phi
+void easyWarp( cv::Size sz, double phi, cv::Mat &M);
+
+// Compute projection matrix
+void warpMatrix(cv::Size sz,
+                double theta,
+                double phi,
+                double gamma,
+                double scale,
+                double fovy,
+                cv::Mat &M,
+                std::vector<Point2f> *corners);
+
+// Compute matrix and warp image
 void warpImage(const     cv::Mat &src,
                double    theta,
                double    phi,

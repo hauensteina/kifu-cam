@@ -349,23 +349,20 @@ static BlackWhiteEmpty classifier;
     return res;
 } // f01_vert_lines()
 
-// Find horizontal grid lines
-//-----------------------------
-- (UIImage *) f02_horiz_lines
+// Find a transform the makes the lines parallel
+// Returns a number indicationg how parallel the best solution was.
+// Small numbers are more parallel.
+//-------------------------------------------------------------------------------------------------------
+float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
+                          float &minphi, cv::Mat &minM, float &sidelength, std::vector<Point2f> &minCorners)
 {
-    static int state = 0;
-    if (!SZ(_horizontal_lines)) state = 0;
-
-    cv::Mat drawing;
-    
     Points2f p1s, p2s;
-    ISLOOP( _vertical_lines) {
-        cv::Vec4f seg = polar2segment( _vertical_lines[i]);
+    ISLOOP( plines) {
+        cv::Vec4f seg = polar2segment( plines[i]);
         p1s.push_back( Point2f( seg[0],seg[1]));
-        p2s.push_back( Point2f( seg[1],seg[2]));
+        p2s.push_back( Point2f( seg[2],seg[3]));
     }
-    std::vector<cv::Vec2f> vert_proj;
-    auto rotlines = [&](const cv::Mat &M) {
+    auto rotlines = [&p1s, &p2s](const cv::Mat &M) {
         Points2f p1srot, p2srot;
         cv::perspectiveTransform( p1s, p1srot, M);
         cv::perspectiveTransform( p2s, p2srot, M);
@@ -375,47 +372,88 @@ static BlackWhiteEmpty classifier;
         }
         return res;
     }; // rotlines()
-    auto paralellity = [&]( const cv::Mat &M) {
+    auto paralellity = [rotlines]( const cv::Mat &M) {
         std::vector<cv::Vec2f> plines = rotlines( M);
         auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
         double q1 = vec_q1( thetas);
         double q3 = vec_q3( thetas);
+        double mmax = vec_max( thetas);
+        double mmin = vec_min( thetas);
         double dq = q3 - q1;
+        NSLog( @"dq: %.4lf max: %.4f, min: %.4f\n", dq, mmax, mmin);
         return dq;
-    };
-    
+    }; // paralellity()
     double theta, phi, gamma, scale, fovy;
-    gamma = 0; scale = 1; fovy = 30;
+    gamma = theta = 0; scale = 1; fovy = 30;
+    std::vector<Point2f> corners;
+    float minpary = 1E9;
+    minphi = -1;
     cv::Mat M;
-    Points2f corners;
+    for (phi = 0; phi > -60; phi -= 1) {
+        warpMatrix( sz,
+                   theta,
+                   phi,
+                   gamma,
+                   scale,
+                   fovy,
+                   M,
+                   &corners);
+        float pary = paralellity( M);
+        if (pary < minpary) {
+            minpary = pary;
+            minphi = phi;
+            minCorners = corners;
+            minM = M;
+        }
+    } // for
+    // A square to fit a transform results
+    sidelength = scale * hypot( sz.width, sz.height) / cos( fovy * 0.5 * (PI / 180.0));
+    return minpary;
+} // parallel_projection()
+
+// Find horizontal grid lines
+//-----------------------------
+- (UIImage *) f02_horiz_lines
+{
+    static int state = 0;
+    if (!SZ(_horizontal_lines)) state = 0;
+    cv::Size sz( _small_img.cols, _small_img.rows);
+    //std::vector<cv::Vec2f> vsub( &_vertical_lines[5], &_vertical_lines[20]);
+    
+    cv::Mat M;
+
+    cv::Mat drawing;
     switch (state) {
         case 0:
         {
-            theta = 0; phi = 0;
-            warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
-                      drawing, M, corners); // out
-            double pary = paralellity( M);
-            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f; pary: %.2f", theta, phi, pary);
+            float phi; cv::Mat M; float sidelength;
+            std::vector<Point2f> corners;
+            float pary = parallel_projection( sz, _vertical_lines, phi, M, sidelength, corners);
+            cv::Rect bounding = cv::boundingRect( corners);
+            warpPerspective( _small_img, drawing, M, cv::Size( sidelength, sidelength));
+            drawing = drawing(bounding);
+            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
             break;
         }
         case 1:
-        {
-            theta = 0; phi = 30;
-            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
-            warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
-                      drawing, M, corners); // out
-            double pary = paralellity( M);
-            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f; pary: %.2f", theta, phi, pary);
+        {   float phi = 90;
+            easyWarp( sz, phi, M);
+            warpPerspective( _small_img, drawing, M, sz);
+            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
             break;
         }
         case 2:
-        {
-            theta = 0; phi = -30;
-            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f;", theta, phi);
-            warpImage( _small_img, theta, phi, gamma, scale, fovy, // in
-                      drawing, M, corners); // out
-            double pary = paralellity( M);
-            g_app.mainVC.lbBottom.text = nsprintf( @"theta = %.2f; phi = %.2f; pary: %.2f", theta, phi, pary);
+        {   float phi = 100;
+            easyWarp( sz, phi, M);
+            warpPerspective( _small_img, drawing, M, sz);
+            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+            break;
+        }
+        case 3:
+        {   float phi = 110;
+            easyWarp( sz, phi, M);
+            warpPerspective( _small_img, drawing, M, sz);
+            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
             break;
         }
         default:

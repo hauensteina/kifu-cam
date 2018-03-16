@@ -17,6 +17,39 @@
 
 static double deg2Rad(double deg){return deg*(M_PI/180);}
 
+
+// phi == pi => we only see a line
+// phi == pi / 2 => squares are squares
+// Find matrix M such that a square gets viewed from angle phi.
+// The bottom line of the square goes through the screen center.
+// phi between pi/2 and pi.
+//--------------------------------------------------------------
+void easyWarp( cv::Size sz, double phi, cv::Mat &M)
+{
+    phi = deg2Rad( phi);
+    Point2f center( sz.width / 2.0, sz.height / 2.0);
+    // Distance of eye from image center
+    double a = 1.0 * sz.width;
+    double s = 1.0; // side of orig square
+    // Undistoreted orig square
+    Point2f bl_sq( center.x - s/2, center.y);
+    Point2f br_sq( center.x + s/2, center.y);
+    Point2f tl_sq( center.x - s/2, center.y - s);
+    Point2f tr_sq( center.x + s/2, center.y - s);
+    // Distorted by angle phi
+    Point2f bl_dist( center.x - s/2, center.y);
+    Point2f br_dist( center.x + s/2, center.y);
+    double l2r = a / (s * (sqrt( a*a + s*s - 2*a*s*cos(phi)))); // distorted distance left to right
+    double b2t = s * sin( phi); // distorted bottom to top
+    Point2f tl_dist( center.x - l2r/2, center.y - b2t);
+    Point2f tr_dist( center.x + l2r/2, center.y - b2t);
+    // Get transform fom distorted to normal
+    std::vector<Point2f> src = { tl_dist, tr_dist, br_dist, bl_dist };
+    std::vector<Point2f> dst = { tl_sq, tr_sq, br_sq, bl_sq };
+    M = getPerspectiveTransform( src, dst);
+} // easyWarp()
+
+
 // Compute the perspective transform matrix
 //------------------------------------------
 void warpMatrix(cv::Size sz,
