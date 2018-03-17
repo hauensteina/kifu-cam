@@ -279,14 +279,17 @@ static BlackWhiteEmpty classifier;
     BlobFinder::find_stones( _gray, _stone_or_empty);
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
     
-    // Find verticals
-    _vertical_lines = homegrown_vert_lines( _stone_or_empty);
-    static std::vector<cv::Vec2f> all_vert_lines;
-    all_vert_lines = _vertical_lines;
-    dedup_verticals( _vertical_lines, _gray);
-    filter_vert_lines( _vertical_lines);
-    const double x_thresh = 4.0;
-    fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
+    // Find lines
+    houghlines (_small_img, _stone_or_empty,
+                _vertical_lines, _horizontal_lines);
+
+//    _vertical_lines = homegrown_vert_lines( _stone_or_empty);
+//    static std::vector<cv::Vec2f> all_vert_lines;
+//    all_vert_lines = _vertical_lines;
+//    dedup_verticals( _vertical_lines, _gray);
+//    filter_vert_lines( _vertical_lines);
+//    const double x_thresh = 4.0;
+//    fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
     
     // Unwarp
     float phi; cv::Mat M;
@@ -430,7 +433,7 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
             minphi = phi;
             minM = M;
         }
-    } // for 
+    } // for
     return minpary;
 } // parallel_projection()
 

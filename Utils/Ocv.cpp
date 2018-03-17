@@ -631,6 +631,37 @@ void rot_img( const cv::Mat &img, double angle, cv::Mat &dst)
     cv::warpAffine( img, dst, m, cv::Size( nW, nH));
 }
 
+// Find verticals and horizontals using hough lines
+//-------------------------------------------------------------
+void houghlines (const cv::Mat &img, const Points &ps,
+                 std::vector<cv::Vec2f> &vert_lines,
+                 std::vector<cv::Vec2f> &horiz_lines)
+{
+    // Draw the points
+    cv::Mat canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
+    ISLOOP (ps) {
+        draw_point( ps[i], canvas,1, cv::Scalar(255));
+    }
+    // Put lines through them
+    std::vector<cv::Vec2f> lines;
+    const int votes = 10;
+    HoughLines(canvas, lines, 1, PI/180, votes, 0, 0 );
+    
+    // Separate vertical, horizontal, and other lines
+    std::vector<std::vector<cv::Vec2f> > horiz_vert_other_lines;
+    horiz_vert_other_lines = partition( lines, 3,
+                                       [](cv::Vec2f &line) {
+                                           const double thresh = 10.0;
+                                           double theta = line[1] * (180.0 / PI);
+                                           if (fabs(theta - 180) < thresh) return 1;   // vert
+                                           else if (fabs(theta) < thresh) return 1;
+                                           else if (fabs(theta-90) < thresh) return 0; // horiz
+                                           else return 2;
+                                       });
+    vert_lines  = horiz_vert_other_lines[1];
+    horiz_lines = horiz_vert_other_lines[0];
+} // houghlines()
+
 // Get main horizontal direction of a grid of points (in rad)
 //-------------------------------------------------------------
 double direction (const cv::Mat &img, const Points &ps)
@@ -656,43 +687,12 @@ double direction (const cv::Mat &img, const Points &ps)
                                            else if (fabs(theta-90) < thresh) return 0;
                                            else return 2;
                                        });
-    // Find median theta of vertical lines
+    // Find median theta of horizontal lines
     cv::Vec2f med = vec_median( horiz_vert_other_lines[0],
                                [](cv::Vec2f &a) { return a[1]; } );
     return med[1];
 } // direction()
 
-// Get variance of vertical line slopes.
-// If this is low, we got the perspective right.
-//-------------------------------------------------------------
-double vert_variance (const cv::Mat &img, const Points &ps)
-{
-    // Draw the points
-    cv::Mat canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
-    ISLOOP (ps) {
-        draw_point( ps[i], canvas,1, cv::Scalar(255));
-    }
-    // Put lines through them
-    std::vector<cv::Vec2f> lines;
-    const int votes = 10;
-    HoughLines(canvas, lines, 1, PI/180, votes, 0, 0 );
-    
-    // Separate horizontal, vertical, and other lines
-    std::vector<std::vector<cv::Vec2f> > horiz_vert_other_lines;
-    horiz_vert_other_lines = partition( lines, 3,
-                                       [](cv::Vec2f &line) {
-                                           const double thresh = 10.0;
-                                           double theta = line[1] * (180.0 / PI);
-                                           if (fabs(theta - 180) < thresh) return 1;
-                                           else if (fabs(theta) < thresh) return 1;
-                                           else if (fabs(theta-90) < thresh) return 0;
-                                           else return 2;
-                                       });
-    // Find theta variance of vertical lince
-    std::vector<double> thetas = vec_extract( horiz_vert_other_lines[0], [](const cv::Vec2f &a) { return a[1]; });
-    double sig2 = vec_var( thetas);
-    return sig2;
-} // vert_variance()
 
 // Inverse threshold at median
 //-----------------------------------------------------------

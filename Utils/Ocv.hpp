@@ -201,8 +201,10 @@ void normalize_plane( const cv::Mat &src, cv::Mat &dst);
 void normalize_plane_local( const cv::Mat &src, cv::Mat &dst, int radius);
 // Get main horizontal direction of a grid of points (in rad)
 double direction( const cv::Mat &img, const Points &ps);
-// Get variance of vertical line slopes.
-double vert_variance (const cv::Mat &img, const Points &ps);
+// Find verticals and horizontals using hough lines
+void houghlines (const cv::Mat &img, const Points &ps,
+                 std::vector<cv::Vec2f> &vert_lines,
+                 std::vector<cv::Vec2f> &horiz_lines);
 // Inverse threshold at median
 void inv_thresh_median( const cv::Mat &gray, cv::Mat &dst);
 // Inverse threshold at q1
