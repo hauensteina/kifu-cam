@@ -349,12 +349,12 @@ static BlackWhiteEmpty classifier;
     return res;
 } // f01_vert_lines()
 
-// Find a transform the makes the lines parallel
+// Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
 // Small numbers are more parallel.
 //-------------------------------------------------------------------------------------------------------
 float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
-                          float &minphi, cv::Mat &minM, float &sidelength, std::vector<Point2f> &minCorners)
+                          float &minphi, cv::Mat &minM)
 {
     Points2f p1s, p2s;
     ISLOOP( plines) {
@@ -377,37 +377,25 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
         auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
         double q1 = vec_q1( thetas);
         double q3 = vec_q3( thetas);
-        double mmax = vec_max( thetas);
-        double mmin = vec_min( thetas);
+        //double mmax = vec_max( thetas);
+        //double mmin = vec_min( thetas);
         double dq = q3 - q1;
-        NSLog( @"dq: %.4lf max: %.4f, min: %.4f\n", dq, mmax, mmin);
+        //NSLog( @"dq: %.4lf max: %.4f, min: %.4f\n", dq, mmax, mmin);
         return dq;
     }; // paralellity()
-    double theta, phi, gamma, scale, fovy;
-    gamma = theta = 0; scale = 1; fovy = 30;
-    std::vector<Point2f> corners;
+    double phi;
     float minpary = 1E9;
     minphi = -1;
     cv::Mat M;
-    for (phi = 0; phi > -60; phi -= 1) {
-        warpMatrix( sz,
-                   theta,
-                   phi,
-                   gamma,
-                   scale,
-                   fovy,
-                   M,
-                   &corners);
+    for (phi = 90; phi < 130; phi += 1) {
+        easyWarp( sz, phi, M);
         float pary = paralellity( M);
         if (pary < minpary) {
             minpary = pary;
             minphi = phi;
-            minCorners = corners;
             minM = M;
         }
     } // for
-    // A square to fit a transform results
-    sidelength = scale * hypot( sz.width, sz.height) / cos( fovy * 0.5 * (PI / 180.0));
     return minpary;
 } // parallel_projection()
 
@@ -426,39 +414,36 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     switch (state) {
         case 0:
         {
-            float phi; cv::Mat M; float sidelength;
-            std::vector<Point2f> corners;
-            float pary = parallel_projection( sz, _vertical_lines, phi, M, sidelength, corners);
-            cv::Rect bounding = cv::boundingRect( corners);
-            warpPerspective( _small_img, drawing, M, cv::Size( sidelength, sidelength));
-            drawing = drawing(bounding);
+            float phi; cv::Mat M;
+            float pary = parallel_projection( sz, _vertical_lines, phi, M);
+            cv::warpPerspective( _small_img, drawing, M, sz);
             g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
             break;
         }
-        case 1:
-        {   float phi = 90;
-            easyWarp( sz, phi, M);
-            warpPerspective( _small_img, drawing, M, sz);
-            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-            break;
-        }
-        case 2:
-        {   float phi = 100;
-            easyWarp( sz, phi, M);
-            warpPerspective( _small_img, drawing, M, sz);
-            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-            break;
-        }
-        case 3:
-        {   float phi = 110;
-            easyWarp( sz, phi, M);
-            warpPerspective( _small_img, drawing, M, sz);
-            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-            break;
-        }
-        default:
-            state = 0;
-            return NULL;
+//        case 1:
+//        {   float phi = 90;
+//            easyWarp( sz, phi, M);
+//            warpPerspective( _small_img, drawing, M, sz);
+//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+//            break;
+//        }
+//        case 2:
+//        {   float phi = 100;
+//            easyWarp( sz, phi, M);
+//            warpPerspective( _small_img, drawing, M, sz);
+//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+//            break;
+//        }
+//        case 3:
+//        {   float phi = 110;
+//            easyWarp( sz, phi, M);
+//            warpPerspective( _small_img, drawing, M, sz);
+//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+//            break;
+//        }
+//        default:
+//            state = 0;
+//            return NULL;
     } // switch()
     state++;
     _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);

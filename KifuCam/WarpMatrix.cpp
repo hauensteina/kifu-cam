@@ -18,11 +18,11 @@
 static double deg2Rad(double deg){return deg*(M_PI/180);}
 
 
-// phi == pi => we only see a line
-// phi == pi / 2 => squares are squares
 // Find matrix M such that a square gets viewed from angle phi.
 // The bottom line of the square goes through the screen center.
 // phi between pi/2 and pi.
+// phi == pi => extremely distorted fron view
+// phi == pi / 2 => the camera was vertically on top of the board, do nothing
 //--------------------------------------------------------------
 void easyWarp( cv::Size sz, double phi, cv::Mat &M)
 {
