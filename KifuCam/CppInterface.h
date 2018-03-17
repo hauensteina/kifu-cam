@@ -1,5 +1,5 @@
 //
-//  CppInterface.h
+//  CppInterface.h 
 //  KifuCam
 //
 // The MIT License (MIT)
@@ -34,16 +34,17 @@
 
 // Individual steps for debugging
 //---------------------------------
-- (UIImage *) f00_blobs;
-- (UIImage *) f01_vert_lines;
-- (UIImage *) f02_horiz_lines;
-- (UIImage *) f03_corners;
-- (UIImage *) f04_zoom_in;
-- (UIImage *) f05_dark_places;
-- (UIImage *) f06_mask_dark;
-- (UIImage *) f07_white_holes;
-- (UIImage *) f08_features;
-- (UIImage *) f09_classify;
+- (UIImage *) f00_warp;
+- (UIImage *) f01_blobs;
+- (UIImage *) f02_vert_lines;
+- (UIImage *) f03_horiz_lines;
+- (UIImage *) f04_corners;
+- (UIImage *) f05_zoom_in;
+- (UIImage *) f06_dark_places;
+- (UIImage *) f07_mask_dark;
+- (UIImage *) f08_white_holes;
+- (UIImage *) f09_features;
+- (UIImage *) f10_classify;
 
 - (UIImage *) video_mode:(UIImage *)img;
 - (UIImage *) photo_mode;

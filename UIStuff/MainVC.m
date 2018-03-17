@@ -353,55 +353,59 @@
         switch (_debugstate) {
             case 0:
                 _debugstate++;
-                //self.frame_grabber_on = NO;
                 [self.frameExtractor suspend];
-                img = [self.cppInterface f00_blobs];
+                img = [self.cppInterface f00_warp];
                 [self.cameraView setImage:img];
                 break;
             case 1:
-                img = [self.cppInterface f01_vert_lines];
-                if (!img) { _debugstate=2; continue; }
+                _debugstate++;
+                img = [self.cppInterface f01_blobs];
                 [self.cameraView setImage:img];
                 break;
             case 2:
-                img = [self.cppInterface f02_horiz_lines];
-                if (!img) { _debugstate=3; continue; }
+                img = [self.cppInterface f02_vert_lines];
+                if (!img) { _debugstate++; continue; }
                 [self.cameraView setImage:img];
                 break;
             case 3:
-                _debugstate++;
-                img = [self.cppInterface f03_corners];
+                img = [self.cppInterface f03_horiz_lines];
+                if (!img) { _debugstate++; continue; }
                 [self.cameraView setImage:img];
                 break;
             case 4:
                 _debugstate++;
-                img = [self.cppInterface f04_zoom_in];
+                img = [self.cppInterface f04_corners];
                 [self.cameraView setImage:img];
                 break;
             case 5:
                 _debugstate++;
-                img = [self.cppInterface f05_dark_places];
+                img = [self.cppInterface f05_zoom_in];
                 [self.cameraView setImage:img];
                 break;
             case 6:
                 _debugstate++;
-                img = [self.cppInterface f06_mask_dark];
+                img = [self.cppInterface f06_dark_places];
                 [self.cameraView setImage:img];
                 break;
             case 7:
                 _debugstate++;
-                img = [self.cppInterface f07_white_holes];
+                img = [self.cppInterface f07_mask_dark];
                 [self.cameraView setImage:img];
                 break;
             case 8:
+                _debugstate++;
+                img = [self.cppInterface f08_white_holes];
+                [self.cameraView setImage:img];
+                break;
+            case 9:
                 _debugstate++; continue; // skip;
                 //                img = [self.cppInterface f08_features];
                 //                if (!img) { _sliderstate=9; continue; }
                 //                [self.cameraView setImage:img];
                 break;
-            case 9:
+            case 10:
                 _debugstate++;
-                img = [self.cppInterface f09_classify];
+                img = [self.cppInterface f10_classify];
                 [self.cameraView setImage:img];
                 break;
             default:

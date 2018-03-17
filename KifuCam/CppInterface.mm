@@ -249,14 +249,14 @@ static BlackWhiteEmpty classifier;
 #pragma mark - Processing Pipeline for debugging
 //=================================================
 
+// Make verticals parallel
 //--------------------------
-- (UIImage *) f00_blobs
+- (UIImage *) f00_warp
 {
     _board_sz=19;
     g_app.mainVC.lbBottom.text = @"Tap the screen";
     _vertical_lines.clear();
     _horizontal_lines.clear();
-    //int sldVal = g_app.mainVC.sldDbg.value;
     NSString *fullfname;
     if ([g_app.menuVC demoMode]) {
         fullfname = findInBundle(@"demo", @".png");
@@ -268,8 +268,43 @@ static BlackWhiteEmpty classifier;
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     UIImageToMat( img, _orig_img);
     
+    // Find Blobs
     resize( _orig_img, _small_img, IMG_WIDTH);
-    cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB); 
+    const cv::Size sz( _small_img.cols, _small_img.rows);
+    cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB);
+    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+    thresh_dilate( _gray, _gray_threshed);
+    _stone_or_empty.clear();
+    BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
+    BlobFinder::find_stones( _gray, _stone_or_empty);
+    _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+    
+    // Find verticals
+    _vertical_lines = homegrown_vert_lines( _stone_or_empty);
+    static std::vector<cv::Vec2f> all_vert_lines;
+    all_vert_lines = _vertical_lines;
+    dedup_verticals( _vertical_lines, _gray);
+    filter_vert_lines( _vertical_lines);
+    const double x_thresh = 4.0;
+    fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
+    
+    // Unwarp
+    float phi; cv::Mat M;
+    float pary = parallel_projection( sz, _vertical_lines, phi, M);
+    cv::warpPerspective( _small_img, _small_img, M, sz);
+    g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
+    UIImage *res = MatToUIImage( _small_img);
+    return res;
+} // f00_warp()
+
+
+//--------------------------
+- (UIImage *) f01_blobs
+{
+    _board_sz=19;
+    g_app.mainVC.lbBottom.text = @"Stones and Intersections";
+    _vertical_lines.clear();
+    _horizontal_lines.clear();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed);
     _stone_or_empty.clear();
@@ -284,7 +319,7 @@ static BlackWhiteEmpty classifier;
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f00_blobs()
+} // f01_blobs()
 
 // Convert sgf string to UIImage 
 //----------------------------------------
@@ -299,7 +334,7 @@ static BlackWhiteEmpty classifier;
 
 // Find vertical grid lines
 //----------------------------------
-- (UIImage *) f01_vert_lines
+- (UIImage *) f02_vert_lines
 {
     static int state = 0;
     if (!SZ(_vertical_lines)) state = 0;
@@ -347,7 +382,7 @@ static BlackWhiteEmpty classifier;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f01_vert_lines()
+} // f02_vert_lines()
 
 // Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
@@ -395,108 +430,109 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
             minphi = phi;
             minM = M;
         }
-    } // for
+    } // for 
     return minpary;
 } // parallel_projection()
 
 // Find horizontal grid lines
 //-----------------------------
-- (UIImage *) f02_horiz_lines
+- (UIImage *) f03_horiz_lines
 {
     static int state = 0;
     if (!SZ(_horizontal_lines)) state = 0;
-    cv::Size sz( _small_img.cols, _small_img.rows);
-    //std::vector<cv::Vec2f> vsub( &_vertical_lines[5], &_vertical_lines[20]);
-    
-    cv::Mat M;
-
     cv::Mat drawing;
-    switch (state) {
-        case 0:
-        {
-            float phi; cv::Mat M;
-            float pary = parallel_projection( sz, _vertical_lines, phi, M);
-            cv::warpPerspective( _small_img, drawing, M, sz);
-            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
-            break;
-        }
-//        case 1:
-//        {   float phi = 90;
-//            easyWarp( sz, phi, M);
-//            warpPerspective( _small_img, drawing, M, sz);
-//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-//            break;
-//        }
-//        case 2:
-//        {   float phi = 100;
-//            easyWarp( sz, phi, M);
-//            warpPerspective( _small_img, drawing, M, sz);
-//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-//            break;
-//        }
-//        case 3:
-//        {   float phi = 110;
-//            easyWarp( sz, phi, M);
-//            warpPerspective( _small_img, drawing, M, sz);
-//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-//            break;
-//        }
-//        default:
-//            state = 0;
-//            return NULL;
-    } // switch()
-    state++;
-    _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
-    dedup_horizontals( _horizontal_lines, _gray);
-    filter_horiz_lines( _horizontal_lines);
-    fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
-
+//    cv::Size sz( _small_img.cols, _small_img.rows);
+//    //std::vector<cv::Vec2f> vsub( &_vertical_lines[5], &_vertical_lines[20]);
+//
+//    cv::Mat M;
+//
+//    cv::Mat drawing;
 //    switch (state) {
 //        case 0:
 //        {
-//            g_app.mainVC.lbBottom.text = @"Find horizontals";
-//            _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+//            float phi; cv::Mat M;
+//            float pary = parallel_projection( sz, _vertical_lines, phi, M);
+//            cv::warpPerspective( _small_img, drawing, M, sz);
+//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
 //            break;
 //        }
-//        case 1:
-//        {
-//            g_app.mainVC.lbBottom.text = @"Remove duplicates";
-//            dedup_horizontals( _horizontal_lines, _gray);
-//            break;
-//        }
-//        case 2:
-//        {
-//            g_app.mainVC.lbBottom.text = @"Filter";
-//            filter_horiz_lines( _horizontal_lines);
-//            break;
-//        }
-//        case 3:
-//        {
-//            g_app.mainVC.lbBottom.text = @"Generate";
-//            fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
-//            break;
-//        }
-//        default:
-//            state = 0;
-//            return NULL;
-//    } // switch
+////        case 1:
+////        {   float phi = 90;
+////            easyWarp( sz, phi, M);
+////            warpPerspective( _small_img, drawing, M, sz);
+////            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+////            break;
+////        }
+////        case 2:
+////        {   float phi = 100;
+////            easyWarp( sz, phi, M);
+////            warpPerspective( _small_img, drawing, M, sz);
+////            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+////            break;
+////        }
+////        case 3:
+////        {   float phi = 110;
+////            easyWarp( sz, phi, M);
+////            warpPerspective( _small_img, drawing, M, sz);
+////            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
+////            break;
+////        }
+////        default:
+////            state = 0;
+////            return NULL;
+//    } // switch()
 //    state++;
+//    _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+//    dedup_horizontals( _horizontal_lines, _gray);
+//    filter_horiz_lines( _horizontal_lines);
+//    fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+
+    switch (state) {
+        case 0:
+        {
+            g_app.mainVC.lbBottom.text = @"Find horizontals";
+            _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+            break;
+        }
+        case 1:
+        {
+            g_app.mainVC.lbBottom.text = @"Remove duplicates";
+            dedup_horizontals( _horizontal_lines, _gray);
+            break;
+        }
+        case 2:
+        {
+            g_app.mainVC.lbBottom.text = @"Filter";
+            filter_horiz_lines( _horizontal_lines);
+            break;
+        }
+        case 3:
+        {
+            g_app.mainVC.lbBottom.text = @"Generate";
+            fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+            break;
+        }
+        default:
+            state = 0;
+            return NULL;
+    } // switch
+    state++;
     
     // Show results
-//    cv::cvtColor( _gray, drawing, cv::COLOR_GRAY2RGB);
-//    get_color( true);
-//    ISLOOP (_horizontal_lines) {
-//        cv::Scalar col = get_color();
-//        draw_polar_line( _horizontal_lines[i], drawing, col);
-//    }
+    cv::cvtColor( _gray, drawing, cv::COLOR_GRAY2RGB);
+    get_color( true);
+    ISLOOP (_horizontal_lines) {
+        cv::Scalar col = get_color();
+        draw_polar_line( _horizontal_lines[i], drawing, col);
+    }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f02_horiz_lines()
+} // f03_horiz_lines()
 
 
 // Find the corners
 //----------------------------
-- (UIImage *) f03_corners
+- (UIImage *) f04_corners
 {
     g_app.mainVC.lbBottom.text = @"Find corners";
     
@@ -527,11 +563,11 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     }
     UIImage *res = MatToUIImage( disp);
     return res;
-} // f03_corners()
+} // f04_corners()
 
 // Zoom in
 //----------------------------
-- (UIImage *) f04_zoom_in
+- (UIImage *) f05_zoom_in
 {
     g_app.mainVC.lbBottom.text = @"Perspective transform";
     cv::Mat threshed;
@@ -559,11 +595,11 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f04_zoom_in()
+} // f05_zoom_in()
 
 // Dark places to find B stones
 //-----------------------------------------------------------
-- (UIImage *) f05_dark_places
+- (UIImage *) f06_dark_places
 {
     g_app.mainVC.lbBottom.text = @"Adaptive threshold dark";
     //_corners = _corners_zoomed;
@@ -581,11 +617,11 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f05_dark_places()
+} // f06_dark_places()
 
 // Replace dark places with average to make white dynamic threshold work
 //-----------------------------------------------------------------------
-- (UIImage *) f06_mask_dark
+- (UIImage *) f07_mask_dark
 {
     g_app.mainVC.lbBottom.text = @"Hide dark places";
     
@@ -611,12 +647,12 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f06_mask_dark()
+} // f07_mask_dark()
 
 
 // Find White places
 //-------------------------------
-- (UIImage *) f07_white_holes
+- (UIImage *) f08_white_holes
 {
     g_app.mainVC.lbBottom.text = @"Adaptive threshold bright";
     
@@ -636,11 +672,11 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f07_white_holes()
+} // f08_white_holes()
 
 // Visualize some features
 //---------------------------
-- (UIImage *) f08_features
+- (UIImage *) f09_features
 {
     g_app.mainVC.lbBottom.text = @"brightness";
     static int state = 0;
@@ -670,12 +706,12 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     cv::cvtColor( drawing, drawing, cv::COLOR_GRAY2RGB);
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f08_features()
+} // f09_features()
 
 
 // Classify intersections into black, white, empty
 //-----------------------------------------------------------
-- (UIImage *) f09_classify
+- (UIImage *) f10_classify
 {
     g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
@@ -720,7 +756,7 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f09_classify()
+} // f10_classify()
 
 
 #pragma mark - Real time implementation
