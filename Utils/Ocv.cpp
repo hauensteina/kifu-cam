@@ -658,8 +658,9 @@ void houghlines (const cv::Mat &img, const Points &ps,
                                            else if (fabs(theta-90) < thresh) return 0; // horiz
                                            else return 2;
                                        });
-    vert_lines  = horiz_vert_other_lines[1];
-    horiz_lines = horiz_vert_other_lines[0];
+    // Get the ones with the most votes
+    vert_lines  = vec_slice( horiz_vert_other_lines[1], 0, 20);
+    horiz_lines = vec_slice( horiz_vert_other_lines[0], 0, 20);
 } // houghlines()
 
 // Get main horizontal direction of a grid of points (in rad)

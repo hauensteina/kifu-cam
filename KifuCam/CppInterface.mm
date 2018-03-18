@@ -45,7 +45,7 @@
 #import "CppInterface.h"
 #import "DrawBoard.hpp"
 #import "KerasBoardModel.h"
-#import "WarpMatrix.hpp"
+#import "Perspective.hpp"
 
 // Pyramid filter params
 #define SPATIALRAD  5
@@ -249,8 +249,8 @@ static BlackWhiteEmpty classifier;
 #pragma mark - Processing Pipeline for debugging
 //=================================================
 
-// Make verticals parallel
-//--------------------------
+// Make verticals parallel and really vertical
+//----------------------------------------------
 - (UIImage *) f00_warp
 {
     _board_sz=19;
@@ -280,23 +280,29 @@ static BlackWhiteEmpty classifier;
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
     
     // Find lines
-    houghlines (_small_img, _stone_or_empty,
-                _vertical_lines, _horizontal_lines);
-
-//    _vertical_lines = homegrown_vert_lines( _stone_or_empty);
-//    static std::vector<cv::Vec2f> all_vert_lines;
-//    all_vert_lines = _vertical_lines;
-//    dedup_verticals( _vertical_lines, _gray);
-//    filter_vert_lines( _vertical_lines);
-//    const double x_thresh = 4.0;
-//    fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
+    houghlines( _small_img, _stone_or_empty,
+               _vertical_lines, _horizontal_lines);
     
     // Unwarp
-    float phi; cv::Mat M;
-    float pary = parallel_projection( sz, _vertical_lines, phi, M);
-    cv::warpPerspective( _small_img, _small_img, M, sz);
-    g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
-    UIImage *res = MatToUIImage( _small_img);
+    float phi; cv::Mat Mp;
+    float pary = parallel_projection( sz, _vertical_lines, phi, Mp);
+    cv::warpPerspective( _small_img, _small_img, Mp, sz);
+    warp_plines( _vertical_lines, Mp, _vertical_lines);
+    
+    // Straighten
+    float theta; cv::Mat Ms;
+    float straightness = straight_rotation( sz, _vertical_lines, theta, Ms);
+    cv::warpAffine( _small_img, _small_img, Ms, sz);
+    warp_plines( _vertical_lines, Ms, _vertical_lines);
+
+    g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f, theta = %.2f, sness = %.2f", phi, pary, theta, straightness);
+
+    cv::Mat drawing = _small_img.clone();
+    get_color(true);
+    ISLOOP( _vertical_lines) {
+        draw_polar_line( _vertical_lines[i], drawing, get_color());
+    }
+    UIImage *res = MatToUIImage( drawing);
     return res;
 } // f00_warp()
 
@@ -391,27 +397,12 @@ static BlackWhiteEmpty classifier;
 // Returns a number indicationg how parallel the best solution was.
 // Small numbers are more parallel.
 //-------------------------------------------------------------------------------------------------------
-float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
+float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
                           float &minphi, cv::Mat &minM)
 {
-    Points2f p1s, p2s;
-    ISLOOP( plines) {
-        cv::Vec4f seg = polar2segment( plines[i]);
-        p1s.push_back( Point2f( seg[0],seg[1]));
-        p2s.push_back( Point2f( seg[2],seg[3]));
-    }
-    auto rotlines = [&p1s, &p2s](const cv::Mat &M) {
-        Points2f p1srot, p2srot;
-        cv::perspectiveTransform( p1s, p1srot, M);
-        cv::perspectiveTransform( p2s, p2srot, M);
-        std::vector<cv::Vec2f> res;
-        ISLOOP( p1srot) {
-            res.push_back( segment2polar( cv::Vec4f( p1srot[i].x, p1srot[i].y,  p2srot[i].x,  p2srot[i].y)));
-        }
-        return res;
-    }; // rotlines()
-    auto paralellity = [rotlines]( const cv::Mat &M) {
-        std::vector<cv::Vec2f> plines = rotlines( M);
+    auto paralellity = [plines_]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> plines;
+        warp_plines( plines_, M, plines);
         auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
         double q1 = vec_q1( thetas);
         double q3 = vec_q3( thetas);
@@ -426,7 +417,7 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     minphi = -1;
     cv::Mat M;
     for (phi = 90; phi < 130; phi += 1) {
-        easyWarp( sz, phi, M);
+        perspective_warp( sz, phi, M);
         float pary = paralellity( M);
         if (pary < minpary) {
             minpary = pary;
@@ -436,6 +427,38 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines,
     } // for
     return minpary;
 } // parallel_projection()
+
+// Find a rotation that makes vertical lines truly vertical
+// Returns a number indicationg how straight the best solution was.
+// Small numbers are straighter
+//--------------------------------------------------------------------------------
+float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
+                          float &minphi, cv::Mat &minM)
+{
+    Point2f center( sz.width/2.0, sz.height/2.0);
+    auto straightness = [plines_]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> plines;
+        warp_plines( plines_, M, plines);
+        auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
+        double med = vec_median( thetas);
+        return fabs(med);
+    }; // straightness()
+    double phi;
+    float minstr = 1E9;
+    minphi = -1;
+    cv::Mat M;
+    for (phi = -20; phi <= 20; phi += 1) {
+        M = cv::getRotationMatrix2D( center, phi, 1.0);
+        float strness = straightness( M);
+        NSLog( @"strness %.4f", strness);
+        if (strness < minstr ) {
+            minstr = strness;
+            minphi = phi;
+            minM = M;
+        }
+    } // for
+    return minstr;
+} // straight_rotation()
 
 // Find horizontal grid lines
 //-----------------------------

@@ -261,7 +261,7 @@ void vapp( std::vector<T> &v1, const std::vector<T> &v2)
     v1.insert( v1.end(), v2.begin(), v2.end());
 }
 
-// Median value of a vector, with acces func
+// Median value of a vector, with access func
 //----------------------------------------------
 template <typename T, typename Func>
 T vec_median( std::vector<T> vec, Func at)
@@ -302,7 +302,7 @@ T vec_q3( std::vector<T> vec)
     return vec[(3 * vec.size()) / 4];
 }
 
-// Top quartile, with acces func
+// Top quartile, with access func
 //--------------------------------------
 template <typename T, typename Func>
 T vec_q3( std::vector<T> vec, Func at)
@@ -386,7 +386,7 @@ T vec_avg( std::vector<T> vec)
     return T(ssum / vec.size());
 }
 
-// Avg value of a vector, with acces func
+// Avg value of a vector, with access func
 //---------------------------------------------
 template <typename T, typename Func>
 double vec_avg( std::vector<T> vec, Func at)
