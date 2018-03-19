@@ -306,7 +306,6 @@ static BlackWhiteEmpty classifier;
     return res;
 } // f00_warp()
 
-
 //--------------------------
 - (UIImage *) f01_blobs
 {
@@ -322,6 +321,10 @@ static BlackWhiteEmpty classifier;
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
     
     cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
+    
+    // Find lines
+    houghlines( _small_img, _stone_or_empty,
+               _vertical_lines, _horizontal_lines);
     
     // Show results
     cv::Mat drawing = _small_img.clone();
@@ -354,7 +357,7 @@ static BlackWhiteEmpty classifier;
         case 0:
         {
             g_app.mainVC.lbBottom.text = @"Find verticals";
-            _vertical_lines = homegrown_vert_lines( _stone_or_empty);
+            //_vertical_lines = homegrown_vert_lines( _stone_or_empty);
             all_vert_lines = _vertical_lines;
             break;
         }
@@ -467,58 +470,12 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     static int state = 0;
     if (!SZ(_horizontal_lines)) state = 0;
     cv::Mat drawing;
-//    cv::Size sz( _small_img.cols, _small_img.rows);
-//    //std::vector<cv::Vec2f> vsub( &_vertical_lines[5], &_vertical_lines[20]);
-//
-//    cv::Mat M;
-//
-//    cv::Mat drawing;
-//    switch (state) {
-//        case 0:
-//        {
-//            float phi; cv::Mat M;
-//            float pary = parallel_projection( sz, _vertical_lines, phi, M);
-//            cv::warpPerspective( _small_img, drawing, M, sz);
-//            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f", phi, pary);
-//            break;
-//        }
-////        case 1:
-////        {   float phi = 90;
-////            easyWarp( sz, phi, M);
-////            warpPerspective( _small_img, drawing, M, sz);
-////            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-////            break;
-////        }
-////        case 2:
-////        {   float phi = 100;
-////            easyWarp( sz, phi, M);
-////            warpPerspective( _small_img, drawing, M, sz);
-////            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-////            break;
-////        }
-////        case 3:
-////        {   float phi = 110;
-////            easyWarp( sz, phi, M);
-////            warpPerspective( _small_img, drawing, M, sz);
-////            g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f", phi);
-////            break;
-////        }
-////        default:
-////            state = 0;
-////            return NULL;
-//    } // switch()
-//    state++;
-//    _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
-//    dedup_horizontals( _horizontal_lines, _gray);
-//    filter_horiz_lines( _horizontal_lines);
-//    fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
-
     static std::vector<cv::Vec2f> all_horiz_lines;
     switch (state) {
         case 0:
         {
             g_app.mainVC.lbBottom.text = @"Find horizontals";
-            _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+            //_horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
             all_horiz_lines = _horizontal_lines;
             break;
         }
@@ -816,8 +773,12 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         double theta = direction( _gray, _stone_or_empty) - PI/2;
         if (breakIfBad && fabs(theta) > 4 * PI/180) break;
         
+        // Find lines
+        houghlines( _small_img, _stone_or_empty,
+                   _vertical_lines, _horizontal_lines);
+        
         // Find vertical lines
-        _vertical_lines = homegrown_vert_lines( _stone_or_empty);
+        //_vertical_lines = homegrown_vert_lines( _stone_or_empty);
         std::vector<cv::Vec2f> all_vert_lines = _vertical_lines;
         dedup_verticals( _vertical_lines, _gray);
         filter_lines( _vertical_lines);
@@ -827,7 +788,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
         
         // Find horiz lines
-        _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+        //_horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
         static std::vector<cv::Vec2f> all_horiz_lines = _horizontal_lines;
         dedup_horizontals( _horizontal_lines, _gray);
         filter_lines( _horizontal_lines);

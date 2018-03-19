@@ -122,7 +122,6 @@ inline std::string generate_sgf( const std::string &title,
     return buf + moves + ")\n";
 } // generate_sgf()
 
-
 // e.g for board size, call get_sgf_tag( sgf, "SZ")
 //----------------------------------------------------------------------------------
 inline std::string get_sgf_tag( const std::string &sgf, const std::string &tag)
@@ -745,107 +744,6 @@ inline double v_line_similarity( cv::Vec2f a, cv::Vec2f b, double middle_y)
     return res;
 } // v_line_similarity
 
-//// Find the change per line in rho and theta and synthesize the whole bunch
-//// starting at the middle. Replace synthesized lines with real ones if close enough.
-////-----------------------------------------------------------------------------------------------------
-//inline void fix_horiz_lines( std::vector<cv::Vec2f> &lines_, const std::vector<cv::Vec2f> &vert_lines,
-//                     const cv::Mat &img)
-//{
-//    const double middle_x = img.cols / 2.0;
-//    const double height = img.rows;
-//
-//    // Convert hlines to chlines (center y + angle)
-//    std::vector<cv::Vec2f> lines;
-//    ISLOOP (lines_) {
-//        lines.push_back( polar2changle( lines_[i], middle_x));
-//    }
-//    std::sort( lines.begin(), lines.end(), [](cv::Vec2f a, cv::Vec2f b) { return a[0] < b[0]; } );
-//    lines_.clear();
-//    ISLOOP (lines) { lines_.push_back( changle2polar( lines[i], middle_x)); }
-//
-//    auto rhos   = vec_extract( lines, [](cv::Vec2f line) { return line[0]; } );
-//    //auto thetas = vec_extract( lines, [](cv::Vec2f line) { return line[1]; } );
-//    auto d_rhos   = vec_delta( rhos);
-//    //vec_filter( d_rhos, [](double d){ return d > 10;});
-//
-//    int good_idx = good_center_line( lines);
-//    if (good_idx < 0) {
-//        lines.clear();
-//        return;
-//    }
-//    cv::Vec2f med_line = lines[good_idx];
-//
-//
-//    // Interpolate the rest
-//    std::vector<cv::Vec2f> synth_lines;
-//    synth_lines.push_back(med_line);
-//
-//    double med_rho = med_line[0];
-//    double med_d_rho = vec_median( d_rhos);
-//    double alpha = RAT( hspace_at_line( vert_lines, cv::Vec2f( 0, PI/2)),
-//                       hspace_at_line( vert_lines, cv::Vec2f( med_rho, PI/2)));
-//    double dd_rho_per_y = RAT( med_d_rho * (1.0 - alpha), med_rho);
-//
-//    double rho, theta, d_rho;
-//    cv::Vec2f line;
-//
-//    // Lines below
-//    //d_rho = med_d_rho;
-//    d_rho = hspace_at_line( vert_lines, cv::Vec2f( med_rho, PI/2));
-//    rho = med_line[0];
-//    theta = med_line[1];
-//    ILOOP(100) {
-//        double old_rho = rho;
-//        rho += d_rho;
-//        double d;
-//        int close_idx = closest_hline( changle2polar( cv::Vec2f( rho, theta), middle_x), lines_, middle_x, d);
-//        if (d < d_rho * 0.6) {
-//            rho   = lines[close_idx][0];
-//            theta = lines[close_idx][1];
-//            d_rho = rho - old_rho;
-//        }
-//        else {
-//            d_rho += (rho - old_rho) * dd_rho_per_y;
-//            //PLOG("synth %d\n",i);
-//        }
-//        if (rho > height) break;
-//        cv::Vec2f line( rho,theta);
-//        synth_lines.push_back( line);
-//    } // ILOOP
-//
-//    // Lines above
-//    //d_rho = med_d_rho;
-//    d_rho = 0.9 * hspace_at_line( vert_lines, cv::Vec2f( med_rho, PI/2));
-//    rho = med_line[0];
-//    theta = med_line[1];
-//    ILOOP(100) {
-//        double old_rho = rho;
-//        rho -= d_rho;
-//        double d;
-//        int close_idx = closest_hline( changle2polar( cv::Vec2f( rho, theta), middle_x), lines_, middle_x, d);
-//        if (d < d_rho * 0.6) {
-//            rho   = lines[close_idx][0];
-//            theta = lines[close_idx][1];
-//            d_rho = old_rho - rho;
-//        }
-//        else {
-//            d_rho += (rho - old_rho) * dd_rho_per_y;
-//            //PLOG("i %d d_rho %.2f\n", i, d_rho);
-//        }
-//        if (rho < 0) break;
-//        if (d_rho < 3) break;
-//        cv::Vec2f line( rho,theta);
-//        synth_lines.push_back( line);
-//    } // ILOOP
-//    // Sort top to bottom
-//    std::sort( synth_lines.begin(), synth_lines.end(),
-//              [](cv::Vec2f line1, cv::Vec2f line2) {
-//                  return line1[0] < line2[0];
-//              });
-//    lines_.clear();
-//    ISLOOP (synth_lines) { lines_.push_back( changle2polar( synth_lines[i], middle_x)); }
-//} // fix_horiz_lines()
-
 // How many of these points are on the line, roughly.
 //------------------------------------------------------------
 inline int count_points_on_line( cv::Vec2f line, Points pts)
@@ -907,47 +805,6 @@ inline cv::Vec2f find_horiz_line_thru_point( const Points &allpoints, cv::Point 
     }
     return res;
 } // find_horiz_line_thru_point()
-
-// Homegrown method to find vertical line candidates, as a replacement
-// for thinning Hough lines.
-//-----------------------------------------------------------------------------
-inline std::vector<cv::Vec2f> homegrown_vert_lines( Points pts)
-{
-    std::vector<cv::Vec2f> res;
-    // Find points in quartile with lowest y
-    std::sort( pts.begin(), pts.end(), [](Point2f p1, Point2f p2) { return p1.y < p2.y; } );
-    Points top_points( SZ(pts)/4);
-    std::copy_n ( pts.begin(), SZ(pts)/4, top_points.begin() );
-    // For each point, find a line that hits many other points
-    for (auto tp: top_points) {
-        int nhits;
-        cv::Vec2f newline = find_vert_line_thru_point( pts, tp, nhits);
-        if (/*nhits > 5 &&*/ newline[0] != 0) {
-            res.push_back( newline);
-        }
-    }
-    return res;
-} // homegrown_vert_lines()
-
-// Homegrown method to find horizontal line candidates
-//-----------------------------------------------------------------------------
-inline std::vector<cv::Vec2f> homegrown_horiz_lines( Points pts)
-{
-    std::vector<cv::Vec2f> res;
-    // Find points in quartile with lowest x
-    std::sort( pts.begin(), pts.end(), [](Point2f p1, Point2f p2) { return p1.x < p2.x; } );
-    Points left_points( SZ(pts)/4);
-    std::copy_n ( pts.begin(), SZ(pts)/4, left_points.begin() );
-    // For each point, find a line that hits many other points
-    for (auto tp: left_points) {
-        cv::Vec2f newline = find_horiz_line_thru_point( pts, tp);
-        if (newline[0] != 0) {
-            res.push_back( newline);
-        }
-    }
-    return res;
-} // homegrown_horiz_lines()
-
 
 // Among the largest two in m1, choose the one where m2 is larger
 //------------------------------------------------------------------
