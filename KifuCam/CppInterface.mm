@@ -283,17 +283,18 @@ static BlackWhiteEmpty classifier;
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
 
-    // Unwarp
+    // Straighten horizontals
+    float theta; cv::Mat Ms;
+    float straightness = straight_rotation( sz, _horizontal_lines, theta, Ms);
+    cv::warpAffine( _small_img, _small_img, Ms, sz);
+    warp_plines( _vertical_lines, Ms, _vertical_lines);
+
+    // Unwarp verticals
     float phi; cv::Mat Mp;
     float pary = parallel_projection( sz, _vertical_lines, phi, Mp);
     cv::warpPerspective( _small_img, _small_img, Mp, sz);
     warp_plines( _vertical_lines, Mp, _vertical_lines);
     
-    // Straighten
-    float theta; cv::Mat Ms;
-    float straightness = straight_rotation( sz, _vertical_lines, theta, Ms);
-    cv::warpAffine( _small_img, _small_img, Ms, sz);
-    warp_plines( _vertical_lines, Ms, _vertical_lines);
 
     g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f, theta = %.2f, sness = %.2f", phi, pary, theta, straightness);
 
@@ -376,7 +377,7 @@ static BlackWhiteEmpty classifier;
         case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
-            const double x_thresh = 4.0;
+            const double x_thresh = 8.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
         }
@@ -431,9 +432,9 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     return minpary;
 } // parallel_projection()
 
-// Find a rotation that makes vertical lines truly vertical
+// Find a rotation that makes horizontal lines truly horizontal
 // Returns a number indicationg how straight the best solution was.
-// Small numbers are straighter
+// Smaller numbers are straighter.
 //--------------------------------------------------------------------------------
 float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
                           float &minphi, cv::Mat &minM)
@@ -444,7 +445,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         warp_plines( plines_, M, plines);
         auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
         double med = vec_median( thetas);
-        return fabs(med);
+        return fabs(PI/2 - med);
     }; // straightness()
     double phi;
     float minstr = 1E9;
@@ -453,7 +454,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     for (phi = -20; phi <= 20; phi += 1) {
         M = cv::getRotationMatrix2D( center, phi, 1.0);
         float strness = straightness( M);
-        NSLog( @"strness %.4f", strness);
+        //NSLog( @"strness %.4f", strness);
         if (strness < minstr ) {
             minstr = strness;
             minphi = phi;
@@ -494,7 +495,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
-            const double y_thresh = 4.0;
+            const double y_thresh = 8.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
