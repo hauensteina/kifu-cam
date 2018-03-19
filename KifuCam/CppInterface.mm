@@ -367,7 +367,7 @@ static BlackWhiteEmpty classifier;
         case 2:
         {
             g_app.mainVC.lbBottom.text = @"Filter";
-            filter_vert_lines( _vertical_lines);
+            filter_lines( _vertical_lines);
             break;
         }
         case 3:
@@ -529,7 +529,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         case 2:
         {
             g_app.mainVC.lbBottom.text = @"Filter";
-            filter_horiz_lines( _horizontal_lines);
+            filter_lines( _horizontal_lines);
             break;
         }
         case 3:
@@ -817,7 +817,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         _vertical_lines = homegrown_vert_lines( _stone_or_empty);
         std::vector<cv::Vec2f> all_vert_lines = _vertical_lines;
         dedup_verticals( _vertical_lines, _gray);
-        filter_vert_lines( _vertical_lines);
+        filter_lines( _vertical_lines);
         const int x_thresh = 4.0;
         fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
@@ -826,7 +826,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         // Find horiz lines
         _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
         dedup_horizontals( _horizontal_lines, _gray);
-        filter_horiz_lines( _horizontal_lines);
+        filter_lines( _horizontal_lines);
         fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;

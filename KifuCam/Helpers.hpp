@@ -428,71 +428,71 @@ inline int good_center_line( const std::vector<cv::Vec2f> &lines)
 
 // Adjacent lines should have similar slope
 //-----------------------------------------------------------------
-inline void filter_vert_lines( std::vector<cv::Vec2f> &vlines)
+inline void filter_lines( std::vector<cv::Vec2f> &lines)
 {
     const double eps = 10.0;
-    std::sort( vlines.begin(), vlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
-    int med_idx = good_center_line( vlines);
+    std::sort( lines.begin(), lines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
+    int med_idx = good_center_line( lines);
     if (med_idx < 0) return;
-    const double med_theta = vlines[med_idx][1];
+    const double med_theta = lines[med_idx][1];
     // Going left and right, theta should not change abruptly
     std::vector<cv::Vec2f> good;
-    good.push_back( vlines[med_idx]);
+    good.push_back( lines[med_idx]);
     const double EPS = eps * PI/180;
     double prev_theta;
     // right
     prev_theta = med_theta;
-    for (int i = med_idx+1; i < SZ(vlines); i++ ) {
-        double d = fabs( vlines[i][1] - prev_theta) + fabs( vlines[i][1] - med_theta);
+    for (int i = med_idx+1; i < SZ(lines); i++ ) {
+        double d = fabs( lines[i][1] - prev_theta) + fabs( lines[i][1] - med_theta);
         if (d < EPS) {
-            good.push_back( vlines[i]);
-            prev_theta = vlines[i][1];
+            good.push_back( lines[i]);
+            prev_theta = lines[i][1];
         }
     }
     // left
     prev_theta = med_theta;
     for (int i = med_idx-1; i >= 0; i-- ) {
-        double d = fabs( vlines[i][1] - prev_theta) + fabs( vlines[i][1] - med_theta);
+        double d = fabs( lines[i][1] - prev_theta) + fabs( lines[i][1] - med_theta);
         if (d < EPS) {
-            good.push_back( vlines[i]);
-            prev_theta = vlines[i][1];
+            good.push_back( lines[i]);
+            prev_theta = lines[i][1];
         }
     }
-    vlines = good;
-} // filter_vert_lines()
+    lines = good;
+} // filter_lines()
 
-// Adjacent lines should have similar slope
-//-----------------------------------------------------------------
-inline void filter_horiz_lines( std::vector<cv::Vec2f> &hlines)
-{
-    const double eps = 1.1;
-    std::sort( hlines.begin(), hlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
-    int med_idx = good_center_line( hlines);
-    if (med_idx < 0) return;
-    double theta = hlines[med_idx][1];
-    // Going up and down, theta should not change abruptly
-    std::vector<cv::Vec2f> good;
-    good.push_back( hlines[med_idx]);
-    const double EPS = eps * PI/180;
-    double prev_theta;
-    // down
-    prev_theta = theta;
-    for (int i = med_idx+1; i < SZ(hlines); i++ ) {
-        if (fabs( hlines[i][1] - prev_theta) < EPS) {
-            good.push_back( hlines[i]);
-            prev_theta = hlines[i][1];
-        }
-    }
-    // up
-    prev_theta = theta;
-    for (int i = med_idx-1; i >= 0; i-- ) {
-        if (fabs( hlines[i][1] - prev_theta) < EPS) {
-            good.push_back( hlines[i]);
-            prev_theta = hlines[i][1];
-        }
-    }
-    hlines = good;
-} // filter_horiz_lines()
+//// Adjacent lines should have similar slope
+////-----------------------------------------------------------------
+//inline void filter_horiz_lines( std::vector<cv::Vec2f> &hlines)
+//{
+//    const double eps = 1.1;
+//    std::sort( hlines.begin(), hlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
+//    int med_idx = good_center_line( hlines);
+//    if (med_idx < 0) return;
+//    double theta = hlines[med_idx][1];
+//    // Going up and down, theta should not change abruptly
+//    std::vector<cv::Vec2f> good;
+//    good.push_back( hlines[med_idx]);
+//    const double EPS = eps * PI/180;
+//    double prev_theta;
+//    // down
+//    prev_theta = theta;
+//    for (int i = med_idx+1; i < SZ(hlines); i++ ) {
+//        if (fabs( hlines[i][1] - prev_theta) < EPS) {
+//            good.push_back( hlines[i]);
+//            prev_theta = hlines[i][1];
+//        }
+//    }
+//    // up
+//    prev_theta = theta;
+//    for (int i = med_idx-1; i >= 0; i-- ) {
+//        if (fabs( hlines[i][1] - prev_theta) < EPS) {
+//            good.push_back( hlines[i]);
+//            prev_theta = hlines[i][1];
+//        }
+//    }
+//    hlines = good;
+//} // filter_horiz_lines()
 
 // Find line where top_x and bot_x match best.
 //---------------------------------------------------------------------------------------------------------------
