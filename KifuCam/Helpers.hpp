@@ -299,7 +299,7 @@ inline bool board_valid( Points2f board, const cv::Mat &img)
 
 // Convert horizontal (roughly) polar line to a pair
 // y_at_middle, angle
-//--------------------------------------------------------------
+//-----------------------------------------------------------------------
 inline cv::Vec2f polar2changle( const cv::Vec2f pline, double middle_x)
 {
     cv::Vec2f res;
@@ -311,7 +311,7 @@ inline cv::Vec2f polar2changle( const cv::Vec2f pline, double middle_x)
 }
 
 // Convert a pair (y_at_middle, angle) to polar
-//---------------------------------------------------------------
+//-----------------------------------------------------------------------
 inline cv::Vec2f changle2polar( const cv::Vec2f cline, double middle_x)
 {
     cv::Vec2f res;
@@ -322,7 +322,7 @@ inline cv::Vec2f changle2polar( const cv::Vec2f cline, double middle_x)
 
 // Convert vertical (roughly) polar line to a pair
 // x_at_middle, angle
-//--------------------------------------------------------------
+//-----------------------------------------------------------------------
 inline cv::Vec2f polar2cvangle( const cv::Vec2f pline, double middle_y)
 {
     cv::Vec2f res;
@@ -334,7 +334,7 @@ inline cv::Vec2f polar2cvangle( const cv::Vec2f pline, double middle_y)
 }
 
 // Convert a pair (x_at_middle, angle) to polar
-//---------------------------------------------------------------
+//-----------------------------------------------------------------------
 inline cv::Vec2f cvangle2polar( const cv::Vec2f cline, double middle_y)
 {
     cv::Vec2f res;
@@ -343,7 +343,22 @@ inline cv::Vec2f cvangle2polar( const cv::Vec2f cline, double middle_y)
     return res;
 }
 
-
+// Determine the average line per cluster
+//-----------------------------------------------------------------------------------------
+inline void average_cluster_lines( const std::vector<double> &cuts,
+                                  const std::vector<std::vector<cv::Vec2f> > &clusters,
+                                  std::vector<cv::Vec2f> &lines)
+{
+    // Average the clusters into single lines
+    lines.clear();
+    ISLOOP (clusters) {
+        auto &clust = clusters[i];
+        double theta = vec_avg( clust, [](cv::Vec2f line){ return line[1]; });
+        double rho   = vec_avg( clust, [](cv::Vec2f line){ return line[0]; });
+        cv::Vec2f line( rho, theta);
+        lines.push_back( line);
+    }
+} // average_cluster_lines()
 
 // Replace close clusters of vert lines by their average.
 //-----------------------------------------------------------------------------------
@@ -351,7 +366,6 @@ inline void dedup_verticals( std::vector<cv::Vec2f> &lines, const cv::Mat &img)
 {
     if (SZ(lines) < 3) return;
     // Cluster by x in the middle
-    //const double wwidth = 32.0;
     const double wwidth = 8.0;
     const double middle_y = img.rows / 2.0;
     const int min_clust_size = 0;
@@ -359,17 +373,9 @@ inline void dedup_verticals( std::vector<cv::Vec2f> &lines, const cv::Mat &img)
     auto vert_line_cuts = Clust1D::cluster( lines, wwidth, Getter);
     std::vector<std::vector<cv::Vec2f> > clusters;
     Clust1D::classify( lines, vert_line_cuts, min_clust_size, Getter, clusters);
-    
-    // Average the clusters into single lines
-    lines.clear();
-    ISLOOP (clusters) {
-        auto &clust = clusters[i];
-        double theta = vec_avg( clust, [](cv::Vec2f line){ return line[1]; });
-        double rho   = vec_avg( clust, [](cv::Vec2f line){ return line[0]; });
-        cv::Vec2f line( rho, theta);
-        lines.push_back( line);
-    }
+    average_cluster_lines( vert_line_cuts, clusters, lines);
 } // dedup_verticals()
+
 
 // Replace close clusters of horiz lines by their average.
 //-----------------------------------------------------------------------------------
@@ -377,28 +383,19 @@ inline void dedup_horizontals( std::vector<cv::Vec2f> &lines, const cv::Mat &img
 {
     if (SZ(lines) < 3) return;
     // Cluster by y in the middle
-    const double wwidth = 32.0;
+    const double wwidth = 8.0;
     const double middle_x = img.cols / 2.0;
     const int min_clust_size = 0;
     auto Getter =  [middle_x](cv::Vec2f line) { return y_from_x( middle_x, line); };
     auto horiz_line_cuts = Clust1D::cluster( lines, wwidth, Getter);
     std::vector<std::vector<cv::Vec2f> > clusters;
     Clust1D::classify( lines, horiz_line_cuts, min_clust_size, Getter, clusters);
-    
-    // Average the clusters into single lines
-    lines.clear();
-    ISLOOP (clusters) {
-        auto &clust = clusters[i];
-        double theta = vec_avg( clust, [](cv::Vec2f line){ return line[1]; });
-        double rho   = vec_avg( clust, [](cv::Vec2f line){ return line[0]; });
-        cv::Vec2f line( rho, theta);
-        lines.push_back( line);
-    }
+    average_cluster_lines( horiz_line_cuts, clusters, lines);
 } // dedup_horizontals()
 
 // Find a line close to the middle with roughly median theta.
 // The lines should be sorted by rho.
-//--------------------------------------------------------------------------
+//-------------------------------------------------------------------
 inline int good_center_line( const std::vector<cv::Vec2f> &lines)
 {
     const int r = 2;
@@ -430,7 +427,7 @@ inline int good_center_line( const std::vector<cv::Vec2f> &lines)
 } // good_center_line()
 
 // Adjacent lines should have similar slope
-//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------
 inline void filter_vert_lines( std::vector<cv::Vec2f> &vlines)
 {
     const double eps = 10.0;
