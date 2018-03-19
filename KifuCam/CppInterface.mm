@@ -282,7 +282,7 @@ static BlackWhiteEmpty classifier;
     // Find lines
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
-    
+
     // Unwarp
     float phi; cv::Mat Mp;
     float pary = parallel_projection( sz, _vertical_lines, phi, Mp);

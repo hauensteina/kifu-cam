@@ -199,6 +199,12 @@ void vec_append( std::vector<T> a, std::vector<T> b)
 template <typename T>
 std::vector<T> vec_slice( std::vector<T> vec, int start, int len)
 {
+    if (start >= SZ(vec)) {
+        return std::vector<T>();
+    }
+    if (start + len > SZ(vec)) {
+        len = SZ(vec) - start;
+    }
     std::vector<T> res( vec.begin() + start, vec.begin() + start + len);
     return res;
 }

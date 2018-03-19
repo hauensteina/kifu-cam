@@ -635,23 +635,30 @@ void rot_img( const cv::Mat &img, double angle, cv::Mat &dst)
 //-------------------------------------------------------------
 void houghlines (const cv::Mat &img, const Points &ps,
                  std::vector<cv::Vec2f> &vert_lines,
-                 std::vector<cv::Vec2f> &horiz_lines)
+                 std::vector<cv::Vec2f> &horiz_lines,
+                 int votes)
 {
-    // Draw the points
-    cv::Mat canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
-    ISLOOP (ps) {
-        draw_point( ps[i], canvas,1, cv::Scalar(255));
+    cv::Mat canvas;
+    
+    if (SZ(ps)) {
+        // Draw the points
+        canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
+        ISLOOP (ps) {
+            draw_point( ps[i], canvas,1, cv::Scalar(255));
+        }
     }
-    // Put lines through them
+    else {
+        canvas = img; // binary one channel
+    }
+    // Find lines
     std::vector<cv::Vec2f> lines;
-    const int votes = 10;
     HoughLines(canvas, lines, 1, PI/180, votes, 0, 0 );
     
     // Separate vertical, horizontal, and other lines
     std::vector<std::vector<cv::Vec2f> > horiz_vert_other_lines;
     horiz_vert_other_lines = partition( lines, 3,
                                        [](cv::Vec2f &line) {
-                                           const double thresh = 10.0;
+                                           const double thresh = 20.0;
                                            double theta = line[1] * (180.0 / PI);
                                            if (fabs(theta - 180) < thresh) return 1;   // vert
                                            else if (fabs(theta) < thresh) return 1;
@@ -659,8 +666,8 @@ void houghlines (const cv::Mat &img, const Points &ps,
                                            else return 2;
                                        });
     // Get the ones with the most votes
-    vert_lines  = vec_slice( horiz_vert_other_lines[1], 0, 20);
-    horiz_lines = vec_slice( horiz_vert_other_lines[0], 0, 20);
+    vert_lines  = vec_slice( horiz_vert_other_lines[1], 0, 25);
+    horiz_lines = vec_slice( horiz_vert_other_lines[0], 0, 25);
 } // houghlines()
 
 // Get main horizontal direction of a grid of points (in rad)
