@@ -513,11 +513,13 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 //    filter_horiz_lines( _horizontal_lines);
 //    fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
 
+    static std::vector<cv::Vec2f> all_horiz_lines;
     switch (state) {
         case 0:
         {
             g_app.mainVC.lbBottom.text = @"Find horizontals";
             _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+            all_horiz_lines = _horizontal_lines;
             break;
         }
         case 1:
@@ -535,7 +537,8 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
-            fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+            const double y_thresh = 4.0;
+            fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
         default:
@@ -825,9 +828,11 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         
         // Find horiz lines
         _horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+        static std::vector<cv::Vec2f> all_horiz_lines = _horizontal_lines;
         dedup_horizontals( _horizontal_lines, _gray);
         filter_lines( _horizontal_lines);
-        fix_horiz_lines( _horizontal_lines, _vertical_lines, _gray);
+        const double y_thresh = 4.0;
+        fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
         
