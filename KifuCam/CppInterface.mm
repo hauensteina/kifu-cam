@@ -284,14 +284,14 @@ static BlackWhiteEmpty classifier;
                _vertical_lines, _horizontal_lines);
 
     // Straighten horizontals
-    float theta; cv::Mat Ms;
-    float straightness = straight_rotation( sz, _horizontal_lines, theta, Ms);
+    float theta; cv::Mat Ms, invMs;
+    float straightness = straight_rotation( sz, _horizontal_lines, theta, Ms, invMs);
     cv::warpAffine( _small_img, _small_img, Ms, sz);
     warp_plines( _vertical_lines, Ms, _vertical_lines);
 
     // Unwarp verticals
-    float phi; cv::Mat Mp;
-    float pary = parallel_projection( sz, _vertical_lines, phi, Mp);
+    float phi; cv::Mat Mp, invMp;
+    float pary = parallel_projection( sz, _vertical_lines, phi, Mp, invMp);
     cv::warpPerspective( _small_img, _small_img, Mp, sz);
     warp_plines( _vertical_lines, Mp, _vertical_lines);
     
@@ -400,9 +400,9 @@ static BlackWhiteEmpty classifier;
 // Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
 // Small numbers are more parallel.
-//-------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
 float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
-                          float &minphi, cv::Mat &minM)
+                          float &minphi, cv::Mat &minM, cv::Mat &invM)
 {
     auto paralellity = [plines_]( const cv::Mat &M) {
         std::vector<cv::Vec2f> plines;
@@ -410,10 +410,7 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
         double q1 = vec_q1( thetas);
         double q3 = vec_q3( thetas);
-        //double mmax = vec_max( thetas);
-        //double mmin = vec_min( thetas);
         double dq = q3 - q1;
-        //NSLog( @"dq: %.4lf max: %.4f, min: %.4f\n", dq, mmax, mmin);
         return dq;
     }; // paralellity()
     double phi;
@@ -429,6 +426,7 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
             minM = M;
         }
     } // for
+    perspective_warp( sz, -minphi, invM);
     return minpary;
 } // parallel_projection()
 
@@ -437,7 +435,7 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 // Smaller numbers are straighter.
 //--------------------------------------------------------------------------------
 float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
-                          float &minphi, cv::Mat &minM)
+                        float &minphi, cv::Mat &minM, cv::Mat &invM)
 {
     Point2f center( sz.width/2.0, sz.height/2.0);
     auto straightness = [plines_]( const cv::Mat &M) {
@@ -454,13 +452,13 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     for (phi = -20; phi <= 20; phi += 1) {
         M = cv::getRotationMatrix2D( center, phi, 1.0);
         float strness = straightness( M);
-        //NSLog( @"strness %.4f", strness);
         if (strness < minstr ) {
             minstr = strness;
             minphi = phi;
             minM = M;
         }
     } // for
+    invM = cv::getRotationMatrix2D( center, -minphi, 1.0);
     return minstr;
 } // straight_rotation()
 
@@ -762,52 +760,70 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB);
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
         thresh_dilate( _gray, _gray_threshed);
+        const cv::Size sz( _small_img.cols, _small_img.rows);
         
-        // Find stones and intersections
+        // Blobs
         _stone_or_empty.clear();
-        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
+        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty);
         BlobFinder::find_stones( _gray, _stone_or_empty);
         _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-        if (breakIfBad && SZ(_stone_or_empty) < 0.8 * SQR(_board_sz)) break;
-        
-        // Break if not straight
-        double theta = direction( _gray, _stone_or_empty) - PI/2;
-        if (breakIfBad && fabs(theta) > 4 * PI/180) break;
         
         // Find lines
         houghlines( _small_img, _stone_or_empty,
                    _vertical_lines, _horizontal_lines);
+        if (breakIfBad && SZ( _vertical_lines) < 5) break;
+        if (breakIfBad && SZ( _horizontal_lines) < 5) break;
+
+        // Straighten horizontals
+        float theta; cv::Mat Ms, invMs;
+        straight_rotation( sz, _horizontal_lines, theta, Ms, invMs);
+        cv::warpAffine( _small_img, _small_img, Ms, sz);
+        warp_plines( _vertical_lines, Ms, _vertical_lines);
+
+        // Unwarp verticals
+        float phi; cv::Mat Mp, invMp;
+        parallel_projection( sz, _vertical_lines, phi, Mp, invMp);
+        cv::warpPerspective( _small_img, _small_img, Mp, sz);
+
+        // Find blobs again
+        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+        thresh_dilate( _gray, _gray_threshed);
+        _stone_or_empty.clear();
+        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty);
+        BlobFinder::find_stones( _gray, _stone_or_empty);
+        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+        if (breakIfBad && SZ(_stone_or_empty) < 0.8 * SQR(_board_sz)) break;
         
-        // Find vertical lines
-        //_vertical_lines = homegrown_vert_lines( _stone_or_empty);
+        // Find lines, again
+        houghlines( _small_img, _stone_or_empty,
+                   _vertical_lines, _horizontal_lines);
+        
+        // Filter and generate verticals
         std::vector<cv::Vec2f> all_vert_lines = _vertical_lines;
         dedup_verticals( _vertical_lines, _gray);
         filter_lines( _vertical_lines);
-        const int x_thresh = 4.0;
+        const int x_thresh = 8.0;
         fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
         
-        // Find horiz lines
-        //_horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
+        // Filter and generate horizontals
         static std::vector<cv::Vec2f> all_horiz_lines = _horizontal_lines;
         dedup_horizontals( _horizontal_lines, _gray);
         filter_lines( _horizontal_lines);
-        const double y_thresh = 4.0;
+        const double y_thresh = 8.0;
         fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
         
         // Find corners
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
-        cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
+        //cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
         _corners.clear();
         if (SZ(_horizontal_lines) && SZ(_vertical_lines)) {
             cv::Mat boardness;
             [self nn_boardness:_small_img dst:boardness];
             _corners = find_corners_from_score( _horizontal_lines, _vertical_lines, _intersections, boardness);
-//            _corners = find_corners( _stone_or_empty, _horizontal_lines, _vertical_lines,
-//                                    _intersections, _small_pyr, _gray_threshed);
         }
         // Intersections for only the board lines
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
@@ -832,20 +848,15 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         // Zoom in
         cv::Mat M;
         zoom_in( _gray,  _corners, _gray_zoomed, M);
-        zoom_in( _small_pyr, _corners, _pyr_zoomed, M);
+        //zoom_in( _small_pyr, _corners, _pyr_zoomed, M);
         cv::perspectiveTransform( _corners, _corners_zoomed, M);
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
         fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
-        fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
+        //fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
         
         // Classify
-        if ([g_app.settingsVC useNN]) {
-            zoom_in( _small_img, _corners, _small_zoomed, M);
-            [self keras_classify_intersections];
-        }
-        else {
-            _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, timeVotes);
-        }
+        zoom_in( _small_img, _corners, _small_zoomed, M);
+        [self keras_classify_intersections];
         fix_diagram( _diagram, _intersections, _small_img);
         
         // Copy diagram to NSMutableArray
@@ -862,15 +873,12 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 //--------------------------------------------
 - (UIImage *) video_mode:(UIImage *) img
 {
-    static std::vector<Points> boards; // Some history for averaging
-    cv::Mat drawing;
-    //bool success = [self recognize_position:img timeVotes:10 breakIfBad:YES];
     bool success = [self find_board:img breakIfBad:YES];
 
     // Draw real time results on screen
     //------------------------------------
-    cv::Mat *canvas;
-    canvas = &_small_img;
+    cv::Mat canvas;
+    canvas = _small_img;
     
     static std::vector<cv::Vec2f> old_hlines, old_vlines;
     static Points2f old_corners, old_intersections;
@@ -890,35 +898,20 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     
     if (SZ(_corners) == 4) {
         draw_line( cv::Vec4f( _corners[0].x, _corners[0].y, _corners[1].x, _corners[1].y),
-                  *canvas, cv::Scalar( 255,0,0,255));
+                  canvas, cv::Scalar( 255,0,0,255));
         draw_line( cv::Vec4f( _corners[1].x, _corners[1].y, _corners[2].x, _corners[2].y),
-                  *canvas, cv::Scalar( 255,0,0,255));
+                  canvas, cv::Scalar( 255,0,0,255));
         draw_line( cv::Vec4f( _corners[2].x, _corners[2].y, _corners[3].x, _corners[3].y),
-                  *canvas, cv::Scalar( 255,0,0,255));
+                  canvas, cv::Scalar( 255,0,0,255));
         draw_line( cv::Vec4f( _corners[3].x, _corners[3].y, _corners[0].x, _corners[0].y),
-                  *canvas, cv::Scalar( 255,0,0,255));
+                  canvas, cv::Scalar( 255,0,0,255));
         
-        // One horiz and vert line
-        //draw_polar_line( _horizontal_lines[SZ(_horizontal_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
-        //draw_polar_line( _vertical_lines[SZ(_vertical_lines)/2], *canvas, cv::Scalar( 255,255,0,255));
-        
-//        // Show classification result
-//        ISLOOP (_diagram) {
-//            cv::Point p(ROUND(_intersections[i].x), ROUND(_intersections[i].y));
-//            if (_diagram[i] == BBLACK) {
-//                draw_point( p, *canvas, 5, cv::Scalar(255,0,0,255));
-//            }
-//            else if (_diagram[i] == WWHITE) {
-//                draw_point( p, *canvas, 5, cv::Scalar(0,255,0,255));
-//            }
-//        }
         ISLOOP (_intersections) {
-            draw_point( _intersections[i], *canvas, 2, cv::Scalar(0,0,255,255));
+            draw_point( _intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
         }
     } // if (SZ(corners) == 4)
     
-    UIImage *res = MatToUIImage( *canvas);
-    //UIImage *res = MatToUIImage( drawing);
+    UIImage *res = MatToUIImage( canvas);
     return res;
 } // video_mode()
 

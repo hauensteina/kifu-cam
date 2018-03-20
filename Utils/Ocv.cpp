@@ -638,17 +638,14 @@ void houghlines (const cv::Mat &img, const Points &ps,
                  std::vector<cv::Vec2f> &horiz_lines,
                  int votes)
 {
+    vert_lines.clear();
+    horiz_lines.clear();
+    if (!SZ(ps)) return;
     cv::Mat canvas;
-    
-    if (SZ(ps)) {
-        // Draw the points
-        canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
-        ISLOOP (ps) {
-            draw_point( ps[i], canvas,1, cv::Scalar(255));
-        }
-    }
-    else {
-        canvas = img; // binary one channel
+    // Draw the points
+    canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
+    ISLOOP (ps) {
+        draw_point( ps[i], canvas,1, cv::Scalar(255));
     }
     // Find lines
     std::vector<cv::Vec2f> lines;

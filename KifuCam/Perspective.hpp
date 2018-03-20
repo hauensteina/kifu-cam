@@ -16,12 +16,12 @@
 #import "Ocv.hpp"
 #include <stdio.h>
 
-// Find matrix M such that a square gets viewed from angle phi.
+// Find matrix M such that we look down with pitch phi.
 // The bottom line of the square goes through the screen center.
 // phi between pi/2 and pi.
-// phi == pi => extremely distorted fron view
-// phi == pi / 2 => the camera was vertically on top of the board, do nothing
-//-----------------------------------------------------------------------------
+// phi == pi => No pitch. Extremely distorted front view.
+// phi == pi / 2 => Looking straight down.
+//---------------------------------------------------------------------
 inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M)
 {
     phi *= PI/ 180;
