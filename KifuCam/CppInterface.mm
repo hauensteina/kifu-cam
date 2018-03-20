@@ -59,11 +59,14 @@ static BlackWhiteEmpty classifier;
 
 @interface CppInterface()
 //=======================
-@property cv::Mat small_img; // resized image, in color, RGB
+@property cv::Mat invProj; // Inverse projection matrix
+@property cv::Mat invRot;  // Inverse rotation matrix
+@property cv::Mat small_img; // resized image, in color, RGB, unwarped
 @property cv::Mat small_pyr; // resized image, in color, pyramid filtered
 @property Points pyr_board; // Initial guess at board location
 
 @property cv::Mat orig_img;     // Mat with image we are working on
+@property cv::Mat orig_small;     // orig resized
 @property cv::Mat small_zoomed;  // small, zoomed into the board
 @property cv::Mat gray;  // Grayscale version of small
 @property cv::Mat gray_threshed;  // gray with inv_thresh and dilation
@@ -269,9 +272,9 @@ static BlackWhiteEmpty classifier;
     UIImageToMat( img, _orig_img);
     
     // Find Blobs
-    resize( _orig_img, _small_img, IMG_WIDTH);
-    const cv::Size sz( _small_img.cols, _small_img.rows);
-    cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB);
+    resize( _orig_img, _orig_small, IMG_WIDTH);
+    const cv::Size sz( _orig_small.cols, _orig_small.rows);
+    cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed);
     _stone_or_empty.clear();
@@ -416,17 +419,18 @@ float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     double phi;
     float minpary = 1E9;
     minphi = -1;
-    cv::Mat M;
+    cv::Mat M, Minv;
     for (phi = 90; phi < 130; phi += 1) {
-        perspective_warp( sz, phi, M);
+        perspective_warp( sz, phi, M, Minv);
         float pary = paralellity( M);
         if (pary < minpary) {
             minpary = pary;
             minphi = phi;
             minM = M;
+            invM = Minv;
         }
     } // for
-    perspective_warp( sz, -minphi, invM);
+    //perspective_warp( sz, -minphi, invM);
     return minpary;
 } // parallel_projection()
 
@@ -743,6 +747,19 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     return res;
 } // f10_classify()
 
+// Undo perspective correction on several points so we can draw them on
+// the original image.
+//------------------------------------------------------------------------------------
+void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
+                   Points2f &pts_out)
+{
+    pts_out.clear();
+    ISLOOP( pts_in) {
+        Point2f p = pts_in[i];
+        cv::perspectiveTransform( pts_in, pts_out, invProj);
+        cv::transform( pts_out, pts_out, invRot);
+    }
+} // unwarp_points()
 
 #pragma mark - Real time implementation
 //========================================
@@ -756,11 +773,11 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     bool success = false;
     do {
         UIImageToMat( img, _orig_img, false); // Makes a cv::Mat in RGBA order
-        resize( _orig_img, _small_img, IMG_WIDTH);
-        cv::cvtColor( _small_img, _small_img, CV_RGBA2RGB);
+        resize( _orig_img, _orig_small, IMG_WIDTH);
+        const cv::Size sz( _orig_small.cols, _orig_small.rows);
+        cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
         thresh_dilate( _gray, _gray_threshed);
-        const cv::Size sz( _small_img.cols, _small_img.rows);
         
         // Blobs
         _stone_or_empty.clear();
@@ -775,14 +792,14 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
 
         // Straighten horizontals
-        float theta; cv::Mat Ms, invMs;
-        straight_rotation( sz, _horizontal_lines, theta, Ms, invMs);
+        float theta; cv::Mat Ms;
+        straight_rotation( sz, _horizontal_lines, theta, Ms, _invRot);
         cv::warpAffine( _small_img, _small_img, Ms, sz);
         warp_plines( _vertical_lines, Ms, _vertical_lines);
 
         // Unwarp verticals
-        float phi; cv::Mat Mp, invMp;
-        parallel_projection( sz, _vertical_lines, phi, Mp, invMp);
+        float phi; cv::Mat Mp;
+        parallel_projection( sz, _vertical_lines, phi, Mp, _invProj);
         cv::warpPerspective( _small_img, _small_img, Mp, sz);
 
         // Find blobs again
@@ -878,7 +895,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     // Draw real time results on screen
     //------------------------------------
     cv::Mat canvas;
-    canvas = _small_img;
+    canvas = _orig_small;
     
     static std::vector<cv::Vec2f> old_hlines, old_vlines;
     static Points2f old_corners, old_intersections;
@@ -896,18 +913,21 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         _last_frame_with_board = _small_img.clone();
     }
     
+    Points2f corners, intersections;
+    unwarp_points( _invProj, _invRot, _corners, corners);
+    unwarp_points( _invProj, _invRot, _intersections, intersections);
     if (SZ(_corners) == 4) {
-        draw_line( cv::Vec4f( _corners[0].x, _corners[0].y, _corners[1].x, _corners[1].y),
+        draw_line( cv::Vec4f( corners[0].x, corners[0].y, corners[1].x, corners[1].y),
                   canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( _corners[1].x, _corners[1].y, _corners[2].x, _corners[2].y),
+        draw_line( cv::Vec4f( corners[1].x, corners[1].y, corners[2].x, corners[2].y),
                   canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( _corners[2].x, _corners[2].y, _corners[3].x, _corners[3].y),
+        draw_line( cv::Vec4f( corners[2].x, corners[2].y, corners[3].x, corners[3].y),
                   canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( _corners[3].x, _corners[3].y, _corners[0].x, _corners[0].y),
+        draw_line( cv::Vec4f( corners[3].x, corners[3].y, corners[0].x, corners[0].y),
                   canvas, cv::Scalar( 255,0,0,255));
         
-        ISLOOP (_intersections) {
-            draw_point( _intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
+        ISLOOP (intersections) {
+            draw_point( intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
         }
     } // if (SZ(corners) == 4)
     

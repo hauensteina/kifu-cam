@@ -21,8 +21,8 @@
 // phi between pi/2 and pi.
 // phi == pi => No pitch. Extremely distorted front view.
 // phi == pi / 2 => Looking straight down.
-//---------------------------------------------------------------------
-inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M)
+//---------------------------------------------------------------------------------
+inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M, cv::Mat &invM)
 {
     phi *= PI/ 180;
     Point2f center( sz.width / 2.0, sz.height / 2.0);
@@ -45,6 +45,7 @@ inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M)
     std::vector<Point2f> src = { tl_dist, tr_dist, br_dist, bl_dist };
     std::vector<Point2f> dst = { tl_sq, tr_sq, br_sq, bl_sq };
     M = getPerspectiveTransform( src, dst);
+    invM = getPerspectiveTransform( dst, src);
 } // perspective_warp()
 
 // Run a matrix over a bunch of polar lines.
