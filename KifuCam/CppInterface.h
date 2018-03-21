@@ -36,7 +36,7 @@
 //---------------------------------
 - (UIImage *) f00_warp_dbg;
 - (UIImage *) f01_blobs_dbg;
-- (UIImage *) f02_vert_lines;
+- (UIImage *) f02_vert_lines_dbg;
 - (UIImage *) f03_horiz_lines;
 - (UIImage *) f04_corners;
 - (UIImage *) f05_zoom_in;
@@ -47,8 +47,6 @@
 
 // Methods for the Obj-C View Controllers
 //=============================================
-// Run recognizer on img. Result goes into _diagram. Use get_sgf() next.
-//- (bool)recognize_position:(UIImage *)img breakIfBad:(bool)breakIfBad;
 // Detect position on img and count the errors
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf;
 // Save resized image to png. Fname must have .png extension.

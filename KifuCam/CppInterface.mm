@@ -320,7 +320,7 @@ static BlackWhiteEmpty classifier;
 
 // Roughly guess intersections, stones, and lines
 //--------------------------------------------------
-- (UIImage *) f01_blobs
+- (void) f01_blobs
 {
     _vertical_lines.clear();
     _horizontal_lines.clear();
@@ -335,11 +335,6 @@ static BlackWhiteEmpty classifier;
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
     
-    // Show results
-    cv::Mat drawing = _small_img.clone();
-    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
-    UIImage *res = MatToUIImage( drawing);
-    return res;
 } // f01_blobs()
 
 // Debug wrapper for f01_blobs
@@ -369,38 +364,68 @@ static BlackWhiteEmpty classifier;
 
 // Find vertical grid lines
 //----------------------------------
-- (UIImage *) f02_vert_lines
+- (void) f02_vert_lines:(int)state
 {
-    static int state = 0;
-    if (!SZ(_vertical_lines)) state = 0;
-    cv::Mat drawing;
     static std::vector<cv::Vec2f> all_vert_lines;
-    
     switch (state) {
         case 0:
         {
-            g_app.mainVC.lbBottom.text = @"Find verticals";
-            //_vertical_lines = homegrown_vert_lines( _stone_or_empty);
             all_vert_lines = _vertical_lines;
             break;
         }
         case 1:
         {
-            g_app.mainVC.lbBottom.text = @"Remove duplicates";
             dedup_verticals( _vertical_lines, _gray);
             break;
         }
         case 2:
         {
-            g_app.mainVC.lbBottom.text = @"Filter";
             filter_lines( _vertical_lines);
             break;
         }
         case 3:
         {
-            g_app.mainVC.lbBottom.text = @"Generate";
             const double x_thresh = 8.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
+            break;
+        }
+        default:
+            NSLog( @"f02_vert_lines(): bad state %d", state);
+            return;
+    } // switch
+} // f02_vert_lines()
+
+// Debug wrapper for f02_vert_lines
+//-------------------------------------
+- (UIImage *) f02_vert_lines_dbg
+{
+    static int state = 0;
+    if (!SZ(_vertical_lines)) state = 0;
+    cv::Mat drawing;
+    
+    switch (state) {
+        case 0:
+        {
+            g_app.mainVC.lbBottom.text = @"Find verticals";
+            [self f02_vert_lines:state];
+            break;
+        }
+        case 1:
+        {
+            g_app.mainVC.lbBottom.text = @"Remove duplicates";
+            [self f02_vert_lines:state];
+            break;
+        }
+        case 2:
+        {
+            g_app.mainVC.lbBottom.text = @"Filter";
+            [self f02_vert_lines:state];
+            break;
+        }
+        case 3:
+        {
+            g_app.mainVC.lbBottom.text = @"Generate";
+            [self f02_vert_lines:state];
             break;
         }
         default:
@@ -417,7 +442,7 @@ static BlackWhiteEmpty classifier;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f02_vert_lines()
+} // f02_vert_lines_dbg()
 
 // Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
@@ -698,13 +723,10 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         [self f00_warp];
         [self f01_blobs];
         if (breakIfBad && SZ(_stone_or_empty) < 0.8 * SQR(_board_sz)) break;
-        
-        // Filter and generate verticals
-        std::vector<cv::Vec2f> all_vert_lines = _vertical_lines;
-        dedup_verticals( _vertical_lines, _gray);
-        filter_lines( _vertical_lines);
-        const double x_thresh = 8.0;
-        fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
+        [self f02_vert_lines:0];
+        [self f02_vert_lines:1];
+        [self f02_vert_lines:2];
+        [self f02_vert_lines:3];
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
         

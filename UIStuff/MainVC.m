@@ -359,7 +359,7 @@
                 [self.cameraView setImage:img];
                 break;
             case 2:
-                img = [self.cppInterface f02_vert_lines];
+                img = [self.cppInterface f02_vert_lines_dbg];
                 if (!img) { _debugstate++; continue; }
                 [self.cameraView setImage:img];
                 break;
