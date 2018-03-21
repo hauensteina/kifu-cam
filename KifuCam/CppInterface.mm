@@ -595,10 +595,8 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 
 // Find the corners
 //----------------------------
-- (UIImage *) f04_corners
+- (void) f04_corners
 {
-    g_app.mainVC.lbBottom.text = @"Find corners";
-    
     _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     _corners.clear();
     cv::Mat boardness;
@@ -607,15 +605,21 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         if (SZ( _horizontal_lines) < 5) break;
         if (SZ( _vertical_lines) > 55) break;
         if (SZ( _vertical_lines) < 5) break;
-//        _corners = find_corners( _stone_or_empty, _horizontal_lines, _vertical_lines,
-//                                _intersections, _small_pyr, _gray_threshed );
+        // Get boardness per pixel
         [self nn_boardness:_small_img dst:boardness];
+        // Corners maximize boardness
         _corners = find_corners_from_score( _horizontal_lines, _vertical_lines, _intersections, boardness);
         // Intersections for only the board lines
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     } while(0);
-    
-    //UIImage *res = MatToUIImage( mat_dbg);
+} // f04_corners()
+
+// Debug wrapper for f04_corners
+//--------------------------------
+- (UIImage *) f04_corners_dbg
+{
+    g_app.mainVC.lbBottom.text = @"Find corners";
+    [self f04_corners];
     cv::Mat disp = _small_img.clone();
     if (SZ( _corners) == 4) {
         int rad = 3;
@@ -626,7 +630,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     }
     UIImage *res = MatToUIImage( disp);
     return res;
-} // f04_corners()
+} // f04_corners_dbg()
 
 // Zoom in
 //----------------------------
@@ -765,24 +769,7 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         [self f03_horiz_lines:3];
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
-
-        // Find corners
-        _intersections = get_intersections( _horizontal_lines, _vertical_lines);
-        //cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
-        _corners.clear();
-        if (SZ(_horizontal_lines) && SZ(_vertical_lines)) {
-            cv::Mat boardness;
-            [self nn_boardness:_small_img dst:boardness];
-            _corners = find_corners_from_score( _horizontal_lines, _vertical_lines, _intersections, boardness);
-            if (_vertical_lines[0][0] == _vertical_lines[1][0]) {
-                int tt = 42;
-            }
-        }
-        // Intersections for only the board lines
-        _intersections = get_intersections( _horizontal_lines, _vertical_lines);
-        if (breakIfBad && !board_valid( _corners, _gray)) {
-            break;
-        }
+        [self f04_corners];
         success = true;
     } while(0);
     return success;

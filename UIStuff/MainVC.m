@@ -370,7 +370,7 @@
                 break;
             case 4:
                 _debugstate++;
-                img = [self.cppInterface f04_corners];
+                img = [self.cppInterface f04_corners_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 5:
