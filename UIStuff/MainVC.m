@@ -275,18 +275,12 @@
 //-----------------------------
 - (void) btnCam:(id)sender
 {
-//    if ([g_app.menuVC videoMode]) {
-//        //g_app.saveDiscardVC.photo = [self.cameraView.image copy];
-//        g_app.saveDiscardVC.photo = [_cppInterface get_last_frame_with_board];
-//        g_app.saveDiscardVC.sgf = [g_app.mainVC.cppInterface get_sgf];
-//        [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
-//    } // videoMode
     if ([g_app.menuVC photoMode] || [g_app.menuVC videoMode]) {
         [self.frameExtractor suspend];
         g_app.saveDiscardVC.photo = [_cppInterface photo_mode];
         g_app.saveDiscardVC.sgf = [g_app.mainVC.cppInterface get_sgf];
         [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
-    } // photoMode
+    }
     // Enable debug menu on the right if trigger position seen
     if ([_cppInterface check_debug_trigger]) {
         [g_app enableDebugMenu];
@@ -316,7 +310,7 @@
         [self.frameExtractor suspend];
         _img = image;
         [_cppInterface qImg:_img];
-        UIImage *processedImg = [self.cppInterface video_mode:image];
+        UIImage *processedImg = [self.cppInterface video_mode];
         self.img = processedImg;
         [self.cameraView setImage:self.img];
         if (self.view.window) {

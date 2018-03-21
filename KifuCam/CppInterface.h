@@ -42,13 +42,13 @@
 - (UIImage *) f05_zoom_in;
 - (UIImage *) f06_classify;
 
-- (UIImage *) video_mode:(UIImage *)img;
+- (UIImage *) video_mode;
 - (UIImage *) photo_mode;
 
 // Methods for the Obj-C View Controllers
 //=============================================
 // Run recognizer on img. Result goes into _diagram. Use get_sgf() next.
-- (bool)recognize_position:(UIImage *)img breakIfBad:(bool)breakIfBad;
+//- (bool)recognize_position:(UIImage *)img breakIfBad:(bool)breakIfBad;
 // Detect position on img and count the errors
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf;
 // Save resized image to png. Fname must have .png extension.

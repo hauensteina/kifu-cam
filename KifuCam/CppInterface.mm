@@ -255,7 +255,7 @@ static BlackWhiteEmpty classifier;
 #pragma mark - Processing Pipeline for debugging
 //=================================================
 
-UIImage *img;
+//UIImage *img;
 
 // Make verticals parallel and really vertical
 //----------------------------------------------
@@ -273,7 +273,10 @@ UIImage *img;
         NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
         fullfname = getFullPath( fname);
     }
-    /*UIImage * */ img = [UIImage imageWithContentsOfFile:fullfname];
+    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    
+    //bool success = [self recognize_position:img breakIfBad:NO];
+    
     UIImageToMat( img, _orig_img);
     
     // Find Blobs
@@ -675,13 +678,14 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 // Try to find the board and the intersections.
 // Return true on success.
 //---------------------------------------------------------------
-- (bool)find_board:(UIImage *)img breakIfBad:(bool)breakIfBad
+- (bool)find_board:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
     _board_sz = 19;
     bool success = false;
     do {
-        UIImageToMat( img, _orig_img, false); // Makes a cv::Mat in RGBA order
-        resize( _orig_img, _orig_small, IMG_WIDTH);
+        //UIImageToMat( img, _orig_img, false); // Makes a cv::Mat in RGBA order
+        //resize( _orig_img, _orig_small, IMG_WIDTH);
+        _orig_small = small_img;
         const cv::Size sz( _orig_small.cols, _orig_small.rows);
         cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -766,13 +770,13 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 // Recognize position in image. Result goes into _diagram.
 // Returns true on success.
 //----------------------------------------------------------------------------------------------
-- (bool)recognize_position:(UIImage *)img breakIfBad:(bool)breakIfBad
+- (bool)recognize_position:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
     _board_sz = 19;
     bool success = false;
     do {
-        success = [self find_board:img breakIfBad:breakIfBad];
-        if (breakIfBad and !success) break;
+        success = [self find_board:small_img breakIfBad:breakIfBad];
+        if (breakIfBad && !success) break;
         // Zoom in
         cv::Mat M;
         zoom_in( _gray,  _corners, _gray_zoomed, M);
@@ -800,9 +804,10 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 
 // Entry point for video mode, on each frame
 //--------------------------------------------
-- (UIImage *) video_mode:(UIImage *) img
+- (UIImage *) video_mode
 {
-    bool success = [self find_board:img breakIfBad:YES];
+    cv::Mat _small_img = _imgQ.back().clone();
+    bool success = [self find_board:_small_img breakIfBad:YES];
 
     // Draw real time results on screen
     //------------------------------------
@@ -887,27 +892,21 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 //    }
     int mode = 1;
     if (mode == 1) {
-        best = _imgQ.back();
+        best = _imgQ.back().clone();
+        [self recognize_position:best breakIfBad:NO];
         UIImage *img = MatToUIImage( best);
-        [self recognize_position:img breakIfBad:NO];
         return img;
     }
     else if (mode == 2) {
         NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
         fname = getFullPath( fname);
         UIImage *img = [UIImage imageWithContentsOfFile:fname];
-        [self recognize_position:img breakIfBad:NO];
+        cv::Mat m;
+        UIImageToMat( img, m);
+        resize( m, m, IMG_WIDTH);
+        cv::cvtColor( m, m, CV_RGBA2RGB);
+        [self recognize_position:m breakIfBad:NO];
         return img;
-    }
-    else if (mode == 3) {
-        best = _imgQ.back();
-        UIImage *img = MatToUIImage( best);
-        NSString *fname = nscat( @"tt", @".png");
-        fname = getFullPath( fname);
-        [UIImagePNGRepresentation( img) writeToFile:fname atomically:YES];
-        UIImage *img1 = [UIImage imageWithContentsOfFile:fname];
-        [self recognize_position:img1 breakIfBad:NO];
-        return img1;
     }
     return [UIImage new];
 } // photo_mode()
@@ -916,7 +915,11 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 //------------------------------------------------------------
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf
 {
-    if (![self recognize_position:img breakIfBad:NO]) {
+    cv::Mat m;
+    UIImageToMat( img, m);
+    resize( m, m, IMG_WIDTH);
+    cv::cvtColor( m, m, CV_RGBA2RGB);
+    if (![self recognize_position:m breakIfBad:NO]) {
         return -1;
     }
     auto correct_diagram = sgf2vec([sgf UTF8String]);
