@@ -38,7 +38,6 @@
 #include "Helpers.hpp"
 
 #import "AppDelegate.h"
-#import "BlackWhiteEmpty.hpp"
 #import "BlobFinder.hpp"
 #import "Boardness.hpp"
 #import "Clust1D.hpp"
@@ -47,15 +46,7 @@
 #import "KerasBoardModel.h"
 #import "Perspective.hpp"
 
-// Pyramid filter params
-#define SPATIALRAD  5
-#define COLORRAD    30
-#define MAXPYRLEVEL 2
-
-//#define USE_KERAS
-
 extern cv::Mat mat_dbg;
-static BlackWhiteEmpty classifier;
 
 @interface CppInterface()
 //=======================

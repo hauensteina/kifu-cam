@@ -27,8 +27,6 @@
 
 #include "Globals.h"
 #include "DrawBoard.hpp"
-//#include "BlackWhiteEmpty.hpp"
-
 
 // Draw a board from a list of B,W,E
 //---------------------------------------------------------------

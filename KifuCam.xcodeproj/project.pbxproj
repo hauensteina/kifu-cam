@@ -292,7 +292,6 @@
 		ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCloudWatch.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCloudWatch.framework"; sourceTree = "<group>"; };
 		ACD6C84420152B2F00759875 /* AWSKMS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSKMS.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSKMS.framework"; sourceTree = "<group>"; };
 		ACEF735F1FBDF53200DA4AD8 /* Clust1D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clust1D.hpp; sourceTree = "<group>"; };
-		ACEF73621FBE3BA200DA4AD8 /* BlackWhiteEmpty.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlackWhiteEmpty.hpp; sourceTree = "<group>"; };
 		ACF862D31FE95AF200EEC707 /* Boardness.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Boardness.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -471,7 +470,6 @@
 		AC628C151F9A7D3F0043FCEE /* KifuCam */ = {
 			isa = PBXGroup;
 			children = (
-				ACEF73621FBE3BA200DA4AD8 /* BlackWhiteEmpty.hpp */,
 				AC8ACF8B1FBF5553005D5722 /* BlobFinder.hpp */,
 				AC8ACF8A1FBF5553005D5722 /* BlobFinder.cpp */,
 				ACF862D31FE95AF200EEC707 /* Boardness.hpp */,
