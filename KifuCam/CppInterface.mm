@@ -62,22 +62,12 @@ static BlackWhiteEmpty classifier;
 @property cv::Mat invProj; // Inverse projection matrix
 @property cv::Mat invRot;  // Inverse rotation matrix
 @property cv::Mat small_img; // resized image, in color, RGB, unwarped
-@property cv::Mat small_pyr; // resized image, in color, pyramid filtered
-@property Points pyr_board; // Initial guess at board location
-
 @property cv::Mat orig_small;     // orig resized
 @property cv::Mat small_zoomed;  // small, zoomed into the board
 @property cv::Mat gray;  // Grayscale version of small
 @property cv::Mat gray_threshed;  // gray with inv_thresh and dilation
 @property cv::Mat gray_zoomed;   // Grayscale version of small, zoomed into the board
-@property cv::Mat pyr_zoomed;    // zoomed version of small_pyr
-@property cv::Mat pyr_gray;      // zoomed version of small_pyr, in gray
-@property cv::Mat pyr_masked;    // pyr_gray with black stones masked out
-
-@property cv::Mat gz_threshed; // gray_zoomed with inv_thresh and dilation
-@property cv::Mat dark_places; // adaptive thresh for dark places
-@property cv::Mat white_holes; // adaptive thresh for bright places
-@property Contours cont; // Current set of contours
+//@property Contours cont; // Current set of contours
 @property int board_sz; // board size, 9 or 19
 @property Points stone_or_empty; // places where we suspect stones or empty
 @property std::vector<cv::Vec2f> horizontal_lines;
@@ -87,12 +77,6 @@ static BlackWhiteEmpty classifier;
 @property Points2f corners_zoomed;
 @property Points2f intersections;
 @property Points2f intersections_zoomed;
-@property double dy;
-@property double dx;
-@property std::vector<Points2f> boards; // history of board corners
-@property cv::Mat white_templ;
-@property cv::Mat black_templ;
-@property cv::Mat empty_templ;
 // History of frames. The one at the button press is often shaky.
 @property std::vector<cv::Mat> imgQ;
 // Remember most recent video frame with a Go board
@@ -118,20 +102,6 @@ static BlackWhiteEmpty classifier;
         g_docroot = [getFullPath(@"") UTF8String];
         // Load template files
         cv::Mat tmat;
-        NSString *fpath;
-        
-        fpath = findInBundle( @"white_templ", @"yml");
-        cv::FileStorage fsw( [fpath UTF8String], cv::FileStorage::READ);
-        fsw["white_template"] >> _white_templ;
-        
-        fpath = findInBundle( @"black_templ", @"yml");
-        cv::FileStorage fsb( [fpath UTF8String], cv::FileStorage::READ);
-        fsb["black_template"] >> _black_templ;
-        
-        fpath = findInBundle( @"empty_templ", @"yml");
-        cv::FileStorage fse( [fpath UTF8String], cv::FileStorage::READ);
-        fse["empty_template"] >> _empty_templ;
-
         // The io model
         _iomodel = [nn_io new];
         _boardModel = [[KerasBoardModel alloc] initWithModel:_iomodel];
@@ -183,13 +153,6 @@ static BlackWhiteEmpty classifier;
     int delta_v = 21;
     const cv::Mat rgbimg = _small_zoomed.clone();
     cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
-    std::vector<cv::Mat> channels;
-    channels.push_back( _white_holes);
-    channels.push_back( _dark_places);
-    channels.push_back( _gz_threshed);
-    cv::Mat bdtimg;
-    cv::merge( channels, bdtimg);
-
     NSString *tstamp = tstampFname();
 
     ILOOP( _intersections_zoomed.size())
@@ -221,11 +184,6 @@ static BlackWhiteEmpty classifier;
             fname = nsprintf(@"%@_rgb_%@_hood_%03d.jpg", col, tstamp, i);
             fname = getFullPath( fname);
             cv::imwrite( [fname UTF8String], rgbhood);
-            // Save wdt as jpg
-            const cv::Mat &wdthood( bdtimg(rect));
-            fname = nsprintf(@"%@_bdt_%@_hood_%03d.jpg", col, tstamp, i);
-            fname = getFullPath( fname);
-            cv::imwrite( [fname UTF8String], wdthood);
         }
     } // ILOOP
 } // save_intersections()
@@ -330,7 +288,7 @@ static BlackWhiteEmpty classifier;
     BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones( _gray, _stone_or_empty);
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-    cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
+    //cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
     // Find lines
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
@@ -642,14 +600,10 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         cv::Mat M;
         zoom_in( _gray,  _corners, _gray_zoomed, M);
         zoom_in( _small_img, _corners, _small_zoomed, M);
-        zoom_in( _small_pyr, _corners, _pyr_zoomed, M);
-        cv::cvtColor( _pyr_zoomed, _pyr_gray, cv::COLOR_RGB2GRAY);
         cv::perspectiveTransform( _corners, _corners_zoomed, M);
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
         fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
         fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
-        fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
-        thresh_dilate( _gray_zoomed, _gz_threshed, 4);
     }
 } // f05_zoom_in()
 
@@ -690,9 +644,10 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     cv::cvtColor( _gray_zoomed, drawing, cv::COLOR_GRAY2RGB);
     
     Points2f dummy;
-    get_intersections_from_corners( _corners_zoomed, _board_sz, dummy, _dx, _dy);
-    int dx = ROUND( _dx/4.0);
-    int dy = ROUND( _dy/4.0);
+    double dxd, dyd;
+    get_intersections_from_corners( _corners_zoomed, _board_sz, dummy, dxd, dyd);
+    int dx = ROUND( dxd/4.0);
+    int dy = ROUND( dyd/4.0);
     ISLOOP (_diagram) {
         cv::Point p(ROUND(_intersections_zoomed[i].x), ROUND(_intersections_zoomed[i].y));
         cv::Rect rect( p.x - dx,
