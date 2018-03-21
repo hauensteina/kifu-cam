@@ -848,40 +848,24 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     Points2f bestCorners;
     int maxBlobs = -1E9;
     int bestidx = -1;
-//    ILOOP (SZ(_imgQ) - 1) { // ignore newest frame
-//        _small_img = _imgQ[i];
-//        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-//        thresh_dilate( _gray, _gray_threshed);
-//        _stone_or_empty.clear();
-//        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
-//        BlobFinder::find_stones( _gray, _stone_or_empty);
-//        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-//        if (SZ(_stone_or_empty) > maxBlobs) {
-//            maxBlobs = SZ(_stone_or_empty);
-//            best = _small_img;
-//            bestCorners = _corners;
-//            bestidx = i;
-//        }
-//    }
-    int mode = 1;
-    if (mode == 1) {
-        best = _imgQ.back().clone();
-        [self recognize_position:best breakIfBad:NO];
-        UIImage *img = MatToUIImage( best);
-        return img;
+    ILOOP (SZ(_imgQ) - 1) { // ignore newest frame
+        _small_img = _imgQ[i];
+        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+        thresh_dilate( _gray, _gray_threshed);
+        _stone_or_empty.clear();
+        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
+        BlobFinder::find_stones( _gray, _stone_or_empty);
+        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+        if (SZ(_stone_or_empty) > maxBlobs) {
+            maxBlobs = SZ(_stone_or_empty);
+            best = _small_img;
+            bestCorners = _corners;
+            bestidx = i;
+        }
     }
-    else if (mode == 2) {
-        NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
-        fname = getFullPath( fname);
-        UIImage *img = [UIImage imageWithContentsOfFile:fname];
-        cv::Mat m;
-        UIImageToMat( img, m);
-        resize( m, m, IMG_WIDTH);
-        cv::cvtColor( m, m, CV_RGBA2RGB);
-        [self recognize_position:m breakIfBad:NO];
-        return img;
-    }
-    return [UIImage new];
+    [self recognize_position:best breakIfBad:NO];
+    UIImage *img = MatToUIImage( best);
+    return img;
 } // photo_mode()
 
 // Detect position on image and count erros
