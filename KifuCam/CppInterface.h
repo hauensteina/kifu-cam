@@ -35,7 +35,7 @@
 // Individual steps for debugging
 //---------------------------------
 - (UIImage *) f00_warp_dbg;
-- (UIImage *) f01_blobs;
+- (UIImage *) f01_blobs_dbg;
 - (UIImage *) f02_vert_lines;
 - (UIImage *) f03_horiz_lines;
 - (UIImage *) f04_corners;

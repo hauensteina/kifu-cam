@@ -355,7 +355,7 @@
                 break;
             case 1:
                 _debugstate++;
-                img = [self.cppInterface f01_blobs];
+                img = [self.cppInterface f01_blobs_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 2:

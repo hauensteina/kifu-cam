@@ -318,11 +318,10 @@ static BlackWhiteEmpty classifier;
     return res;
 } // f00_warp()
 
-//--------------------------
+// Roughly guess intersections, stones, and lines
+//--------------------------------------------------
 - (UIImage *) f01_blobs
 {
-    _board_sz=19;
-    g_app.mainVC.lbBottom.text = @"Stones and Intersections";
     _vertical_lines.clear();
     _horizontal_lines.clear();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -331,9 +330,7 @@ static BlackWhiteEmpty classifier;
     BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones( _gray, _stone_or_empty);
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-    
     cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
-    
     // Find lines
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
@@ -344,6 +341,20 @@ static BlackWhiteEmpty classifier;
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f01_blobs()
+
+// Debug wrapper for f01_blobs
+//-------------------------------
+- (UIImage *) f01_blobs_dbg
+{
+    g_app.mainVC.lbBottom.text = @"Stones and Intersections";
+    [self f01_blobs];
+    
+    // Show results
+    cv::Mat drawing = _small_img.clone();
+    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
+    UIImage *res = MatToUIImage( drawing);
+    return res;
+} // f01_blobs_dbg()
 
 // Convert sgf string to UIImage 
 //----------------------------------------
@@ -685,19 +696,8 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     do {
         _orig_small = small_img;
         [self f00_warp];
-
-        // Find blobs again
-        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-        thresh_dilate( _gray, _gray_threshed);
-        _stone_or_empty.clear();
-        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty);
-        BlobFinder::find_stones( _gray, _stone_or_empty);
-        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+        [self f01_blobs];
         if (breakIfBad && SZ(_stone_or_empty) < 0.8 * SQR(_board_sz)) break;
-        
-        // Find lines, again
-        houghlines( _small_img, _stone_or_empty,
-                   _vertical_lines, _horizontal_lines);
         
         // Filter and generate verticals
         std::vector<cv::Vec2f> all_vert_lines = _vertical_lines;
