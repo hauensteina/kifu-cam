@@ -486,7 +486,7 @@ extern cv::Mat mat_dbg;
 - (void) f06_classify
 {
     if (_small_zoomed.rows > 0) {
-        [self keras_classify_intersections];
+        [self nn_classify_intersections];
     }
     fix_diagram( _diagram, _intersections, _small_img);
 } // f06_classify()
@@ -525,8 +525,8 @@ extern cv::Mat mat_dbg;
     return res;
 } // f06_classify_dbg()
 
-#pragma mark - Real time implementation
-//========================================
+//=== Production Flow ===
+//=======================
 
 // Try to find the board and the intersections.
 // Return true on success.
@@ -654,10 +654,8 @@ extern cv::Mat mat_dbg;
 } // photo_mode()
 
 
-#pragma mark - iOS Glue
-
-//=== iOS Glue ===
-//================
+//=== Neural Network CoreML interface ===
+//=======================================
 
 // Make an MLMultiArray from a 3 channel cv::Mat with values 0..255
 // cvMat will be converted to double and scaled to [-1,1]
@@ -717,7 +715,7 @@ extern cv::Mat mat_dbg;
 
 // Classify intersections with Keras Model
 //--------------------------------------------
-- (UIImage *) keras_classify_intersections
+- (UIImage *) nn_classify_intersections
 {
     UIImage *res;
     int r = CROPSIZE/2;
@@ -743,7 +741,7 @@ extern cv::Mat mat_dbg;
     } // ILOOP
     _diagram = diagram;
     return res;
-} // keras_classify_intersections()
+} // nn_classify_intersections()
 
 // Compute an image giving on-board probability per pixel.
 // Use a convolutional network to do that.
@@ -787,6 +785,16 @@ extern cv::Mat mat_dbg;
     return ofs.good();
 }
 
+
+// Get current diagram as sgf
+//----------------------------------
+- (NSString *) get_sgf
+{
+    Points2f my_intersections;
+    unwarp_points(_invProj, _invRot, _intersections, my_intersections);
+    return @(generate_sgf( "", _diagram, my_intersections).c_str());
+}
+
 // Convert sgf string to UIImage
 //----------------------------------------
 + (UIImage *) sgf2img:(NSString *)sgf
@@ -798,19 +806,10 @@ extern cv::Mat mat_dbg;
     return res;
 }
 
-// Get current diagram as sgf
-//----------------------------------
-- (NSString *) get_sgf
-{
-    Points2f my_intersections;
-    unwarp_points(_invProj, _invRot, _intersections, my_intersections);
-    return @(generate_sgf( "", _diagram, my_intersections).c_str());
-}
-
 // Return the four corner coords as an array of 4 pairs [[x0,y0],[x1,y1],...]
 // Ordered clockwise tl,tr,br,bl
 //-----------------------------------------------------------------------------
-- (NSArray *) corners_from_sgf:(NSString *)sgf_
++ (NSArray *) corners_from_sgf:(NSString *)sgf_
 {
     std::string sgf = [sgf_ UTF8String];
     NSMutableArray *res = [NSMutableArray new];

@@ -56,12 +56,13 @@
 
 // Save the cuurently detected position to sgf
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title;
-// Make a diagram from sgf
-+ (UIImage *) sgf2img:(NSString *)sgf;
 // get current diagram as sgf
 - (NSString *) get_sgf;
+
+// Make a diagram from sgf
++ (UIImage *) sgf2img:(NSString *)sgf;
 // Get the corner coords fom GC tag of sgf
-- (NSArray *) corners_from_sgf:(NSString *)sgf;
++ (NSArray *) corners_from_sgf:(NSString *)sgf;
 
 
 @end
