@@ -53,6 +53,10 @@ inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M, cv::Mat &invM
 inline void warp_plines( const std::vector<cv::Vec2f> &plines_in, const cv::Mat &M,
                         std::vector<cv::Vec2f> &plines_out)
 {
+    if (!SZ(plines_in)) {
+        plines_out.clear();
+        return;
+    }
     Points2f p1s, p2s;
     ISLOOP( plines_in) {
         cv::Vec4f seg = polar2segment( plines_in[i]);

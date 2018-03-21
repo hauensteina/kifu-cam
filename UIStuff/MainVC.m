@@ -306,9 +306,11 @@
         return;
     } // debugMode
     else if ([g_app.menuVC photoMode]) {
+        [self.frameExtractor suspend];
         [self.cameraView setImage:image];
         _img = image;
         [_cppInterface qImg:_img];
+        [self.frameExtractor resume];
     } // photoMode
     else if ([g_app.menuVC videoMode]) {
         [self.frameExtractor suspend];
@@ -384,28 +386,7 @@
                 break;
             case 6:
                 _debugstate++;
-                img = [self.cppInterface f06_dark_places];
-                [self.cameraView setImage:img];
-                break;
-            case 7:
-                _debugstate++;
-                img = [self.cppInterface f07_mask_dark];
-                [self.cameraView setImage:img];
-                break;
-            case 8:
-                _debugstate++;
-                img = [self.cppInterface f08_white_holes];
-                [self.cameraView setImage:img];
-                break;
-            case 9:
-                _debugstate++; continue; // skip;
-                //                img = [self.cppInterface f08_features];
-                //                if (!img) { _sliderstate=9; continue; }
-                //                [self.cameraView setImage:img];
-                break;
-            case 10:
-                _debugstate++;
-                img = [self.cppInterface f10_classify];
+                img = [self.cppInterface f06_classify];
                 [self.cameraView setImage:img];
                 break;
             default:

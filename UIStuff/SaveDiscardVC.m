@@ -121,7 +121,7 @@
     fname = nsprintf( @"%@/%@", @SAVED_FOLDER, fname);
     fname = getFullPath( fname);
     // Save img
-    [UIImageJPEGRepresentation( _photo, 1.0) writeToFile:fname atomically:YES];
+    [UIImagePNGRepresentation( _photo) writeToFile:fname atomically:YES];
     // Save sgf
     fname = changeExtension( fname, @".sgf");
     NSError *error;

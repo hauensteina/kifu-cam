@@ -235,7 +235,9 @@ static BlackWhiteEmpty classifier;
 //----------------------------------
 - (NSString *) get_sgf
 {
-    return @(generate_sgf( "", _diagram, _intersections).c_str());
+    Points2f my_intersections;
+    unwarp_points(_invProj, _invRot, _intersections, my_intersections);
+    return @(generate_sgf( "", _diagram, my_intersections).c_str());
 }
 
 // Queue image frames. The newest one is often shaky.
@@ -245,12 +247,15 @@ static BlackWhiteEmpty classifier;
     cv::Mat m;
     UIImageToMat( img, m);
     resize( m, m, IMG_WIDTH);
-    cv::cvtColor( m, m, CV_RGBA2RGB); // Yes, RGBA not BGR
-    ringpush( _imgQ , m, 4); // keep 4 frames
+    cv::cvtColor( m, m, CV_RGBA2RGB);
+    int keep_n_frames = 4;
+    ringpush( _imgQ , m, keep_n_frames); // keep 4 frames
 }
 
 #pragma mark - Processing Pipeline for debugging
 //=================================================
+
+UIImage *img;
 
 // Make verticals parallel and really vertical
 //----------------------------------------------
@@ -268,7 +273,7 @@ static BlackWhiteEmpty classifier;
         NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
         fullfname = getFullPath( fname);
     }
-    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    /*UIImage * */ img = [UIImage imageWithContentsOfFile:fullfname];
     UIImageToMat( img, _orig_img);
     
     // Find Blobs
@@ -575,6 +580,11 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         
         thresh_dilate( _gray_zoomed, _gz_threshed, 4);
     }
+    //
+    //_corners.clear();
+    //_corners_zoomed.clear();
+    //[self find_board:img breakIfBad:true];
+    //[self recognize_position:img breakIfBad:NO];
     // Show results
     cv::Mat drawing = _small_zoomed.clone();
     //cv::cvtColor( _gz_threshed, drawing, cv::COLOR_GRAY2RGB);
@@ -586,121 +596,9 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     return res;
 } // f05_zoom_in()
 
-// Dark places to find B stones
-//-----------------------------------------------------------
-- (UIImage *) f06_dark_places
-{
-    g_app.mainVC.lbBottom.text = @"Adaptive threshold dark";
-    //_corners = _corners_zoomed;
-    
-    cv::Mat dark_places;
-    //cv::GaussianBlur( _gray_zoomed, dark_places, cv::Size(9,9),0,0);
-    //cv::adaptiveThreshold( dark_places, dark_places, 255, CV_ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 50);
-    cv::adaptiveThreshold( _pyr_gray, dark_places, 255, CV_ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 50);
-    // Show results
-    cv::Mat drawing;
-    cv::cvtColor( dark_places, drawing, cv::COLOR_GRAY2RGB);
-    ISLOOP (_intersections_zoomed) {
-        Point2f p = _intersections_zoomed[i];
-        draw_square( p, 3, drawing, cv::Scalar(255,0,0));
-    }
-    UIImage *res = MatToUIImage( drawing);
-    return res;
-} // f06_dark_places()
-
-// Replace dark places with average to make white dynamic threshold work
-//-----------------------------------------------------------------------
-- (UIImage *) f07_mask_dark
-{
-    g_app.mainVC.lbBottom.text = @"Hide dark places";
-    
-    uint8_t mean = cv::mean( _pyr_gray)[0];
-    //cv::Mat black_places;
-    cv::adaptiveThreshold( _pyr_gray, _dark_places, mean, CV_ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 51, 50);
-    _pyr_masked = _pyr_gray.clone();
-    // Copy over if not zero
-    cv::Mat m = _dark_places.clone();
-    _pyr_masked.forEach<uint8_t>( [&m](uint8_t &v, const int *p)
-                                 {
-                                     int row = p[0]; int col = p[1];
-                                     if (auto p = m.at<uint8_t>( row,col)) {
-                                         v = p;
-                                     }
-                                 });
-    // Show results
-    cv::Mat drawing;
-    cv::cvtColor( _pyr_masked, drawing, cv::COLOR_GRAY2RGB);
-    ISLOOP (_intersections_zoomed) {
-        Point2f p = _intersections_zoomed[i];
-        draw_square( p, 3, drawing, cv::Scalar(255,0,0));
-    }
-    UIImage *res = MatToUIImage( drawing);
-    return res;
-} // f07_mask_dark()
-
-
-// Find White places
-//-------------------------------
-- (UIImage *) f08_white_holes
-{
-    g_app.mainVC.lbBottom.text = @"Adaptive threshold bright";
-    
-    // The White stones become black holes, all else is white
-    int nhood_sz =  25;
-    double thresh = -32;
-    //cv::Mat white_holes;
-    cv::adaptiveThreshold( _pyr_masked, _white_holes, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV,
-                          nhood_sz, thresh);
-    
-    // Show results
-    cv::Mat drawing;
-    cv::cvtColor( _white_holes, drawing, cv::COLOR_GRAY2RGB);
-    ISLOOP (_intersections_zoomed) {
-        Point2f p = _intersections_zoomed[i];
-        draw_square( p, 3, drawing, cv::Scalar(255,0,0));
-    }
-    UIImage *res = MatToUIImage( drawing);
-    return res;
-} // f08_white_holes()
-
-// Visualize some features
-//---------------------------
-- (UIImage *) f09_features
-{
-    g_app.mainVC.lbBottom.text = @"brightness";
-    static int state = 0;
-    std::vector<double> feats;
-    cv::Mat drawing;
-    
-    switch (state) {
-        case 0:
-        {
-            // Gray mean
-            const int r = 4;
-            const int yshift = 0;
-            const bool dontscale = false;
-            classifier.get_feature( _pyr_gray, _intersections_zoomed, r,
-                                   [](const cv::Mat &hood) { return cv::mean(hood)[0]; },
-                                   feats, yshift, dontscale);
-            viz_feature( _pyr_gray, _intersections_zoomed, feats, drawing, 1);
-            break;
-        }
-        default:
-            state = 0;
-            return NULL;
-    } // switch
-    state++;
-    
-    // Show results
-    cv::cvtColor( drawing, drawing, cv::COLOR_GRAY2RGB);
-    UIImage *res = MatToUIImage( drawing);
-    return res;
-} // f09_features()
-
-
 // Classify intersections into black, white, empty
 //-----------------------------------------------------------
-- (UIImage *) f10_classify
+- (UIImage *) f06_classify
 {
     g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
@@ -718,6 +616,16 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         }
     }
     fix_diagram( _diagram, _intersections, _small_img);
+//    _corners.clear();
+//    _corners_zoomed.clear();
+//    _vertical_lines.clear();
+//    _horizontal_lines.clear();
+//    _diagram.clear();
+//    [self recognize_position:img breakIfBad:NO];
+//    int rows = [img size].height;
+//    int cols = [img size].width;
+
+    
     
     // Show results
     cv::Mat drawing;
@@ -819,7 +727,7 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         std::vector<cv::Vec2f> all_vert_lines = _vertical_lines;
         dedup_verticals( _vertical_lines, _gray);
         filter_lines( _vertical_lines);
-        const int x_thresh = 8.0;
+        const double x_thresh = 8.0;
         fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
@@ -841,6 +749,9 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
             cv::Mat boardness;
             [self nn_boardness:_small_img dst:boardness];
             _corners = find_corners_from_score( _horizontal_lines, _vertical_lines, _intersections, boardness);
+            if (_vertical_lines[0][0] == _vertical_lines[1][0]) {
+                int tt = 42;
+            }
         }
         // Intersections for only the board lines
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
@@ -855,7 +766,7 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 // Recognize position in image. Result goes into _diagram.
 // Returns true on success.
 //----------------------------------------------------------------------------------------------
-- (bool)recognize_position:(UIImage *)img timeVotes:(int)timeVotes breakIfBad:(bool)breakIfBad
+- (bool)recognize_position:(UIImage *)img breakIfBad:(bool)breakIfBad
 {
     _board_sz = 19;
     bool success = false;
@@ -868,19 +779,20 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         //zoom_in( _small_pyr, _corners, _pyr_zoomed, M);
         cv::perspectiveTransform( _corners, _corners_zoomed, M);
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
-        fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
+        //fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
         //fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
         
         // Classify
         zoom_in( _small_img, _corners, _small_zoomed, M);
+        fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
         [self keras_classify_intersections];
         fix_diagram( _diagram, _intersections, _small_img);
         
         // Copy diagram to NSMutableArray
-        NSMutableArray *res = [NSMutableArray new];
-        ISLOOP (_diagram) {
-            [res addObject:@(_diagram[i])];
-        }
+        //NSMutableArray *res = [NSMutableArray new];
+        //ISLOOP (_diagram) {
+        //    [res addObject:@(_diagram[i])];
+        //}
         success = true;
     } while(0);
     return success;
@@ -913,23 +825,23 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         _last_frame_with_board = _small_img.clone();
     }
     
-    Points2f corners, intersections;
-    unwarp_points( _invProj, _invRot, _corners, corners);
-    unwarp_points( _invProj, _invRot, _intersections, intersections);
-    if (SZ(_corners) == 4) {
-        draw_line( cv::Vec4f( corners[0].x, corners[0].y, corners[1].x, corners[1].y),
+    Points2f my_corners, my_intersections;
+    unwarp_points( _invProj, _invRot, _corners, my_corners);
+    unwarp_points( _invProj, _invRot, _intersections, my_intersections);
+    if (SZ(my_corners) == 4) {
+        draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
                   canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( corners[1].x, corners[1].y, corners[2].x, corners[2].y),
+        draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
                   canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( corners[2].x, corners[2].y, corners[3].x, corners[3].y),
+        draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
                   canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( corners[3].x, corners[3].y, corners[0].x, corners[0].y),
+        draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
                   canvas, cv::Scalar( 255,0,0,255));
         
-        ISLOOP (intersections) {
-            draw_point( intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
+        ISLOOP (my_intersections) {
+            draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
         }
-    } // if (SZ(corners) == 4)
+    } // if (SZ(my_corners) == 4)
     
     UIImage *res = MatToUIImage( canvas);
     return res;
@@ -958,31 +870,53 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     Points2f bestCorners;
     int maxBlobs = -1E9;
     int bestidx = -1;
-    ILOOP (SZ(_imgQ) - 1) { // ignore newest frame
-        _small_img = _imgQ[i];
-        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-        thresh_dilate( _gray, _gray_threshed);
-        _stone_or_empty.clear();
-        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
-        BlobFinder::find_stones( _gray, _stone_or_empty);
-        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-        if (SZ(_stone_or_empty) > maxBlobs) {
-            maxBlobs = SZ(_stone_or_empty);
-            best = _small_img;
-            bestCorners = _corners;
-            bestidx = i;
-        }
+//    ILOOP (SZ(_imgQ) - 1) { // ignore newest frame
+//        _small_img = _imgQ[i];
+//        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+//        thresh_dilate( _gray, _gray_threshed);
+//        _stone_or_empty.clear();
+//        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
+//        BlobFinder::find_stones( _gray, _stone_or_empty);
+//        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+//        if (SZ(_stone_or_empty) > maxBlobs) {
+//            maxBlobs = SZ(_stone_or_empty);
+//            best = _small_img;
+//            bestCorners = _corners;
+//            bestidx = i;
+//        }
+//    }
+    int mode = 1;
+    if (mode == 1) {
+        best = _imgQ.back();
+        UIImage *img = MatToUIImage( best);
+        [self recognize_position:img breakIfBad:NO];
+        return img;
     }
-    UIImage *img = MatToUIImage( best);
-    [self recognize_position:img timeVotes:1 breakIfBad:NO];
-    return img;
+    else if (mode == 2) {
+        NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
+        fname = getFullPath( fname);
+        UIImage *img = [UIImage imageWithContentsOfFile:fname];
+        [self recognize_position:img breakIfBad:NO];
+        return img;
+    }
+    else if (mode == 3) {
+        best = _imgQ.back();
+        UIImage *img = MatToUIImage( best);
+        NSString *fname = nscat( @"tt", @".png");
+        fname = getFullPath( fname);
+        [UIImagePNGRepresentation( img) writeToFile:fname atomically:YES];
+        UIImage *img1 = [UIImage imageWithContentsOfFile:fname];
+        [self recognize_position:img1 breakIfBad:NO];
+        return img1;
+    }
+    return [UIImage new];
 } // photo_mode()
 
 // Detect position on image and count erros
 //------------------------------------------------------------
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf
 {
-    if (![self recognize_position:img timeVotes:1 breakIfBad:NO]) {
+    if (![self recognize_position:img breakIfBad:NO]) {
         return -1;
     }
     auto correct_diagram = sgf2vec([sgf UTF8String]);
@@ -1027,11 +961,12 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     static NSMutableDictionary *memDict = [NSMutableDictionary new];
     if (memDict[memId] == nil) {
         int size = 3 * cvMat.rows * cvMat.cols * sizeof(double);
+        size *= 2; // paranoia
         void *mem = malloc(size);
         memDict[memId] = [NSValue valueWithPointer:mem];
     }
     void *mem = [memDict[memId] pointerValue];
-    
+
     // Split and normalize
     cv::Mat channels[3];
     cv::split( cvMat, channels);

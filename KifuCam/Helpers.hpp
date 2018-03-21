@@ -534,8 +534,8 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
                                                [bot_y](cv::Vec2f a) { return x_from_y( bot_y, a); });
     auto d_top_rhos = vec_delta( top_rhos);
     auto d_bot_rhos = vec_delta( bot_rhos);
-    vec_filter( d_top_rhos, [](double d){ return d > 5 && d < 20;});
-    vec_filter( d_bot_rhos, [](double d){ return d > 8 && d < 25;});
+    vec_filter( d_top_rhos, [](double d){ return d > 8 && d < 20;});
+    vec_filter( d_bot_rhos, [](double d){ return d > 8 && d < 20;});
     double d_top_rho = vec_median( d_top_rhos);
     double d_bot_rho = vec_median( d_bot_rhos);
     
@@ -617,8 +617,8 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
                                                  [right_x](cv::Vec2f a) { return y_from_x( right_x, a); });
     auto d_left_rhos = vec_delta( left_rhos);
     auto d_right_rhos = vec_delta( right_rhos);
-    vec_filter( d_left_rhos, [](double d){ return d > 5 && d < 25;});
-    vec_filter( d_right_rhos, [](double d){ return d > 5 && d < 25;});
+    vec_filter( d_left_rhos, [](double d){ return d > 8 && d < 20;});
+    vec_filter( d_right_rhos, [](double d){ return d > 8 && d < 20;});
     double d_left_rho  = vec_median( d_left_rhos);
     double d_right_rho = vec_median( d_right_rhos);
     
