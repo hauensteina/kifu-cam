@@ -49,20 +49,17 @@
 //=============================================
 // Detect position on img and count the errors
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf;
-// Save resized image to png. Fname must have .png extension.
-//- (bool) save_small_img:(NSString *)fname;
-// Save the cuurently detected position to sgf
-- (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title;
-// Save intersections as trining material
-//- (void) save_intersections;
 // Put an image into a buffer q. We pick the best one later.
 - (void) qImg:(UIImage *)img;
+// Check for the debug mode trigger position to show right menu.
+- (bool) check_debug_trigger;
+
+// Save the cuurently detected position to sgf
+- (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title;
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;
 // get current diagram as sgf
 - (NSString *) get_sgf;
-// Check for the debug mode trigger position to show right menu.
-- (bool) check_debug_trigger;
 // Get the corner coords fom GC tag of sgf
 - (NSArray *) corners_from_sgf:(NSString *)sgf;
 

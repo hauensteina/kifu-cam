@@ -146,5 +146,20 @@ inline float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &pline
     return minstr;
 } // straight_rotation()
 
+// Undo perspective correction on several points so we can draw them on
+// the original image.
+//------------------------------------------------------------------------------------
+inline void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
+                   Points2f &pts_out)
+{
+    pts_out.clear();
+    ISLOOP( pts_in) {
+        Point2f p = pts_in[i];
+        cv::perspectiveTransform( pts_in, pts_out, invProj);
+        cv::transform( pts_out, pts_out, invRot);
+    }
+} // unwarp_points()
+
+
 
 #endif /* Perspective_hpp */

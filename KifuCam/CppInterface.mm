@@ -92,29 +92,8 @@ extern cv::Mat mat_dbg;
     return self;
 }
 
-#pragma mark - Pipeline Helpers
-//==================================
-
-// Save current diagram to file as sgf
-//-----------------------------------------------------------------------
-- (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
-{
-    auto sgf = generate_sgf( [title UTF8String], _diagram, _intersections);
-    std::ofstream ofs;
-    ofs.open( [fname UTF8String]);
-    ofs << sgf;
-    ofs.close();
-    return ofs.good();
-}
-
-// Get current diagram as sgf
-//----------------------------------
-- (NSString *) get_sgf
-{
-    Points2f my_intersections;
-    unwarp_points(_invProj, _invRot, _intersections, my_intersections);
-    return @(generate_sgf( "", _diagram, my_intersections).c_str());
-}
+//=== Misc Public ===
+//===================
 
 // Queue image frames. The newest one is often shaky.
 //-----------------------------------------------------
@@ -128,8 +107,45 @@ extern cv::Mat mat_dbg;
     ringpush( _imgQ , m, keep_n_frames); // keep 4 frames
 }
 
-#pragma mark - Processing Pipeline for debugging
-//=================================================
+// Detect position on image and count erros
+//------------------------------------------------------------
+- (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf
+{
+    cv::Mat m;
+    UIImageToMat( img, m);
+    resize( m, m, IMG_WIDTH);
+    cv::cvtColor( m, m, CV_RGBA2RGB);
+    if (![self recognize_position:m breakIfBad:NO]) {
+        return -1;
+    }
+    auto correct_diagram = sgf2vec([sgf UTF8String]);
+    auto &detected_diagram = _diagram;
+    assert( SZ(detected_diagram) == SZ(correct_diagram));
+    int errcount = 0;
+    ISLOOP (correct_diagram) {
+        if (correct_diagram[i] != detected_diagram[i]) {
+            errcount++;
+        }
+    }
+    return errcount;
+} // runTestImg()
+
+// Check for the debug mode trigger position to show right menu.
+// A clump of 4 black stones in the top left corner.
+//----------------------------------------------------------------
+- (bool) check_debug_trigger
+{
+    std::vector<int> templ( SQR(_board_sz), EEMPTY);
+    templ[0] = BBLACK;
+    templ[1] = BBLACK;
+    templ[_board_sz] = BBLACK;
+    templ[_board_sz+1] = BBLACK;
+    bool res = templ == _diagram;
+    return res;
+} // check_debug_trigger()
+
+//=== Debug Flow ===
+//==================
 
 // Make verticals parallel and really vertical
 //----------------------------------------------
@@ -227,16 +243,6 @@ extern cv::Mat mat_dbg;
     return res;
 } // f01_blobs_dbg()
 
-// Convert sgf string to UIImage 
-//----------------------------------------
-+ (UIImage *) sgf2img:(NSString *)sgf
-{
-    if (!sgf) sgf = @"";
-    cv::Mat m;
-    draw_sgf( [sgf UTF8String], m, IMG_WIDTH);
-    UIImage *res = MatToUIImage( m);
-    return res;
-}
 
 // Find vertical grid lines
 //----------------------------------
@@ -519,20 +525,6 @@ extern cv::Mat mat_dbg;
     return res;
 } // f06_classify_dbg()
 
-// Undo perspective correction on several points so we can draw them on
-// the original image.
-//------------------------------------------------------------------------------------
-void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
-                   Points2f &pts_out)
-{
-    pts_out.clear();
-    ISLOOP( pts_in) {
-        Point2f p = pts_in[i];
-        cv::perspectiveTransform( pts_in, pts_out, invProj);
-        cv::transform( pts_out, pts_out, invRot);
-    }
-} // unwarp_points()
-
 #pragma mark - Real time implementation
 //========================================
 
@@ -661,42 +653,6 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     return img;
 } // photo_mode()
 
-// Detect position on image and count erros
-//------------------------------------------------------------
-- (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf
-{
-    cv::Mat m;
-    UIImageToMat( img, m);
-    resize( m, m, IMG_WIDTH);
-    cv::cvtColor( m, m, CV_RGBA2RGB);
-    if (![self recognize_position:m breakIfBad:NO]) {
-        return -1;
-    }
-    auto correct_diagram = sgf2vec([sgf UTF8String]);
-    auto &detected_diagram = _diagram;
-    assert( SZ(detected_diagram) == SZ(correct_diagram));
-    int errcount = 0;
-    ISLOOP (correct_diagram) {
-        if (correct_diagram[i] != detected_diagram[i]) {
-            errcount++;
-        }
-    }
-    return errcount;
-} // runTestImg()
-
-// Check for the debug mode trigger position to show right menu.
-// A clump of 4 black stones in the top left corner.
-//----------------------------------------------------------------
-- (bool) check_debug_trigger
-{
-    std::vector<int> templ( SQR(_board_sz), EEMPTY);
-    templ[0] = BBLACK;
-    templ[1] = BBLACK;
-    templ[_board_sz] = BBLACK;
-    templ[_board_sz+1] = BBLACK;
-    bool res = templ == _diagram;
-    return res;
-} // check_debug_trigger()
 
 #pragma mark - iOS Glue
 
@@ -819,6 +775,38 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 //=== Sgf ===
 //===========
 
+// Save current diagram to file as sgf
+//-----------------------------------------------------------------------
+- (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
+{
+    auto sgf = generate_sgf( [title UTF8String], _diagram, _intersections);
+    std::ofstream ofs;
+    ofs.open( [fname UTF8String]);
+    ofs << sgf;
+    ofs.close();
+    return ofs.good();
+}
+
+// Convert sgf string to UIImage
+//----------------------------------------
++ (UIImage *) sgf2img:(NSString *)sgf
+{
+    if (!sgf) sgf = @"";
+    cv::Mat m;
+    draw_sgf( [sgf UTF8String], m, IMG_WIDTH);
+    UIImage *res = MatToUIImage( m);
+    return res;
+}
+
+// Get current diagram as sgf
+//----------------------------------
+- (NSString *) get_sgf
+{
+    Points2f my_intersections;
+    unwarp_points(_invProj, _invRot, _intersections, my_intersections);
+    return @(generate_sgf( "", _diagram, my_intersections).c_str());
+}
+
 // Return the four corner coords as an array of 4 pairs [[x0,y0],[x1,y1],...]
 // Ordered clockwise tl,tr,br,bl
 //-----------------------------------------------------------------------------
@@ -846,6 +834,8 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     [res addObject:points[boardsz*boardsz-boardsz]];
     return res;
 } // corners_from_sgf()
+
+
 
 @end
 
