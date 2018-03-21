@@ -61,8 +61,6 @@
 + (UIImage *) sgf2img:(NSString *)sgf;
 // get current diagram as sgf
 - (NSString *) get_sgf;
-// Get most recent video frame with a Go board
-- (UIImage *) get_last_frame_with_board;
 // Check for the debug mode trigger position to show right menu.
 - (bool) check_debug_trigger;
 // Get the corner coords fom GC tag of sgf

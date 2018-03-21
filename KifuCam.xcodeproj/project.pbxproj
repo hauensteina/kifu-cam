@@ -60,9 +60,6 @@
 		AC99ECED200968E200EDF097 /* board_full.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC99ECEB200968E200EDF097 /* board_full.jpg */; };
 		AC99ECEE200968E200EDF097 /* board_full_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC99ECEC200968E200EDF097 /* board_full_1.jpg */; };
 		AC9DB02F1FE0581F008723CE /* board06.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB02E1FE0581F008723CE /* board06.jpg */; };
-		AC9DB0331FE09DFA008723CE /* black_templ.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB0321FE09DFA008723CE /* black_templ.yml */; };
-		AC9DB0351FE09E02008723CE /* empty_templ.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB0341FE09E02008723CE /* empty_templ.yml */; };
-		AC9DB0371FE09E0F008723CE /* white_templ.yml in Resources */ = {isa = PBXBuildFile; fileRef = AC9DB0361FE09E0F008723CE /* white_templ.yml */; };
 		ACA185D8201BEA7100A3501E /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA185D7201BEA7000A3501E /* demo.png */; };
 		ACA69E4C1F9D077B00F5E068 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = ACA69E4B1F9D077B00F5E068 /* Common.m */; };
 		ACA86B73202508E800939F1A /* Icon-152.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B70202508E700939F1A /* Icon-152.png */; };
@@ -276,9 +273,6 @@
 		AC99ECEB200968E200EDF097 /* board_full.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board_full.jpg; sourceTree = "<group>"; };
 		AC99ECEC200968E200EDF097 /* board_full_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board_full_1.jpg; sourceTree = "<group>"; };
 		AC9DB02E1FE0581F008723CE /* board06.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = board06.jpg; sourceTree = "<group>"; };
-		AC9DB0321FE09DFA008723CE /* black_templ.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = black_templ.yml; sourceTree = "<group>"; };
-		AC9DB0341FE09E02008723CE /* empty_templ.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = empty_templ.yml; sourceTree = "<group>"; };
-		AC9DB0361FE09E0F008723CE /* white_templ.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = white_templ.yml; sourceTree = "<group>"; };
 		ACA185D7201BEA7000A3501E /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
 		ACA69E4B1F9D077B00F5E068 /* Common.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		ACA86B70202508E700939F1A /* Icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-152.png"; sourceTree = "<group>"; };
@@ -568,9 +562,6 @@
 				ACA185D7201BEA7000A3501E /* demo.png */,
 				AC3274402016836C009BEFD2 /* video_icon.png */,
 				AC32743F2016836B009BEFD2 /* photo_icon.png */,
-				AC9DB0361FE09E0F008723CE /* white_templ.yml */,
-				AC9DB0321FE09DFA008723CE /* black_templ.yml */,
-				AC9DB0341FE09E02008723CE /* empty_templ.yml */,
 				AC99ECEB200968E200EDF097 /* board_full.jpg */,
 				AC99ECEC200968E200EDF097 /* board_full_1.jpg */,
 				AC8ACF8D1FC1EC12005D5722 /* board01.jpg */,
@@ -668,7 +659,6 @@
 				AC0FFB041FEB4AD7009A02FD /* board11.jpg in Resources */,
 				ACA185D8201BEA7100A3501E /* demo.png in Resources */,
 				ACA86B75202508E800939F1A /* Icon-167.png in Resources */,
-				AC9DB0371FE09E0F008723CE /* white_templ.yml in Resources */,
 				AC0FFB011FEB4AD7009A02FD /* board07.jpg in Resources */,
 				AC99ECEE200968E200EDF097 /* board_full_1.jpg in Resources */,
 				ACA86B74202508E800939F1A /* Icon-120.png in Resources */,
@@ -678,8 +668,6 @@
 				AC0FFB051FEB4AD7009A02FD /* board12.jpg in Resources */,
 				AC9DB02F1FE0581F008723CE /* board06.jpg in Resources */,
 				AC0FFB061FEB4AD7009A02FD /* board08.jpg in Resources */,
-				AC9DB0331FE09DFA008723CE /* black_templ.yml in Resources */,
-				AC9DB0351FE09E02008723CE /* empty_templ.yml in Resources */,
 				AC8ACF901FC1F6E6005D5722 /* board02.jpg in Resources */,
 				AC3274412016836D009BEFD2 /* photo_icon.png in Resources */,
 				ACAC40C01FC3321A00B6968B /* board03.jpg in Resources */,

@@ -67,7 +67,6 @@ static BlackWhiteEmpty classifier;
 @property cv::Mat gray;  // Grayscale version of small
 @property cv::Mat gray_threshed;  // gray with inv_thresh and dilation
 @property cv::Mat gray_zoomed;   // Grayscale version of small, zoomed into the board
-//@property Contours cont; // Current set of contours
 @property int board_sz; // board size, 9 or 19
 @property Points stone_or_empty; // places where we suspect stones or empty
 @property std::vector<cv::Vec2f> horizontal_lines;
@@ -79,8 +78,6 @@ static BlackWhiteEmpty classifier;
 @property Points2f intersections_zoomed;
 // History of frames. The one at the button press is often shaky.
 @property std::vector<cv::Mat> imgQ;
-// Remember most recent video frame with a Go board
-@property cv::Mat last_frame_with_board;
 // NN models
 @property nn_io *iomodel; // Keras model to get boardness per pixel
 @property KerasBoardModel *boardModel; // wrapper around iomodel
@@ -88,10 +85,6 @@ static BlackWhiteEmpty classifier;
 @end
 
 @implementation CppInterface
-{
-    double m_cropdata[3*CROPSIZE*CROPSIZE];
-    //double m_imagedata[3*IMG_WIDTH*IMG_HEIGHT];
-}
 //=========================
 
 //----------------------
@@ -755,7 +748,6 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         old_vlines = _vertical_lines;
         old_corners = _corners;
         old_intersections = _intersections;
-        _last_frame_with_board = _small_img.clone();
     }
     
     Points2f my_corners, my_intersections;
@@ -779,20 +771,6 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     UIImage *res = MatToUIImage( canvas);
     return res;
 } // video_mode()
-
-// Get most recent frame with a Go board
-//----------------------------------------
-- (UIImage *) get_last_frame_with_board
-{
-    UIImage *res;
-    if (_last_frame_with_board.cols) {
-        res = MatToUIImage( _last_frame_with_board);
-    }
-    else {
-        res = MatToUIImage( _small_img);
-    }
-    return res;
-}
 
 // Photo Mode. Find the best frame in the queue and process it.
 //--------------------------------------------------------------
