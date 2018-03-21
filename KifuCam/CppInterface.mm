@@ -42,7 +42,6 @@
 #import "Boardness.hpp"
 #import "Clust1D.hpp"
 #import "CppInterface.h"
-#import "DrawBoard.hpp"
 #import "KerasBoardModel.h"
 #import "Perspective.hpp"
 
@@ -96,27 +95,6 @@ extern cv::Mat mat_dbg;
 #pragma mark - Pipeline Helpers
 //==================================
 
-// Load image from file
-//-------------------------------------------------------
-- (void) load_img:(NSString *)fname dst:(cv::Mat &) dst
-{
-    UIImage *img = [UIImage imageNamed:fname];
-    UIImageToMat(img, dst);
-}
-
-// Save current resized image to file.
-// fname must have .png extension.
-//---------------------------------------------
-- (bool) save_small_img:(NSString *)fname
-{
-    cv::Mat m;
-    cv::cvtColor( _small_img, m, CV_RGB2BGR);
-    std::vector<int> compression_params;
-    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-    compression_params.push_back(0);
-    return cv::imwrite( [fname UTF8String], m);
-}
-
 // Save current diagram to file as sgf
 //-----------------------------------------------------------------------
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
@@ -128,49 +106,6 @@ extern cv::Mat mat_dbg;
     ofs.close();
     return ofs.good();
 }
-
-// Save intersections as training material
-//------------------------------------------
-- (void) save_intersections
-{
-    int delta_h = 21;
-    int delta_v = 21;
-    const cv::Mat rgbimg = _small_zoomed.clone();
-    cv::cvtColor( rgbimg, rgbimg, CV_BGR2RGB); // Yes, RGBA not BGR
-    NSString *tstamp = tstampFname();
-
-    ILOOP( _intersections_zoomed.size())
-    {
-        int x = _intersections_zoomed[i].x;
-        int y = _intersections_zoomed[i].y;
-        int dx = round(delta_h/2.0); int dy = round(delta_v/2.0);
-        cv::Rect rect( x - dx, y - dy, 2*dx+1, 2*dy+1 );
-        if (0 <= rect.x &&
-            0 <= rect.width &&
-            rect.x + rect.width <= rgbimg.cols &&
-            0 <= rect.y &&
-            0 <= rect.height &&
-            rect.y + rect.height <= rgbimg.rows)
-        {
-            // Find Black, White, Empty
-            NSString *col;
-            switch (_diagram[i]) {
-                case BBLACK:
-                    col = @"B"; break;
-                case WWHITE:
-                    col = @"W"; break;
-                default:
-                    col = @"E";
-            }
-            NSString *fname;
-            // Save rgb as jpg
-            const cv::Mat &rgbhood( rgbimg(rect));
-            fname = nsprintf(@"%@_rgb_%@_hood_%03d.jpg", col, tstamp, i);
-            fname = getFullPath( fname);
-            cv::imwrite( [fname UTF8String], rgbhood);
-        }
-    } // ILOOP
-} // save_intersections()
 
 // Get current diagram as sgf
 //----------------------------------
@@ -272,7 +207,6 @@ extern cv::Mat mat_dbg;
     BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones( _gray, _stone_or_empty);
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-    //cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
     // Find lines
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);

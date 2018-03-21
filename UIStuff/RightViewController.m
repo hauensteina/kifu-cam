@@ -60,7 +60,6 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
                        @{ @"txt": @"Add Test Case", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Run Test Cases", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Overwrite Test Cases", @"state": @(ITEM_NOT_SELECTED) },
-                       @{ @"txt": @"Save Intersections", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Upload Test Cases", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Download Test Casess", @"state": @(ITEM_NOT_SELECTED) }
@@ -147,9 +146,6 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
         }
         else if ([menuItem hasPrefix:@"Download Test Cases"]) {
             [self mnuDownloadTestCases_0];
-        }
-        else if ([menuItem hasPrefix:@"Save Intersections"]) {
-            [self mnuSaveIntersections];
         }
         [self.tableView reloadData];
     } while(0);
@@ -291,13 +287,6 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
                 }
             });
 } // mnuDownloadTestCases_1()
-
-// Save intersections to file as training material
-//--------------------------------------------------
-- (void)mnuSaveIntersections
-{
-    [g_app.mainVC.cppInterface save_intersections];
-} // mnuSaveIntersections()
 
 // Download image files
 //-------------------------------

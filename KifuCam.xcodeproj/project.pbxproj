@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */; };
-		AC0BC39D1FE2E26F0066C542 /* DrawBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC0BC39B1FE2E26F0066C542 /* DrawBoard.cpp */; };
 		AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */; };
 		AC13BB29200BD38600369CAE /* LGSideMenuHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */; };
 		AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1E200BD38500369CAE /* UIViewController+LGSideMenuController.m */; };
@@ -175,8 +174,6 @@
 		AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameExtractor.h; sourceTree = "<group>"; };
 		AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameExtractor.m; sourceTree = "<group>"; };
 		AC043D331F9BB9AB006CF7F0 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
-		AC0BC39B1FE2E26F0066C542 /* DrawBoard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawBoard.cpp; sourceTree = "<group>"; };
-		AC0BC39C1FE2E26F0066C542 /* DrawBoard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DrawBoard.hpp; sourceTree = "<group>"; };
 		AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuBorderView.m; path = LGSideMenuController/LGSideMenuBorderView.m; sourceTree = "<group>"; };
 		AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LGSideMenuHelper.m; path = LGSideMenuController/LGSideMenuHelper.m; sourceTree = "<group>"; };
 		AC13BB1C200BD38500369CAE /* LGSideMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LGSideMenuView.h; path = LGSideMenuController/LGSideMenuView.h; sourceTree = "<group>"; };
@@ -476,8 +473,6 @@
 				ACEF735F1FBDF53200DA4AD8 /* Clust1D.hpp */,
 				AC5540751F9BE71800922557 /* CppInterface.h */,
 				AC5540761F9BE71800922557 /* CppInterface.mm */,
-				AC0BC39B1FE2E26F0066C542 /* DrawBoard.cpp */,
-				AC0BC39C1FE2E26F0066C542 /* DrawBoard.hpp */,
 				AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */,
 				AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */,
 				AC9702191FBC88050057C4C2 /* Globals.h */,
@@ -645,7 +640,6 @@
 				AC5F340E20151C41002FEF06 /* S3.m in Sources */,
 				AC5540771F9BE71900922557 /* CppInterface.mm in Sources */,
 				AC13BB3B200BD6C600369CAE /* LeftMenuController.m in Sources */,
-				AC0BC39D1FE2E26F0066C542 /* DrawBoard.cpp in Sources */,
 				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
 				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
