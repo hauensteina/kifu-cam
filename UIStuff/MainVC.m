@@ -380,7 +380,7 @@
                 break;
             case 6:
                 _debugstate++;
-                img = [self.cppInterface f06_classify];
+                img = [self.cppInterface f06_classify_dbg];
                 [self.cameraView setImage:img];
                 break;
             default:

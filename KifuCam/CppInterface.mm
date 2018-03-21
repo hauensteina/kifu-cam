@@ -670,39 +670,23 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 
 // Classify intersections into black, white, empty
 //-----------------------------------------------------------
-- (UIImage *) f06_classify
+- (void) f06_classify
+{
+    if (_small_zoomed.rows > 0) {
+        [self keras_classify_intersections];
+    }
+    fix_diagram( _diagram, _intersections, _small_img);
+} // f06_classify()
+
+// Debug wrapper for f06_classify
+//---------------------------------------
+- (UIImage *) f06_classify_dbg
 {
     g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
-    
-    //std::vector<int> diagram;
-    if (_small_zoomed.rows > 0) {
-        if ([g_app.settingsVC useNN]) {
-            /* return */ [self keras_classify_intersections];
-        }
-        else {
-            //cv::Mat gray_blurred;
-            //cv::GaussianBlur( _gray_zoomed, gray_blurred, cv::Size(5, 5), 2, 2 );
-            const int TIME_BUF_SZ = 1;
-            _diagram = classifier.frame_vote( _intersections_zoomed, _pyr_zoomed, _gray_zoomed, TIME_BUF_SZ);
-        }
-    }
-    fix_diagram( _diagram, _intersections, _small_img);
-//    _corners.clear();
-//    _corners_zoomed.clear();
-//    _vertical_lines.clear();
-//    _horizontal_lines.clear();
-//    _diagram.clear();
-//    [self recognize_position:img breakIfBad:NO];
-//    int rows = [img size].height;
-//    int cols = [img size].width;
+    [self f06_classify];
 
-    
-    
-    // Show results
     cv::Mat drawing;
-    //DrawBoard drb( _gray_zoomed, _corners_zoomed[0].y, _corners_zoomed[0].x, _board_sz);
-    //drb.draw( _diagram);
     cv::cvtColor( _gray_zoomed, drawing, cv::COLOR_GRAY2RGB);
     
     Points2f dummy;
@@ -725,7 +709,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f10_classify()
+} // f06_classify_dbg()
 
 // Undo perspective correction on several points so we can draw them on
 // the original image.
@@ -785,8 +769,7 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         success = [self find_board:small_img breakIfBad:breakIfBad];
         if (breakIfBad && !success) break;
         [self f05_zoom_in];
-        [self keras_classify_intersections];
-        fix_diagram( _diagram, _intersections, _small_img);
+        [self f06_classify];
         success = true;
     } while(0);
     return success;
