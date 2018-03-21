@@ -65,7 +65,6 @@ static BlackWhiteEmpty classifier;
 @property cv::Mat small_pyr; // resized image, in color, pyramid filtered
 @property Points pyr_board; // Initial guess at board location
 
-@property cv::Mat orig_img;     // Mat with image we are working on
 @property cv::Mat orig_small;     // orig resized
 @property cv::Mat small_zoomed;  // small, zoomed into the board
 @property cv::Mat gray;  // Grayscale version of small
@@ -255,32 +254,17 @@ static BlackWhiteEmpty classifier;
 #pragma mark - Processing Pipeline for debugging
 //=================================================
 
-//UIImage *img;
-
 // Make verticals parallel and really vertical
 //----------------------------------------------
-- (UIImage *) f00_warp
+- (void) f00_warp
 {
     _board_sz=19;
-    g_app.mainVC.lbBottom.text = @"Tap the screen";
     _vertical_lines.clear();
     _horizontal_lines.clear();
-    NSString *fullfname;
-    if ([g_app.menuVC demoMode]) {
-        fullfname = findInBundle(@"demo", @".png");
-    }
-    else {
-        NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
-        fullfname = getFullPath( fname);
-    }
-    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
-    
-    //bool success = [self recognize_position:img breakIfBad:NO];
-    
-    UIImageToMat( img, _orig_img);
-    
     // Find Blobs
-    resize( _orig_img, _orig_small, IMG_WIDTH);
+    if (_orig_small.cols != IMG_WIDTH) {
+        resize( _orig_small, _orig_small, IMG_WIDTH);
+    }
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
     cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -293,21 +277,37 @@ static BlackWhiteEmpty classifier;
     // Find lines
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
-
+    
     // Straighten horizontals
-    float theta; cv::Mat Ms, invMs;
-    float straightness = straight_rotation( sz, _horizontal_lines, theta, Ms, invMs);
+    float theta; cv::Mat Ms;
+    straight_rotation( sz, _horizontal_lines, theta, Ms, _invRot);
     cv::warpAffine( _small_img, _small_img, Ms, sz);
     warp_plines( _vertical_lines, Ms, _vertical_lines);
-
+    
     // Unwarp verticals
-    float phi; cv::Mat Mp, invMp;
-    float pary = parallel_projection( sz, _vertical_lines, phi, Mp, invMp);
+    float phi; cv::Mat Mp;
+    parallel_projection( sz, _vertical_lines, phi, Mp, _invProj);
     cv::warpPerspective( _small_img, _small_img, Mp, sz);
     warp_plines( _vertical_lines, Mp, _vertical_lines);
-    
+} // f00_warp()
 
-    g_app.mainVC.lbBottom.text = nsprintf( @"phi = %.2f, pary = %.2f, theta = %.2f, sness = %.2f", phi, pary, theta, straightness);
+// Debug wrapper for f00_warp
+//------------------------------------
+- (UIImage *) f00_warp_dbg
+{
+    _board_sz=19;
+    g_app.mainVC.lbBottom.text = @"Tap the screen";
+    NSString *fullfname;
+    if ([g_app.menuVC demoMode]) {
+        fullfname = findInBundle(@"demo", @".png");
+    }
+    else {
+        NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
+        fullfname = getFullPath( fname);
+    }
+    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    UIImageToMat( img, _orig_small);
+    [self f00_warp];
 
     cv::Mat drawing = _small_img.clone();
     get_color(true);
@@ -683,36 +683,8 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     _board_sz = 19;
     bool success = false;
     do {
-        //UIImageToMat( img, _orig_img, false); // Makes a cv::Mat in RGBA order
-        //resize( _orig_img, _orig_small, IMG_WIDTH);
         _orig_small = small_img;
-        const cv::Size sz( _orig_small.cols, _orig_small.rows);
-        cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
-        cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-        thresh_dilate( _gray, _gray_threshed);
-        
-        // Blobs
-        _stone_or_empty.clear();
-        BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty);
-        BlobFinder::find_stones( _gray, _stone_or_empty);
-        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-        
-        // Find lines
-        houghlines( _small_img, _stone_or_empty,
-                   _vertical_lines, _horizontal_lines);
-        if (breakIfBad && SZ( _vertical_lines) < 5) break;
-        if (breakIfBad && SZ( _horizontal_lines) < 5) break;
-
-        // Straighten horizontals
-        float theta; cv::Mat Ms;
-        straight_rotation( sz, _horizontal_lines, theta, Ms, _invRot);
-        cv::warpAffine( _small_img, _small_img, Ms, sz);
-        warp_plines( _vertical_lines, Ms, _vertical_lines);
-
-        // Unwarp verticals
-        float phi; cv::Mat Mp;
-        parallel_projection( sz, _vertical_lines, phi, Mp, _invProj);
-        cv::warpPerspective( _small_img, _small_img, Mp, sz);
+        [self f00_warp];
 
         // Find blobs again
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);

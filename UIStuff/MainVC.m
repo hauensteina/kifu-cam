@@ -350,7 +350,7 @@
             case 0:
                 _debugstate++;
                 [self.frameExtractor suspend];
-                img = [self.cppInterface f00_warp];
+                img = [self.cppInterface f00_warp_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 1:
