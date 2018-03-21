@@ -634,9 +634,8 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 
 // Zoom in
 //----------------------------
-- (UIImage *) f05_zoom_in
+- (void) f05_zoom_in
 {
-    g_app.mainVC.lbBottom.text = @"Perspective transform";
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
@@ -650,24 +649,24 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
         fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
         fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
         fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
-        
         thresh_dilate( _gray_zoomed, _gz_threshed, 4);
     }
-    //
-    //_corners.clear();
-    //_corners_zoomed.clear();
-    //[self find_board:img breakIfBad:true];
-    //[self recognize_position:img breakIfBad:NO];
-    // Show results
+} // f05_zoom_in()
+
+// Debug wrapper for f05_zoom_in
+//--------------------------------
+- (UIImage *) f05_zoom_in_dbg
+{
+    g_app.mainVC.lbBottom.text = @"Perspective transform";
+    [self f05_zoom_in];
     cv::Mat drawing = _small_zoomed.clone();
-    //cv::cvtColor( _gz_threshed, drawing, cv::COLOR_GRAY2RGB);
     ISLOOP (_intersections_zoomed) {
         Point2f p = _intersections_zoomed[i];
         draw_square( p, 3, drawing, cv::Scalar(255,0,0));
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f05_zoom_in()
+} // f05_zoom_in_dbg()
 
 // Classify intersections into black, white, empty
 //-----------------------------------------------------------
@@ -777,7 +776,7 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
 
 // Recognize position in image. Result goes into _diagram.
 // Returns true on success.
-//----------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 - (bool)recognize_position:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
     _board_sz = 19;
@@ -785,26 +784,9 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
     do {
         success = [self find_board:small_img breakIfBad:breakIfBad];
         if (breakIfBad && !success) break;
-        // Zoom in
-        cv::Mat M;
-        zoom_in( _gray,  _corners, _gray_zoomed, M);
-        //zoom_in( _small_pyr, _corners, _pyr_zoomed, M);
-        cv::perspectiveTransform( _corners, _corners_zoomed, M);
-        cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
-        //fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
-        //fill_outside_with_average_rgb( _pyr_zoomed, _corners_zoomed);
-        
-        // Classify
-        zoom_in( _small_img, _corners, _small_zoomed, M);
-        fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
+        [self f05_zoom_in];
         [self keras_classify_intersections];
         fix_diagram( _diagram, _intersections, _small_img);
-        
-        // Copy diagram to NSMutableArray
-        //NSMutableArray *res = [NSMutableArray new];
-        //ISLOOP (_diagram) {
-        //    [res addObject:@(_diagram[i])];
-        //}
         success = true;
     } while(0);
     return success;

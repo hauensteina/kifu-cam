@@ -375,7 +375,7 @@
                 break;
             case 5:
                 _debugstate++;
-                img = [self.cppInterface f05_zoom_in];
+                img = [self.cppInterface f05_zoom_in_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 6:

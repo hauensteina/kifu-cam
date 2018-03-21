@@ -39,7 +39,7 @@
 - (UIImage *) f02_vert_lines_dbg;
 - (UIImage *) f03_horiz_lines_dbg;
 - (UIImage *) f04_corners_dbg;
-- (UIImage *) f05_zoom_in;
+- (UIImage *) f05_zoom_in_dbg;
 - (UIImage *) f06_classify;
 
 - (UIImage *) video_mode;
