@@ -43,6 +43,7 @@
 #import "Clust1D.hpp"
 #import "CppInterface.h"
 #import "KerasBoardModel.h"
+#import "KerasStoneModel.h"
 #import "Perspective.hpp"
 
 extern cv::Mat mat_dbg;
@@ -71,6 +72,8 @@ extern cv::Mat mat_dbg;
 // NN models
 @property nn_io *iomodel; // Keras model to get boardness per pixel
 @property KerasBoardModel *boardModel; // wrapper around iomodel
+@property nn_bew *bewmodel; // Keras model to classify intersections int B,W,E
+@property KerasStoneModel *stoneModel; // wrapper around bewmodel
 
 @end
 
@@ -85,9 +88,12 @@ extern cv::Mat mat_dbg;
         g_docroot = [getFullPath(@"") UTF8String];
         // Load template files
         cv::Mat tmat;
-        // The io model
+        // The boardness model
         _iomodel = [nn_io new];
         _boardModel = [[KerasBoardModel alloc] initWithModel:_iomodel];
+        // The stone model
+        _bewmodel = [nn_bew new];
+        _stoneModel = [[KerasStoneModel alloc] initWithModel:_bewmodel];
     }
     return self;
 }
@@ -735,7 +741,7 @@ extern cv::Mat mat_dbg;
             rect.y + rect.height <= _small_zoomed.rows)
         {
             MLMultiArray *nn_bew_input = [self MultiArrayFromCVMat:_small_zoomed( rect) memId:@"bew_input"];
-            clazz = [g_app.stoneModel classify:nn_bew_input];
+            clazz = [_stoneModel classify:nn_bew_input];
             diagram[i] = clazz;
         }
     } // ILOOP

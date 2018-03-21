@@ -18,9 +18,12 @@
 
 @interface KerasStoneModel : NSObject
 @property (nullable) UIImage *dbgimg;
+
 - (nonnull instancetype)initWithModel:(nullable nn_bew*) kerasModel;
+
 // Classify a crop with one intersection at the center
 // Returns one of BBLACK, EEMPTY, WWHITE
+//------------------------------------------------------
 - (int) classify: (nullable MLMultiArray *)image;
 
 @end
