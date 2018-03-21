@@ -364,7 +364,7 @@
                 [self.cameraView setImage:img];
                 break;
             case 3:
-                img = [self.cppInterface f03_horiz_lines];
+                img = [self.cppInterface f03_horiz_lines_dbg];
                 if (!img) { _debugstate++; continue; }
                 [self.cameraView setImage:img];
                 break;

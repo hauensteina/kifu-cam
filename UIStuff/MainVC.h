@@ -47,12 +47,6 @@
 // Slider for test purposes
 //@property UISlider *sldDbg;
 
-
-//// Callbacks
-////============
-//- (void) mnuAddTestCase;
-//- (void) mnuEditTestCases;
-
 // Other
 //=======
 // Redraw main screen

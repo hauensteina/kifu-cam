@@ -512,37 +512,67 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
 
 // Find horizontal grid lines
 //-----------------------------
-- (UIImage *) f03_horiz_lines
+- (void) f03_horiz_lines:(int)state
 {
-    static int state = 0;
-    if (!SZ(_horizontal_lines)) state = 0;
-    cv::Mat drawing;
     static std::vector<cv::Vec2f> all_horiz_lines;
     switch (state) {
         case 0:
         {
-            g_app.mainVC.lbBottom.text = @"Find horizontals";
-            //_horizontal_lines = homegrown_horiz_lines( _stone_or_empty);
             all_horiz_lines = _horizontal_lines;
             break;
         }
         case 1:
         {
-            g_app.mainVC.lbBottom.text = @"Remove duplicates";
             dedup_horizontals( _horizontal_lines, _gray);
             break;
         }
         case 2:
         {
-            g_app.mainVC.lbBottom.text = @"Filter";
             filter_lines( _horizontal_lines);
             break;
         }
         case 3:
         {
-            g_app.mainVC.lbBottom.text = @"Generate";
             const double y_thresh = 8.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
+            break;
+        }
+        default:
+            NSLog( @"f03_horiz_lines(): bad state %d", state);
+            return;
+    } // switch
+} // f03_horiz_lines()
+
+// Debug wrapper for f03_horiz_lines
+//--------------------------------------
+- (UIImage *) f03_horiz_lines_dbg
+{
+    static int state = 0;
+    if (!SZ(_horizontal_lines)) state = 0;
+    cv::Mat drawing;
+    switch (state) {
+        case 0:
+        {
+            g_app.mainVC.lbBottom.text = @"Find horizontals";
+            [self f03_horiz_lines:0];
+            break;
+        }
+        case 1:
+        {
+            g_app.mainVC.lbBottom.text = @"Remove duplicates";
+            [self f03_horiz_lines:1];
+            break;
+        }
+        case 2:
+        {
+            g_app.mainVC.lbBottom.text = @"Filter";
+            [self f03_horiz_lines:2];
+            break;
+        }
+        case 3:
+        {
+            g_app.mainVC.lbBottom.text = @"Generate";
+            [self f03_horiz_lines:3];
             break;
         }
         default:
@@ -560,7 +590,7 @@ float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f03_horiz_lines()
+} // f03_horiz_lines_dbg()
 
 
 // Find the corners
@@ -729,16 +759,13 @@ void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
         [self f02_vert_lines:3];
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
-        
-        // Filter and generate horizontals
-        static std::vector<cv::Vec2f> all_horiz_lines = _horizontal_lines;
-        dedup_horizontals( _horizontal_lines, _gray);
-        filter_lines( _horizontal_lines);
-        const double y_thresh = 8.0;
-        fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
+        [self f03_horiz_lines:0];
+        [self f03_horiz_lines:1];
+        [self f03_horiz_lines:2];
+        [self f03_horiz_lines:3];
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
-        
+
         // Find corners
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
         //cv::pyrMeanShiftFiltering( _small_img, _small_pyr, SPATIALRAD, COLORRAD, MAXPYRLEVEL );
