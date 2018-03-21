@@ -80,4 +80,71 @@ inline void warp_plines( const std::vector<cv::Vec2f> &plines_in, const cv::Mat 
     plines_out = res;
 } // warp_plines()
 
+// Find a transform that makes the lines parallel
+// Returns a number indicationg how parallel the best solution was.
+// Small numbers are more parallel.
+//----------------------------------------------------------------------------------------
+inline float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
+                                 float &minphi, cv::Mat &minM, cv::Mat &invM)
+{
+    auto paralellity = [plines_]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> plines;
+        warp_plines( plines_, M, plines);
+        auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
+        double q1 = vec_q1( thetas);
+        double q3 = vec_q3( thetas);
+        double dq = q3 - q1;
+        return dq;
+    }; // paralellity()
+    double phi;
+    float minpary = 1E9;
+    minphi = -1;
+    cv::Mat M, Minv;
+    for (phi = 90; phi < 130; phi += 1) {
+        perspective_warp( sz, phi, M, Minv);
+        float pary = paralellity( M);
+        if (pary < minpary) {
+            minpary = pary;
+            minphi = phi;
+            minM = M;
+            invM = Minv;
+        }
+    } // for
+    //perspective_warp( sz, -minphi, invM);
+    return minpary;
+} // parallel_projection()
+
+// Find a rotation that makes horizontal lines truly horizontal
+// Returns a number indicationg how straight the best solution was.
+// Smaller numbers are straighter.
+//--------------------------------------------------------------------------------
+inline float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
+                               float &minphi, cv::Mat &minM, cv::Mat &invM)
+{
+    Point2f center( sz.width/2.0, sz.height/2.0);
+    auto straightness = [plines_]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> plines;
+        warp_plines( plines_, M, plines);
+        auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
+        double med = vec_median( thetas);
+        return fabs(PI/2 - med);
+    }; // straightness()
+    double phi;
+    float minstr = 1E9;
+    minphi = -1;
+    cv::Mat M;
+    for (phi = -20; phi <= 20; phi += 1) {
+        M = cv::getRotationMatrix2D( center, phi, 1.0);
+        float strness = straightness( M);
+        if (strness < minstr ) {
+            minstr = strness;
+            minphi = phi;
+            minM = M;
+        }
+    } // for
+    invM = cv::getRotationMatrix2D( center, -minphi, 1.0);
+    return minstr;
+} // straight_rotation()
+
+
 #endif /* Perspective_hpp */
