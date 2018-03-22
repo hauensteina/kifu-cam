@@ -153,17 +153,62 @@ extern cv::Mat mat_dbg;
 //=== Debug Flow ===
 //==================
 
-// Make verticals parallel and really vertical
-//----------------------------------------------
-- (void) f00_warp
+// Find some intersections, blobs, verticals
+//--------------------------------------------------
+- (void) f00_dots_and_verticals
 {
-    _board_sz=19;
     _vertical_lines.clear();
     _horizontal_lines.clear();
     // Find Blobs
     if (_orig_small.cols != IMG_WIDTH) {
         resize( _orig_small, _orig_small, IMG_WIDTH);
     }
+    const cv::Size sz( _orig_small.cols, _orig_small.rows);
+    cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
+    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+    thresh_dilate( _gray, _gray_threshed);
+    _stone_or_empty.clear();
+    BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
+    BlobFinder::find_stones( _gray, _stone_or_empty);
+    _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+    
+    // Find lines
+    houghlines( _small_img, _stone_or_empty,
+               _vertical_lines, _horizontal_lines);
+} // f00_dots_and_verticals()
+
+// Debug wrapper for f00_dots_and_verticals
+//--------------------------------------------
+- (UIImage *) f00_dots_and_verticals_dbg
+{
+    _board_sz = 19;
+    g_app.mainVC.lbBottom.text = @"Tap the screen";
+    NSString *fullfname;
+    if ([g_app.menuVC demoMode]) {
+        fullfname = findInBundle(@"demo", @".png");
+    }
+    else {
+        NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
+        fullfname = getFullPath( fname);
+    }
+    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    UIImageToMat( img, _orig_small);
+    [self f00_dots_and_verticals];
+    
+    cv::Mat drawing = _small_img.clone();
+    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
+    get_color(true);
+    ISLOOP( _vertical_lines) {
+        draw_polar_line( _vertical_lines[i], drawing, get_color());
+    }
+    UIImage *res = MatToUIImage( drawing);
+    return res;
+} // f00_dots_and_verticals_dbg()
+
+// Make verticals parallel and really vertical
+//----------------------------------------------
+- (void) f02_warp
+{
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
     cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -188,25 +233,14 @@ extern cv::Mat mat_dbg;
     parallel_projection( sz, _vertical_lines, phi, Mp, _invProj);
     cv::warpPerspective( _small_img, _small_img, Mp, sz);
     warp_plines( _vertical_lines, Mp, _vertical_lines);
-} // f00_warp()
+} // f02_warp()
 
-// Debug wrapper for f00_warp
+// Debug wrapper for f02_warp
 //------------------------------------
-- (UIImage *) f00_warp_dbg
+- (UIImage *) f02_warp_dbg
 {
-    _board_sz=19;
-    g_app.mainVC.lbBottom.text = @"Tap the screen";
-    NSString *fullfname;
-    if ([g_app.menuVC demoMode]) {
-        fullfname = findInBundle(@"demo", @".png");
-    }
-    else {
-        NSString *fname = nsprintf( @"%@/%@", @TESTCASE_FOLDER, g_app.editTestCaseVC.selectedTestCase);
-        fullfname = getFullPath( fname);
-    }
-    UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
-    UIImageToMat( img, _orig_small);
-    [self f00_warp];
+    g_app.mainVC.lbBottom.text = @"Unwarp";
+    [self f02_warp];
 
     cv::Mat drawing = _small_img.clone();
     get_color(true);
@@ -215,11 +249,11 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f00_warp()
+} // f02_warp_dbg()
 
 // Roughly guess intersections, stones, and lines
 //--------------------------------------------------
-- (void) f01_blobs
+- (void) f03_blobs
 {
     _vertical_lines.clear();
     _horizontal_lines.clear();
@@ -233,26 +267,26 @@ extern cv::Mat mat_dbg;
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
     
-} // f01_blobs()
+} // f03_blobs()
 
-// Debug wrapper for f01_blobs
+// Debug wrapper for f03_blobs
 //-------------------------------
-- (UIImage *) f01_blobs_dbg
+- (UIImage *) f03_blobs_dbg
 {
     g_app.mainVC.lbBottom.text = @"Stones and Intersections";
-    [self f01_blobs];
+    [self f03_blobs];
     
     // Show results
     cv::Mat drawing = _small_img.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f01_blobs_dbg()
+} // f03_blobs_dbg()
 
 
 // Find vertical grid lines
 //----------------------------------
-- (void) f02_vert_lines:(int)state
+- (void) f04_vert_lines:(int)state
 {
     static std::vector<cv::Vec2f> all_vert_lines;
     switch (state) {
@@ -281,11 +315,11 @@ extern cv::Mat mat_dbg;
             NSLog( @"f02_vert_lines(): bad state %d", state);
             return;
     } // switch
-} // f02_vert_lines()
+} // f04_vert_lines()
 
-// Debug wrapper for f02_vert_lines
+// Debug wrapper for f04_vert_lines
 //-------------------------------------
-- (UIImage *) f02_vert_lines_dbg
+- (UIImage *) f04_vert_lines_dbg
 {
     static int state = 0;
     if (!SZ(_vertical_lines)) state = 0;
@@ -295,25 +329,25 @@ extern cv::Mat mat_dbg;
         case 0:
         {
             g_app.mainVC.lbBottom.text = @"Find verticals";
-            [self f02_vert_lines:state];
+            [self f04_vert_lines:state];
             break;
         }
         case 1:
         {
             g_app.mainVC.lbBottom.text = @"Remove duplicates";
-            [self f02_vert_lines:state];
+            [self f04_vert_lines:state];
             break;
         }
         case 2:
         {
             g_app.mainVC.lbBottom.text = @"Filter";
-            [self f02_vert_lines:state];
+            [self f04_vert_lines:state];
             break;
         }
         case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
-            [self f02_vert_lines:state];
+            [self f04_vert_lines:state];
             break;
         }
         default:
@@ -330,12 +364,12 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f02_vert_lines_dbg()
+} // f04_vert_lines_dbg()
 
 
 // Find horizontal grid lines
 //-----------------------------
-- (void) f03_horiz_lines:(int)state
+- (void) f05_horiz_lines:(int)state
 {
     static std::vector<cv::Vec2f> all_horiz_lines;
     switch (state) {
@@ -364,11 +398,11 @@ extern cv::Mat mat_dbg;
             NSLog( @"f03_horiz_lines(): bad state %d", state);
             return;
     } // switch
-} // f03_horiz_lines()
+} // f05_horiz_lines()
 
-// Debug wrapper for f03_horiz_lines
+// Debug wrapper for f05_horiz_lines
 //--------------------------------------
-- (UIImage *) f03_horiz_lines_dbg
+- (UIImage *) f05_horiz_lines_dbg
 {
     static int state = 0;
     if (!SZ(_horizontal_lines)) state = 0;
@@ -377,25 +411,25 @@ extern cv::Mat mat_dbg;
         case 0:
         {
             g_app.mainVC.lbBottom.text = @"Find horizontals";
-            [self f03_horiz_lines:0];
+            [self f05_horiz_lines:0];
             break;
         }
         case 1:
         {
             g_app.mainVC.lbBottom.text = @"Remove duplicates";
-            [self f03_horiz_lines:1];
+            [self f05_horiz_lines:1];
             break;
         }
         case 2:
         {
             g_app.mainVC.lbBottom.text = @"Filter";
-            [self f03_horiz_lines:2];
+            [self f05_horiz_lines:2];
             break;
         }
         case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
-            [self f03_horiz_lines:3];
+            [self f05_horiz_lines:3];
             break;
         }
         default:
@@ -413,12 +447,12 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f03_horiz_lines_dbg()
+} // f05_horiz_lines_dbg()
 
 
 // Find the corners
 //----------------------------
-- (void) f04_corners
+- (void) f06_corners
 {
     _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     _corners.clear();
@@ -435,14 +469,14 @@ extern cv::Mat mat_dbg;
         // Intersections for only the board lines
         _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     } while(0);
-} // f04_corners()
+} // f06_corners()
 
-// Debug wrapper for f04_corners
+// Debug wrapper for f06_corners
 //--------------------------------
-- (UIImage *) f04_corners_dbg
+- (UIImage *) f06_corners_dbg
 {
     g_app.mainVC.lbBottom.text = @"Find corners";
-    [self f04_corners];
+    [self f06_corners];
     cv::Mat disp = _small_img.clone();
     if (SZ( _corners) == 4) {
         int rad = 3;
@@ -453,11 +487,11 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( disp);
     return res;
-} // f04_corners_dbg()
+} // f06_corners_dbg()
 
 // Zoom in
 //----------------------------
-- (void) f05_zoom_in
+- (void) f07_zoom_in
 {
     cv::Mat threshed;
     cv::Mat dst;
@@ -470,14 +504,14 @@ extern cv::Mat mat_dbg;
         fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
         fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
     }
-} // f05_zoom_in()
+} // f07_zoom_in()
 
-// Debug wrapper for f05_zoom_in
+// Debug wrapper for f07_zoom_in
 //--------------------------------
-- (UIImage *) f05_zoom_in_dbg
+- (UIImage *) f07_zoom_in_dbg
 {
     g_app.mainVC.lbBottom.text = @"Perspective transform";
-    [self f05_zoom_in];
+    [self f07_zoom_in];
     cv::Mat drawing = _small_zoomed.clone();
     ISLOOP (_intersections_zoomed) {
         Point2f p = _intersections_zoomed[i];
@@ -485,25 +519,25 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f05_zoom_in_dbg()
+} // f07_zoom_in_dbg()
 
 // Classify intersections into black, white, empty
 //-----------------------------------------------------------
-- (void) f06_classify
+- (void) f08_classify
 {
     if (_small_zoomed.rows > 0) {
         [self nn_classify_intersections];
     }
     fix_diagram( _diagram, _intersections, _small_img);
-} // f06_classify()
+} // f08_classify()
 
-// Debug wrapper for f06_classify
+// Debug wrapper for f08_classify
 //---------------------------------------
-- (UIImage *) f06_classify_dbg
+- (UIImage *) f08_classify_dbg
 {
     g_app.mainVC.lbBottom.text = @"Classify";
     if (SZ(_corners_zoomed) != 4) { return MatToUIImage( _gray); }
-    [self f06_classify];
+    [self f08_classify];
 
     cv::Mat drawing;
     cv::cvtColor( _gray_zoomed, drawing, cv::COLOR_GRAY2RGB);
@@ -529,7 +563,7 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f06_classify_dbg()
+} // f08_classify_dbg()
 
 //=== Production Flow ===
 //=======================
@@ -543,22 +577,23 @@ extern cv::Mat mat_dbg;
     bool success = false;
     do {
         _orig_small = small_img;
-        [self f00_warp];
-        [self f01_blobs];
+        [self f00_dots_and_verticals];
+        [self f02_warp];
+        [self f03_blobs];
         if (breakIfBad && SZ(_stone_or_empty) < 0.8 * SQR(_board_sz)) break;
-        [self f02_vert_lines:0];
-        [self f02_vert_lines:1];
-        [self f02_vert_lines:2];
-        [self f02_vert_lines:3];
+        [self f04_vert_lines:0];
+        [self f04_vert_lines:1];
+        [self f04_vert_lines:2];
+        [self f04_vert_lines:3];
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
-        [self f03_horiz_lines:0];
-        [self f03_horiz_lines:1];
-        [self f03_horiz_lines:2];
-        [self f03_horiz_lines:3];
+        [self f05_horiz_lines:0];
+        [self f05_horiz_lines:1];
+        [self f05_horiz_lines:2];
+        [self f05_horiz_lines:3];
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
-        [self f04_corners];
+        [self f06_corners];
         success = true;
     } while(0);
     return success;
@@ -574,8 +609,8 @@ extern cv::Mat mat_dbg;
     do {
         success = [self find_board:small_img breakIfBad:breakIfBad];
         if (breakIfBad && !success) break;
-        [self f05_zoom_in];
-        [self f06_classify];
+        [self f07_zoom_in];
+        [self f08_classify];
         success = true;
     } while(0);
     return success;

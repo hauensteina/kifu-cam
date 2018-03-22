@@ -348,39 +348,49 @@
     while(1) {
         switch (_debugstate) {
             case 0:
-                _debugstate++;
+                _debugstate=2;
                 [self.frameExtractor suspend];
-                img = [self.cppInterface f00_warp_dbg];
+                img = [self.cppInterface f00_dots_and_verticals_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 1:
                 _debugstate++;
-                img = [self.cppInterface f01_blobs_dbg];
+                //img = [self.cppInterface f02_warp_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 2:
-                img = [self.cppInterface f02_vert_lines_dbg];
-                if (!img) { _debugstate++; continue; }
+                _debugstate++;
+                img = [self.cppInterface f02_warp_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 3:
-                img = [self.cppInterface f03_horiz_lines_dbg];
-                if (!img) { _debugstate++; continue; }
+                _debugstate++;
+                img = [self.cppInterface f03_blobs_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 4:
-                _debugstate++;
-                img = [self.cppInterface f04_corners_dbg];
+                img = [self.cppInterface f04_vert_lines_dbg];
+                if (!img) { _debugstate++; continue; }
                 [self.cameraView setImage:img];
                 break;
             case 5:
-                _debugstate++;
-                img = [self.cppInterface f05_zoom_in_dbg];
+                img = [self.cppInterface f05_horiz_lines_dbg];
+                if (!img) { _debugstate++; continue; }
                 [self.cameraView setImage:img];
                 break;
             case 6:
                 _debugstate++;
-                img = [self.cppInterface f06_classify_dbg];
+                img = [self.cppInterface f06_corners_dbg];
+                [self.cameraView setImage:img];
+                break;
+            case 7:
+                _debugstate++;
+                img = [self.cppInterface f07_zoom_in_dbg];
+                [self.cameraView setImage:img];
+                break;
+            case 8:
+                _debugstate++;
+                img = [self.cppInterface f08_classify_dbg];
                 [self.cameraView setImage:img];
                 break;
             default:

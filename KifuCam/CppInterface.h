@@ -34,13 +34,14 @@
 
 // Individual steps for debugging
 //---------------------------------
-- (UIImage *) f00_warp_dbg;
-- (UIImage *) f01_blobs_dbg;
-- (UIImage *) f02_vert_lines_dbg;
-- (UIImage *) f03_horiz_lines_dbg;
-- (UIImage *) f04_corners_dbg;
-- (UIImage *) f05_zoom_in_dbg;
-- (UIImage *) f06_classify_dbg;
+- (UIImage *) f00_dots_and_verticals_dbg;
+- (UIImage *) f02_warp_dbg;
+- (UIImage *) f03_blobs_dbg;
+- (UIImage *) f04_vert_lines_dbg;
+- (UIImage *) f05_horiz_lines_dbg;
+- (UIImage *) f06_corners_dbg;
+- (UIImage *) f07_zoom_in_dbg;
+- (UIImage *) f08_classify_dbg;
 
 - (UIImage *) video_mode;
 - (UIImage *) photo_mode;
