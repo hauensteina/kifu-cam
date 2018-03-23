@@ -309,7 +309,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [sgf writeToFile:fname
           atomically:YES encoding:NSUTF8StringEncoding error:&error];
     [picker dismissViewControllerAnimated:YES
-                               completion:^{ popup(@"Photo imported to Saved Images",@"");
+                               completion:^{
+                                   choicePopup( @[@"OK"], @"Photo Imported",
+                                               ^(UIAlertAction *action) {
+                                                   [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
+                                               });
                                }];
 } // didFinishPickingMediaWithInfo()
 
