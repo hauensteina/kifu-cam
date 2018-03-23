@@ -62,6 +62,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
                        @{ @"txt": @"Demo Mode", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Saved Images", @"state": @(ITEM_NOT_SELECTED) },
+                       @{ @"txt": @"Import Photo", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Settings", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"About", @"state": @(ITEM_NOT_SELECTED) },
@@ -199,6 +200,9 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         else if ([menuItem hasPrefix:@"Saved Images"]) {
             [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
         }
+        else if ([menuItem hasPrefix:@"Import Photo"]) {
+            [self importPhoto];
+        }
         else if ([menuItem hasPrefix:@"About"]) {
             [g_app.navVC pushViewController:g_app.aboutVC animated:YES];
         }
@@ -261,6 +265,51 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
     [g_app.mainVC debugFlow:true];
     [self.tableView reloadData];
 } // gotoDemoMode()
+
+//---------------------------
+- (void)importPhoto
+{
+    UIImagePickerController *imagePickerController = [UIImagePickerController new];
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePickerController.delegate = self;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+} // importPhoto()
+
+// Image picker delegate methods
+//================================
+
+// This method is called when an image has been chosen from the library.
+//-----------------------------------------------------------------------
+- (void)imagePickerController:(UIImagePickerController *)picker
+didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    UIImage *img = [info valueForKey:UIImagePickerControllerOriginalImage];
+    NSString *fname = nscat( tstampFname(), @".png");
+    fname = nsprintf( @"%@/%@", @SAVED_FOLDER, fname);
+    fname = getFullPath( fname);
+    
+    // Save img. Maybe orientation needs fixing.
+    if ([img imageOrientation] != UIImageOrientationUp) {
+        UIGraphicsBeginImageContext( img.size);
+        CGRect imageRect = (CGRect){.origin = CGPointZero, .size = img.size};
+        [img drawInRect:imageRect];
+        img = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    }
+    [UIImagePNGRepresentation( img) writeToFile:fname atomically:YES];
+    // Get sgf
+    [g_app.mainVC.cppInterface clearImgQ];
+    [g_app.mainVC.cppInterface qImg:img];
+    [g_app.mainVC.cppInterface photo_mode];
+    NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
+    // Save sgf
+    fname = changeExtension( fname, @".sgf");
+    NSError *error;
+    [sgf writeToFile:fname
+          atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    [picker dismissViewControllerAnimated:YES
+                               completion:^{ popup(@"Photo imported to Saved Images",@"");}];
+} // didFinishPickingMediaWithInfo()
 
 
 @end

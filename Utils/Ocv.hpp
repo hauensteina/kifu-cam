@@ -175,7 +175,8 @@ double diff_quads( const Points2f &q1, const Points2f &q2);
 //========
 // Save image to file
 bool save_img( const cv::Mat &img, const std::string &fname);
-// Rotate image by angle. Does not adjust image size.
+// Rotate image by angle. Adjusts image size.
+// From PyImageSearch.
 void rot_img( const cv::Mat &img, double angle, cv::Mat &dst);
 // Resize image such that min(width,height) = sz
 void resize(const cv::Mat &src, cv::Mat &dst, int sz);

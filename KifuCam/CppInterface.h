@@ -52,6 +52,9 @@
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf;
 // Put an image into a buffer q. We pick the best one later.
 - (void) qImg:(UIImage *)img;
+// Clear the image q.
+- (void) clearImgQ;
+
 // Check for the debug mode trigger position to show right menu.
 - (bool) check_debug_trigger;
 

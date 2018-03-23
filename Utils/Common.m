@@ -210,10 +210,10 @@ NSString *tstampFname()
 //-----------------------------------------------
 void popup (NSString *msg, NSString *title)
 {
-    UIAlertController * alert = [UIAlertController
-                                 alertControllerWithTitle:title
-                                 message:msg
-                                 preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController
+                                alertControllerWithTitle:title
+                                message:msg
+                                preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction* yesButton = [UIAlertAction
                                 actionWithTitle:@"OK"

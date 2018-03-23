@@ -112,8 +112,8 @@
 // Helpers
 //============
 
-// Save photo, sgf, json
-//--------------------------
+// Save photo and sgf
+//------------------------------
 - (NSString*) savePhotoAndSgf 
 {
     // Make filename from date
@@ -128,10 +128,10 @@
     [_sgf writeToFile:fname
            atomically:YES encoding:NSUTF8StringEncoding error:&error];
     return fname;
-}
+} // savePhotoAndSgf()
 
-// Upload image,sgf,json to S3
-//-------------------------------------
+// Upload image and sgf to S3
+//------------------------------------
 - (void) uploadToS3:(NSString*)fname
 {
     if (![g_app.settingsVC uploadEnabled]) return;
@@ -152,7 +152,7 @@
 // Button Callbacks
 //======================
 
-//---------------------------
+//-----------------------------
 - (void) btnB2Play:(id)sender
 {
     // Regex to insert PL[B] right after the SZ tag
@@ -168,7 +168,7 @@
     [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
 } // btnB2Play()
 
-//---------------------------
+//-----------------------------
 - (void) btnW2Play:(id)sender
 {
     // Regex to insert PL[W] rigth after the SZ tag

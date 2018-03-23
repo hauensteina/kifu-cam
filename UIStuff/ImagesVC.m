@@ -303,6 +303,7 @@
     fname = changeExtension( fname, @".png");
     NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @SAVED_FOLDER, fname));
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    [g_app.mainVC.cppInterface clearImgQ];
     [g_app.mainVC.cppInterface qImg:img];
     [g_app.mainVC.cppInterface photo_mode];
     NSString *sgf = [g_app.mainVC.cppInterface get_sgf];

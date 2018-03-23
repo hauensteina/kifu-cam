@@ -113,6 +113,12 @@ extern cv::Mat mat_dbg;
     ringpush( _imgQ , m, keep_n_frames); // keep 4 frames
 }
 
+//-----------------
+- (void)clearImgQ
+{
+    _imgQ.clear();
+}
+
 // Detect position on image and count erros
 //------------------------------------------------------------
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf
@@ -674,7 +680,7 @@ extern cv::Mat mat_dbg;
     Points2f bestCorners;
     int maxBlobs = -1E9;
     int bestidx = -1;
-    ILOOP (SZ(_imgQ) - 1) { // ignore newest frame
+    ILOOP (SZ(_imgQ)) { 
         _small_img = _imgQ[i];
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
         thresh_dilate( _gray, _gray_threshed);
@@ -825,7 +831,6 @@ extern cv::Mat mat_dbg;
     ofs.close();
     return ofs.good();
 }
-
 
 // Get current diagram as sgf
 //----------------------------------

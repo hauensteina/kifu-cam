@@ -28,7 +28,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LeftMenuController : UITableViewController
+@interface LeftMenuController : UITableViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 // Getters for mode
 - (bool) videoMode;
 - (bool) photoMode;

@@ -42,6 +42,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Used to capture frames</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Import pictures of Go boards</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>UIRequiredDeviceCapabilities</key>
