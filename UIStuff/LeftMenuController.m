@@ -288,7 +288,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     fname = nsprintf( @"%@/%@", @SAVED_FOLDER, fname);
     fname = getFullPath( fname);
     
-    // Save img. Maybe orientation needs fixing.
+    // Maybe image orientation needs fixing.
     if ([img imageOrientation] != UIImageOrientationUp) {
         UIGraphicsBeginImageContext( img.size);
         CGRect imageRect = (CGRect){.origin = CGPointZero, .size = img.size};
@@ -296,19 +296,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
         img = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
     }
-    [UIImagePNGRepresentation( img) writeToFile:fname atomically:YES];
     // Get sgf
     [g_app.mainVC.cppInterface clearImgQ];
     [g_app.mainVC.cppInterface qImg:img];
-    [g_app.mainVC.cppInterface photo_mode];
+    img = [g_app.mainVC.cppInterface photo_mode];
     NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
+    // Save resized image
+    [UIImagePNGRepresentation( img) writeToFile:fname atomically:YES];
     // Save sgf
     fname = changeExtension( fname, @".sgf");
     NSError *error;
     [sgf writeToFile:fname
           atomically:YES encoding:NSUTF8StringEncoding error:&error];
     [picker dismissViewControllerAnimated:YES
-                               completion:^{ popup(@"Photo imported to Saved Images",@"");}];
+                               completion:^{ popup(@"Photo imported to Saved Images",@"");
+                               }];
 } // didFinishPickingMediaWithInfo()
 
 

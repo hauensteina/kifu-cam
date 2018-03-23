@@ -677,9 +677,9 @@ extern cv::Mat mat_dbg;
 {
     // Pick best frame from Q
     cv::Mat best;
-    Points2f bestCorners;
+    //Points2f bestCorners;
     int maxBlobs = -1E9;
-    int bestidx = -1;
+    //int bestidx = -1;
     ILOOP (SZ(_imgQ)) { 
         _small_img = _imgQ[i];
         cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -691,12 +691,12 @@ extern cv::Mat mat_dbg;
         if (SZ(_stone_or_empty) > maxBlobs) {
             maxBlobs = SZ(_stone_or_empty);
             best = _small_img;
-            bestCorners = _corners;
-            bestidx = i;
+            //bestCorners = _corners;
+            //bestidx = i;
         }
     }
-    [self recognize_position:best breakIfBad:NO];
     UIImage *img = MatToUIImage( best);
+    [self recognize_position:best breakIfBad:NO];
     return img;
 } // photo_mode()
 
