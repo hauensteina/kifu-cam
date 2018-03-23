@@ -271,15 +271,31 @@
 //    self.lbDbg.text = nsprintf( @"%d", tt);
 //}
 
+//----------------------
+- (void) processImgQ
+{
+    g_app.saveDiscardVC.photo = [_cppInterface photo_mode];
+    g_app.saveDiscardVC.sgf = [g_app.mainVC.cppInterface get_sgf];
+    [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
+}
+
+// Process one image, e.g. from photo import
+//---------------------------------------------
+- (void) processImg:(UIImage*)img
+{
+    [self.frameExtractor suspend];
+    [_cppInterface clearImgQ];
+    [_cppInterface qImg:img];
+    [self processImgQ];
+} // processImg()
+
 // Camera button press
 //-----------------------------
 - (void) btnCam:(id)sender
 {
     if ([g_app.menuVC photoMode] || [g_app.menuVC videoMode]) {
         [self.frameExtractor suspend];
-        g_app.saveDiscardVC.photo = [_cppInterface photo_mode];
-        g_app.saveDiscardVC.sgf = [g_app.mainVC.cppInterface get_sgf];
-        [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
+        [self processImgQ];
     }
     // Enable debug menu on the right if trigger position seen
     if ([_cppInterface check_debug_trigger]) {

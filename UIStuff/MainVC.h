@@ -53,5 +53,7 @@
 - (void) doLayout;
 // Debugging helper, shows individual processing stages
 - (void) debugFlow:(bool)reset;
+// Process image and go to SaveDiscardVC
+- (void) processImg:(UIImage*)img;
 
 @end

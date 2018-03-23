@@ -296,23 +296,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
         img = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
     }
-    // Get sgf
-    [g_app.mainVC.cppInterface clearImgQ];
-    [g_app.mainVC.cppInterface qImg:img];
-    img = [g_app.mainVC.cppInterface photo_mode];
-    NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
-    // Save resized image
-    [UIImagePNGRepresentation( img) writeToFile:fname atomically:YES];
-    // Save sgf
-    fname = changeExtension( fname, @".sgf");
-    NSError *error;
-    [sgf writeToFile:fname
-          atomically:YES encoding:NSUTF8StringEncoding error:&error];
     [picker dismissViewControllerAnimated:YES
                                completion:^{
                                    choicePopup( @[@"OK"], @"Photo Imported",
                                                ^(UIAlertAction *action) {
-                                                   [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
+                                                   [g_app.mainVC processImg:img];
                                                });
                                }];
 } // didFinishPickingMediaWithInfo()
