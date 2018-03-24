@@ -25,6 +25,7 @@
 // SOFTWARE.
 //
 
+// Entry point to core functionality for the UI controllers.
 // This class is the only place where Objective-C and C++ mix.
 // All other files are either pure Obj-C or pure C++.
 
@@ -50,7 +51,9 @@ extern cv::Mat mat_dbg;
 
 @interface CppInterface()
 //=======================
+@property float phi; // projection angle in degrees
 @property cv::Mat invProj; // Inverse projection matrix
+@property float theta; // rotation angle in degrees
 @property cv::Mat invRot;  // Inverse rotation matrix
 @property cv::Mat small_img; // resized image, in color, RGB, unwarped
 @property cv::Mat orig_small;     // orig resized
@@ -101,8 +104,8 @@ extern cv::Mat mat_dbg;
 //=== Misc Public ===
 //===================
 
-// Queue image frames. The newest one is often shaky.
-//-----------------------------------------------------
+// Put a video frame into the image queue. The newest one is often shaky.
+//-------------------------------------------------------------------------
 - (void)qImg:(UIImage *)img
 {
     cv::Mat m;
@@ -229,14 +232,14 @@ extern cv::Mat mat_dbg;
                _vertical_lines, _horizontal_lines);
     
     // Straighten horizontals
-    float theta; cv::Mat Ms;
-    straight_rotation( sz, _horizontal_lines, theta, Ms, _invRot);
+    cv::Mat Ms;
+    straight_rotation( sz, _horizontal_lines, _theta, Ms, _invRot);
     cv::warpAffine( _small_img, _small_img, Ms, sz);
     warp_plines( _vertical_lines, Ms, _vertical_lines);
     
     // Unwarp verticals
-    float phi; cv::Mat Mp;
-    parallel_projection( sz, _vertical_lines, phi, Mp, _invProj);
+    cv::Mat Mp;
+    parallel_projection( sz, _vertical_lines, _phi, Mp, _invProj);
     cv::warpPerspective( _small_img, _small_img, Mp, sz);
     warp_plines( _vertical_lines, Mp, _vertical_lines);
 } // f02_warp()
@@ -622,8 +625,9 @@ extern cv::Mat mat_dbg;
     return success;
 } // recognize_position()
 
-// Entry point for video mode, on each frame
-//--------------------------------------------
+// In video mode, draw the detected board on the image
+// for every frame.
+//--------------------------------------------------------
 - (UIImage *) video_mode
 {
     cv::Mat _small_img = _imgQ.back().clone();
@@ -671,8 +675,9 @@ extern cv::Mat mat_dbg;
     return res;
 } // video_mode()
 
-// Photo Mode. Find the best frame in the queue and process it.
-//--------------------------------------------------------------
+// Find the best frame in the queue and process it.
+// Called when the camera button is pressed.
+//----------------------------------------------------
 - (UIImage *) photo_mode
 {
     // Pick best frame from Q
@@ -824,13 +829,13 @@ extern cv::Mat mat_dbg;
 //-----------------------------------------------------------------------
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
 {
-    auto sgf = generate_sgf( [title UTF8String], _diagram, _intersections);
+    auto sgf = generate_sgf( [title UTF8String], _diagram, _intersections, _phi, _theta);
     std::ofstream ofs;
     ofs.open( [fname UTF8String]);
     ofs << sgf;
     ofs.close();
     return ofs.good();
-}
+} // save_current_sgf()
 
 // Get current diagram as sgf
 //----------------------------------
@@ -838,8 +843,8 @@ extern cv::Mat mat_dbg;
 {
     Points2f my_intersections;
     unwarp_points(_invProj, _invRot, _intersections, my_intersections);
-    return @(generate_sgf( "", _diagram, my_intersections).c_str());
-}
+    return @(generate_sgf( "", _diagram, my_intersections, _phi, _theta).c_str());
+} // get_sgf()
 
 // Convert sgf string to UIImage
 //----------------------------------------
@@ -850,7 +855,7 @@ extern cv::Mat mat_dbg;
     draw_sgf( [sgf UTF8String], m, IMG_WIDTH);
     UIImage *res = MatToUIImage( m);
     return res;
-}
+} // sgf2img()
 
 // Return the four corner coords as an array of 4 pairs [[x0,y0],[x1,y1],...]
 // Ordered clockwise tl,tr,br,bl
@@ -860,7 +865,7 @@ extern cv::Mat mat_dbg;
     std::string sgf = [sgf_ UTF8String];
     NSMutableArray *res = [NSMutableArray new];
     std::string gc = get_sgf_tag( sgf, "GC");
-    std::regex re( ".*:(\\(.*\\))");
+    std::regex re( "intersections:(\\([^#]*\\))#.*");
     std::string tstr = std::regex_replace( gc, re, "$1" );
     // Turn it into json
     std::regex re1( "\\(");
