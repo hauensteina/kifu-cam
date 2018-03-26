@@ -168,6 +168,9 @@
     // Photo
     UIImageView *imgView1 = [[UIImageView alloc] initWithFrame:CGRectMake(leftMarg,topMarg,IMGWIDTH,IMGWIDTH)];
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    if (!sgf) {
+        sgf = [g_app.mainVC.cppInterface get_sgf_for_img:img];
+    }
     NSArray *corners = [CppInterface corners_from_sgf:sgf];
     img = drawCircleOnImg( img, [corners[0][0] intValue], [corners[0][1] intValue], 20, RED);
     img = drawCircleOnImg( img, [corners[1][0] intValue], [corners[1][1] intValue], 20, RED);

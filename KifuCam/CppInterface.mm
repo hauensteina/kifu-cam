@@ -838,13 +838,31 @@ extern cv::Mat mat_dbg;
 } // save_current_sgf()
 
 // Get current diagram as sgf
-//----------------------------------
+//-----------------------------
 - (NSString *) get_sgf
 {
     Points2f my_intersections;
     unwarp_points(_invProj, _invRot, _intersections, my_intersections);
     return @(generate_sgf( "", _diagram, my_intersections, _phi, _theta).c_str());
 } // get_sgf()
+
+// Get sgf for a UIImage
+//-----------------------------------------------
+- (NSString *) get_sgf_for_img: (UIImage *)img
+{
+    [self clearImgQ];
+    [self qImg:img];
+    [self photo_mode];
+    NSString *sgf = [self get_sgf];
+    return sgf;
+} // get_sgf_for_img()
+
+// Get an empty sgf
+//-------------------------
+- (NSString *) empty_sgf
+{
+    return @(generate_sgf( "").c_str());
+} // empty_sgf()
 
 // Convert sgf string to UIImage
 //----------------------------------------

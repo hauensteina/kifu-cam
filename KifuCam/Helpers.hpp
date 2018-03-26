@@ -73,13 +73,15 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
 // Couldn't use json because sgf chokes on brackets.
 //------------------------------------------------------------------------------------------------------------------------
 inline std::string generate_sgf( const std::string &title,
-                                const std::vector<int> diagram, const Points2f &intersections, float phi, float theta,
-                                double komi=7.5)
+                                const std::vector<int> diagram = std::vector<int>(),
+                                const Points2f &intersections = Points2f(),
+                                float phi=0, float theta=0, double komi=7.5)
 {
     const int BUFSZ = 10000;
     char buf[BUFSZ+1];
-    if (!SZ(diagram)) return "";
-    int boardsz = ROUND( sqrt( SZ(diagram)));
+    int boardsz = 19; // default
+    if (SZ(diagram) == 13*13) boardsz = 13;
+    else if (SZ(diagram) == 9*9) boardsz = 9;
     
     // Intersection coordinate string
     std::string coords = "intersections:(";

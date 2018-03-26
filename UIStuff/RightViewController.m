@@ -316,21 +316,20 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
 - (void)mnuDownloadTestCases_3
 {
     int idx = -1;
-    NSInteger fcount = [_s3_testcase_sgffiles count];
-    if (!fcount) {
-        popup( @"No sgf files found.", @"");
-        return;
-    }
+//    NSInteger fcount = [_s3_testcase_sgffiles count];
+//    if (!fcount) {
+//        popup( @"No sgf files found.", @"");
+//        return;
+//    }
     for (id fname in _s3_testcase_sgffiles ) {
         idx++;
         S3_download_file( fname, fname,
                          ^(NSError *err) {
-                             if (idx == fcount - 1) {
+                             if ([fname isEqualToString:[_s3_testcase_sgffiles lastObject]]) {
                                  popup( @"Testcases downloaded", @"");
                                  dispatch_async( dispatch_get_main_queue(), ^{ g_app.mainVC.lbSmall.text = @""; });
                              }
                          });
-        
     } // for
 } // mnuDownloadTestCases_3()
 

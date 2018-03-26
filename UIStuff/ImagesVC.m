@@ -311,6 +311,7 @@
     NSError *error;
     [sgf writeToFile:fname
            atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    [SaveDiscardVC uploadToS3:fname];
     [self refresh];
 } // handleRerun()
 

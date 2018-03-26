@@ -60,8 +60,12 @@
 
 // Save the cuurently detected position to sgf
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title;
-// get current diagram as sgf
+// Get current diagram as sgf
 - (NSString *) get_sgf;
+// Get sgf for a UIImage
+- (NSString *) get_sgf_for_img: (UIImage *)img;
+// Get an empty sgf
+- (NSString *) empty_sgf;
 
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;

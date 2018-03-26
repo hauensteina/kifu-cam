@@ -132,7 +132,7 @@
 
 // Upload image and sgf to S3
 //------------------------------------
-- (void) uploadToS3:(NSString*)fname
++ (void) uploadToS3:(NSString*)fname
 {
     if (![g_app.settingsVC uploadEnabled]) return;
     
@@ -161,7 +161,7 @@
     _sgf = replaceRegex( re, _sgf, templ);
     
     NSString *fname = [self savePhotoAndSgf];
-    [self uploadToS3:fname];
+    [SaveDiscardVC uploadToS3:fname];
     
     // Show saved images
     [g_app.navVC popViewControllerAnimated:NO];
@@ -177,7 +177,7 @@
     _sgf = replaceRegex( re, _sgf, templ);
 
     NSString *fname = [self savePhotoAndSgf];
-    [self uploadToS3:fname];
+    [SaveDiscardVC uploadToS3:fname];
 
     // Show saved images
     [g_app.navVC popViewControllerAnimated:NO];

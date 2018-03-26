@@ -28,6 +28,8 @@
 #import <UIKit/UIKit.h>
 
 @interface SaveDiscardVC : UIViewController
+// Upload image and sgf to S3
++ (void) uploadToS3:(NSString*)fname;
 @property NSString *sgf;
 @property UIImage *photo;
 @end

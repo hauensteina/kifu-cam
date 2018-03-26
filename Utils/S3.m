@@ -95,7 +95,6 @@ void S3_upload_file( NSString *fname, NSString *target, void(^completion)(NSErro
 } // S3_upload_file()
 
 
-
 // List files in kifu-cam bucket. Filter by prefix and extension.
 // Returns at most 1000 keys.
 //--------------------------------------------------------------------------------------------------
