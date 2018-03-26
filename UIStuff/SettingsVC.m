@@ -40,18 +40,8 @@
 @property UILabel *lbUploadNo;
 
 // Photo/Video
-@property UIButton *btnDefaultPhoto;
-@property UILabel *lbDefaultPhoto;
-
-@property UIButton *btnDefaultVideo;
-@property UILabel *lbDefaultVideo;
-
-// NN/OpenCV
-//@property UIButton *btnNN;
-//@property UILabel *lbNN;
-//
-//@property UIButton *btnOpenCV;
-//@property UILabel *lbOpenCV;
+@property UISwitch *btnShowDetectedBoard;
+@property UILabel *lbShowDetectedBoard;
 
 @end
 
@@ -87,16 +77,9 @@
     _lbUploadYes = [UILabel new];
     _lbUploadNo = [UILabel new];
     //
-    _btnDefaultVideo = [UIButton new];
-    _btnDefaultPhoto = [UIButton new];
-    _lbDefaultVideo = [UILabel new];
-    _lbDefaultPhoto = [UILabel new];
-    //
-//    _btnNN = [UIButton new];
-//    _btnOpenCV = [UIButton new];
-//    _lbNN = [UILabel new];
-//    _lbOpenCV = [UILabel new];
-
+    _btnShowDetectedBoard = [UISwitch new];
+    _lbShowDetectedBoard = [UILabel new];
+    
     // Config upload radio button
     [_btnUploadYes setImage:_imgUnChecked forState:UIControlStateNormal];
     [_btnUploadYes setImage:_imgChecked forState:UIControlStateSelected];
@@ -109,45 +92,17 @@
     makeLabelClickable( _lbUploadYes, self, @selector(btnUploadYes:));
     makeLabelClickable( _lbUploadNo, self, @selector(btnUploadNo:));
 
-    // Config mode radio button
-    [_btnDefaultPhoto setImage:_imgUnChecked forState:UIControlStateNormal];
-    [_btnDefaultPhoto setImage:_imgChecked forState:UIControlStateSelected];
-    [_btnDefaultVideo setImage:_imgUnChecked forState:UIControlStateNormal];
-    [_btnDefaultVideo setImage:_imgChecked forState:UIControlStateSelected];
-    _lbDefaultPhoto.text = @"Default to photo mode";
-    _lbDefaultVideo.text = @"Default to video mode";
-    [_btnDefaultPhoto addTarget:self action:@selector(btnDefaultPhoto:) forControlEvents: UIControlEventTouchUpInside];
-    [_btnDefaultVideo addTarget:self action:@selector(btnDefaultVideo:) forControlEvents: UIControlEventTouchUpInside];
-    makeLabelClickable( _lbDefaultPhoto, self, @selector(btnDefaultPhoto:));
-    makeLabelClickable( _lbDefaultVideo, self, @selector(btnDefaultVideo:));
-    
-//    // Config NN/OpenCV button
-//    [_btnNN setImage:_imgUnChecked forState:UIControlStateNormal];
-//    [_btnNN setImage:_imgChecked forState:UIControlStateSelected];
-//    [_btnOpenCV setImage:_imgUnChecked forState:UIControlStateNormal];
-//    [_btnOpenCV setImage:_imgChecked forState:UIControlStateSelected];
-//    _lbNN.text = @"Neural Networks";
-//    _lbOpenCV.text = @"OpenCV";
-//    [_btnNN addTarget:self action:@selector(btnNN:) forControlEvents: UIControlEventTouchUpInside];
-//    [_btnOpenCV addTarget:self action:@selector(btnOpenCV:) forControlEvents: UIControlEventTouchUpInside];
-//    makeLabelClickable( _lbNN, self, @selector(btnNN:));
-//    makeLabelClickable( _lbOpenCV, self, @selector(btnOpenCV:));
-    
+    [_btnShowDetectedBoard addTarget:self action:@selector(btnShowDetectedBoard:) forControlEvents:UIControlEventValueChanged];
+    _lbShowDetectedBoard.text = @"Show detected board";
+
     // Add controls as subviews
     [v addSubview: _btnUploadYes];
     [v addSubview: _btnUploadNo];
     [v addSubview: _lbUploadYes];
     [v addSubview: _lbUploadNo];
     //
-    [v addSubview: _btnDefaultVideo];
-    [v addSubview: _btnDefaultPhoto];
-    [v addSubview: _lbDefaultVideo];
-    [v addSubview: _lbDefaultPhoto];
-    //
-//    [v addSubview: _btnNN];
-//    [v addSubview: _btnOpenCV];
-//    [v addSubview: _lbNN];
-//    [v addSubview: _lbOpenCV];
+    [v addSubview: _btnShowDetectedBoard];
+    [v addSubview: _lbShowDetectedBoard];
 } // loadView
 
 //------------------------------------------
@@ -184,12 +139,10 @@
 {
     // Set button states accordingly
     if ([self defaultToVideo]) {
-        _btnDefaultVideo.selected = YES;
-        _btnDefaultPhoto.selected = NO;
+        [_btnShowDetectedBoard setOn:YES];
     }
     else {
-        _btnDefaultVideo.selected = NO;
-        _btnDefaultPhoto.selected = YES;
+        [_btnShowDetectedBoard setOn:NO];
     }
     if ([self uploadEnabled]) {
         _btnUploadYes.selected = YES;
@@ -199,14 +152,6 @@
         _btnUploadYes.selected = NO;
         _btnUploadNo.selected = YES;
     }
-//    if ([self useNN]) {
-//        _btnNN.selected = YES;
-//        _btnOpenCV.selected = NO;
-//    }
-//    else {
-//        _btnNN.selected = NO;
-//        _btnOpenCV.selected = YES;
-//    }
 
     // Layout
     float H = SCREEN_HEIGHT;
@@ -228,21 +173,10 @@
     _btnUploadNo.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
     _lbUploadNo.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
 
-    // Default mode
+    // SHow detected board or not
     y += checkBoxSize * 3;
-    _btnDefaultVideo.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
-    _lbDefaultVideo.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
-    y += checkBoxSize * 1.5;
-    _btnDefaultPhoto.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
-    _lbDefaultPhoto.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
-
-    // Neural Networks or OpenCV
-//    y += checkBoxSize * 3;
-//    _btnNN.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
-//    _lbNN.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
-//    y += checkBoxSize * 1.5;
-//    _btnOpenCV.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
-//    _lbOpenCV.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
+    _btnShowDetectedBoard.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
+    _lbShowDetectedBoard.frame = CGRectMake( lmarg + checkBoxSize*2.3, y, W - lmarg, checkBoxSize);
 } // doLayout()
 
 // Button Callbacks
@@ -265,38 +199,17 @@
 } // btnUploadNo()
 
 //-----------------------------------
-- (void) btnDefaultPhoto:(id)sender
+- (void) btnShowDetectedBoard:(id)sender
 {
-    _btnDefaultPhoto.selected = YES;
-    _btnDefaultVideo.selected = NO;
-    setProp( @"opt_mode", @"photo");
-    [g_app.menuVC gotoPhotoMode];
-} // btnDefaultPhoto()
-
-//-----------------------------------
-- (void) btnDefaultVideo:(id)sender
-{
-    _btnDefaultPhoto.selected = NO;
-    _btnDefaultVideo.selected = YES;
-    setProp( @"opt_mode", @"video");
-    [g_app.menuVC gotoVideoMode];
-} // btnDefaultVideo()
-
-////-----------------------------------
-//- (void) btnNN:(id)sender
-//{
-//    _btnNN.selected = YES;
-//    _btnOpenCV.selected = NO;
-//    setProp( @"opt_NN", @"yes");
-//} // btnNN()
-//
-////-----------------------------------
-//- (void) btnOpenCV:(id)sender
-//{
-//    _btnNN.selected = NO;
-//    _btnOpenCV.selected = YES;
-//    setProp( @"opt_NN", @"no");
-//} // btnOpenCV()
+    if ([_btnShowDetectedBoard isOn]) {
+        setProp( @"opt_mode", @"video");
+        [g_app.menuVC gotoVideoMode];
+    }
+    else {
+        setProp( @"opt_mode", @"photo");
+        [g_app.menuVC gotoPhotoMode];
+    }
+} // btnShowDetectedBoard()
 
 //=========
 // Public
@@ -317,14 +230,6 @@
     bool res = [optUpload isEqualToString:@"yes"];
     return res;
 }
-
-////----------------------
-//- (bool) useNN
-//{
-//    NSString *optNN =  getProp( @"opt_NN", @"yes");
-//    bool res = [optNN isEqualToString:@"yes"];
-//    return res;
-//}
 
 @end
 

@@ -57,7 +57,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         _selectedFont = [UIFont fontWithName:@"Verdana-Bold" size:16 ];
         _normalFont = [UIFont fontWithName:@"Verdana" size:16 ];
         NSArray *d = @[
-                       @{ @"txt": @"Video Mode", @"state": @(_mode == VIDEO_MODE) },
+                       // @{ @"txt": @"Video Mode", @"state": @(_mode == VIDEO_MODE) },
                        @{ @"txt": @"Photo Mode", @"state": @(_mode == PHOTO_MODE) },
                        @{ @"txt": @"Demo Mode", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
@@ -187,11 +187,13 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
     NSString *menuItem = _titlesArray[indexPath.row][@"txt"];
 
     do {
-        if ([menuItem hasPrefix:@"Video Mode"]) {
-            [self gotoVideoMode];
-        }
-        else if ([menuItem hasPrefix:@"Photo Mode"]) {
-            [self gotoPhotoMode];
+        if ([menuItem hasPrefix:@"Photo Mode"]) {
+            if ([g_app.settingsVC defaultToVideo]) {
+                [self gotoVideoMode];
+            }
+            else {
+                [self gotoPhotoMode];
+            }
         }
         else if ([menuItem hasPrefix:@"Demo Mode"]) {
             if (_mode == DEBUG_MODE) break;
