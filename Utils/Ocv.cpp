@@ -358,7 +358,7 @@ cv::Vec4f polar2segment( const cv::Vec2f &pline)
     result[2] = cvRound(x0 - 1000*(-b));
     result[3] = cvRound(y0 - 1000*(a));
     return result;
-}
+} // polar2segment()
 
 // Line segment to polar, with positive rho
 //-----------------------------------------------------------------
@@ -384,7 +384,7 @@ cv::Vec2f segment2polar( const cv::Vec4f &line_)
     pline[0] = rho;
     pline[1] = theta;
     return pline;
-}
+} // segment2polar()
 
 // Stretch a line by factor, on both ends
 //------------------------------------------------
@@ -663,8 +663,17 @@ void houghlines (const cv::Mat &img, const Points &ps,
                                            else return 2;
                                        });
     // Get the ones with the most votes
-    vert_lines  = vec_slice( horiz_vert_other_lines[1], 0, 25);
-    horiz_lines = vec_slice( horiz_vert_other_lines[0], 0, 25);
+    std::vector<cv::Vec2f> vert_lines_0  = vec_slice( horiz_vert_other_lines[1], 0, 25);
+    std::vector<cv::Vec2f> horiz_lines_0 = vec_slice( horiz_vert_other_lines[0], 0, 25);
+    // Make sure rho is always positive
+    vert_lines.clear();
+    ISLOOP( vert_lines_0) {
+        vert_lines.push_back( segment2polar( polar2segment( vert_lines_0[i])));
+    }
+    horiz_lines.clear();
+    ISLOOP( horiz_lines_0) {
+        horiz_lines.push_back( segment2polar( polar2segment( horiz_lines_0[i])));
+    }
 } // houghlines()
 
 // Get main horizontal direction of a grid of points (in rad)
