@@ -386,6 +386,23 @@ cv::Vec2f segment2polar( const cv::Vec4f &line_)
     return pline;
 } // segment2polar()
 
+// Change polar line to have positive rho
+//-----------------------------------------
+void rho_positive( cv::Vec2f &pline)
+{
+    float &rho( pline[0]);
+    float &theta( pline[1]);
+    if (rho < 0) {
+        rho *= -1;
+        if (fabs(theta + PI) < fabs(theta - PI)) {
+            theta += PI;
+        }
+        else {
+            theta -= PI;
+        }
+    }
+} // rho_positive()
+
 // Stretch a line by factor, on both ends
 //------------------------------------------------
 Points stretch_line(Points line, double factor )
@@ -663,16 +680,16 @@ void houghlines (const cv::Mat &img, const Points &ps,
                                            else return 2;
                                        });
     // Get the ones with the most votes
-    std::vector<cv::Vec2f> vert_lines_0  = vec_slice( horiz_vert_other_lines[1], 0, 25);
-    std::vector<cv::Vec2f> horiz_lines_0 = vec_slice( horiz_vert_other_lines[0], 0, 25);
-    // Make sure rho is always positive
     vert_lines.clear();
-    ISLOOP( vert_lines_0) {
-        vert_lines.push_back( segment2polar( polar2segment( vert_lines_0[i])));
-    }
+    vert_lines  = vec_slice( horiz_vert_other_lines[1], 0, 25);
     horiz_lines.clear();
-    ISLOOP( horiz_lines_0) {
-        horiz_lines.push_back( segment2polar( polar2segment( horiz_lines_0[i])));
+    horiz_lines = vec_slice( horiz_vert_other_lines[0], 0, 25);
+    // Make sure rho is always positive
+    ISLOOP( vert_lines) {
+        rho_positive( vert_lines[i]);
+    }
+    ISLOOP( horiz_lines) {
+        rho_positive( horiz_lines[i]);
     }
 } // houghlines()
 

@@ -138,6 +138,8 @@ cv::Vec4f median_slope_line( const std::vector<cv::Vec2f> &plines );
 cv::Vec4f polar2segment( const cv::Vec2f &pline);
 // Line segment to polar, with positive rho
 cv::Vec2f segment2polar( const cv::Vec4f &line);
+// Change polar line to have positive rho
+void rho_positive( cv::Vec2f &pline);
 // Stretch a line by factor, on both ends
 Points stretch_line(Points line, double factor );
 // Stretch a line by factor, on both ends
