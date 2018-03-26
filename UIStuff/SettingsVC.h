@@ -30,5 +30,6 @@
 @interface SettingsVC : UIViewController
 - (bool) defaultToVideo;
 - (bool) uploadEnabled;
-- (bool) useNN;
+//- (bool) useNN;
+
 @end

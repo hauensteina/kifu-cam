@@ -47,11 +47,12 @@
 @property UILabel *lbDefaultVideo;
 
 // NN/OpenCV
-@property UIButton *btnNN;
-@property UILabel *lbNN;
+//@property UIButton *btnNN;
+//@property UILabel *lbNN;
+//
+//@property UIButton *btnOpenCV;
+//@property UILabel *lbOpenCV;
 
-@property UIButton *btnOpenCV;
-@property UILabel *lbOpenCV;
 @end
 
 @implementation SettingsVC
@@ -91,10 +92,10 @@
     _lbDefaultVideo = [UILabel new];
     _lbDefaultPhoto = [UILabel new];
     //
-    _btnNN = [UIButton new];
-    _btnOpenCV = [UIButton new];
-    _lbNN = [UILabel new];
-    _lbOpenCV = [UILabel new];
+//    _btnNN = [UIButton new];
+//    _btnOpenCV = [UIButton new];
+//    _lbNN = [UILabel new];
+//    _lbOpenCV = [UILabel new];
 
     // Config upload radio button
     [_btnUploadYes setImage:_imgUnChecked forState:UIControlStateNormal];
@@ -120,17 +121,17 @@
     makeLabelClickable( _lbDefaultPhoto, self, @selector(btnDefaultPhoto:));
     makeLabelClickable( _lbDefaultVideo, self, @selector(btnDefaultVideo:));
     
-    // Config NN/OpenCV button
-    [_btnNN setImage:_imgUnChecked forState:UIControlStateNormal];
-    [_btnNN setImage:_imgChecked forState:UIControlStateSelected];
-    [_btnOpenCV setImage:_imgUnChecked forState:UIControlStateNormal];
-    [_btnOpenCV setImage:_imgChecked forState:UIControlStateSelected];
-    _lbNN.text = @"Neural Networks";
-    _lbOpenCV.text = @"OpenCV";
-    [_btnNN addTarget:self action:@selector(btnNN:) forControlEvents: UIControlEventTouchUpInside];
-    [_btnOpenCV addTarget:self action:@selector(btnOpenCV:) forControlEvents: UIControlEventTouchUpInside];
-    makeLabelClickable( _lbNN, self, @selector(btnNN:));
-    makeLabelClickable( _lbOpenCV, self, @selector(btnOpenCV:));
+//    // Config NN/OpenCV button
+//    [_btnNN setImage:_imgUnChecked forState:UIControlStateNormal];
+//    [_btnNN setImage:_imgChecked forState:UIControlStateSelected];
+//    [_btnOpenCV setImage:_imgUnChecked forState:UIControlStateNormal];
+//    [_btnOpenCV setImage:_imgChecked forState:UIControlStateSelected];
+//    _lbNN.text = @"Neural Networks";
+//    _lbOpenCV.text = @"OpenCV";
+//    [_btnNN addTarget:self action:@selector(btnNN:) forControlEvents: UIControlEventTouchUpInside];
+//    [_btnOpenCV addTarget:self action:@selector(btnOpenCV:) forControlEvents: UIControlEventTouchUpInside];
+//    makeLabelClickable( _lbNN, self, @selector(btnNN:));
+//    makeLabelClickable( _lbOpenCV, self, @selector(btnOpenCV:));
     
     // Add controls as subviews
     [v addSubview: _btnUploadYes];
@@ -143,10 +144,10 @@
     [v addSubview: _lbDefaultVideo];
     [v addSubview: _lbDefaultPhoto];
     //
-    [v addSubview: _btnNN];
-    [v addSubview: _btnOpenCV];
-    [v addSubview: _lbNN];
-    [v addSubview: _lbOpenCV];
+//    [v addSubview: _btnNN];
+//    [v addSubview: _btnOpenCV];
+//    [v addSubview: _lbNN];
+//    [v addSubview: _lbOpenCV];
 } // loadView
 
 //------------------------------------------
@@ -198,14 +199,14 @@
         _btnUploadYes.selected = NO;
         _btnUploadNo.selected = YES;
     }
-    if ([self useNN]) {
-        _btnNN.selected = YES;
-        _btnOpenCV.selected = NO;
-    }
-    else {
-        _btnNN.selected = NO;
-        _btnOpenCV.selected = YES;
-    }
+//    if ([self useNN]) {
+//        _btnNN.selected = YES;
+//        _btnOpenCV.selected = NO;
+//    }
+//    else {
+//        _btnNN.selected = NO;
+//        _btnOpenCV.selected = YES;
+//    }
 
     // Layout
     float H = SCREEN_HEIGHT;
@@ -236,12 +237,12 @@
     _lbDefaultPhoto.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
 
     // Neural Networks or OpenCV
-    y += checkBoxSize * 3;
-    _btnNN.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
-    _lbNN.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
-    y += checkBoxSize * 1.5;
-    _btnOpenCV.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
-    _lbOpenCV.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
+//    y += checkBoxSize * 3;
+//    _btnNN.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
+//    _lbNN.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
+//    y += checkBoxSize * 1.5;
+//    _btnOpenCV.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
+//    _lbOpenCV.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
 } // doLayout()
 
 // Button Callbacks
@@ -281,21 +282,21 @@
     [g_app.menuVC gotoVideoMode];
 } // btnDefaultVideo()
 
-//-----------------------------------
-- (void) btnNN:(id)sender
-{
-    _btnNN.selected = YES;
-    _btnOpenCV.selected = NO;
-    setProp( @"opt_NN", @"yes");
-} // btnNN()
-
-//-----------------------------------
-- (void) btnOpenCV:(id)sender
-{
-    _btnNN.selected = NO;
-    _btnOpenCV.selected = YES;
-    setProp( @"opt_NN", @"no");
-} // btnOpenCV()
+////-----------------------------------
+//- (void) btnNN:(id)sender
+//{
+//    _btnNN.selected = YES;
+//    _btnOpenCV.selected = NO;
+//    setProp( @"opt_NN", @"yes");
+//} // btnNN()
+//
+////-----------------------------------
+//- (void) btnOpenCV:(id)sender
+//{
+//    _btnNN.selected = NO;
+//    _btnOpenCV.selected = YES;
+//    setProp( @"opt_NN", @"no");
+//} // btnOpenCV()
 
 //=========
 // Public
@@ -317,13 +318,13 @@
     return res;
 }
 
-//----------------------
-- (bool) useNN
-{
-    NSString *optNN =  getProp( @"opt_NN", @"yes");
-    bool res = [optNN isEqualToString:@"yes"];
-    return res;
-}
+////----------------------
+//- (bool) useNN
+//{
+//    NSString *optNN =  getProp( @"opt_NN", @"yes");
+//    bool res = [optNN isEqualToString:@"yes"];
+//    return res;
+//}
 
 @end
 
