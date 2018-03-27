@@ -170,6 +170,7 @@
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     if (!sgf) {
         sgf = [g_app.mainVC.cppInterface get_sgf_for_img:img];
+        [g_app.mainVC.cppInterface save_current_sgf:sgfname withTitle:@""];
     }
     NSArray *corners = [CppInterface corners_from_sgf:sgf];
     img = drawCircleOnImg( img, [corners[0][0] intValue], [corners[0][1] intValue], 20, RED);

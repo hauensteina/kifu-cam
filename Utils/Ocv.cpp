@@ -361,7 +361,7 @@ cv::Vec4f polar2segment( const cv::Vec2f &pline)
 } // polar2segment()
 
 // Line segment to polar, with positive rho
-//-----------------------------------------------------------------
+//---------------------------------------------------
 cv::Vec2f segment2polar( const cv::Vec4f &line_)
 {
     cv::Vec2f pline;
