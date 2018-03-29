@@ -43,6 +43,15 @@
 - (UIImage *) f07_zoom_in_dbg;
 - (UIImage *) f08_classify_dbg;
 
+- (void) f00_dots_and_verticals;
+- (void) f02_warp;
+- (void) f03_blobs;
+- (void) f04_vert_lines:(int)state;
+- (void) f05_horiz_lines:(int)state;
+- (void) f06_corners;
+- (void) f07_zoom_in;
+
+
 - (UIImage *) video_mode;
 - (UIImage *) photo_mode;
 

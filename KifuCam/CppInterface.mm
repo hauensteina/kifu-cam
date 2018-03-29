@@ -829,7 +829,9 @@ extern cv::Mat mat_dbg;
 //-----------------------------------------------------------------------
 - (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
 {
-    auto sgf = generate_sgf( [title UTF8String], _diagram, _intersections, _phi, _theta);
+    Points2f unwarped_intersections;
+    unwarp_points( _invProj, _invRot, _intersections, unwarped_intersections);
+    std::string sgf = generate_sgf( [title UTF8String], _diagram, unwarped_intersections, _phi, _theta);
     std::ofstream ofs;
     ofs.open( [fname UTF8String]);
     ofs << sgf;
@@ -841,9 +843,9 @@ extern cv::Mat mat_dbg;
 //-----------------------------
 - (NSString *) get_sgf
 {
-    Points2f my_intersections;
-    unwarp_points(_invProj, _invRot, _intersections, my_intersections);
-    return @(generate_sgf( "", _diagram, my_intersections, _phi, _theta).c_str());
+    Points2f unwarped_intersections;
+    unwarp_points( _invProj, _invRot, _intersections, unwarped_intersections);
+    return @(generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta).c_str());
 } // get_sgf()
 
 // Get sgf for a UIImage

@@ -102,7 +102,7 @@ def get_sgf_tag( tag, sgf):
     return res
 
 # Get list of intersection coords from sgf GC tag
-#-------------------------------------------------
+#--------------------------------------------------
 def get_isec_coords( sgffile):
     with open( sgffile) as f: sgf = f.read()
     sgf = sgf.replace( '\\','')
@@ -115,19 +115,24 @@ def get_isec_coords( sgffile):
     intersections = re.sub( '\(','[',intersections)
     intersections = re.sub( '\)',']',intersections)
     intersections = re.sub( 'intersections','"intersections"',intersections)
+    intersections = re.sub( '#.*','',intersections)
     intersections = '{' + intersections + '}'
     intersections = json.loads( intersections)
     intersections = intersections[ 'intersections']
     return intersections
 
 # Read sgf, replace intersections, write back
-#-------------------------------------------------------------
+#-----------------------------------------------
 def isecs2sgf( sgffile, intersections):
     sgf  = open( sgffile).read()
+    gc = get_sgf_tag( 'GC', sgf)
+    phi = re.sub( r'.*#phi:([^#]*)#.*',r'\1',gc)
+    theta = re.sub( r'.*#theta:([^#]*)#.*',r'\1',gc)
+
     tstr = json.dumps( intersections)
     tstr = re.sub( '\[','(',tstr)
     tstr = re.sub( '\]',')',tstr)
-    tstr = 'GC[intersections:' + tstr + ']'
+    tstr = 'GC[intersections:' + tstr + '#' + 'phi:%.2f#' % float(phi) + 'theta:%.2f#' % float(theta) + ']'
     res = sgf
     res = re.sub( '(GC\[[^\]]*\])', '', res)
     res = re.sub( '(SZ\[[^\]]*\])', r'\1' + tstr, res)
