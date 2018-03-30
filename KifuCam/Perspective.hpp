@@ -30,10 +30,12 @@ inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M, cv::Mat &invM
     double a = 1.0 * sz.width;
     double s = 1.0; // side of orig square
     // Undistoreted orig square
-    Point2f bl_sq( center.x - s/2, center.y);
-    Point2f br_sq( center.x + s/2, center.y);
-    Point2f tl_sq( center.x - s/2, center.y - s);
-    Point2f tr_sq( center.x + s/2, center.y - s);
+    // Move the square down to avoid projecting the top edge off screen
+    double d = (sz.height / 4.0) * cos(phi) * -1;
+    Point2f bl_sq( center.x - s/2, center.y + d);
+    Point2f br_sq( center.x + s/2, center.y + d);
+    Point2f tl_sq( center.x - s/2, center.y - s + d);
+    Point2f tr_sq( center.x + s/2, center.y - s + d);
     // Distorted by angle phi
     Point2f bl_dist( center.x - s/2, center.y);
     Point2f br_dist( center.x + s/2, center.y);
@@ -41,7 +43,8 @@ inline void perspective_warp( cv::Size sz, double phi, cv::Mat &M, cv::Mat &invM
     double b2t = s * sin( phi); // distorted bottom to top
     Point2f tl_dist( center.x - l2r/2, center.y - b2t);
     Point2f tr_dist( center.x + l2r/2, center.y - b2t);
-    // Get transform fom distorted to normal
+    
+    // Get transform from distorted to normal
     std::vector<Point2f> src = { tl_dist, tr_dist, br_dist, bl_dist };
     std::vector<Point2f> dst = { tl_sq, tr_sq, br_sq, bl_sq };
     M = getPerspectiveTransform( src, dst);
