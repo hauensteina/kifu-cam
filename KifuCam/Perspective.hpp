@@ -85,7 +85,7 @@ inline void warp_plines( const std::vector<cv::Vec2f> &plines_in, const cv::Mat 
 
 // Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
-// Small numbers are more parallel.
+// Small numbers are more paralleinl.
 //----------------------------------------------------------------------------------------
 inline float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
                                  float &minphi, cv::Mat &minM, cv::Mat &invM)
@@ -103,7 +103,7 @@ inline float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &pli
     float minpary = 1E9;
     minphi = -1;
     cv::Mat M, Minv;
-    for (phi = 90; phi < 130; phi += 1) {
+    for (phi = 70; phi < 130; phi += 1) {
         perspective_warp( sz, phi, M, Minv);
         float pary = paralellity( M);
         if (pary < minpary) {
@@ -113,7 +113,6 @@ inline float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &pli
             invM = Minv;
         }
     } // for
-    //perspective_warp( sz, -minphi, invM);
     return minpary;
 } // parallel_projection()
 
