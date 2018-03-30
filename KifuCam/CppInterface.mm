@@ -40,7 +40,6 @@
 
 #import "AppDelegate.h"
 #import "BlobFinder.hpp"
-#import "Boardness.hpp"
 #import "Clust1D.hpp"
 #import "CppInterface.h"
 #import "KerasBoardModel.h"

@@ -37,7 +37,6 @@
 #include <regex>
 
 #include "Common.hpp"
-#include "Boardness.hpp"
 #include "Clust1D.hpp"
 
 // Apply inverse thresh and dilate grayscale image.
@@ -832,42 +831,6 @@ inline cv::Point tiebreak( const cv::Mat &m1, const cv::Mat &m2)
     }
     return res;
 } // tiebreak()
-
-// Use horizontal and vertical lines to find corners such that the board best matches the points we found
-//-------------------------------------------------------------------------------------------------------------------
-inline
-Points2f find_corners( const Points blobs, std::vector<cv::Vec2f> &horiz_lines, std::vector<cv::Vec2f> &vert_lines,
-                      const Points2f &intersections, const cv::Mat &img, const cv::Mat &threshed, int board_sz = 19)
-{
-    if (SZ(horiz_lines) < 3 || SZ(vert_lines) < 3) return Points2f();
-    
-    Boardness bness( intersections, blobs, img, board_sz, horiz_lines, vert_lines);
-    cv::Mat &edgeness  = bness.edgeness();
-    cv::Mat &blobness  = bness.blobness();
-    
-    cv::Point max_loc = tiebreak( blobness, edgeness);
-    
-    cv::Point tl = max_loc;
-    cv::Point tr( tl.x + board_sz-1, tl.y);
-    cv::Point br( tl.x + board_sz-1, tl.y + board_sz-1);
-    cv::Point bl( tl.x, tl.y + board_sz-1);
-    
-    // Return the board lines only
-    horiz_lines = vec_slice( horiz_lines, max_loc.y, board_sz);
-    vert_lines  = vec_slice( vert_lines, max_loc.x, board_sz);
-    
-    // Mark corners for visualization
-    mat_dbg = bness.m_pyrpix_edgeness.clone();
-    mat_dbg.at<cv::Vec3b>( pf2p(tl)) = cv::Vec3b( 255,0,0);
-    mat_dbg.at<cv::Vec3b>( pf2p(tr)) = cv::Vec3b( 255,0,0);
-    mat_dbg.at<cv::Vec3b>( pf2p(bl)) = cv::Vec3b( 255,0,0);
-    mat_dbg.at<cv::Vec3b>( pf2p(br)) = cv::Vec3b( 255,0,0);
-    cv::resize( mat_dbg, mat_dbg, img.size(), 0,0, CV_INTER_NN);
-    
-    auto isec2pf = [&blobness, &intersections](cv::Point p) { return p2pf( intersections[p.y*blobness.cols + p.x]); };
-    Points2f corners = { isec2pf(tl), isec2pf(tr), isec2pf(br), isec2pf(bl) };
-    return corners;
-} // find_corners()
 
 // Find corners by pixelwise boardness score, typically from a neural network
 //-------------------------------------------------------------------------------------------------------------------
