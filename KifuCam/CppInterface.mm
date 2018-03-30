@@ -509,8 +509,8 @@ extern cv::Mat mat_dbg;
         zoom_in( _small_img, _corners, _small_zoomed, M);
         cv::perspectiveTransform( _corners, _corners_zoomed, M);
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
-        fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
-        fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
+        //fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
+        //fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
     }
 } // f07_zoom_in()
 
