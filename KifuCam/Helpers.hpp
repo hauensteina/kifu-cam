@@ -885,7 +885,8 @@ Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vect
         CSLOOP (vert_lines) {
             i++;
             Point2f pf = intersections[i];
-            const int rad = 3;
+            //const int rad = 3;
+            const int rad = 0;
             auto hood = make_hood( pf, rad, rad);
             if (check_rect( hood, pixel_boardness.rows, pixel_boardness.cols)) {
                 cv::Scalar m = cv::mean( pixel_boardness(hood));
