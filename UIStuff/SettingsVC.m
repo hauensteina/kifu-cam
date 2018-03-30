@@ -173,7 +173,7 @@
     _btnUploadNo.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
     _lbUploadNo.frame = CGRectMake( lmarg + checkBoxSize*1.5, y, W - lmarg, checkBoxSize);
 
-    // SHow detected board or not
+    // Show detected board or not
     y += checkBoxSize * 3;
     _btnShowDetectedBoard.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
     _lbShowDetectedBoard.frame = CGRectMake( lmarg + checkBoxSize*2.3, y, W - lmarg, checkBoxSize);
@@ -218,7 +218,7 @@
 //------------------------
 - (bool) defaultToVideo
 {
-    NSString *optMode =  getProp( @"opt_mode", @"video");
+    NSString *optMode =  getProp( @"opt_mode", @"photo");
     bool res = [optMode isEqualToString:@"video"];
     return res;
 }
