@@ -885,8 +885,11 @@ extern cv::Mat mat_dbg;
     std::string sgf = [sgf_ UTF8String];
     NSMutableArray *res = [NSMutableArray new];
     std::string gc = get_sgf_tag( sgf, "GC");
+    // Remove backslashes
+    std::regex re_back( "\\\\");
+    std::string tstr = std::regex_replace( gc, re_back, "" );
     std::regex re( "intersections:(\\([^#]*\\))#.*");
-    std::string tstr = std::regex_replace( gc, re, "$1" );
+    tstr = std::regex_replace( tstr, re, "$1" );
     // Turn it into json
     std::regex re1( "\\(");
     tstr = std::regex_replace( tstr, re1, "[" );
