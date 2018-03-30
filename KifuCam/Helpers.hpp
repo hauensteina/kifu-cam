@@ -893,7 +893,6 @@ Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vect
     return corners;
 } // find_corners_from_score()
 
-
 // Get intersections of two sets of lines
 //--------------------------------------------------------------------------
 inline Points2f get_intersections( const std::vector<cv::Vec2f> &hlines,
@@ -915,13 +914,14 @@ inline Points2f get_intersections( const std::vector<cv::Vec2f> &hlines,
 //--------------------------------------------------------------------------------------------
 inline void zoom_in( const cv::Mat &img, const Points2f &corners, cv::Mat &dst, cv::Mat &M)
 {
-    int marg = img.cols / 20;
+    int lmarg = img.cols / 20;
+    int tmarg = img.cols / 15;
     // Target square for transform
     Points2f square = {
-        cv::Point( marg, marg),
-        cv::Point( img.cols - marg, marg),
-        cv::Point( img.cols - marg, img.cols - marg),
-        cv::Point( marg, img.cols - marg) };
+        cv::Point( lmarg, tmarg),
+        cv::Point( img.cols - lmarg, tmarg),
+        cv::Point( img.cols - lmarg, img.cols - tmarg),
+        cv::Point( lmarg, img.cols - tmarg) };
     M = cv::getPerspectiveTransform( corners, square);
     cv::warpPerspective( img, dst, M, cv::Size( img.cols, img.rows));
 } // zoom_in()
@@ -930,29 +930,33 @@ inline void zoom_in( const cv::Mat &img, const Points2f &corners, cv::Mat &dst, 
 //----------------------------------------------------------------------------------
 inline void fill_outside_with_average_gray( cv::Mat &img, const Points2f &corners)
 {
+    int lmarg = 10;
+    int tmarg = 15;
     uint8_t mean = cv::mean( img)[0];
-    img.forEach<uint8_t>( [&mean, &corners](uint8_t &v, const int *p)
+    img.forEach<uint8_t>( [&mean, &corners, lmarg, tmarg](uint8_t &v, const int *p)
                          {
                              int x = p[1]; int y = p[0];
-                             if (x < corners[0].x - 10) v = mean;
-                             else if (x > corners[1].x + 10) v = mean;
-                             if (y < corners[0].y - 10) v = mean;
-                             else if (y > corners[3].y + 10) v = mean;
+                             if (x < corners[0].x - lmarg) v = mean;
+                             else if (x > corners[1].x + lmarg) v = mean;
+                             if (y < corners[0].y - tmarg) v = mean;
+                             else if (y > corners[3].y + tmarg) v = mean;
                          });
 } // fill_outside_with_average_gray()
 
 //----------------------------------------------------------------------------------
 inline void fill_outside_with_average_rgb( cv::Mat &img, const Points2f &corners)
 {
+    int lmarg = 10;
+    int tmarg = 15;
     cv::Scalar smean = cv::mean( img);
     Pixel mean( smean[0], smean[1], smean[2]);
-    img.forEach<Pixel>( [&mean, &corners](Pixel &v, const int *p)
+    img.forEach<Pixel>( [&mean, &corners, lmarg, tmarg](Pixel &v, const int *p)
                        {
                            int x = p[1]; int y = p[0];
-                           if (x < corners[0].x - 10) v = mean;
-                           else if (x > corners[1].x + 10) v = mean;
-                           if (y < corners[0].y - 10) v = mean;
-                           else if (y > corners[3].y + 10) v = mean;
+                           if (x < corners[0].x - lmarg) v = mean;
+                           else if (x > corners[1].x + lmarg) v = mean;
+                           if (y < corners[0].y - tmarg) v = mean;
+                           else if (y > corners[3].y + tmarg) v = mean;
                        });
 } // fill_outside_with_average_rgb()
 
