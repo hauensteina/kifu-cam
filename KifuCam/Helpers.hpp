@@ -147,6 +147,22 @@ inline std::string get_sgf_tag( const std::string &sgf, const std::string &tag)
     return res;
 } // get_sgf_tag()
 
+// Set a tag to a value. Does not work for SZ tag. Who would wants to change the size?
+//---------------------------------------------------------------------------------------------------------
+inline std::string set_sgf_tag( const std::string &sgf, const std::string &tag,  const std::string &val)
+{
+    std::string res;
+    // Remove old tag, if any
+    std::regex re_tag( tag + "\\[[^\\]]*\\]");
+    res = std::regex_replace( sgf, re_tag, "" );
+    // Build new tag
+    std::string newtag = tag + "[" + val + "]";
+    // Insert right after SZ tag
+    std::regex re_insert( "(.*SZ\\[[0-9]+\\])(.*)");
+    res = std::regex_replace( res, re_insert, "$1" + newtag + "$2" );
+    return res;
+} // set_sgf_tag()
+
 // Look for AB[ab][cd] or AW[ab]... and transform into a linear vector
 // of ints
 //-----------------------------------------------------------

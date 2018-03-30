@@ -825,17 +825,23 @@ extern cv::Mat mat_dbg;
 //===========
 
 // Save current diagram to file as sgf
-//-----------------------------------------------------------------------
-- (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title
+//--------------------------------------------------------------------------------------------------
+- (void) save_current_sgf:(NSString *)fname overwrite:(bool)overwrite
 {
     Points2f unwarped_intersections;
     unwarp_points( _invProj, _invRot, _intersections, unwarped_intersections);
-    std::string sgf = generate_sgf( [title UTF8String], _diagram, unwarped_intersections, _phi, _theta);
-    std::ofstream ofs;
-    ofs.open( [fname UTF8String]);
-    ofs << sgf;
-    ofs.close();
-    return ofs.good();
+    std::string sgf_ = generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta);
+    NSString *sgf = [NSString stringWithUTF8String:sgf_.c_str()];
+    
+    NSString *oldsgf = [NSString stringWithContentsOfFile:fname encoding:NSUTF8StringEncoding error:NULL];
+    // Just use the new GC tag, keep the old sgf
+    if (oldsgf && !overwrite) {
+        NSString *gc = [CppInterface get_sgf_tag:@"GC" sgf:sgf];
+        sgf = [CppInterface set_sgf_tag:@"GC" sgf:oldsgf val:gc];
+    }
+    NSError *error;
+    [sgf writeToFile:fname
+          atomically:YES encoding:NSUTF8StringEncoding error:&error];
 } // save_current_sgf()
 
 // Get current diagram as sgf
@@ -907,6 +913,30 @@ extern cv::Mat mat_dbg;
     return res;
 } // corners_from_sgf()
 
+//-----------------------------------------------------------------
++ (NSString *) get_sgf_tag:(NSString *)tag_ sgf:(NSString *)sgf_
+{
+    std::string sgf = [sgf_ UTF8String];
+    std::string tag = [tag_ UTF8String];
+    std::string val = get_sgf_tag( sgf, tag);
+    // Remove backslashes
+    std::regex re_back( "\\\\");
+    val = std::regex_replace( val, re_back, "" );
+    return [NSString stringWithUTF8String:val.c_str()];
+} // get_sgf_tag()
+
+//-------------------------------------------------------------------------------------
++ (NSString *) set_sgf_tag:(NSString *)tag_ sgf:(NSString *)sgf_ val:(NSString *)val_
+{
+    std::string sgf = [sgf_ UTF8String];
+    std::string tag = [tag_ UTF8String];
+    std::string val = [val_ UTF8String];
+    std::string res = set_sgf_tag( sgf, tag, val);
+    // Remove backslashes
+    std::regex re_back( "\\\\");
+    res = std::regex_replace( res, re_back, "" );
+    return [NSString stringWithUTF8String:res.c_str()];
+} // set_sgf_tag()
 
 
 @end

@@ -204,7 +204,12 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
         // Classify
         int nerrs = [g_app.mainVC.cppInterface runTestImg:img withSgf: sgf];
         if (overwrite) {
-            [g_app.mainVC.cppInterface save_current_sgf:fullfname withTitle:@""];
+            if ([getProp( @"opt_overwrite_sgf", @"off") isEqualToString:@"on"]) {
+                [g_app.mainVC.cppInterface save_current_sgf:fullfname overwrite:YES];
+            }
+            else {
+                [g_app.mainVC.cppInterface save_current_sgf:fullfname overwrite:NO];
+            }
         }
         [errCounts addObject:@(nerrs)];
     } // for

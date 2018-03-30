@@ -170,7 +170,7 @@
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     if (!sgf) {
         sgf = [g_app.mainVC.cppInterface get_sgf_for_img:img];
-        [g_app.mainVC.cppInterface save_current_sgf:sgfname withTitle:@""];
+        [g_app.mainVC.cppInterface save_current_sgf:sgfname overwrite:YES];
     }
     NSArray *corners = [CppInterface corners_from_sgf:sgf];
     img = drawCircleOnImg( img, [corners[0][0] intValue], [corners[0][1] intValue], 20, RED);
@@ -298,52 +298,54 @@
     [g_app.mainVC.cppInterface clearImgQ];
     [g_app.mainVC.cppInterface qImg:img];
     [g_app.mainVC.cppInterface photo_mode];
-    NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
-    fname = changeExtension( fullfname, @".sgf");
-    NSError *error;
-    [sgf writeToFile:fname
-          atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    NSString *sgfname = changeExtension( fullfname, @".sgf");
+    [g_app.mainVC.cppInterface save_current_sgf:sgfname overwrite:YES];
+
     [self refresh];
 } // handleRerun()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @end // EditTestCaseVC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

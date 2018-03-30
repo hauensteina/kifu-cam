@@ -43,6 +43,10 @@
 @property UISwitch *btnShowDetectedBoard;
 @property UILabel *lbShowDetectedBoard;
 
+// Overwrite sgf switch
+@property UISwitch *btnOverwriteSgf;
+@property UILabel *lbOverwriteSgf;
+
 @end
 
 @implementation SettingsVC
@@ -79,7 +83,10 @@
     //
     _btnShowDetectedBoard = [UISwitch new];
     _lbShowDetectedBoard = [UILabel new];
-    
+    //
+    _btnOverwriteSgf = [UISwitch new];
+    _lbOverwriteSgf = [UILabel new];
+
     // Config upload radio button
     [_btnUploadYes setImage:_imgUnChecked forState:UIControlStateNormal];
     [_btnUploadYes setImage:_imgChecked forState:UIControlStateSelected];
@@ -94,7 +101,10 @@
 
     [_btnShowDetectedBoard addTarget:self action:@selector(btnShowDetectedBoard:) forControlEvents:UIControlEventValueChanged];
     _lbShowDetectedBoard.text = @"Show detected board";
-
+    
+    [_btnOverwriteSgf addTarget:self action:@selector(btnOverwriteSgf:) forControlEvents:UIControlEventValueChanged];
+    _lbOverwriteSgf.text = @"Overwrite Sgf";
+    
     // Add controls as subviews
     [v addSubview: _btnUploadYes];
     [v addSubview: _btnUploadNo];
@@ -103,6 +113,8 @@
     //
     [v addSubview: _btnShowDetectedBoard];
     [v addSubview: _lbShowDetectedBoard];
+    [v addSubview: _btnOverwriteSgf];
+    [v addSubview: _lbOverwriteSgf];
 } // loadView
 
 //------------------------------------------
@@ -137,7 +149,7 @@
 //----------------------------------------
 - (void) doLayout
 {
-    // Set button states accordingly
+    // Set initial button states
     if ([self defaultToVideo]) {
         [_btnShowDetectedBoard setOn:YES];
     }
@@ -151,6 +163,10 @@
     else {
         _btnUploadYes.selected = NO;
         _btnUploadNo.selected = YES;
+    }
+    [_btnOverwriteSgf setOn:NO];
+    if ([getProp(@"opt_overwrite_sgf", @"off") isEqualToString:@"on"]) {
+        [_btnOverwriteSgf setOn:YES];
     }
 
     // Layout
@@ -177,6 +193,20 @@
     y += checkBoxSize * 3;
     _btnShowDetectedBoard.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
     _lbShowDetectedBoard.frame = CGRectMake( lmarg + checkBoxSize*2.3, y, W - lmarg, checkBoxSize);
+
+    // Overwrite sgf or not
+    y += checkBoxSize * 3;
+    _btnOverwriteSgf.frame = CGRectMake( lmarg, y, checkBoxSize, checkBoxSize);
+    _lbOverwriteSgf.frame = CGRectMake( lmarg + checkBoxSize*2.3, y, W - lmarg, checkBoxSize);
+    
+    if ([getProp( @"opt_debug", @"off") isEqualToString:@"on"]) {
+        _btnOverwriteSgf.hidden = NO;
+        _lbOverwriteSgf.hidden = NO;
+    }
+    else {
+        _btnOverwriteSgf.hidden = YES;
+        _lbOverwriteSgf.hidden = YES;
+    }
 } // doLayout()
 
 // Button Callbacks
@@ -198,7 +228,7 @@
     setProp( @"opt_upload", @"no");
 } // btnUploadNo()
 
-//-----------------------------------
+//-----------------------------------------
 - (void) btnShowDetectedBoard:(id)sender
 {
     if ([_btnShowDetectedBoard isOn]) {
@@ -210,6 +240,17 @@
         [g_app.menuVC gotoPhotoMode];
     }
 } // btnShowDetectedBoard()
+
+//------------------------------------
+- (void) btnOverwriteSgf:(id)sender
+{
+    if ([_btnOverwriteSgf isOn]) {
+        setProp( @"opt_overwrite_sgf", @"on");
+    }
+    else {
+        setProp( @"opt_overwrite_sgf", @"off");
+    }
+} // btnOverwriteSgf()
 
 //=========
 // Public

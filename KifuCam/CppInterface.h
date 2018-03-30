@@ -67,8 +67,8 @@
 // Check for the debug mode trigger position to show right menu.
 - (bool) check_debug_trigger;
 
-// Save the cuurently detected position to sgf
-- (bool) save_current_sgf:(NSString *)fname withTitle:(NSString *)title;
+// Save current diagram to file as sgf
+- (void) save_current_sgf:(NSString *)fname overwrite:(bool)overwrite;
 // Get current diagram as sgf
 - (NSString *) get_sgf;
 // Get sgf for a UIImage
@@ -80,6 +80,10 @@
 + (UIImage *) sgf2img:(NSString *)sgf;
 // Get the corner coords fom GC tag of sgf
 + (NSArray *) corners_from_sgf:(NSString *)sgf;
+// Extract an sgf tag
++ (NSString *) get_sgf_tag:(NSString *)tag sgf:(NSString *)sgf;
+// Set an sgf tag. Do not try to set the SZ tag.
++ (NSString *) set_sgf_tag:(NSString *)tag sgf:(NSString *)sgf val:(NSString *)val;
 
 
 @end

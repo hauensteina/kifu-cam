@@ -40,6 +40,7 @@
 //------------------------------------------------------------------------------------------------------------
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    setProp( @"opt_debug", @"off");
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor =  [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.95];
         
@@ -84,6 +85,7 @@
 //-------------------------------
 - (void) enableDebugMenu
 {
+    setProp( @"opt_debug", @"on");
     [_topVC setupLeftAndRight];
     _menuVC  = (LeftMenuController *) _topVC.leftViewController;
     _rightVC = (RightViewController *) _topVC.rightViewController;
