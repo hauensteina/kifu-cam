@@ -51,9 +51,9 @@ extern cv::Mat mat_dbg;
 @interface CppInterface()
 //=======================
 @property float phi; // projection angle in degrees
-@property cv::Mat invProj; // Inverse projection matrix
+@property cv::Mat Mp, invProj; // Projection matrix and inverse
 @property float theta; // rotation angle in degrees
-@property cv::Mat invRot;  // Inverse rotation matrix
+@property cv::Mat Ms, invRot;  // Rotation matrix and inverse
 @property cv::Mat small_img; // resized image, in color, RGB, unwarped
 @property cv::Mat orig_small;     // orig resized
 @property cv::Mat small_zoomed;  // small, zoomed into the board
@@ -80,7 +80,7 @@ extern cv::Mat mat_dbg;
 @end
 
 @implementation CppInterface
-//=========================
+//============================
 
 //----------------------
 - (instancetype)init
@@ -231,16 +231,16 @@ extern cv::Mat mat_dbg;
                _vertical_lines, _horizontal_lines);
     
     // Straighten horizontals
-    cv::Mat Ms;
-    straight_rotation( sz, _horizontal_lines, _theta, Ms, _invRot);
-    cv::warpAffine( _small_img, _small_img, Ms, sz);
-    warp_plines( _vertical_lines, Ms, _vertical_lines);
+    //cv::Mat Ms;
+    straight_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
+    cv::warpAffine( _small_img, _small_img, _Ms, sz);
+    warp_plines( _vertical_lines, _Ms, _vertical_lines);
     
     // Unwarp verticals
-    cv::Mat Mp;
-    parallel_projection( sz, _vertical_lines, _phi, Mp, _invProj);
-    cv::warpPerspective( _small_img, _small_img, Mp, sz);
-    warp_plines( _vertical_lines, Mp, _vertical_lines);
+    //cv::Mat Mp;
+    parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
+    cv::warpPerspective( _small_img, _small_img, _Mp, sz);
+    warp_plines( _vertical_lines, _Mp, _vertical_lines);
 } // f02_warp()
 
 // Debug wrapper for f02_warp
@@ -261,20 +261,20 @@ extern cv::Mat mat_dbg;
 
 // Roughly guess intersections, stones, and lines
 //--------------------------------------------------
-- (void) f03_blobs
+- (void) f03_blobs //@@@
 {
     _vertical_lines.clear();
     _horizontal_lines.clear();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed);
-    _stone_or_empty.clear();
-    BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
-    BlobFinder::find_stones( _gray, _stone_or_empty);
-    _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+    
+    // Warp the old points
+    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
+    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
+    
     // Find lines
     houghlines( _small_img, _stone_or_empty,
                _vertical_lines, _horizontal_lines);
-    
 } // f03_blobs()
 
 // Debug wrapper for f03_blobs
@@ -588,7 +588,7 @@ extern cv::Mat mat_dbg;
         [self f00_dots_and_verticals];
         [self f02_warp];
         [self f03_blobs];
-        if (breakIfBad && SZ(_stone_or_empty) < 0.8 * SQR(_board_sz)) break;
+        if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(_board_sz)) break;
         [self f04_vert_lines:0];
         [self f04_vert_lines:1];
         [self f04_vert_lines:2];

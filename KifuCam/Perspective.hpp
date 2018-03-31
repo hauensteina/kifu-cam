@@ -66,7 +66,7 @@ inline void warp_plines( const std::vector<cv::Vec2f> &plines_in, const cv::Mat 
         p1s.push_back( Point2f( seg[0],seg[1]));
         p2s.push_back( Point2f( seg[2],seg[3]));
     }
-
+    
     std::vector<cv::Vec2f>  res;
     Points2f p1srot, p2srot;
     if (M.rows == 3) { // persp trans
@@ -82,6 +82,26 @@ inline void warp_plines( const std::vector<cv::Vec2f> &plines_in, const cv::Mat 
     }
     plines_out = res;
 } // warp_plines()
+
+// Run a matrix over a bunch of points
+//---------------------------------------------------------------------
+inline void warp_points( const Points &points_in, const cv::Mat &M,
+                         Points &points_out)
+{
+    if (!SZ(points_in)) {
+        points_out.clear();
+        return;
+    }
+    Points2f pf = points2float( points_in);
+    Points2f res;
+    if (M.rows == 3) { // persp trans
+        cv::perspectiveTransform( pf, res, M);
+    }
+    else { // affine trans
+        cv::transform( pf, res, M);
+    }
+    points2int( res, points_out);
+} // warp_points()
 
 // Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
