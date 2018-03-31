@@ -229,6 +229,8 @@ extern cv::Mat mat_dbg;
     parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
     cv::warpPerspective( _small_img, _small_img, _Mp, sz);
     warp_plines( _vertical_lines, _Mp, _vertical_lines);
+
+    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
 } // f02_warp()
 
 // Debug wrapper for f02_warp
@@ -249,12 +251,12 @@ extern cv::Mat mat_dbg;
 
 // Roughly guess intersections, stones, and lines
 //--------------------------------------------------
-- (void) f03_blobs //@@@
+- (void) f03_blobs
 {
-    _vertical_lines.clear();
-    _horizontal_lines.clear();
-    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-    thresh_dilate( _gray, _gray_threshed);
+    //_vertical_lines.clear();
+    //_horizontal_lines.clear();
+    //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+    //thresh_dilate( _gray, _gray_threshed);
     
     // Warp the old points
     warp_points( _stone_or_empty, _Ms, _stone_or_empty);
