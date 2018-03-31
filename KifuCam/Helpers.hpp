@@ -927,8 +927,8 @@ inline Points2f get_intersections( const std::vector<cv::Vec2f> &hlines,
 } // get_intersections()
 
 // Unwarp the square defined by corners
-//--------------------------------------------------------------------------------------------
-inline void zoom_in( const cv::Mat &img, const Points2f &corners, cv::Mat &dst, cv::Mat &M)
+//-----------------------------------------------------------------------------------------------------------------
+inline void zoom_in( const cv::Mat &img, const Points2f &corners, cv::Mat &dst, cv::Mat &M, bool skipWarp = false)
 {
     int lmarg = img.cols / 20;
     int tmarg = img.cols / 15;
@@ -939,7 +939,9 @@ inline void zoom_in( const cv::Mat &img, const Points2f &corners, cv::Mat &dst, 
         cv::Point( img.cols - lmarg, img.cols - tmarg),
         cv::Point( lmarg, img.cols - tmarg) };
     M = cv::getPerspectiveTransform( corners, square);
-    cv::warpPerspective( img, dst, M, cv::Size( img.cols, img.rows));
+    if (!skipWarp) {
+        cv::warpPerspective( img, dst, M, cv::Size( img.cols, img.rows));
+    }
 } // zoom_in()
 
 // Fill image outside of board with average. Helps with adaptive thresholds.

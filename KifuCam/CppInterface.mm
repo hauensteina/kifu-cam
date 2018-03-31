@@ -172,7 +172,8 @@ extern cv::Mat mat_dbg;
         resize( _orig_small, _orig_small, IMG_WIDTH);
     }
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
-    cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
+    cv::cvtColor( _orig_small, _orig_small, CV_RGBA2RGB);
+    _small_img = _orig_small.clone();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed);
     _stone_or_empty.clear();
@@ -218,26 +219,13 @@ extern cv::Mat mat_dbg;
 - (void) f02_warp
 {
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
-    cv::cvtColor( _orig_small, _small_img, CV_RGBA2RGB);
-    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-    thresh_dilate( _gray, _gray_threshed);
-    _stone_or_empty.clear();
-    BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
-    BlobFinder::find_stones( _gray, _stone_or_empty);
-    _stone_or_empty = BlobFinder::clean( _stone_or_empty);
-    
-    // Find lines
-    houghlines( _small_img, _stone_or_empty,
-               _vertical_lines, _horizontal_lines);
     
     // Straighten horizontals
-    //cv::Mat Ms;
     straight_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
     cv::warpAffine( _small_img, _small_img, _Ms, sz);
     warp_plines( _vertical_lines, _Ms, _vertical_lines);
     
     // Unwarp verticals
-    //cv::Mat Mp;
     parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
     cv::warpPerspective( _small_img, _small_img, _Mp, sz);
     warp_plines( _vertical_lines, _Mp, _vertical_lines);
@@ -504,13 +492,19 @@ extern cv::Mat mat_dbg;
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
+        cv::Size sz( _small_img.cols, _small_img.rows);
         cv::Mat M;
-        zoom_in( _gray,  _corners, _gray_zoomed, M);
-        zoom_in( _small_img, _corners, _small_zoomed, M);
+        //zoom_in( _gray,  _corners, _gray_zoomed, M);
+        bool skipWarp = true;
+        zoom_in( _small_img, _corners, _small_zoomed, M, skipWarp);
         cv::perspectiveTransform( _corners, _corners_zoomed, M);
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
-        //fill_outside_with_average_gray( _gray_zoomed, _corners_zoomed);
-        //fill_outside_with_average_rgb( _small_zoomed, _corners_zoomed);
+        // Do the image zoom directly from source, to reduce loss through repeated transforms
+        Points2f orig_corners;
+        unwarp_points( _invProj, _invRot, _corners, orig_corners);
+        M = cv::getPerspectiveTransform( orig_corners, _corners_zoomed);
+        cv::warpPerspective( _orig_small, _small_zoomed, M, sz);
+        cv::cvtColor( _small_zoomed, _gray_zoomed, cv::COLOR_RGB2GRAY);
     }
 } // f07_zoom_in()
 
