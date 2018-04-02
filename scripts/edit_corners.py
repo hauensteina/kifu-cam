@@ -27,12 +27,15 @@ import cv2
 # Where am I
 SCRIPTPATH = os.path.dirname(os.path.realpath(__file__))
 SELECTED_CORNER = 'TL'
+SELECTED_BEW = 'Black'
 CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
 AX_IMAGE = None
 FIG = None
 IMG = None
 BOARDSZ = 19
 NEW_INTERSECTIONS=[]
+INTERSECTIONS=[]
+DIAGRAM = []
 
 #---------------------------
 def usage(printmsg=False):
@@ -110,7 +113,7 @@ def get_isec_coords( sgffile):
         print('no intersections in ' + sgffile)
         return
     boardsz = int( get_sgf_tag( 'SZ', sgf))
-    #diagram = linearize_sgf( sgf)
+    diagram = linearize_sgf( sgf)
     intersections = get_sgf_tag( 'GC', sgf)
     intersections = re.sub( '\(','[',intersections)
     intersections = re.sub( '\)',']',intersections)
@@ -119,7 +122,7 @@ def get_isec_coords( sgffile):
     intersections = '{' + intersections + '}'
     intersections = json.loads( intersections)
     intersections = intersections[ 'intersections']
-    return intersections
+    return (intersections, diagram)
 
 # Read sgf, replace intersections, write back
 #-----------------------------------------------
@@ -142,18 +145,29 @@ def isecs2sgf( sgffile, intersections):
 #----------------------
 def onclick( event):
     global SELECTED_CORNER
+    if not event.xdata: return
+    if event.xdata < 1: return # The click was on a button, not the image
+
+    if SELECTED_CORNER:
+        handle_corner_click( event)
+    else:
+        handle_bew_click( event)
+
+# Image click in corner mode
+#--------------------------------
+def handle_corner_click( event):
+    global SELECTED_CORNER
     global CORNER_COORDS
     global AX_IMAGE
     global FIG
-    if not event.xdata: return
-    if event.xdata < 1: return # The click was on the button, not the image
+
     CORNER_COORDS[SELECTED_CORNER][0] = event.xdata
     CORNER_COORDS[SELECTED_CORNER][1] = event.ydata
 
     s = 15
     r = s / 2.0
     col = 'r'
-    if SELECTED_CORNER == 'TR': col = 'g'
+    if SELECTED_CORNER == 'TR': col = 'm'
     elif SELECTED_CORNER == 'BR': col = 'b'
     elif SELECTED_CORNER == 'BL': col = 'c'
     ell = patches.Ellipse( (event.xdata, event.ydata), s, s, edgecolor=col, facecolor='none')
@@ -166,6 +180,48 @@ def onclick( event):
     print( '%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
            ('double' if event.dblclick else 'single', event.button,
             event.x, event.y, event.xdata, event.ydata))
+
+# Find closest intersection to x,y
+#-------------------------------------
+def closest_isec( x, y, isecs):
+    mind = 1E9
+    minidx = -1
+    for idx, isec in enumerate(isecs):
+        d = (x-isec[0])*(x-isec[0]) + (y-isec[1])*(y-isec[1])
+        if d < mind:
+            mind = d
+            minidx = idx
+    return (isecs[minidx][0], isecs[minidx][1])
+
+# Image click in Black White Empty mode
+#----------------------------------------
+def handle_bew_click( event):
+    # Find closest intersection
+    x,y = closest_isec( event.xdata, event.ydata, NEW_INTERSECTIONS)
+    # Draw color on intersection
+    if SELECTED_BEW == 'Black': col = 'g'
+    elif SELECTED_BEW == 'Empty': col = 'b'
+    elif SELECTED_BEW == 'White': col = 'r'
+    s = 5
+    ell = patches.Ellipse( (x, y), s, s, edgecolor=col, facecolor=col)
+    AX_IMAGE.add_patch( ell)
+    FIG.canvas.draw()
+
+# Mark Black, White, Empty on the screen
+#--------------------------------------------
+def paint_diagram( diagram, intersections):
+    for idx,bew in enumerate(diagram):
+        isec = intersections[idx]
+        if bew == 'BLACK':
+            col = 'g'
+        elif bew == 'EMPTY':
+            col = 'b'
+        elif bew == 'WHITE':
+            col = 'r'
+        s = 5
+        ell = patches.Ellipse( (isec[0], isec[1]), s, s, edgecolor=col, facecolor=col)
+        AX_IMAGE.add_patch( ell)
+    FIG.canvas.draw()
 
 #----------------------------
 def cb_btn_reset( event):
@@ -185,10 +241,17 @@ def cb_btn_save( event):
 def cb_btn_done( event):
     global NEW_INTERSECTIONS
 
+    if CORNER_COORDS['TL'][0] == 0.0: # didn't mark corners
+        CORNER_COORDS['TL'] = INTERSECTIONS[0]
+        CORNER_COORDS['TR'] = INTERSECTIONS[BOARDSZ-1]
+        CORNER_COORDS['BR'] = INTERSECTIONS[BOARDSZ*BOARDSZ-1]
+        CORNER_COORDS['BL'] = INTERSECTIONS[BOARDSZ*BOARDSZ-BOARDSZ]
+
     tl = CORNER_COORDS['TL']
     tr = CORNER_COORDS['TR']
     br = CORNER_COORDS['BR']
     bl = CORNER_COORDS['BL']
+
     src_quad = np.array( [tl,tr,br,bl]).astype('float32')
     width = IMG.shape[1]
     height = IMG.shape[0]
@@ -219,22 +282,30 @@ def cb_btn_done( event):
     # Show
     AX_IMAGE.cla()
     AX_IMAGE.imshow( IMG, origin='upper')
-    draw_intersections( intersections, 5, 'r')
+    #draw_intersections( intersections, 5, 'r')
+    paint_diagram( DIAGRAM, INTERSECTIONS)
 
 # Draw circles on intersections
-#----------------------------------
+#-----------------------------------------------
 def draw_intersections( intersections, r, col):
     for isec in intersections:
         ell = patches.Ellipse( isec, r, r, edgecolor=col, facecolor='none')
         AX_IMAGE.add_patch( ell)
     FIG.canvas.draw()
 
-
+# Choose corner
 #----------------------------
-def cb_rbtn_corner( label):
+def cb_rbtn_corner_bew( label):
     global SELECTED_CORNER
-    SELECTED_CORNER = label
-    print( 'rbtn_corner %s' % label)
+    global SELECTED_BEW
+    if label in ('Black', 'Empty', 'White'):
+        SELECTED_CORNER = ''
+        SELECTED_BEW = label
+        print( 'rbtn_bew %s' % label)
+    else:
+        SELECTED_BEW = ''
+        SELECTED_CORNER = label
+        print( 'rbtn_corner %s' % label)
 
 #-----------
 def main():
@@ -244,6 +315,8 @@ def main():
     global FIG
     global IMG
     global SGF_FILE
+    global INTERSECTIONS
+    global DIAGRAM
 
     if len(sys.argv) == 1:
         usage(True)
@@ -262,8 +335,8 @@ def main():
 
     # Sgf
     SGF_FILE = os.path.splitext(args.fname)[0]+'.sgf'
-    intersections = get_isec_coords( SGF_FILE)
-    draw_intersections( intersections, 5, 'g')
+    INTERSECTIONS, DIAGRAM = get_isec_coords( SGF_FILE)
+    draw_intersections( INTERSECTIONS, 5, 'g')
 
     # Reset button
     ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
@@ -280,10 +353,10 @@ def main():
     btn_done = Button( ax_done, 'Done')
     btn_done.on_clicked( cb_btn_done)
 
-    # Radiobutton for corner
+    # Radiobutton for corner and Black Empty White
     ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
-    rbtn_corner = RadioButtons( ax_radio, ('TL', 'TR', 'BR', 'BL' ))
-    rbtn_corner.on_clicked( cb_rbtn_corner)
+    rbtn_corner_bew = RadioButtons( ax_radio, ('TL', 'TR', 'BR', 'BL', 'Black', 'Empty', 'White' ))
+    rbtn_corner_bew.on_clicked( cb_rbtn_corner_bew)
 
     plt.show()
 
