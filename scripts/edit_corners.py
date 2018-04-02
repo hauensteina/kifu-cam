@@ -262,12 +262,12 @@ def paint_diagram( diagram, intersections):
         AX_IMAGE.add_patch( ell)
     FIG.canvas.draw()
 
-#----------------------------
-def cb_btn_reset( event):
-    CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
-    AX_IMAGE.cla()
-    AX_IMAGE.imshow( IMG, origin='upper')
-    FIG.canvas.draw()
+# #----------------------------
+# def cb_btn_reset( event):
+#     CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
+#     AX_IMAGE.cla()
+#     AX_IMAGE.imshow( IMG, origin='upper')
+#     FIG.canvas.draw()
 
 # Write the sgf back, with the intersections swapped out
 #----------------------------------------------------------
@@ -276,9 +276,9 @@ def cb_btn_save( event):
     overwrite_sgf( SGF_FILE, DIAGRAM)
     print( 'saved')
 
-# Compute intersections from corners
-#-------------------------------------
-def cb_btn_done( event):
+# Compute ans show intersections from corners
+#------------------------------------------------
+def cb_btn_show( event):
     global NEW_INTERSECTIONS
 
     if CORNER_COORDS['TL'][0] == 0.0: # didn't mark corners
@@ -323,7 +323,7 @@ def cb_btn_done( event):
     AX_IMAGE.cla()
     AX_IMAGE.imshow( IMG, origin='upper')
     #draw_intersections( intersections, 5, 'r')
-    paint_diagram( DIAGRAM, INTERSECTIONS)
+    paint_diagram( DIAGRAM, NEW_INTERSECTIONS)
 
 # Draw circles on intersections
 #-----------------------------------------------
@@ -378,20 +378,20 @@ def main():
     INTERSECTIONS, DIAGRAM = get_isec_coords( SGF_FILE)
     draw_intersections( INTERSECTIONS, 5, 'g')
 
-    # Reset button
-    ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
-    btn_reset = Button( ax_reset, 'Reset')
-    btn_reset.on_clicked( cb_btn_reset)
+    # # Reset button
+    # ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
+    # btn_reset = Button( ax_reset, 'Reset')
+    # btn_reset.on_clicked( cb_btn_reset)
 
     # Save button
     ax_save  = FIG.add_axes( [0.70, 0.16, 0.1, 0.05] )
     btn_save = Button( ax_save, 'Save')
     btn_save.on_clicked( cb_btn_save)
 
-    # Done button computes and shows intersections
-    ax_done  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
-    btn_done = Button( ax_done, 'Done')
-    btn_done.on_clicked( cb_btn_done)
+    # Show button computes and shows intersections
+    ax_show  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
+    btn_show = Button( ax_show, 'Show')
+    btn_show.on_clicked( cb_btn_show)
 
     # Radiobutton for corner and Black Empty White
     ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
