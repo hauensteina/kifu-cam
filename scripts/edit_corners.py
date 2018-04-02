@@ -55,6 +55,10 @@ def usage(printmsg=False):
     else:
         return msg
 
+#===========
+#=== Sgf ===
+#===========
+
 # Read and sgf file and linearize it into a list
 # ['b','w','e',...]
 #-------------------------------------------------
@@ -128,10 +132,14 @@ def get_isec_coords( sgffile):
 #-----------------------------------------------
 def isecs2sgf( sgffile, intersections):
     sgf  = open( sgffile).read()
+    sgf = sgf.replace( '\\','')
     gc = get_sgf_tag( 'GC', sgf)
-    phi = re.sub( r'.*#phi:([^#]*)#.*',r'\1',gc)
-    theta = re.sub( r'.*#theta:([^#]*)#.*',r'\1',gc)
-
+    phi = 0
+    if 'phi:' in gc:
+        phi = re.sub( r'.*#phi:([^#]*)#.*',r'\1',gc)
+    theta = 0
+    if 'theta:' in gc:
+        theta = re.sub( r'.*#theta:([^#]*)#.*',r'\1',gc)
     tstr = json.dumps( intersections)
     tstr = re.sub( '\[','(',tstr)
     tstr = re.sub( '\]',')',tstr)
@@ -141,6 +149,31 @@ def isecs2sgf( sgffile, intersections):
     res = re.sub( '(SZ\[[^\]]*\])', r'\1' + tstr, res)
     res = re.sub( r'\s*','', res)
     open( sgffile, 'w').write( res)
+
+
+# Replace anything after the GC tag with the new position
+#----------------------------------------------------------
+def overwrite_sgf( sgffile, diagram):
+    sgf  = open( sgffile).read()
+    boardsz = int( get_sgf_tag( 'SZ', sgf))
+    # Cut off after GC tag
+    sgf = re.sub( '(.*GC\[[^\]]*\]).*', r'\1', sgf)
+    moves = ''
+    for i,bew in enumerate(diagram):
+        row = i // boardsz
+        col = i % boardsz
+        ccol = chr( ord('a') + col)
+        crow = chr( ord('a') + row)
+        if bew == 'WHITE': tag = 'AW'
+        elif bew == 'BLACK': tag = 'AB'
+        else: continue
+        moves += tag + "[" + ccol + crow + "]"
+    sgf += moves + ')'
+    open( sgffile, 'w').write( sgf)
+
+#======================
+#=== Click Handlers ===
+#======================
 
 #----------------------
 def onclick( event):
@@ -191,17 +224,23 @@ def closest_isec( x, y, isecs):
         if d < mind:
             mind = d
             minidx = idx
-    return (isecs[minidx][0], isecs[minidx][1])
+    return (isecs[minidx][0], isecs[minidx][1], minidx)
 
 # Image click in Black White Empty mode
 #----------------------------------------
 def handle_bew_click( event):
     # Find closest intersection
-    x,y = closest_isec( event.xdata, event.ydata, NEW_INTERSECTIONS)
+    x,y,idx = closest_isec( event.xdata, event.ydata, NEW_INTERSECTIONS)
     # Draw color on intersection
-    if SELECTED_BEW == 'Black': col = 'g'
-    elif SELECTED_BEW == 'Empty': col = 'b'
-    elif SELECTED_BEW == 'White': col = 'r'
+    if SELECTED_BEW == 'Black':
+        col = 'g'
+        DIAGRAM[idx] = 'BLACK'
+    elif SELECTED_BEW == 'Empty':
+        col = 'b'
+        DIAGRAM[idx] = 'EMPTY'
+    elif SELECTED_BEW == 'White':
+        col = 'r'
+        DIAGRAM[idx] = 'WHITE'
     s = 5
     ell = patches.Ellipse( (x, y), s, s, edgecolor=col, facecolor=col)
     AX_IMAGE.add_patch( ell)
@@ -234,6 +273,7 @@ def cb_btn_reset( event):
 #----------------------------------------------------------
 def cb_btn_save( event):
     isecs2sgf( SGF_FILE, np.round(NEW_INTERSECTIONS).tolist())
+    overwrite_sgf( SGF_FILE, DIAGRAM)
     print( 'saved')
 
 # Compute intersections from corners
