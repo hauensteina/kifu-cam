@@ -883,10 +883,16 @@ Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vect
             for (int rr = r; rr < r + board_sz; rr++) {
                 for (int cc = c; cc < c + board_sz; cc++) {
                     if (!p_on_img( cv::Point( cc, rr), isec_boardness)) {
-                        ssum = mmax;
+                        ssum = -1E10;
                         goto OUTER;
                     }
-                    ssum += isec_boardness.at<uchar>(rr,cc);
+                    // Only sum inside
+                    if (rr == r || rr == r + board_sz - 1 ||
+                        cc == c || cc == c + board_sz -1)
+                    {}
+                    else {
+                        ssum += isec_boardness.at<uchar>(rr,cc);
+                    }
                 } // for(cc)
             } // for(rr)
         OUTER:

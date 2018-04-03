@@ -806,6 +806,7 @@ extern cv::Mat mat_dbg;
     [self CVMatFromMultiArray:featMap channel:0 dst:feat_on];
     [self CVMatFromMultiArray:featMap channel:1 dst:feat_off];
     feat = feat_on - feat_off;
+    //feat = feat_on; // prob to be inside the board
     // Scale to [0..255]
     double mmin, mmax;
     cv::minMaxLoc( feat, &mmin, &mmax);
