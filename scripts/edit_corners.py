@@ -275,6 +275,14 @@ def cb_btn_save( event):
     isecs2sgf( SGF_FILE, np.round(NEW_INTERSECTIONS).tolist())
     overwrite_sgf( SGF_FILE, DIAGRAM)
     print( 'saved')
+    sys.stdout.flush()
+
+# Set all intersections to empty
+#----------------------------------------------------------
+def cb_btn_clear( event):
+    for idx,d in enumerate(DIAGRAM):
+        DIAGRAM[idx] = 'EMPTY'
+    cb_btn_show( event)
 
 # Compute ans show intersections from corners
 #------------------------------------------------
@@ -389,9 +397,14 @@ def main():
     btn_save.on_clicked( cb_btn_save)
 
     # Show button computes and shows intersections
-    ax_show  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
+    ax_show  = FIG.add_axes( [0.70, 0.28, 0.1, 0.05] )
     btn_show = Button( ax_show, 'Show')
     btn_show.on_clicked( cb_btn_show)
+
+    # Clear button sets all intersections to clear
+    ax_clear  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
+    btn_clear = Button( ax_clear, 'Clear')
+    btn_clear.on_clicked( cb_btn_clear)
 
     # Radiobutton for corner and Black Empty White
     ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
