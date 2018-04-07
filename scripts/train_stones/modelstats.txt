@@ -1,0 +1,433 @@
+
+Look for WINNER to see which one was chosen.
+
+First shot simple model:
+---------------------------
+
+   #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name='image')
+        x = kl.Flatten()(inputs)
+        x = kl.Dense( 4, activation='relu')(x)
+        x = kl.Dense( 4, activation='relu')(x)
+        #x = kl.Dense( 4, activation='relu')(x)
+        #x = kl.Dense( 4, activation='relu')(x)
+        #x = kl.Dense( 16, activation='relu')(x)
+        #x = kl.Dense(4, activation='relu')(x)
+        output = kl.Dense( 3,activation='softmax', name='class')(x)
+
+Total params: 6,387
+Trainable params: 6,387
+Non-trainable params: 0
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/50
+2018-03-02 22:55:15.495689: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+29039/29039 [==============================] - 1s 49us/step - loss: 0.2870 - acc: 0.9848 - val_loss: 0.0072 - val_acc: 0.9985
+Epoch 2/50
+29039/29039 [==============================] - 1s 45us/step - loss: 0.0063 - acc: 0.9980 - val_loss: 0.0076 - val_acc: 0.9975
+Epoch 3/50
+29039/29039 [==============================] - 1s 45us/step - loss: 0.0042 - acc: 0.9987 - val_loss: 0.0047 - val_acc: 0.9988
+Epoch 4/50
+29039/29039 [==============================] - 1s 45us/step - loss: 0.0033 - acc: 0.9988 - val_loss: 0.0031 - val_acc: 0.9985
+Epoch 5/50
+
+
+=============================
+=============================
+
+  #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D(8,(3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D(16,(3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 32, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 32, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 64,(3,3), activation='relu', padding='same', name='three_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 32, (1,1), activation='relu', padding='same', name='three_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 64, (3,3), activation='relu', padding='same', name='three_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+Trainable params: 50,995
+Epoch 1/20
+29039/29039 [==============================] - 46s 2ms/step - loss: 0.0322 - acc: 0.9902 - val_loss: 0.0030 - val_acc: 0.9994
+Epoch 2/20
+29039/29039 [==============================] - 45s 2ms/step - loss: 0.0064 - acc: 0.9982 - val_loss: 0.0052 - val_acc: 0.9985
+Epoch 3/20
+29039/29039 [==============================] - 45s 2ms/step - loss: 0.0065 - acc: 0.9981 - val_loss: 0.0023 - val_acc: 0.9994
+Epoch 4/20
+29039/29039 [==============================] - 45s 2ms/step - loss: 0.0041 - acc: 0.9990 - val_loss: 0.0024 - val_acc: 0.9994
+Epoch 5/20
+29039/29039 [==============================] - 45s 2ms/step - loss: 0.0038 - acc: 0.9989 - val_loss: 0.0024 - val_acc: 0.9991
+
+====================
+====================
+  #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D(4,(3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D(8,(3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 32,(3,3), activation='relu', padding='same', name='three_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (1,1), activation='relu', padding='same', name='three_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 32, (3,3), activation='relu', padding='same', name='three_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+Total params: 13,315
+Trainable params: 13,051
+Non-trainable params: 264
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/20
+29039/29039 [==============================] - 29s 985us/step - loss: 0.0462 - acc: 0.9852 - val_loss: 0.0116 - val_acc: 0.9966
+Epoch 2/20
+29039/29039 [==============================] - 28s 960us/step - loss: 0.0099 - acc: 0.9971 - val_loss: 0.0032 - val_acc: 0.9994
+Epoch 3/20
+29039/29039 [==============================] - 28s 955us/step - loss: 0.0073 - acc: 0.9979 - val_loss: 0.0033 - val_acc: 0.9988
+Epoch 4/20
+29039/29039 [==============================] - 28s 947us/step - loss: 0.0050 - acc: 0.9984 - val_loss: 0.0039 - val_acc: 0.9994
+Epoch 5/20
+29039/29039 [==============================] - 28s 957us/step - loss: 0.0044 - acc: 0.9988 - val_loss: 0.0029 - val_acc: 0.9994
+
+=====================
+=====================
+
+THE WINNER:
+
+    #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D( 2, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 16,(3,3), activation='relu', padding='same', name='three_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='three_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='three_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+Total params: 3,547
+Trainable params: 3,415
+Non-trainable params: 132
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/20
+29039/29039 [==============================] - 22s 753us/step - loss: 0.1719 - acc: 0.9514 - val_loss: 0.0117 - val_acc: 0.9966
+Epoch 2/20
+29039/29039 [==============================] - 21s 724us/step - loss: 0.0197 - acc: 0.9949 - val_loss: 0.0061 - val_acc: 0.9988
+Epoch 3/20
+29039/29039 [==============================] - 21s 714us/step - loss: 0.0129 - acc: 0.9968 - val_loss: 0.0043 - val_acc: 0.9981
+Epoch 4/20
+29039/29039 [==============================] - 21s 723us/step - loss: 0.0066 - acc: 0.9982 - val_loss: 0.0060 - val_acc: 0.9981
+Epoch 5/20
+29039/29039 [==============================] - 21s 724us/step - loss: 0.0068 - acc: 0.9980 - val_loss: 0.0019 - val_acc: 0.9994
+
+=====================
+=====================
+
+   #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 16,(3,3), activation='relu', padding='same', name='three_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='three_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='three_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+
+Total params: 4,135
+Trainable params: 3,991
+Non-trainable params: 144
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/20
+29039/29039 [==============================] - 25s 871us/step - loss: 0.0787 - acc: 0.9747 - val_loss: 0.0100 - val_acc: 0.9975
+Epoch 2/20
+29039/29039 [==============================] - 24s 837us/step - loss: 0.0093 - acc: 0.9976 - val_loss: 0.0054 - val_acc: 0.9988
+Epoch 3/20
+29039/29039 [==============================] - 24s 843us/step - loss: 0.0061 - acc: 0.9982 - val_loss: 0.0018 - val_acc: 0.9994
+Epoch 4/20
+29039/29039 [==============================] - 25s 850us/step - loss: 0.0048 - acc: 0.9988 - val_loss: 0.0036 - val_acc: 0.9988
+Epoch 5/20
+29039/29039 [==============================] - 25s 857us/step - loss: 0.0056 - acc: 0.9985 - val_loss: 0.0012 - val_acc: 0.9994
+
+=====================
+=====================
+
+    #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 8,(3,3), activation='relu', padding='same', name='three_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='three_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='three_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+
+Total params: 2,475
+Trainable params: 2,371
+Non-trainable params: 104
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/20
+29039/29039 [==============================] - 25s 862us/step - loss: 0.1415 - acc: 0.9607 - val_loss: 0.0147 - val_acc: 0.9969
+Epoch 2/20
+29039/29039 [==============================] - 24s 828us/step - loss: 0.0208 - acc: 0.9944 - val_loss: 0.0097 - val_acc: 0.9966
+Epoch 3/20
+29039/29039 [==============================] - 76s 3ms/step - loss: 0.0112 - acc: 0.9965 - val_loss: 0.0076 - val_acc: 0.9975
+Epoch 4/20
+29039/29039 [==============================] - 128s 4ms/step - loss: 0.0094 - acc: 0.9976 - val_loss: 0.0045 - val_acc: 0.9985
+Epoch 5/20
+29039/29039 [==============================] - 129s 4ms/step - loss: 0.0057 - acc: 0.9982 - val_loss: 0.0046 - val_acc: 0.9985
+
+=====================
+=====================
+
+    #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 32,(3,3), activation='relu', padding='same', name='three_a')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (1,1), activation='relu', padding='same', name='three_b')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 32, (3,3), activation='relu', padding='same', name='three_c')(x)
+        x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+Total params: 9,375
+Trainable params: 9,151
+Non-trainable params: 224
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/20
+29039/29039 [==============================] - 139s 5ms/step - loss: 0.0604 - acc: 0.9813 - val_loss: 0.0098 - val_acc: 0.9975
+Epoch 2/20
+29039/29039 [==============================] - 140s 5ms/step - loss: 0.0126 - acc: 0.9958 - val_loss: 0.0126 - val_acc: 0.9957
+Epoch 3/20
+29039/29039 [==============================] - 132s 5ms/step - loss: 0.0090 - acc: 0.9974 - val_loss: 0.0077 - val_acc: 0.9978
+Epoch 4/20
+29039/29039 [==============================] - 132s 5ms/step - loss: 0.0078 - acc: 0.9978 - val_loss: 0.0026 - val_acc: 0.9994
+Epoch 5/20
+29039/29039 [==============================] - 131s 5ms/step - loss: 0.0057 - acc: 0.9983 - val_loss: 0.0030 - val_acc: 0.9985
+
+
+==========================
+==========================
+
+    #-----------------------
+    def build_model(self):
+        nb_colors=3
+        inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
+
+        x = kl.Conv2D( 2, (3,3), activation='selu', padding='same', name='one_a')(inputs)
+        #x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+        x = kl.Conv2D( 4, (3,3), activation='selu', padding='same', name='one_b')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 8, (3,3), activation='selu', padding='same', name='two_a')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (1,1), activation='selu', padding='same', name='two_b')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='selu', padding='same', name='two_c')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 16,(3,3), activation='selu', padding='same', name='three_a')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (1,1), activation='selu', padding='same', name='three_b')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (3,3), activation='selu', padding='same', name='three_c')(x)
+        #x = kl.BatchNormalization()(x)
+        x = kl.MaxPooling2D()(x)
+
+        # Classification block
+        x_class_conv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
+        output = kl.Activation( 'softmax', name='class')(x_class_pool)
+
+
+Total params: 3,283
+Trainable params: 3,283
+Non-trainable params: 0
+_________________________________________________________________
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Found 29039 images belonging to 1 classes.
+Found 3226 images belonging to 1 classes.
+Train on 29039 samples, validate on 3226 samples
+Epoch 1/20
+2018-03-02 20:13:13.228919: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+29039/29039 [==============================] - 79s 3ms/step - loss: 0.0696 - acc: 0.9754 - val_loss: 0.0087 - val_acc: 0.9981
+Epoch 2/20
+29039/29039 [==============================] - 37s 1ms/step - loss: 0.0074 - acc: 0.9976 - val_loss: 0.0024 - val_acc: 0.9994
+Epoch 3/20
+29039/29039 [==============================] - 15s 501us/step - loss: 0.0043 - acc: 0.9986 - val_loss: 0.0033 - val_acc: 0.9988
+Epoch 4/20
+29039/29039 [==============================] - 74s 3ms/step - loss: 0.0032 - acc: 0.9989 - val_loss: 7.3953e-04 - val_acc: 0.9997
+Epoch 5/20
+29039/29039 [==============================] - 78s 3ms/step - loss: 0.0025 - acc: 0.9992 - val_loss: 0.0035 - val_acc: 0.9985
+
+
+
+=== The End ===
