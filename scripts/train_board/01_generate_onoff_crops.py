@@ -25,6 +25,7 @@ SCRIPTPATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append( SCRIPTPATH + '/..')
 
 import ahnutil as ut
+import ocvutil as oc
 
 import cv2
 
@@ -231,17 +232,13 @@ def get_phi_theta( fname):
     theta = re.sub( r'.*#theta:([^#]*)#.*',r'\1',gc)
     return float(phi), float(theta)
 
-# Make a Wallstedt type json file from an sgf with the
-# intersection coordinates in the GC tag
-#--------------------------------------------
-def make_json_file( sgffile, ofname):
-    with open( sgffile) as f: sgf = f.read()
+# Parse intersections from sgf
+#-------------------------------
+def get_intersections( sgf):
     sgf = sgf.replace( '\\','')
     if not 'intersections:' in sgf and not 'intersections\:' in sgf:
         print('no intersections in ' + sgffile)
         return
-    boardsz = int( get_sgf_tag( 'SZ', sgf))
-    diagram = linearize_sgf( sgf)
     intersections = get_sgf_tag( 'GC', sgf)
     intersections = re.sub( '\(','[',intersections)
     intersections = re.sub( '\)',']',intersections)
@@ -250,6 +247,108 @@ def make_json_file( sgffile, ofname):
     intersections = '{' + intersections + '}'
     intersections = json.loads( intersections)
     intersections = intersections[ 'intersections']
+    return intersections
+
+# Recompute phi and theta from the intersections
+#--------------------------------------------------
+def compute_phi_theta( rows, cols, fname):
+    with open( fname) as f: sgf = f.read()
+    intersections = get_intersections( sgf)
+    boardsz = 19
+    lines = []
+    for col in range( boardsz):
+        p1 = intersections[col]
+        p2 = intersections[boardsz*boardsz-boardsz + col]
+        lines.append( (p1,p2))
+    lines = np.array( lines)
+    minphi, minM, minpary = parallel_projection( rows, cols, lines)
+
+# Run a matrix over a bunch of line segments
+#---------------------------------------------
+def warp_lines( lines, M):
+    if not len(lines): return
+    p1s = np.array( [(li[0], li[1]) for li in lines], dtype='float')
+    p2s = np.array( [(li[2], li[3]) for li in lines], dtype='float')
+
+    if M.shape[0] == 3: # persp trans
+        p1srot = cv2.perspectiveTransform( p1s, M)
+        p2srot = cv2.perspectiveTransform( p2s, M)
+    else: # affine trans
+        p1srot = cv2.transform( p1s, M)
+        p2srot = cv2.transform( p2s, M)
+
+    res = []
+    for idx, p1 in enumerate( p1srot):
+        p2 = p2srot[idx]
+        res.append( (p1[0], p1[1], p2[0], p2[1]))
+    return res
+
+# Find matrix M such that we look down with pitch phi.
+# The bottom line of the square goes through the screen center.
+# phi between pi/2 and pi.
+# phi == pi => No pitch. Extremely distorted front view.
+# phi == pi / 2 => Looking straight down.
+#-------------------------------------------------------------------
+def perspective_warp( rows, cols, phi):
+    phi *= np.pi / 180.0
+    center_x = cols / 2.0
+    center_y = rows / 2.0
+    # Distance of eye from image center
+    a = 1.0 * sz.width
+    s = 1.0 # side of orig square
+    # Undistoreted orig square
+    # Move the square down to avoid projecting the top edge off screen
+    d = (rows / 4.0) * np.cos(phi) * -1
+    bl_sq = ( center_x - s/2, center_y + d)
+    br_sq = ( center_x + s/2, center_y + d)
+    tl_sq = ( center_x - s/2, center_y - s + d)
+    tr_sq = ( center_x + s/2, center_y - s + d)
+    # Distorted by angle phi
+    bl_dist = ( center_x - s/2, center_y)
+    br_dist = ( center_x + s/2, center_y)
+    l2r = a / (s * (np.sqrt( a*a + s*s - 2*a*s*np.cos( phi)))) # distorted distance left to right
+    b2t = s * np.sin( phi) # distorted bottom to top
+    tl_dist = ( center_x - l2r/2, center_y - b2t)
+    tr_dist = ( center_x + l2r/2, center_y - b2t)
+
+    # Get transform from distorted to normal
+    src = np.array( [ tl_dist, tr_dist, br_dist, bl_dist ])
+    dst = np.array( [ tl_sq, tr_sq, br_sq, bl_sq ])
+    M = cv2.getPerspectiveTransform( src, dst)
+    return M
+
+# Find a transform that makes the lines parallel
+# Returns a number indicationg how parallel the best solution was.
+# Small numbers are more paralleinl.
+#--------------------------------------------------------------------
+def parallel_projection( rows, cols, lines):
+    def paralellity( M):
+        warplines = warp_lines( lines, M)
+        thetas = np.array( [oc.segment2polar( line)[1] for line in warplines])
+        res = np.percentile( thetas, 75) - np.percentile( thetas, 25)
+        return res
+
+    minpary = 1E9
+    minphi = -1
+    for phi in range( 70, 130):
+        BP()
+        M = perspective_warp( rows, cols, phi);
+        pary = paralellity( M)
+        if pary < minpary:
+            minpary = pary
+            minphi = phi
+            minM = M
+            invM = Minv
+    return minphi, minM, minpary
+
+# Make a Wallstedt type json file from an sgf with the
+# intersection coordinates in the GC tag
+#--------------------------------------------------------
+def make_json_file( sgffile, ofname):
+    with open( sgffile) as f: sgf = f.read()
+    intersections = get_intersections( sgf)
+    boardsz = int( get_sgf_tag( 'SZ', sgf))
+    diagram = linearize_sgf( sgf)
     elt = {'x':0, 'y':0, 'val':'EMPTY'}
     coltempl = [ copy.deepcopy(elt) for _ in range(boardsz) ]
     res = [ copy.deepcopy(coltempl) for _ in range(boardsz) ]
@@ -391,8 +490,9 @@ def main():
         f = files[k]
         f['json'] = os.path.dirname( f['img']) + '/%s_intersections.json' % k
         make_json_file( f['sgf'], f['json'])
-        phi, theta = get_phi_theta( f['sgf'])
         img, intersections = scale_350( f['img'], f['json'])
+        phi, theta = get_phi_theta( f['sgf']) # from sgf
+        phi, theta = compute_phi_theta( img.shape[0], img.shape[1], f['sgf']) # recompute
         rows = img.shape[0]
         cols = img.shape[1]
         Ms = cv2.getRotationMatrix2D( (cols/2.0, rows/2.0), theta, 1.0)

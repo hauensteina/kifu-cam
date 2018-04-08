@@ -4,7 +4,7 @@
 # Creation Date: Aug 27, 2017
 # **********************************************************************/
 #
-# Various utility funcs
+# Various utility funcs for keras
 #
 
 from __future__ import division,print_function
