@@ -52,7 +52,8 @@ def polar2segment( pline):
 
 # Line segment to polar, with positive rho
 #---------------------------------------------------
-def segment2polar( line):
+def segment2polar( line_):
+    line = [line_[0][0], line_[0][1], line_[1][0], line_[1][1]]
     # Always go left to right
     if line[2] < line[0]:
         line[0], line[2] = line[2], line[0]
@@ -69,7 +70,46 @@ def segment2polar( line):
             dx *= -1
             dy *= -1
 
-    theta = np.atan2( dy, dx) + np.pi/2
+    theta = np.arctan2( dy, dx) + np.pi/2
     rho = abs( dist_point_line( (0,0), line))
     pline = [rho, theta]
     return pline
+
+# Perform a perspective transform on a bunch of points
+#-------------------------------------------------------
+def perspTrans( pts, M):
+    # pts needs a stupid empty dimension added
+    sz = len( pts)
+    pts_zoomed = cv2.perspectiveTransform( pts.reshape( 1, sz, 2).astype('float32'), M)
+    # And now get rid of the extra dim and back to int
+    res = pts_zoomed.reshape(sz,2).astype('float32')
+    return res
+
+# Perform an affine transform on a bunch of points
+#-------------------------------------------------------
+def affTrans( pts, M):
+    # pts needs a stupid empty dimension added
+    sz = len( pts)
+    pts_trans = cv2.transform( pts.reshape( 1, sz, 2).astype('float32'), M)
+    # And now get rid of the extra dim and back to int
+    res = pts_trans.reshape(sz,2).astype('float32')
+    return res
+
+# Run a matrix over a bunch of line segments
+#---------------------------------------------
+def warp_lines( lines, M):
+    if not len(lines): return
+    p1s = np.array( [li[0] for li in lines], dtype='float')
+    p2s = np.array( [li[1] for li in lines], dtype='float')
+    if M.shape[0] == 3: # persp trans
+        p1srot = perspTrans( p1s, M)
+        p2srot = perspTrans( p2s, M)
+    else: # affine trans
+        p1srot = affTrans( p1s, M)
+        p2srot = affTrans( p2s, M)
+
+    res = []
+    for idx, p1 in enumerate( p1srot):
+        p2 = p2srot[idx]
+        res.append( [[p1[0], p1[1]], [p2[0], p2[1]]])
+    return np.array( res, dtype='float')

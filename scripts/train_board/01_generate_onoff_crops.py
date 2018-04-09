@@ -255,33 +255,32 @@ def compute_phi_theta( rows, cols, fname):
     with open( fname) as f: sgf = f.read()
     intersections = get_intersections( sgf)
     boardsz = 19
-    lines = []
+
+    # Get vertical lines
+    vlines = []
     for col in range( boardsz):
         p1 = intersections[col]
         p2 = intersections[boardsz*boardsz-boardsz + col]
-        lines.append( (p1,p2))
-    lines = np.array( lines)
-    minphi, minM, minpary = parallel_projection( rows, cols, lines)
+        vlines.append( (p1,p2))
+    vlines = np.array( vlines)
 
-# Run a matrix over a bunch of line segments
-#---------------------------------------------
-def warp_lines( lines, M):
-    if not len(lines): return
-    p1s = np.array( [(li[0], li[1]) for li in lines], dtype='float')
-    p2s = np.array( [(li[2], li[3]) for li in lines], dtype='float')
+    # Get horizontal lines
+    hlines = []
+    for row in range( boardsz):
+        p1 = intersections[row * boardsz]
+        p2 = intersections[row * boardsz + boardsz - 1]
+        hlines.append( (p1,p2))
+    hlines = np.array( hlines)
 
-    if M.shape[0] == 3: # persp trans
-        p1srot = cv2.perspectiveTransform( p1s, M)
-        p2srot = cv2.perspectiveTransform( p2s, M)
-    else: # affine trans
-        p1srot = cv2.transform( p1s, M)
-        p2srot = cv2.transform( p2s, M)
+    # Straighten horizontals
+    theta, Ms, minstr = straight_rotation( rows, cols, hlines)
+    vlines = oc.warp_lines( vlines, Ms)
 
-    res = []
-    for idx, p1 in enumerate( p1srot):
-        p2 = p2srot[idx]
-        res.append( (p1[0], p1[1], p2[0], p2[1]))
-    return res
+    # Make verticals parallel
+    phi, Mp, minpary = parallel_projection( rows, cols, vlines)
+
+    return phi, theta
+
 
 # Find matrix M such that we look down with pitch phi.
 # The bottom line of the square goes through the screen center.
@@ -323,23 +322,45 @@ def perspective_warp( rows, cols, phi):
 #--------------------------------------------------------------------
 def parallel_projection( rows, cols, lines):
     def paralellity( M):
-        warplines = warp_lines( lines, M)
+        warplines = oc.warp_lines( lines, M)
         thetas = np.array( [oc.segment2polar( line)[1] for line in warplines])
         res = np.percentile( thetas, 75) - np.percentile( thetas, 25)
         return res
 
     minpary = 1E9
-    minphi = -1
+    minphi = 0
     for phi in range( 70, 130):
-        BP()
         M = perspective_warp( rows, cols, phi);
         pary = paralellity( M)
         if pary < minpary:
             minpary = pary
             minphi = phi
             minM = M
-            invM = Minv
     return minphi, minM, minpary
+
+# Find a rotation that makes horizontal lines truly horizontal
+# Returns a number indicationg how straight the best solution was.
+# Smaller numbers are straighter.
+#--------------------------------------------------------------------------------
+def straight_rotation( rows, cols, lines):
+    center_x = cols / 2.0
+    center_y = rows / 2.0
+    def straightness( M):
+        warplines = oc.warp_lines( lines, M)
+        thetas = np.array( [oc.segment2polar( line)[1] for line in warplines])
+        med = np.percentile( thetas, 50)
+        return abs( np.pi / 2.0 - med);
+
+    minstr = 1E9
+    minphi = 0
+    for phi in range( -20, 21):
+        M = cv2.getRotationMatrix2D( (center_x, center_y), phi, scale=1.0)
+        strness = straightness( M)
+        if strness < minstr:
+            minstr = strness
+            minphi = phi
+            minM = M
+    return minphi, minM, minstr
 
 # Make a Wallstedt type json file from an sgf with the
 # intersection coordinates in the GC tag
@@ -485,18 +506,22 @@ def main():
     os.makedirs( args.outfolder)
     files = collect_files( args.infolder)
 
-    for i,k in enumerate( files.keys()):
+    for i,k in enumerate( sorted(files.keys())):
+        #if i != 63: continue
         print( '%s ...' % k)
         f = files[k]
         f['json'] = os.path.dirname( f['img']) + '/%s_intersections.json' % k
         make_json_file( f['sgf'], f['json'])
         img, intersections = scale_350( f['img'], f['json'])
-        phi, theta = get_phi_theta( f['sgf']) # from sgf
-        phi, theta = compute_phi_theta( img.shape[0], img.shape[1], f['sgf']) # recompute
         rows = img.shape[0]
         cols = img.shape[1]
-        Ms = cv2.getRotationMatrix2D( (cols/2.0, rows/2.0), theta, 1.0)
-        Mp = perspective_warp( rows, cols, phi)
+        phi_comp, theta_comp = compute_phi_theta( rows, cols, f['sgf']) # recompute
+        phi_file, theta_file = get_phi_theta( f['sgf']) # from sgf
+        print( 'theta_file:%5d theta_comp:%5d' % (theta_file, theta_comp))
+        print( 'phi_file:%5d phi_comp:%5d' % (phi_file, phi_comp))
+        print( '-------------------')
+        Ms = cv2.getRotationMatrix2D( (cols/2.0, rows/2.0), theta_comp, 1.0)
+        Mp = perspective_warp( rows, cols, phi_comp)
         # Unwarp image
         #cv2.imwrite( 'tt1.jpg', img)
         img = cv2.warpAffine( img, Ms, (cols, rows))
