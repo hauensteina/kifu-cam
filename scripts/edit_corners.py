@@ -374,7 +374,7 @@ def main():
     parser.add_argument( '--fname',      required=True)
     args = parser.parse_args()
 
-    FIG = plt.figure( figsize=(12,8))
+    FIG = plt.figure( figsize=(9,8))
 
     # Image
     IMG = mpl.image.imread( args.fname)
