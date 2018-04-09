@@ -388,7 +388,7 @@ def main():
     except: # maybe a jpg saved with png extension
         shutil.copy( args.fname, 'tt.jpg')
         IMG = cv2.imread( 'tt.jpg')
-        cv2.imwrite( 'xx.png', IMG)
+        cv2.imwrite( args.fname, IMG)
         IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
 
     AX_IMAGE = FIG.add_axes( [0.07, 0.06, 0.5, 0.9] )
