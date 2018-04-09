@@ -12,7 +12,7 @@
 
 from __future__ import division, print_function
 from pdb import set_trace as BP
-import os,sys,re,json,copy
+import os,sys,re,json,copy,shutil
 from StringIO import StringIO
 import numpy as np
 from numpy.random import random
@@ -383,7 +383,14 @@ def main():
     FIG = plt.figure( figsize=(9,8))
 
     # Image
-    IMG = mpl.image.imread( args.fname)
+    try:
+        IMG = mpl.image.imread( args.fname)
+    except: # maybe a jpg saved with png extension
+        shutil.copy( args.fname, 'tt.jpg')
+        IMG = cv2.imread( 'tt.jpg')
+        cv2.imwrite( 'xx.png', IMG)
+        IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
+
     AX_IMAGE = FIG.add_axes( [0.07, 0.06, 0.5, 0.9] )
     AX_IMAGE.imshow( IMG, origin='upper')
     cid = FIG.canvas.mpl_connect('button_press_event', onclick)
