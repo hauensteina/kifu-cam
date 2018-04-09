@@ -111,7 +111,10 @@ def get_sgf_tag( tag, sgf):
 # Get list of intersection coords from sgf GC tag
 #--------------------------------------------------
 def get_isec_coords( sgffile):
-    with open( sgffile) as f: sgf = f.read()
+    try:
+        with open( sgffile) as f: sgf = f.read()
+    except:
+        sgf = '(;GM[1]GN[]FF[4]CA[UTF-8]AP[KifuCam]RU[Chinese]PB[Black]PW[White]BS[0]WS[0]SZ[19] )'
     sgf = sgf.replace( '\\','')
     boardsz = int( get_sgf_tag( 'SZ', sgf))
     diagram = linearize_sgf( sgf)
@@ -132,7 +135,10 @@ def get_isec_coords( sgffile):
 # Read sgf, replace intersections, write back
 #-----------------------------------------------
 def isecs2sgf( sgffile, intersections):
-    sgf  = open( sgffile).read()
+    try:
+        with open( sgffile) as f: sgf = f.read()
+    except:
+        sgf = '(;GM[1]GN[]FF[4]CA[UTF-8]AP[KifuCam]RU[Chinese]PB[Black]PW[White]BS[0]WS[0]SZ[19] )'
     sgf = sgf.replace( '\\','')
     gc = get_sgf_tag( 'GC', sgf)
     phi = 0
