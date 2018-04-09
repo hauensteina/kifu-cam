@@ -113,19 +113,20 @@ def get_sgf_tag( tag, sgf):
 def get_isec_coords( sgffile):
     with open( sgffile) as f: sgf = f.read()
     sgf = sgf.replace( '\\','')
-    if not 'intersections:' in sgf and not 'intersections\:' in sgf:
-        print('no intersections in ' + sgffile)
-        return
     boardsz = int( get_sgf_tag( 'SZ', sgf))
     diagram = linearize_sgf( sgf)
-    intersections = get_sgf_tag( 'GC', sgf)
-    intersections = re.sub( '\(','[',intersections)
-    intersections = re.sub( '\)',']',intersections)
-    intersections = re.sub( 'intersections','"intersections"',intersections)
-    intersections = re.sub( '#.*','',intersections)
-    intersections = '{' + intersections + '}'
-    intersections = json.loads( intersections)
-    intersections = intersections[ 'intersections']
+    if not 'intersections:' in sgf and not 'intersections\:' in sgf:
+        print('no intersections in ' + sgffile)
+        intersections = [[0.0, 0.0]] * boardsz * boardsz
+    else:
+        intersections = get_sgf_tag( 'GC', sgf)
+        intersections = re.sub( '\(','[',intersections)
+        intersections = re.sub( '\)',']',intersections)
+        intersections = re.sub( 'intersections','"intersections"',intersections)
+        intersections = re.sub( '#.*','',intersections)
+        intersections = '{' + intersections + '}'
+        intersections = json.loads( intersections)
+        intersections = intersections[ 'intersections']
     return (intersections, diagram)
 
 # Read sgf, replace intersections, write back
@@ -373,7 +374,7 @@ def main():
     parser.add_argument( '--fname',      required=True)
     args = parser.parse_args()
 
-    FIG = plt.figure( figsize=(12,12))
+    FIG = plt.figure( figsize=(12,8))
 
     # Image
     IMG = mpl.image.imread( args.fname)
@@ -382,8 +383,9 @@ def main():
     cid = FIG.canvas.mpl_connect('button_press_event', onclick)
 
     # Sgf
-    SGF_FILE = os.path.splitext(args.fname)[0]+'.sgf'
+    SGF_FILE = os.path.splitext( args.fname)[0]+'.sgf'
     INTERSECTIONS, DIAGRAM = get_isec_coords( SGF_FILE)
+
     draw_intersections( INTERSECTIONS, 5, 'g')
 
     # # Reset button
