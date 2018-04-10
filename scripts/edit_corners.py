@@ -248,7 +248,7 @@ def handle_bew_click( event):
     elif SELECTED_BEW == 'White':
         col = 'r'
         DIAGRAM[idx] = 'WHITE'
-    s = 5
+    s = 4
     ell = patches.Ellipse( (x, y), s, s, edgecolor=col, facecolor=col)
     AX_IMAGE.add_patch( ell)
     FIG.canvas.draw()
@@ -264,7 +264,7 @@ def paint_diagram( diagram, intersections):
             col = 'b'
         elif bew == 'WHITE':
             col = 'r'
-        s = 5
+        s = 4
         ell = patches.Ellipse( (isec[0], isec[1]), s, s, edgecolor=col, facecolor=col)
         AX_IMAGE.add_patch( ell)
     FIG.canvas.draw()
@@ -388,6 +388,7 @@ def main():
     except: # maybe a jpg saved with png extension
         shutil.copy( args.fname, 'tt.jpg')
         IMG = cv2.imread( 'tt.jpg')
+        print( 'converting to png: %s' % args.fname)
         cv2.imwrite( args.fname, IMG)
         IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
 
