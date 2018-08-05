@@ -357,9 +357,6 @@ cv::Vec4f polar2segment( const cv::Vec2f &pline)
     result[1] = cvRound(y0 + 1000*(a));
     result[2] = cvRound(x0 - 1000*(-b));
     result[3] = cvRound(y0 - 1000*(a));
-    if (result[0] < 0 && result[1] < 0) {
-        int tt = 42;
-    }
     return result;
 } // polar2segment()
 
