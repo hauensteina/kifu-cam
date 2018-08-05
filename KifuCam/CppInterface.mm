@@ -182,8 +182,9 @@ extern cv::Mat mat_dbg;
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
     
     // Find lines
+    bool medianize = false;
     houghlines( _small_img, _stone_or_empty,
-               _vertical_lines, _horizontal_lines);
+               _vertical_lines, _horizontal_lines, medianize);
 } // f00_dots_and_verticals()
 
 // Debug wrapper for f00_dots_and_verticals
@@ -263,8 +264,9 @@ extern cv::Mat mat_dbg;
     warp_points( _stone_or_empty, _Mp, _stone_or_empty);
     
     // Find lines
+    bool medianize = true;
     houghlines( _small_img, _stone_or_empty,
-               _vertical_lines, _horizontal_lines);
+               _vertical_lines, _horizontal_lines, medianize);
 } // f03_blobs()
 
 // Debug wrapper for f03_blobs

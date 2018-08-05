@@ -335,15 +335,15 @@ double sum_on_segment( const cv::Mat &gray, cv::Point p1, cv::Point p2)
 }
 
 
-// Return a line segment with median theta
-//-----------------------------------------------------------
-cv::Vec4f median_slope_line( const std::vector<cv::Vec2f> &plines )
-{
-    cv::Vec2f med_theta = vec_median( plines, [](cv::Vec2f line) { return line[1]; });
-    //med_theta[0] = 0;
-    cv::Vec4f seg = polar2segment( med_theta);
-    return seg;
-}
+//// Return a line segment with median theta
+////--------------------------------------------------------------------
+//cv::Vec4f median_slope_line( const std::vector<cv::Vec2f> &plines )
+//{
+//    cv::Vec2f med_theta = vec_median( plines, [](cv::Vec2f line) { return line[1]; });
+//    //med_theta[0] = 0;
+//    cv::Vec4f seg = polar2segment( med_theta);
+//    return seg;
+//}
 
 // Get a line segment representation of a polar line (rho, theta)
 //-------------------------------------------------------------------
@@ -357,6 +357,9 @@ cv::Vec4f polar2segment( const cv::Vec2f &pline)
     result[1] = cvRound(y0 + 1000*(a));
     result[2] = cvRound(x0 - 1000*(-b));
     result[3] = cvRound(y0 - 1000*(a));
+    if (result[0] < 0 && result[1] < 0) {
+        int tt = 42;
+    }
     return result;
 } // polar2segment()
 
@@ -653,6 +656,7 @@ void rot_img( const cv::Mat &img, double angle, cv::Mat &dst)
 void houghlines (const cv::Mat &img, const Points &ps,
                  std::vector<cv::Vec2f> &vert_lines,
                  std::vector<cv::Vec2f> &horiz_lines,
+                 bool medianize,
                  int votes)
 {
     vert_lines.clear();
@@ -679,11 +683,34 @@ void houghlines (const cv::Mat &img, const Points &ps,
                                            else if (fabs(theta-90) < thresh) return 0; // horiz
                                            else return 2;
                                        });
-    // Get the ones with the most votes
+
+    //@@@
+    // Sort by abs( theta - med_theta)
+    auto vlines = horiz_vert_other_lines[1];
+    if (medianize) {
+//        auto med_theta_v = vec_median( vlines, [](cv::Vec2f hline){
+//            return hline[1];})[1];
+        std::sort( vlines.begin(), vlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) {
+            double da = fmin( fabs(a[1]), fabs( fabs( a[1]) - PI));
+            double db = fmin( fabs(b[1]), fabs( fabs( b[1]) - PI));
+            return da < db; });
+    }
+    
+    auto hlines = horiz_vert_other_lines[0];
+    if (medianize) {
+        // auto med_theta_h = vec_median( hlines, [](cv::Vec2f hline){ return hline[1];})[1];
+        std::sort( hlines.begin(), hlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) {
+            double da = fabs( fabs(a[1]) - PI/2);
+            double db = fabs( fabs(b[1]) - PI/2);
+            return da < db; });
+    }
+    
+    // Get the best ones
     vert_lines.clear();
-    vert_lines  = vec_slice( horiz_vert_other_lines[1], 0, 25);
+    vert_lines  = vec_slice( vlines, 0, 25);
     horiz_lines.clear();
-    horiz_lines = vec_slice( horiz_vert_other_lines[0], 0, 25);
+    horiz_lines = vec_slice( hlines, 0, 25);
+
     // Make sure rho is always positive
     ISLOOP( vert_lines) {
         rho_positive( vert_lines[i]);

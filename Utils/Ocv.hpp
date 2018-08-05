@@ -133,7 +133,7 @@ int median_on_segment( const cv::Mat &gray, cv::Vec4f seg);
 // Sum of values on line segment
 double sum_on_segment( const cv::Mat &gray, cv::Point p1, cv::Point p2);
 // Median polar line bt theta
-cv::Vec4f median_slope_line( const std::vector<cv::Vec2f> &plines );
+//cv::Vec4f median_slope_line( const std::vector<cv::Vec2f> &plines );
 // Get a line segment representation of a polar line (rho, theta)
 cv::Vec4f polar2segment( const cv::Vec2f &pline);
 // Line segment to polar, with positive rho
@@ -208,6 +208,7 @@ double direction( const cv::Mat &img, const Points &ps);
 void houghlines (const cv::Mat &img, const Points &ps,
                  std::vector<cv::Vec2f> &vert_lines,
                  std::vector<cv::Vec2f> &horiz_lines,
+                 bool medianize,
                  int votes=10);
 // Inverse threshold at median
 void inv_thresh_median( const cv::Mat &gray, cv::Mat &dst);
