@@ -704,9 +704,9 @@ void houghlines (const cv::Mat &img, const Points &ps,
     
     // Get the best ones
     vert_lines.clear();
-    vert_lines  = vec_slice( vlines, 0, 25);
+    vert_lines  = vec_slice( vlines, 0, 30);
     horiz_lines.clear();
-    horiz_lines = vec_slice( hlines, 0, 25);
+    horiz_lines = vec_slice( hlines, 0, 30);
 
     // Make sure rho is always positive
     ISLOOP( vert_lines) {
