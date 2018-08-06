@@ -70,13 +70,13 @@ void BlobFinder::find_stones( const cv::Mat &img, Points &result)
     cv::Mat mtmp;
     // Find circles
     std::vector<cv::Vec3f> circles;
-    cv::GaussianBlur( img, mtmp, cv::Size(5, 5), 2, 2 );
-    cv::HoughCircles( mtmp, circles, CV_HOUGH_GRADIENT,
+    //cv::GaussianBlur( img, mtmp, cv::Size(5, 5), 2, 2 );
+    cv::HoughCircles( img, circles, CV_HOUGH_GRADIENT,
                      1, // acumulator res == image res; Larger means less acc res
                      img.rows/30, // minimum distance between circles
                      260, // upper canny thresh; half of this is the lower canny
                      12, // less means more circles. The higher ones come first in the result
-                     0,   // min radius
+                     3,   // min radius
                      25 ); // max radius
     if (!circles.size()) return;
     
@@ -126,7 +126,7 @@ void BlobFinder::matchTemplate( const cv::Mat &img, const cv::Mat &templ, Points
     params.filterByCircularity = false;
     params.minCircularity = 0.0;
     params.maxCircularity = 100;
-    params.minArea = 0;
+    params.minArea = 2;
     params.maxArea = 100;
     cv::Ptr<cv::SimpleBlobDetector> d = cv::SimpleBlobDetector::create(params);
     std::vector<cv::KeyPoint> keypoints;
