@@ -668,8 +668,8 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
                           dleft, dright, err, left_y, right_y); // out
         if (dleft < Y_THRESH && dright < Y_THRESH) {
-            //left_rho    = left_y;
-            //right_rho   = right_y;
+            left_rho    = left_y;
+            right_rho   = right_y;
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (right_rho > height) break;
@@ -686,8 +686,8 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
                            dleft, dright, err, left_y, right_y); // out
         if (dleft < Y_THRESH && dright < Y_THRESH) {
-            //left_rho    = left_y;
-            //right_rho   = right_y;
+            left_rho    = left_y;
+            right_rho   = right_y;
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (left_rho < 0) break;
