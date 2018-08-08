@@ -648,12 +648,11 @@ void rot_img( const cv::Mat &img, double angle, cv::Mat &dst)
     cv::warpAffine( img, dst, m, cv::Size( nW, nH));
 }
 
-// Find verticals and horizontals using hough lines
-//-------------------------------------------------------------
-void houghlines (const cv::Mat &img, const Points &ps,
+// Find rough verticals and horizontals using houghlines, before dewarp
+//-----------------------------------------------------------------------
+void rough_houghlines (const cv::Mat &img, const Points &ps,
                  std::vector<cv::Vec2f> &vert_lines,
                  std::vector<cv::Vec2f> &horiz_lines,
-                 bool medianize,
                  int votes)
 {
     vert_lines.clear();
@@ -680,31 +679,11 @@ void houghlines (const cv::Mat &img, const Points &ps,
                                            else if (fabs(theta-90) < thresh) return 0; // horiz
                                            else return 2;
                                        });
-
-    //@@@
-    // Sort by abs( theta - med_theta)
-    auto vlines = horiz_vert_other_lines[1];
-    if (medianize) {
-//        auto med_theta_v = vec_median( vlines, [](cv::Vec2f hline){
-//            return hline[1];})[1];
-        std::sort( vlines.begin(), vlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) {
-            double da = fmin( fabs(a[1]), fabs( fabs( a[1]) - PI));
-            double db = fmin( fabs(b[1]), fabs( fabs( b[1]) - PI));
-            return da < db; });
-    }
-    
-    auto hlines = horiz_vert_other_lines[0];
-    if (medianize) {
-        // auto med_theta_h = vec_median( hlines, [](cv::Vec2f hline){ return hline[1];})[1];
-        std::sort( hlines.begin(), hlines.end(), [](cv::Vec2f &a, cv::Vec2f &b) {
-            double da = fabs( fabs(a[1]) - PI/2);
-            double db = fabs( fabs(b[1]) - PI/2);
-            return da < db; });
-    }
-    
     // Get the best ones
+    auto vlines = horiz_vert_other_lines[1];
     vert_lines.clear();
     vert_lines  = vec_slice( vlines, 0, 30);
+    auto hlines = horiz_vert_other_lines[0];
     horiz_lines.clear();
     horiz_lines = vec_slice( hlines, 0, 30);
 
@@ -715,7 +694,55 @@ void houghlines (const cv::Mat &img, const Points &ps,
     ISLOOP( horiz_lines) {
         rho_positive( horiz_lines[i]);
     }
-} // houghlines()
+} // rough_houghlines()
+
+// Find good verticals and horizontals using hough lines, after dewarp
+//----------------------------------------------------------------------
+void perp_houghlines (const cv::Mat &img, const Points &ps,
+                 std::vector<cv::Vec2f> &vert_lines,
+                 std::vector<cv::Vec2f> &horiz_lines,
+                 int votes)
+{
+    vert_lines.clear();
+    horiz_lines.clear();
+    if (!SZ(ps)) return;
+    cv::Mat canvas;
+    // Draw the points
+    canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
+    ISLOOP (ps) {
+        draw_point( ps[i], canvas,1, cv::Scalar(255));
+    }
+    // Find lines
+    std::vector<cv::Vec2f> lines;
+    HoughLines(canvas, lines, 1, PI/180, votes, 0, 0 );
+    
+    // Separate vertical, horizontal, and other lines
+    std::vector<std::vector<cv::Vec2f> > horiz_vert_other_lines;
+    horiz_vert_other_lines = partition( lines, 3,
+                                       [](cv::Vec2f &line) {
+                                           const double thresh = 1.0;
+                                           double theta = line[1] * (180.0 / PI);
+                                           if (fabs(theta - 180) < thresh) return 1;   // vert
+                                           else if (fabs(theta) < thresh) return 1;
+                                           else if (fabs(theta-90) < thresh) return 0; // horiz
+                                           else return 2;
+                                       });
+    // Get the best ones
+    auto vlines = horiz_vert_other_lines[1];
+    vert_lines.clear();
+    vert_lines  = vec_slice( vlines, 0, 30);
+    auto hlines = horiz_vert_other_lines[0];
+    horiz_lines.clear();
+    horiz_lines = vec_slice( hlines, 0, 30);
+    
+    // Make sure rho is always positive
+    ISLOOP( vert_lines) {
+        rho_positive( vert_lines[i]);
+    }
+    ISLOOP( horiz_lines) {
+        rho_positive( horiz_lines[i]);
+    }
+} // perp_houghlines()
 
 // Get main horizontal direction of a grid of points (in rad)
 //-------------------------------------------------------------

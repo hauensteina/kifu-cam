@@ -182,9 +182,8 @@ extern cv::Mat mat_dbg;
     _stone_or_empty = BlobFinder::clean( _stone_or_empty);
     
     // Find lines
-    bool medianize = false;
-    houghlines( _small_img, _stone_or_empty,
-               _vertical_lines, _horizontal_lines, medianize);
+    rough_houghlines( _small_img, _stone_or_empty,
+                     _vertical_lines, _horizontal_lines);
 } // f00_dots_and_verticals()
 
 // Debug wrapper for f00_dots_and_verticals
@@ -250,7 +249,7 @@ extern cv::Mat mat_dbg;
     return res;
 } // f02_warp_dbg()
 
-// Roughly guess intersections, stones, and lines
+// Find lines after dewarp
 //--------------------------------------------------
 - (void) f03_blobs
 {
@@ -264,9 +263,8 @@ extern cv::Mat mat_dbg;
     warp_points( _stone_or_empty, _Mp, _stone_or_empty);
     
     // Find lines
-    bool medianize = true;
-    houghlines( _small_img, _stone_or_empty,
-               _vertical_lines, _horizontal_lines, medianize);
+    perp_houghlines( _small_img, _stone_or_empty,
+                    _vertical_lines, _horizontal_lines);
 } // f03_blobs()
 
 // Debug wrapper for f03_blobs
@@ -302,12 +300,12 @@ extern cv::Mat mat_dbg;
         }
         case 2:
         {
-            filter_lines( _vertical_lines);
+            //filter_lines( _vertical_lines);
             break;
         }
         case 3:
         {
-            const double x_thresh = 8.0;
+            const double x_thresh = 6.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
         }
@@ -385,12 +383,12 @@ extern cv::Mat mat_dbg;
         }
         case 2:
         {
-            filter_lines( _horizontal_lines);
+            //filter_lines( _horizontal_lines);
             break;
         }
         case 3:
         {
-            const double y_thresh = 8.0;
+            const double y_thresh = 4.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }

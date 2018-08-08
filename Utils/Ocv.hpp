@@ -205,11 +205,14 @@ void normalize_plane_local( const cv::Mat &src, cv::Mat &dst, int radius);
 // Get main horizontal direction of a grid of points (in rad)
 double direction( const cv::Mat &img, const Points &ps);
 // Find verticals and horizontals using hough lines
-void houghlines (const cv::Mat &img, const Points &ps,
-                 std::vector<cv::Vec2f> &vert_lines,
-                 std::vector<cv::Vec2f> &horiz_lines,
-                 bool medianize,
-                 int votes=10);
+void rough_houghlines (const cv::Mat &img, const Points &ps,
+                       std::vector<cv::Vec2f> &vert_lines,
+                       std::vector<cv::Vec2f> &horiz_lines,
+                       int votes=10);
+void perp_houghlines (const cv::Mat &img, const Points &ps,
+                      std::vector<cv::Vec2f> &vert_lines,
+                      std::vector<cv::Vec2f> &horiz_lines,
+                      int votes=10);
 // Inverse threshold at median
 void inv_thresh_median( const cv::Mat &gray, cv::Mat &dst);
 // Inverse threshold at q1
