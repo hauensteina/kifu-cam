@@ -388,7 +388,7 @@ extern cv::Mat mat_dbg;
         }
         case 3:
         {
-            const double y_thresh = 4.0;
+            const double y_thresh = 6.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }

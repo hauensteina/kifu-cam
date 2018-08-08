@@ -582,8 +582,8 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         top_rho += d_top_rho;
         bot_rho += d_bot_rho;
         double dtop, dbot, err, top_x, bot_x;
-        //        closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
-        closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
+        closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
+        //closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
                           dtop, dbot, err, top_x, bot_x); // out
         if (dbot < X_THRESH && dtop < X_THRESH) {
             top_rho   = top_x;
@@ -601,8 +601,8 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         top_rho -= d_top_rho;
         bot_rho -= d_bot_rho;
         double dtop, dbot, err, top_x, bot_x;
-        //        closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
-        closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
+        closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
+        //closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
                           dtop, dbot, err, top_x, bot_x); // out
         if (dbot < X_THRESH && dtop < X_THRESH) {
             top_rho   = top_x;
@@ -630,7 +630,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     const double height = img.rows;
     const int left_x = 0.2 * img.cols;
     const int right_x = 0.8 * img.cols;
-    
+
     std::sort( lines.begin(), lines.end(),
               [right_x](cv::Vec2f a, cv::Vec2f b) {
                   return y_from_x( right_x, a) < y_from_x( right_x, b);
@@ -667,12 +667,12 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         left_rho += d_left_rho;
         right_rho += d_right_rho;
         double dleft, dright, err, left_y, right_y;
-        //        closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
-        closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
+        closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
+                           //closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
                            dleft, dright, err, left_y, right_y); // out
         if (dleft < Y_THRESH && dright < Y_THRESH) {
-            left_rho    = left_y;
-            right_rho   = right_y;
+            left_rho    = (left_y + right_y) / 2.0;
+            right_rho   = (left_y + right_y) / 2.0;
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (right_rho > height) break;
@@ -686,12 +686,12 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         left_rho -= d_left_rho;
         right_rho -= d_right_rho;
         double dleft, dright, err, left_y, right_y;
-        //        closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
-        closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
+        closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
+        //closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
                            dleft, dright, err, left_y, right_y); // out
         if (dleft < Y_THRESH && dright < Y_THRESH) {
-            left_rho    = left_y;
-            right_rho   = right_y;
+            left_rho    = (left_y + right_y) / 2.0;
+            right_rho   = (left_y + right_y) / 2.0;
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (left_rho < 0) break;
