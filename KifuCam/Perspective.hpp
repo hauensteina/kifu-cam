@@ -123,7 +123,7 @@ inline float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &pli
     float minpary = 1E9;
     minphi = -1;
     cv::Mat M, Minv;
-    for (phi = 70; phi < 130; phi += 1) {
+    for (phi = 70; phi < 130; phi += 0.25) {
         perspective_warp( sz, phi, M, Minv);
         float pary = paralellity( M);
         if (pary < minpary) {
@@ -155,7 +155,7 @@ inline float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &pline
     float minstr = 1E9;
     minphi = -1;
     cv::Mat M;
-    for (phi = -20; phi <= 20; phi += 1) {
+    for (phi = -20; phi <= 20; phi += 0.25) {
         M = cv::getRotationMatrix2D( center, phi, 1.0);
         float strness = straightness( M);
         if (strness < minstr ) {
