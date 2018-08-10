@@ -208,12 +208,6 @@ inline void fix_vertical_distance( std::vector<cv::Vec2f> &lines, cv::Mat &small
                                   float &scale, cv::Mat &Md, cv::Mat &invMd)
 
 {
-    if (SZ(lines) < 2) {
-        Md = scale_transform(1.0);
-        invMd = scale_transform(1.0);
-        scale = 1.0;
-        return;
-    }
     const int mid_y = 0.5 * small_img.rows;
 
     std::sort( lines.begin(), lines.end(),
@@ -225,15 +219,19 @@ inline void fix_vertical_distance( std::vector<cv::Vec2f> &lines, cv::Mat &small
 
     auto d_mid_rhos = vec_delta( mid_rhos);
     vec_filter( d_mid_rhos, [](double d){ return d > 8 && d < 20;});
+    if (SZ(d_mid_rhos) < 2) {
+        Md = scale_transform(1.0);
+        invMd = scale_transform(1.0);
+        scale = 1.0;
+        return;
+    }
+
     double d_mid_rho = vec_median( d_mid_rhos);
     scale = CROPSIZE / d_mid_rho; 
     Md = scale_transform( scale);
     invMd = scale_transform( 1.0 / scale);
-    //@@@
     const cv::Size sz( small_img.cols * scale, small_img.rows * scale);
     cv::warpAffine( small_img, small_img, Md, sz);
-//    cv::resize( small_img, small_img, cv::Size(int(small_img.cols*scale), int(small_img.rows*scale)),
-//               0, 0, cv::INTER_LINEAR);
 } // fix_vertical_distance()
 
 #endif /* Perspective_hpp */
