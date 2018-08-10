@@ -54,6 +54,9 @@ extern cv::Mat mat_dbg;
 @property cv::Mat Mp, invProj; // Projection matrix and inverse
 @property float theta; // rotation angle in degrees
 @property cv::Mat Ms, invRot;  // Rotation matrix and inverse
+@property float scale; // scale to make lines CROPSIZE apart
+@property cv::Mat Md, invMd;  // Scale matrix and inverse
+
 @property cv::Mat small_img; // resized image, in color, RGB, unwarped
 @property cv::Mat orig_small;     // orig resized
 @property cv::Mat small_zoomed;  // small, zoomed into the board
@@ -230,6 +233,16 @@ extern cv::Mat mat_dbg;
     cv::warpPerspective( _small_img, _small_img, _Mp, sz);
     warp_plines( _vertical_lines, _Mp, _vertical_lines);
 
+    // Find lines
+    std::vector<cv::Vec2f> hlines, vlines;
+    perp_houghlines( _small_img, _stone_or_empty,
+                    vlines, hlines);
+    dedup_verticals( vlines, _small_img);
+    
+    // Scale so line distance is CROPSIZE
+    fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
+    warp_plines( _vertical_lines, _Md, _vertical_lines);
+
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
 } // f02_warp()
 
@@ -251,7 +264,7 @@ extern cv::Mat mat_dbg;
 
 // Find lines after dewarp
 //--------------------------------------------------
-- (void) f03_blobs
+- (void) f03_houghlines
 {
     //_vertical_lines.clear();
     //_horizontal_lines.clear();
@@ -261,25 +274,28 @@ extern cv::Mat mat_dbg;
     // Warp the old points
     warp_points( _stone_or_empty, _Ms, _stone_or_empty);
     warp_points( _stone_or_empty, _Mp, _stone_or_empty);
-    
+    warp_points( _stone_or_empty, _Md, _stone_or_empty);
+
     // Find lines
     perp_houghlines( _small_img, _stone_or_empty,
                     _vertical_lines, _horizontal_lines);
-} // f03_blobs()
+    
+
+} // f03_houghlines()
 
 // Debug wrapper for f03_blobs
 //-------------------------------
-- (UIImage *) f03_blobs_dbg
+- (UIImage *) f03_houghlines_dbg
 {
     g_app.mainVC.lbBottom.text = @"Stones and Intersections";
-    [self f03_blobs];
+    [self f03_houghlines];
     
     // Show results
     cv::Mat drawing = _small_img.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f03_blobs_dbg()
+} // f03_houghlines_dbg()
 
 
 // Find vertical grid lines
@@ -300,12 +316,13 @@ extern cv::Mat mat_dbg;
         }
         case 2:
         {
-            //filter_lines( _vertical_lines);
+            // Distance between verticals should be CROPSIZE
+            //fix_vertical_distance( _vertical_lines, _small_img);
             break;
         }
         case 3:
         {
-            const double x_thresh = 6.0;
+            const double x_thresh = CROPSIZE / 4.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
         }
@@ -388,7 +405,7 @@ extern cv::Mat mat_dbg;
         }
         case 3:
         {
-            const double y_thresh = 6.0;
+            const double y_thresh = CROPSIZE / 4.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
@@ -494,16 +511,14 @@ extern cv::Mat mat_dbg;
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
-        cv::Size sz( _small_img.cols, _small_img.rows);
+        cv::Size sz( _orig_small.cols, _orig_small.rows);
         cv::Mat M;
-        //zoom_in( _gray,  _corners, _gray_zoomed, M);
-        bool skipWarp = true;
-        zoom_in( _small_img, _corners, _small_zoomed, M, skipWarp);
+        zoom_in( _corners, M);
         cv::perspectiveTransform( _corners, _corners_zoomed, M);
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
         // Do the image zoom directly from source, to reduce loss through repeated transforms
         Points2f orig_corners;
-        unwarp_points( _invProj, _invRot, _corners, orig_corners);
+        unwarp_points( _invProj, _invRot, _invMd, _corners, orig_corners);
         M = cv::getPerspectiveTransform( orig_corners, _corners_zoomed);
         cv::warpPerspective( _orig_small, _small_zoomed, M, sz);
         cv::cvtColor( _small_zoomed, _gray_zoomed, cv::COLOR_RGB2GRAY);
@@ -583,7 +598,7 @@ extern cv::Mat mat_dbg;
         _orig_small = small_img;
         [self f00_dots_and_verticals];
         [self f02_warp];
-        [self f03_blobs];
+        [self f03_houghlines];
         if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(_board_sz)) break;
         [self f04_vert_lines:0];
         [self f04_vert_lines:1];
@@ -649,8 +664,8 @@ extern cv::Mat mat_dbg;
     }
     
     Points2f my_corners, my_intersections;
-    unwarp_points( _invProj, _invRot, _corners, my_corners);
-    unwarp_points( _invProj, _invRot, _intersections, my_intersections);
+    unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
+    unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
     if (SZ(my_corners) == 4) {
         draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
                   canvas, cv::Scalar( 255,0,0,255));
@@ -822,11 +837,11 @@ extern cv::Mat mat_dbg;
 //===========
 
 // Save current diagram to file as sgf
-//--------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------
 - (void) save_current_sgf:(NSString *)fname overwrite:(bool)overwrite
 {
     Points2f unwarped_intersections;
-    unwarp_points( _invProj, _invRot, _intersections, unwarped_intersections);
+    unwarp_points( _invProj, _invRot, _invMd, _intersections, unwarped_intersections);
     std::string sgf_ = generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta);
     NSString *sgf = [NSString stringWithUTF8String:sgf_.c_str()];
     
@@ -846,7 +861,7 @@ extern cv::Mat mat_dbg;
 - (NSString *) get_sgf
 {
     Points2f unwarped_intersections;
-    unwarp_points( _invProj, _invRot, _intersections, unwarped_intersections);
+    unwarp_points( _invProj, _invRot, _invMd, _intersections, unwarped_intersections);
     return @(generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta).c_str());
 } // get_sgf()
 

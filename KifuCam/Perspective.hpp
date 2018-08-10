@@ -168,20 +168,72 @@ inline float straight_rotation( cv::Size sz, const std::vector<cv::Vec2f> &pline
     return minstr;
 } // straight_rotation()
 
+// Get affine transform to scale image
+//-----------------------------------------------
+inline cv::Mat scale_transform( double scale)
+{
+    cv::Mat res;
+    cv::Point2f src[3];
+    src[0] = Point2f(0,0);
+    src[1] = Point2f(0,1);
+    src[2] = Point2f(1,1);
+
+    cv::Point2f target[3];
+    target[0] = Point2f(0,0);
+    target[1] = Point2f(0,scale);
+    target[2] = Point2f(scale,scale);
+
+    res = cv::getAffineTransform( src, target);
+    return res;
+} // scale_transform()
+
 // Undo perspective correction on several points so we can draw them on
 // the original image.
-//------------------------------------------------------------------------------------
-inline void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, const Points2f &pts_in,
+//---------------------------------------------------------------------------------------------------
+inline void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, cv::Mat &invDist, const Points2f &pts_in,
                    Points2f &pts_out)
 {
     pts_out.clear();
     ISLOOP( pts_in) {
         Point2f p = pts_in[i];
-        cv::perspectiveTransform( pts_in, pts_out, invProj);
+        cv::transform( pts_in, pts_out, invDist);
+        cv::perspectiveTransform( pts_out, pts_out, invProj);
         cv::transform( pts_out, pts_out, invRot);
     }
 } // unwarp_points()
 
+// Scale image to make distance of verticals == CROPSIZE. Return the transform and its inverse.
+//-----------------------------------------------------------------------------------------------
+inline void fix_vertical_distance( std::vector<cv::Vec2f> &lines, cv::Mat &small_img,
+                                  float &scale, cv::Mat &Md, cv::Mat &invMd)
 
+{
+    if (SZ(lines) < 2) {
+        Md = scale_transform(1.0);
+        invMd = scale_transform(1.0);
+        scale = 1.0;
+        return;
+    }
+    const int mid_y = 0.5 * small_img.rows;
+
+    std::sort( lines.begin(), lines.end(),
+              [mid_y](cv::Vec2f a, cv::Vec2f b) {
+                  return x_from_y( mid_y, a) < x_from_y( mid_y, b);
+              });
+    std::vector<double> mid_rhos = vec_extract( lines,
+                                               [mid_y](cv::Vec2f a) { return x_from_y( mid_y, a); });
+
+    auto d_mid_rhos = vec_delta( mid_rhos);
+    vec_filter( d_mid_rhos, [](double d){ return d > 8 && d < 20;});
+    double d_mid_rho = vec_median( d_mid_rhos);
+    scale = CROPSIZE / d_mid_rho; 
+    Md = scale_transform( scale);
+    invMd = scale_transform( 1.0 / scale);
+    //@@@
+    const cv::Size sz( small_img.cols * scale, small_img.rows * scale);
+    cv::warpAffine( small_img, small_img, Md, sz);
+//    cv::resize( small_img, small_img, cv::Size(int(small_img.cols*scale), int(small_img.rows*scale)),
+//               0, 0, cv::INTER_LINEAR);
+} // fix_vertical_distance()
 
 #endif /* Perspective_hpp */

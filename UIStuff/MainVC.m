@@ -382,7 +382,7 @@
                 break;
             case 3:
                 _debugstate++;
-                img = [self.cppInterface f03_blobs_dbg];
+                img = [self.cppInterface f03_houghlines_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 4:

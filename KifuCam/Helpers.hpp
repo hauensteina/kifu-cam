@@ -387,7 +387,7 @@ inline void dedup_verticals( std::vector<cv::Vec2f> &lines, const cv::Mat &img)
 {
     if (SZ(lines) < 3) return;
     // Cluster by x in the middle
-    const double wwidth = 8.0;
+    const double wwidth = CROPSIZE;
     const double middle_y = img.rows / 2.0;
     const int min_clust_size = 0;
     auto Getter =  [middle_y](cv::Vec2f line) { return x_from_y( middle_y, line); };
@@ -403,7 +403,7 @@ inline void dedup_horizontals( std::vector<cv::Vec2f> &lines, const cv::Mat &img
 {
     if (SZ(lines) < 3) return;
     // Cluster by y in the middle
-    const double wwidth = 8.0;
+    const double wwidth = CROPSIZE;
     const double middle_x = img.cols / 2.0;
     const int min_clust_size = 0;
     auto Getter =  [middle_x](cv::Vec2f line) { return y_from_x( middle_x, line); };
@@ -556,10 +556,11 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
                                                [bot_y](cv::Vec2f a) { return x_from_y( bot_y, a); });
     auto d_top_rhos = vec_delta( top_rhos);
     auto d_bot_rhos = vec_delta( bot_rhos);
-    vec_filter( d_top_rhos, [](double d){ return d > 8 && d < 20;});
-    vec_filter( d_bot_rhos, [](double d){ return d > 8 && d < 20;});
+    vec_filter( d_top_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.2 * CROPSIZE;});
+    vec_filter( d_bot_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.2 * CROPSIZE;});
     double d_top_rho = vec_median( d_top_rhos);
     double d_bot_rho = vec_median( d_bot_rhos);
+    double d_rho = (d_top_rho + d_bot_rho) / 2.0;
     
     // Find a good line close to the middle
     int good_idx = good_center_line( lines);
@@ -579,11 +580,12 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     top_rho = x_from_y( top_y, med_line);
     bot_rho = x_from_y( bot_y, med_line);
     ILOOP(100) {
-        top_rho += d_top_rho;
-        bot_rho += d_bot_rho;
+        //top_rho += d_top_rho;
+        top_rho += d_rho;
+        bot_rho += d_rho;
         double dtop, dbot, err, top_x, bot_x;
-        closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
-        //closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
+        //closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
+        closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
                           dtop, dbot, err, top_x, bot_x); // out
         if (dbot < X_THRESH && dtop < X_THRESH) {
             top_rho   = top_x;
@@ -598,11 +600,12 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     top_rho = x_from_y( top_y, med_line);
     bot_rho = x_from_y( bot_y, med_line);
     ILOOP(100) {
-        top_rho -= d_top_rho;
-        bot_rho -= d_bot_rho;
+        //top_rho -= d_top_rho;
+        top_rho -= d_rho;
+        bot_rho -= d_rho;
         double dtop, dbot, err, top_x, bot_x;
-        closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
-        //closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
+        //closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
+        closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
                           dtop, dbot, err, top_x, bot_x); // out
         if (dbot < X_THRESH && dtop < X_THRESH) {
             top_rho   = top_x;
@@ -641,10 +644,11 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
                                                  [right_x](cv::Vec2f a) { return y_from_x( right_x, a); });
     auto d_left_rhos = vec_delta( left_rhos);
     auto d_right_rhos = vec_delta( right_rhos);
-    vec_filter( d_left_rhos, [](double d){ return d > 8 && d < 20;});
-    vec_filter( d_right_rhos, [](double d){ return d > 8 && d < 20;});
+    vec_filter( d_left_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.2 * CROPSIZE;});
+    vec_filter( d_right_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.2 * CROPSIZE;});
     double d_left_rho  = vec_median( d_left_rhos);
     double d_right_rho = vec_median( d_right_rhos);
+    double d_rho = (d_left_rho + d_right_rho) / 2.0;
     
     // Find a good line close to the middle
     int good_idx = good_center_line( lines);
@@ -664,15 +668,15 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     left_rho = y_from_x( left_x, med_line);
     right_rho = y_from_x( right_x, med_line);
     ILOOP(100) {
-        left_rho += d_left_rho;
-        right_rho += d_right_rho;
+        left_rho += d_rho;
+        right_rho += d_rho;
         double dleft, dright, err, left_y, right_y;
-        closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
-                           //closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
+        //closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
+        closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
                            dleft, dright, err, left_y, right_y); // out
         if (dleft < Y_THRESH && dright < Y_THRESH) {
-            left_rho    = (left_y + right_y) / 2.0;
-            right_rho   = (left_y + right_y) / 2.0;
+            //left_rho    = left_y;
+            //right_rho   = right_y;
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (right_rho > height) break;
@@ -683,15 +687,15 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     left_rho = y_from_x( left_x, med_line);
     right_rho = y_from_x( right_x, med_line);
     ILOOP(100) {
-        left_rho -= d_left_rho;
-        right_rho -= d_right_rho;
+        left_rho -= d_rho;
+        right_rho -= d_rho;
         double dleft, dright, err, left_y, right_y;
-        closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
-        //closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
+        //closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
+        closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
                            dleft, dright, err, left_y, right_y); // out
         if (dleft < Y_THRESH && dright < Y_THRESH) {
-            left_rho    = (left_y + right_y) / 2.0;
-            right_rho   = (left_y + right_y) / 2.0;
+            //left_rho    = left_y;
+            //right_rho   = right_y;
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (left_rho < 0) break;
@@ -937,21 +941,18 @@ inline Points2f get_intersections( const std::vector<cv::Vec2f> &hlines,
 } // get_intersections()
 
 // Unwarp the square defined by corners
-//-----------------------------------------------------------------------------------------------------------------
-inline void zoom_in( const cv::Mat &img, const Points2f &corners, cv::Mat &dst, cv::Mat &M, bool skipWarp = false)
+//-----------------------------------------------------------
+inline void zoom_in( const Points2f &corners, cv::Mat &M)
 {
-    int lmarg = img.cols / 20;
-    int tmarg = img.cols / 15;
+    int lmarg = IMG_WIDTH / 20;
+    int tmarg = IMG_WIDTH / 15;
     // Target square for transform
     Points2f square = {
         cv::Point( lmarg, tmarg),
-        cv::Point( img.cols - lmarg, tmarg),
-        cv::Point( img.cols - lmarg, img.cols - tmarg),
-        cv::Point( lmarg, img.cols - tmarg) };
+        cv::Point( IMG_WIDTH - lmarg, tmarg),
+        cv::Point( IMG_WIDTH - lmarg, IMG_WIDTH - tmarg),
+        cv::Point( lmarg, IMG_WIDTH - tmarg) };
     M = cv::getPerspectiveTransform( corners, square);
-    if (!skipWarp) {
-        cv::warpPerspective( img, dst, M, cv::Size( img.cols, img.rows));
-    }
 } // zoom_in()
 
 // Fill image outside of board with average. Helps with adaptive thresholds.

@@ -710,7 +710,7 @@ void perp_houghlines (const cv::Mat &img, const Points &ps,
     // Draw the points
     canvas = cv::Mat::zeros( cv::Size(img.cols, img.rows), CV_8UC1 );
     ISLOOP (ps) {
-        draw_point( ps[i], canvas,1, cv::Scalar(255));
+        draw_point( ps[i], canvas,2, cv::Scalar(255));
     }
     // Find lines
     std::vector<cv::Vec2f> lines;

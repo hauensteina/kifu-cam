@@ -36,7 +36,7 @@
 //---------------------------------
 - (UIImage *) f00_dots_and_verticals_dbg;
 - (UIImage *) f02_warp_dbg;
-- (UIImage *) f03_blobs_dbg;
+- (UIImage *) f03_houghlines_dbg;
 - (UIImage *) f04_vert_lines_dbg;
 - (UIImage *) f05_horiz_lines_dbg;
 - (UIImage *) f06_corners_dbg;
@@ -45,7 +45,7 @@
 
 - (void) f00_dots_and_verticals;
 - (void) f02_warp;
-- (void) f03_blobs;
+- (void) f03_houghlines;
 - (void) f04_vert_lines:(int)state;
 - (void) f05_horiz_lines:(int)state;
 - (void) f06_corners;
