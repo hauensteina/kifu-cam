@@ -39,7 +39,9 @@ class BlobFinder
 {
 public:
     // Find empty intersections in a grayscale image
-    static void find_empty_places( const cv::Mat &img, Points &result, int athresh=8);
+    static void find_empty_places( const cv::Mat &img, Points &result);
+    // Find empty intersections after dewarp
+    static void find_empty_places_perp( const cv::Mat &img, Points &result);
     // Find stones in a grayscale image
     static void find_stones( const cv::Mat &img, Points &result);
     // Clean outliers

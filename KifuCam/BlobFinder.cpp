@@ -27,6 +27,7 @@
 
 // Find board intersections and stones in an image
 
+#include "Globals.h"
 #include "BlobFinder.hpp"
 
 extern cv::Mat mat_dbg;
@@ -34,9 +35,9 @@ extern cv::Mat mat_dbg;
 cv::Mat BlobFinder::m_matchRes;
 
 // Find empty intersections in a thresholded, dilated image
-//------------------------------------------------------------------------------------------
-void BlobFinder::find_empty_places( const cv::Mat &threshed, Points &result, int athresh)
-{    
+//------------------------------------------------------------------------------
+void BlobFinder::find_empty_places( const cv::Mat &threshed, Points &result)
+{
     // Define the templates
     const int tsz = 15;
     uint8_t cross[tsz*tsz] = {
@@ -62,6 +63,42 @@ void BlobFinder::find_empty_places( const cv::Mat &threshed, Points &result, int
     double thresh = 75; //90;
     matchTemplate( threshed, mcross, result, thresh);
 } // find_empty_places()
+
+// Find empty intersections after dewarp
+//-----------------------------------------------------------------------------------
+void BlobFinder::find_empty_places_perp( const cv::Mat &threshed, Points &result)
+{
+    // Define the templates
+    const int tsz = 21;
+    uint8_t cross[tsz*tsz] = {
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
+    };
+    cv::Mat mcross  = 255 * cv::Mat(tsz, tsz, CV_8UC1, cross);
+    
+    // Match
+    double thresh = 60; //75; 
+    matchTemplate( threshed, mcross, result, thresh);
+} // find_empty_places_perp()
 
 // Find stones in a grayscale image
 //----------------------------------------------------------------

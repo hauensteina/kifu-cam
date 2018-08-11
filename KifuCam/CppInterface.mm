@@ -242,7 +242,7 @@ extern cv::Mat mat_dbg;
     // Scale so line distance is CROPSIZE
     fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
     warp_plines( _vertical_lines, _Md, _vertical_lines);
-
+    
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
 } // f02_warp()
 
@@ -272,9 +272,19 @@ extern cv::Mat mat_dbg;
     //thresh_dilate( _gray, _gray_threshed);
     
     // Warp the old points
-    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
-    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
-    warp_points( _stone_or_empty, _Md, _stone_or_empty);
+//    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
+//    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
+//    warp_points( _stone_or_empty, _Md, _stone_or_empty);
+
+    // Find blobs after dewarp
+    _stone_or_empty.clear();
+    _vertical_lines.clear();
+    _horizontal_lines.clear();
+    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+    thresh_dilate( _gray, _gray_threshed, 2);
+    BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
+    //BlobFinder::find_stones( _gray, _stone_or_empty);
+    //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
 
     // Find lines
     perp_houghlines( _small_img, _stone_or_empty,

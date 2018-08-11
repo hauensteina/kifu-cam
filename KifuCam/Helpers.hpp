@@ -50,6 +50,7 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
     cv::dilate( dst, dst, element );
 }
 
+
 // Convert vector of int diagram to sgf.
 // sgf coordinates range a,b,c,..,i,j,...,s
 // column first, row second
