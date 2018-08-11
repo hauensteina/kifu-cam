@@ -96,7 +96,7 @@ void BlobFinder::find_empty_places_perp( const cv::Mat &threshed, Points &result
     cv::Mat mcross  = 255 * cv::Mat(tsz, tsz, CV_8UC1, cross);
     
     // Match
-    double thresh = 60; //75; 
+    double thresh = 70;
     matchTemplate( threshed, mcross, result, thresh);
 } // find_empty_places_perp()
 
@@ -150,7 +150,7 @@ void BlobFinder::find_stones_perp( const cv::Mat &img, Points &result)
                      1, // acumulator res == image res; Larger means less acc res
                      15, // minimum distance between circles
                      130, // upper canny thresh; half of this is the lower canny
-                     12, // less means more circles. The higher ones come first in the result
+                     10, // 12, // less means more circles. The higher ones come first in the result
                      8,   // min radius
                      12 ); // max radius
     if (!circles.size()) return;
