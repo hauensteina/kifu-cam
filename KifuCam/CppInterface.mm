@@ -282,8 +282,8 @@ extern cv::Mat mat_dbg;
     _horizontal_lines.clear();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed, 2);
-    BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
-    //BlobFinder::find_stones( _gray, _stone_or_empty);
+    //BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
+    BlobFinder::find_stones_perp( _gray, _stone_or_empty);
     //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
 
     // Find lines

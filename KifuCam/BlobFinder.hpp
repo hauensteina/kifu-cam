@@ -44,6 +44,8 @@ public:
     static void find_empty_places_perp( const cv::Mat &img, Points &result);
     // Find stones in a grayscale image
     static void find_stones( const cv::Mat &img, Points &result);
+    // Find stones after dewarp
+    static void find_stones_perp( const cv::Mat &img, Points &result);
     // Clean outliers
     static Points clean(  Points &pts);
     

@@ -138,6 +138,26 @@ void BlobFinder::find_stones( const cv::Mat &img, Points &result)
     ISLOOP (good_circles) { result.push_back( cv::Point( circles[i][0], circles[i][1]) ); }
 } // find_stones()
 
+// Find stones after dewarp
+//----------------------------------------------------------------------
+void BlobFinder::find_stones_perp( const cv::Mat &img, Points &result)
+{
+    cv::Mat mtmp;
+    // Find circles
+    std::vector<cv::Vec3f> circles;
+    //cv::GaussianBlur( img, mtmp, cv::Size(5, 5), 2, 2 );
+    cv::HoughCircles( img, circles, CV_HOUGH_GRADIENT,
+                     1, // acumulator res == image res; Larger means less acc res
+                     15, // minimum distance between circles
+                     130, // upper canny thresh; half of this is the lower canny
+                     12, // less means more circles. The higher ones come first in the result
+                     8,   // min radius
+                     12 ); // max radius
+    if (!circles.size()) return;
+
+    ISLOOP (circles) { result.push_back( cv::Point( circles[i][0], circles[i][1]) ); }
+} // find_stones_perp()
+
 // Template maching for empty intersections
 //--------------------------------------------------------------------------------------------------------
 void BlobFinder::matchTemplate( const cv::Mat &img, const cv::Mat &templ, Points &result, double thresh)
