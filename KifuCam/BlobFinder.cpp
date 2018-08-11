@@ -117,11 +117,11 @@ void BlobFinder::find_stones( const cv::Mat &img, Points &result)
                      25 ); // max radius
     if (!circles.size()) return;
     
-    // Keep the ones where radius close to avg radius
+    // Keep the ones where radius close to median radius
     std::vector<double> rads;
     ISLOOP (circles){ rads.push_back( circles[i][2]); }
     double avg_r = vec_median( rads);
-    
+
     std::vector<cv::Vec3f> good_circles;
     //const double TOL_LO = 2.0;
     const double TOL_HI = 0.5;
@@ -135,7 +135,7 @@ void BlobFinder::find_stones( const cv::Mat &img, Points &result)
             good_circles.push_back( circles[i]);
         }
     }
-    ISLOOP (good_circles) { result.push_back( cv::Point( circles[i][0], circles[i][1]) ); }
+    ISLOOP (good_circles) { result.push_back( cv::Point( good_circles[i][0], good_circles[i][1]) ); }
 } // find_stones()
 
 // Find stones after dewarp
