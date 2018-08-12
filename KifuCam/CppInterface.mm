@@ -915,7 +915,8 @@ extern cv::Mat mat_dbg;
     // Remove backslashes
     std::regex re_back( "\\\\");
     std::string tstr = std::regex_replace( gc, re_back, "" );
-    std::regex re( "intersections:(\\([^#]*\\))#.*");
+    //std::regex re( "intersections:(\\([^#]*\\))[#].*");
+    std::regex re( "intersections:(\\(\\(.*\\)\\)).*");
     tstr = std::regex_replace( tstr, re, "$1" );
     // Turn it into json
     std::regex re1( "\\(");
