@@ -187,6 +187,7 @@ extern cv::Mat mat_dbg;
     // Find lines
     rough_houghlines( _small_img, _stone_or_empty,
                      _vertical_lines, _horizontal_lines);
+    //filter_lines( _horizontal_lines);
 } // f00_dots_and_verticals()
 
 // Debug wrapper for f00_dots_and_verticals
@@ -210,8 +211,11 @@ extern cv::Mat mat_dbg;
     cv::Mat drawing = _small_img.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
     get_color(true);
-    ISLOOP( _vertical_lines) {
-        draw_polar_line( _vertical_lines[i], drawing, get_color());
+//    ISLOOP( _vertical_lines) {
+//        draw_polar_line( _vertical_lines[i], drawing, get_color());
+//    }
+    ISLOOP( _horizontal_lines) {
+        draw_polar_line( _horizontal_lines[i], drawing, get_color());
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
@@ -222,17 +226,24 @@ extern cv::Mat mat_dbg;
 - (void) f02_warp
 {
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
-    
-    // Straighten horizontals
-    straight_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
-    cv::warpAffine( _small_img, _small_img, _Ms, sz);
-    warp_plines( _vertical_lines, _Ms, _vertical_lines);
-    
-    // Unwarp verticals
-    parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
-    cv::warpPerspective( _small_img, _small_img, _Mp, sz);
-    warp_plines( _vertical_lines, _Mp, _vertical_lines);
 
+    
+    bool success = wiggle_transform(_horizontal_lines, _vertical_lines, _small_img.cols, _small_img.rows, _Mp, _invProj);
+//    // Straighten horizontals
+//    straight_horiz_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
+//    cv::warpAffine( _small_img, _small_img, _Ms, sz);
+//    warp_plines( _vertical_lines, _Ms, _vertical_lines);
+//
+//    // Unwarp verticals
+//    parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
+//    cv::warpPerspective( _small_img, _small_img, _Mp, sz);
+//    warp_plines( _vertical_lines, _Mp, _vertical_lines);
+//
+//    // Straighten verticals
+//    straight_vert_rotation( sz, _vertical_lines, _theta, _Ms, _invRot);
+//    cv::warpAffine( _small_img, _small_img, _Ms, sz);
+//    warp_plines( _vertical_lines, _Ms, _vertical_lines);
+    
     // Find lines
     std::vector<cv::Vec2f> hlines, vlines;
     perp_houghlines( _small_img, _stone_or_empty,

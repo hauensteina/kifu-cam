@@ -633,7 +633,7 @@ void rot_img( const cv::Mat &img, double angle, cv::Mat &dst)
     int w = img.cols;
     double cX = w / 2;
     double cY = h / 2;
-    // Get ro mat
+    // Get rot mat
     cv::Mat m = cv::getRotationMatrix2D( Point2f( cX, cY), -angle * 180/PI, 1.0);
     //std::string ttype = mat_typestr( m);
     // Get new img size

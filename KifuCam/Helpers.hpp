@@ -451,6 +451,7 @@ inline int good_center_line( const std::vector<cv::Vec2f> &lines)
 //-----------------------------------------------------------------
 inline void filter_lines( std::vector<cv::Vec2f> &lines)
 {
+    if (SZ(lines) < 3) { return; }
     const double eps = 10.0;
     std::sort( lines.begin(), lines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
     int med_idx = good_center_line( lines);
@@ -535,6 +536,7 @@ inline int closest_horiz_line( const std::vector<cv::Vec2f> &lines, double left_
     }
     return minidx;
 } // closest_horiz_line()
+
 
 // Find the x-change per line in in upper and lower screen area and synthesize
 // the whole bunch starting at the middle. Replace synthesized lines with real
