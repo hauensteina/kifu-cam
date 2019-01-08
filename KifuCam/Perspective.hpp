@@ -266,89 +266,60 @@ inline void fix_vertical_distance( std::vector<cv::Vec2f> &lines, cv::Mat &small
     cv::warpAffine( small_img, small_img, Md, sz);
 } // fix_vertical_distance()
 
-// Find a good perspective transform by wriggling the forth point
-// of a distored rectangle.
-//-------------------------------------------------------------------------------
-inline bool wiggle_transform( std::vector<cv::Vec2f> hlines,
-                             std::vector<cv::Vec2f> vlines,
-                             double width, double height,
-                             cv::Mat &minM, cv::Mat &invM)
+// Find vanishing point of a bunch of polar lines
+//---------------------------------------------------------------------
+inline cv::Point2f vanishing_point( std::vector<cv::Vec2f> &plines)
 {
-    Point2f tl,tr,br,bl;
-    Point2f ttl,ttr,tbr,tbl;
-    
-    // Find a good vertical line
-    const int bot_y = 0.8 * height;
-    std::sort( vlines.begin(), vlines.end(),
-              [bot_y](cv::Vec2f a, cv::Vec2f b) {
-                  return x_from_y( bot_y, a) < x_from_y( bot_y, b);
-              });
-    int good_vidx = good_center_line( vlines);
-    if (good_vidx < 0) { return false; }
-    cv::Vec2f med_vline = vlines[good_vidx];
-    
-    // Find a good horizontal line
-    const int right_x = 0.8 * width;
-    std::sort( hlines.begin(), hlines.end(),
-              [right_x](cv::Vec2f a, cv::Vec2f b) {
-                  return y_from_x( right_x, a) < y_from_x( right_x, b);
-              });
-    int good_hidx = good_center_line( hlines);
-    if (good_hidx < 0) { return false; }
-    cv::Vec2f med_hline = hlines[good_hidx];
-    
-    // Intersection is the top left corner
-    tl = intersection( med_vline, med_hline);
-    
-    // Target rectangle
-    const double delta = 20.0;
-    ttl = tl;
-    ttr = Point2f( ttl.x + delta, ttl.y);
-    tbr = Point2f( ttl.x + delta, ttl.y + delta);
-    tbl = Point2f( ttl.x, ttl.y + delta);
-    
-    // Distorted source 'rectangle', top right and bot left
-    tr = Point2f( ttl.x + delta, y_from_x( ttl.x + delta, med_hline));
-    bl = Point2f( x_from_y( ttl.y + delta, med_vline), ttl.y + delta);
-    
-    // Guess the bottom right point
-    auto hline = med_hline;
-    hline[0] += delta;
-    auto vline = med_vline;
-    vline[0] += delta;
-    auto br_guess = intersection( hline, vline);
-    
-    // Minmize this cost
-    auto parallelity = [vlines]( const cv::Mat &M) {
-        std::vector<cv::Vec2f> plines;
-        warp_plines( vlines, M, plines);
-        auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
-        double q1 = vec_q1( thetas);
-        double q3 = vec_q3( thetas);
-        double dq = q3 - q1;
-        return dq;
-    }; // paralellity()
-    
-    // Wiggle bottom right source corner until cost minimized
-    const int r = 10;
-    float minpary = 1E9;
-    cv::Mat M, Minv;
-    for (auto x = br_guess.x - r; x <= br_guess.x + r; x += 1.0) {
-        for (auto y = br_guess.y - r; y <= br_guess.y + r; y += 1.0) {
-            auto br = Point2f( x, y);
-            cv::Mat M;
-            std::vector<Point2f> source = {tl, tr, br, bl};
-            std::vector<Point2f> target = {ttl, ttr, tbr, tbl};
-            cv::perspectiveTransform( source, target, M);
-            float pary = parallelity( M);
-            if (pary < minpary) {
-                minpary = pary;
-                minM = M;
-                cv::perspectiveTransform( target, source, Minv);
-            }
-        } // for y
-    } // for x
-    return true;
-} // wiggle_transform()
+    Points2f vpoints;
+    ISLOOP( plines) {
+        auto line = plines[i];
+        Points2f isecs;
+        KSLOOP( plines) {
+            if (k == i) continue;
+            auto kline = plines[k];
+            auto isec = intersection( line, kline);
+            isecs.push_back( isec);
+        }
+        auto xs = vec_extract( isecs,
+                              [](cv::Point2f p) { return p.x; });
+        auto med_x = vec_median( xs);
+        auto ys = vec_extract( isecs,
+                              [](cv::Point2f p) { return p.y; });
+        auto med_y = vec_median( ys);
+        vpoints.push_back( cv::Point2f( med_x, med_y));
+    } // ISLOOP
+    auto xs = vec_extract( vpoints,
+                          [](cv::Point2f p) { return p.x; });
+    auto med_x = vec_median( xs);
+    auto ys = vec_extract( vpoints,
+                          [](cv::Point2f p) { return p.y; });
+    auto med_y = vec_median( ys);
+    auto res = cv::Point2f( med_x, med_y);
+    return res;
+} // vanishing_point()
+
+// Find a prespective transform to make all line sharing a vanishing point
+// parallel and vertical.
+//------------------------------------------------------------------------
+inline void vp_vertical_perspective( cv::Size sz, cv::Point2f vp,
+                                    cv::Mat &M, cv::Mat &invM)
+{
+    Point2f c( sz.width / 2.0, sz.height / 2.0); // screen center
+    auto d = 20.0;
+    auto tl = cv::Point2f( vp.x - d, c.y);
+    auto tr = cv::Point2f( vp.x + d, c.y);
+    auto dir0 = unit_vector( tl - vp);
+    auto dir1 = unit_vector( tr - vp);
+    auto bl = tl + d * dir0;
+    auto br = tr + d * dir1;
+    auto tl_target = cv::Point2f( bl.x, tl.y);
+    auto tr_target = cv::Point2f( br.x, tr.y);
+    auto br_target = cv::Point2f( br.x, br.y);
+    auto bl_target = cv::Point2f( bl.x, bl.y);
+    Points2f src = { tl, tr, br, bl };
+    Points2f dst = { tl_target, tr_target, br_target, bl_target };
+    M = cv::getPerspectiveTransform( src, dst);
+    invM = cv::getPerspectiveTransform( dst, src);
+} // vp_vertical_perspective()
 
 #endif /* Perspective_hpp */

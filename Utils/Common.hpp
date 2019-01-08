@@ -186,13 +186,13 @@ void str_split(const std::string &str, Container &cont, char delim = ' ')
 // Vector
 //==========
 
-// Append a vector in place
-//----------------------------------------------------
-template <typename T>
-void vec_append( std::vector<T> a, std::vector<T> b)
-{
-    a.insert(a.end(), b.begin(), b.end());
-}
+//// Append a vector in place
+////----------------------------------------------------
+//template <typename T>
+//void vec_append( std::vector<T> a, std::vector<T> b)
+//{
+//    a.insert(a.end(), b.begin(), b.end());
+//}
 
 // Get a slice out of a vector
 //------------------------------------------------------------------

@@ -223,26 +223,27 @@ extern cv::Mat mat_dbg;
 
 // Make verticals parallel and really vertical
 //----------------------------------------------
-- (void) f02_warp
+- (void) f02_warp //@@@
 {
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
-
+    auto vp = vanishing_point( _vertical_lines);
+    vp_vertical_perspective( sz, vp, _Ms, _invRot);
     
-    bool success = wiggle_transform(_horizontal_lines, _vertical_lines, _small_img.cols, _small_img.rows, _Mp, _invProj);
-//    // Straighten horizontals
-//    straight_horiz_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
-//    cv::warpAffine( _small_img, _small_img, _Ms, sz);
-//    warp_plines( _vertical_lines, _Ms, _vertical_lines);
-//
-//    // Unwarp verticals
-//    parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
-//    cv::warpPerspective( _small_img, _small_img, _Mp, sz);
-//    warp_plines( _vertical_lines, _Mp, _vertical_lines);
-//
-//    // Straighten verticals
-//    straight_vert_rotation( sz, _vertical_lines, _theta, _Ms, _invRot);
-//    cv::warpAffine( _small_img, _small_img, _Ms, sz);
-//    warp_plines( _vertical_lines, _Ms, _vertical_lines);
+    //bool success = wiggle_transform(_horizontal_lines, _vertical_lines, _small_img.cols, _small_img.rows, _Mp, _invProj);
+    // Straighten horizontals
+    //straight_horiz_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
+    cv::warpPerspective( _small_img, _small_img, _Ms, sz);
+    warp_plines( _vertical_lines, _Ms, _vertical_lines);
+
+    // Unwarp verticals
+    //parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
+    //cv::warpPerspective( _small_img, _small_img, _Mp, sz);
+    //warp_plines( _vertical_lines, _Mp, _vertical_lines);
+
+    // Straighten verticals
+    //straight_vert_rotation( sz, _vertical_lines, _theta, _Ms, _invRot);
+    //cv::warpAffine( _small_img, _small_img, _Ms, sz);
+    //warp_plines( _vertical_lines, _Ms, _vertical_lines);
     
     // Find lines
     std::vector<cv::Vec2f> hlines, vlines;

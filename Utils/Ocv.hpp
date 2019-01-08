@@ -308,7 +308,7 @@ Point2f intersection( Point_ A, Point_ B, Point_ C, Point_ D)
     double determinant = a1*b2 - a2*b1;
     
     if (determinant == 0) { // The lines are parallel.
-        return Point_(10E9, 10E9);
+        return Point_(1E9, 1E9);
     }
     else
     {
@@ -455,6 +455,6 @@ mcluster (std::vector<T> elts, int nof_clust, int ndims, double &compactness, Fu
     return res;
 } // mcluster()
 
-#endif /* __clusplus */
+#endif /* __cplusplus */
 #endif /* Ocv_hpp */
 
