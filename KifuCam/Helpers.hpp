@@ -71,11 +71,11 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
  */
 // The GC tag has the pixel coordinates of the intersections.
 // Couldn't use json because sgf chokes on brackets.
-//------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
 inline std::string generate_sgf( const std::string &title,
                                 const std::vector<int> diagram = std::vector<int>(),
                                 const Points2f &intersections = Points2f(),
-                                float phi=0, float theta=0, double komi=7.5)
+                                double komi=7.5)
 {
     const int BUFSZ = 10000;
     char buf[BUFSZ+1];
@@ -91,10 +91,10 @@ inline std::string generate_sgf( const std::string &title,
         coords += buf;
     }
     coords += ")";
-    snprintf( buf, BUFSZ, "phi:%.2f", phi);
-    std::string phistr = buf;
-    snprintf( buf, BUFSZ, "theta:%.2f", theta);
-    std::string thetastr = buf;
+    //snprintf( buf, BUFSZ, "phi:%.2f", phi);
+    //std::string phistr = buf;
+    //snprintf( buf, BUFSZ, "theta:%.2f", theta);
+    //std::string thetastr = buf;
 
     // Generate sgf
     snprintf( buf, BUFSZ,
@@ -110,9 +110,9 @@ inline std::string generate_sgf( const std::string &title,
              " SZ[%d]"
              " DT[%s]"
              " KM[%f]"
-             " GC[%s#%s#%s#]"
+             " GC[%s#]"
              ,title.c_str(), boardsz, local_date_stamp().c_str(), komi,
-             coords.c_str(), phistr.c_str(), thetastr.c_str());
+             coords.c_str());
 
     std::string moves="";
     ISLOOP (diagram) {

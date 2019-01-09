@@ -50,10 +50,10 @@ extern cv::Mat mat_dbg;
 
 @interface CppInterface()
 //=======================
-@property float phi; // projection angle in degrees
-@property cv::Mat Mp, invProj; // Projection matrix and inverse
-@property float theta; // rotation angle in degrees
-@property cv::Mat Ms, invRot;  // Rotation matrix and inverse
+//@property float phi; // projection angle in degrees
+//@property cv::Mat Mp, invProj; // Projection matrix and inverse
+//@property float theta; // rotation angle in degrees
+@property cv::Mat Ms, invMs;  // Straightening matrix and inverse
 @property float scale; // scale to make lines CROPSIZE apart
 @property cv::Mat Md, invMd;  // Scale matrix and inverse
 
@@ -227,7 +227,7 @@ extern cv::Mat mat_dbg;
 {
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
     auto vp = vanishing_point( _vertical_lines);
-    vp_vertical_perspective( sz, vp, _Ms, _invRot);
+    vp_vertical_perspective( sz, vp, _Ms, _invMs);
     
     //bool success = wiggle_transform(_horizontal_lines, _vertical_lines, _small_img.cols, _small_img.rows, _Mp, _invProj);
     // Straighten horizontals
@@ -540,7 +540,7 @@ extern cv::Mat mat_dbg;
         cv::perspectiveTransform( _intersections, _intersections_zoomed, M);
         // Do the image zoom directly from source, to reduce loss through repeated transforms
         Points2f orig_corners;
-        unwarp_points( _invProj, _invRot, _invMd, _corners, orig_corners);
+        unwarp_points( _invMs, _invMd, _corners, orig_corners);
         M = cv::getPerspectiveTransform( orig_corners, _corners_zoomed);
         cv::warpPerspective( _orig_small, _small_zoomed, M, sz);
         cv::cvtColor( _small_zoomed, _gray_zoomed, cv::COLOR_RGB2GRAY);
@@ -686,8 +686,8 @@ extern cv::Mat mat_dbg;
     }
     
     Points2f my_corners, my_intersections;
-    unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
-    unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
+    unwarp_points( _invMs, _invMd, _corners, my_corners);
+    unwarp_points( _invMs, _invMd, _intersections, my_intersections);
     if (SZ(my_corners) == 4) {
         draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
                   canvas, cv::Scalar( 255,0,0,255));
@@ -863,8 +863,8 @@ extern cv::Mat mat_dbg;
 - (void) save_current_sgf:(NSString *)fname overwrite:(bool)overwrite
 {
     Points2f unwarped_intersections;
-    unwarp_points( _invProj, _invRot, _invMd, _intersections, unwarped_intersections);
-    std::string sgf_ = generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta);
+    unwarp_points( _invMs, _invMd, _intersections, unwarped_intersections);
+    std::string sgf_ = generate_sgf( "", _diagram, unwarped_intersections);
     NSString *sgf = [NSString stringWithUTF8String:sgf_.c_str()];
     
     NSString *oldsgf = [NSString stringWithContentsOfFile:fname encoding:NSUTF8StringEncoding error:NULL];
@@ -883,8 +883,8 @@ extern cv::Mat mat_dbg;
 - (NSString *) get_sgf
 {
     Points2f unwarped_intersections;
-    unwarp_points( _invProj, _invRot, _invMd, _intersections, unwarped_intersections);
-    return @(generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta).c_str());
+    unwarp_points( _invMs, _invMd, _intersections, unwarped_intersections);
+    return @(generate_sgf( "", _diagram, unwarped_intersections).c_str());
 } // get_sgf()
 
 // Get sgf for a UIImage

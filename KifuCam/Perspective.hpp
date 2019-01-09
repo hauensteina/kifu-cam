@@ -222,15 +222,15 @@ inline cv::Mat scale_transform( double scale)
 // Undo perspective correction on several points so we can draw them on
 // the original image.
 //---------------------------------------------------------------------------------------------------
-inline void unwarp_points( cv::Mat &invProj, cv::Mat &invRot, cv::Mat &invDist, const Points2f &pts_in,
+inline void unwarp_points( cv::Mat &invMs, cv::Mat &invDist, const Points2f &pts_in,
                    Points2f &pts_out)
 {
     pts_out.clear();
     ISLOOP( pts_in) {
         Point2f p = pts_in[i];
         cv::transform( pts_in, pts_out, invDist);
-        cv::perspectiveTransform( pts_out, pts_out, invProj);
-        cv::transform( pts_out, pts_out, invRot);
+        //cv::perspectiveTransform( pts_out, pts_out, invProj);
+        cv::perspectiveTransform( pts_out, pts_out, invMs);
     }
 } // unwarp_points()
 
