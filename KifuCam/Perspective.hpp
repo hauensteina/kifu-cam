@@ -298,7 +298,7 @@ inline cv::Point2f vanishing_point( std::vector<cv::Vec2f> &plines)
     return res;
 } // vanishing_point()
 
-// Find a prespective transform to make all line sharing a vanishing point
+// Find a prespective transform to make all lines sharing a vanishing point
 // parallel and vertical.
 //------------------------------------------------------------------------
 inline void vp_vertical_perspective( cv::Size sz, cv::Point2f vp,
@@ -319,7 +319,16 @@ inline void vp_vertical_perspective( cv::Size sz, cv::Point2f vp,
     Points2f src = { tl, tr, br, bl };
     Points2f dst = { tl_target, tr_target, br_target, bl_target };
     M = cv::getPerspectiveTransform( src, dst);
-    invM = cv::getPerspectiveTransform( dst, src);
+    // Add a translation to make sure we are on the screen
+    Points2f top_left;
+    Points2f zero_zero = { cv::Point2f( 0,0) };
+    cv::perspectiveTransform( zero_zero, top_left, M);
+    cv::Mat A = cv::Mat::eye( 3, 3, CV_64F);
+    // A.at<double>(0,2) = -top_left[0].x; // shift right
+    A.at<double>(1,2) = -top_left[0].y; // shift down
+    M = A * M;
+    invM = M.inv();
+    //invM = cv::getPerspectiveTransform( dst, src);
 } // vp_vertical_perspective()
 
 #endif /* Perspective_hpp */
