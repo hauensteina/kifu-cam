@@ -27,4 +27,4 @@ The algorithmic core makes heavy use of OpenCV and is written in C++.
 Feel free to pilfer and reuse.
 
 # Purchase
-Kifu Cam should be available in the App Store shortly.
+Kifu Cam is in the App Store.
