@@ -372,17 +372,16 @@
                 break;
             case 1:
                 _debugstate++;
-                //img = [self.cppInterface f02_warp_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 2:
-                _debugstate++;
+                _debugstate = 4; // skip state 3
                 img = [self.cppInterface f02_warp_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 3:
                 _debugstate++;
-                img = [self.cppInterface f03_houghlines_dbg];
+                //img = [self.cppInterface f03_houghlines_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 4:

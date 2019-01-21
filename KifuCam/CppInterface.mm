@@ -300,6 +300,7 @@ cv::Vec2f vert_line, horiz_line;
     
     cv::warpPerspective( _small_img, _small_img, _Ms, sz);
     warp_plines( _vertical_lines, _Ms, _vertical_lines);
+    warp_plines( _horizontal_lines, _Ms, _horizontal_lines);
 
     // Unwarp verticals
     //parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
@@ -318,9 +319,12 @@ cv::Vec2f vert_line, horiz_line;
     //dedup_verticals( vlines, _small_img);
     
     // Scale so line distance is CROPSIZE
-    //fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
-    //warp_plines( _vertical_lines, _Md, _vertical_lines);
-    
+    auto vlines = _vertical_lines;
+    dedup_verticals( vlines, _small_img);
+    fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
+    warp_plines( _vertical_lines, _Md, _vertical_lines);
+    warp_plines( _horizontal_lines, _Md, _horizontal_lines);
+
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
 } // f02_warp()
 
@@ -333,63 +337,66 @@ cv::Vec2f vert_line, horiz_line;
 
     cv::Mat drawing = _small_img.clone();
     get_color(true);
-    //ISLOOP( _vertical_lines) {
-    //    draw_polar_line( _vertical_lines[i], drawing, get_color());
-    //}
-    draw_point( p_i, drawing, 5, cv::Scalar(255,0,0));
-    draw_point( p_h, drawing, 5, cv::Scalar(0,255,0));
-    draw_point( p_w, drawing, 5, cv::Scalar(0,0,255));
-    draw_point( p_v, drawing, 5, cv::Scalar(255,255,0));
-    draw_polar_line( vert_line, drawing, cv::Scalar(255,0,0));
-    draw_polar_line( horiz_line, drawing, cv::Scalar(0,255,0));
+    ISLOOP( _vertical_lines) {
+        draw_polar_line( _vertical_lines[i], drawing, get_color());
+    }
+    ISLOOP( _horizontal_lines) {
+        draw_polar_line( _horizontal_lines[i], drawing, get_color());
+    }
+//    draw_point( p_i, drawing, 5, cv::Scalar(255,0,0));
+//    draw_point( p_h, drawing, 5, cv::Scalar(0,255,0));
+//    draw_point( p_w, drawing, 5, cv::Scalar(0,0,255));
+//    draw_point( p_v, drawing, 5, cv::Scalar(255,255,0));
+//    draw_polar_line( vert_line, drawing, cv::Scalar(255,0,0));
+//    draw_polar_line( horiz_line, drawing, cv::Scalar(0,255,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f02_warp_dbg()
 
-// Find lines after dewarp
-//--------------------------------------------------
-- (void) f03_houghlines
-{
-    //_vertical_lines.clear();
-    //_horizontal_lines.clear();
-    //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-    //thresh_dilate( _gray, _gray_threshed);
-    
-    // Warp the old points
-//    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
-//    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
-//    warp_points( _stone_or_empty, _Md, _stone_or_empty);
-
-    // Find blobs after dewarp
-    _stone_or_empty.clear();
-    _vertical_lines.clear();
-    _horizontal_lines.clear();
-    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-    thresh_dilate( _gray, _gray_threshed, 2);
-    BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
-    BlobFinder::find_stones_perp( _gray, _stone_or_empty);
-    //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
-
-    // Find lines
-    perp_houghlines( _small_img, _stone_or_empty,
-                    _vertical_lines, _horizontal_lines);
-    
-
-} // f03_houghlines()
-
-// Debug wrapper for f03_blobs
-//-------------------------------
-- (UIImage *) f03_houghlines_dbg
-{
-    g_app.mainVC.lbBottom.text = @"Stones and Intersections";
-    [self f03_houghlines];
-    
-    // Show results
-    cv::Mat drawing = _small_img.clone();
-    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
-    UIImage *res = MatToUIImage( drawing);
-    return res;
-} // f03_houghlines_dbg()
+//// Find lines after dewarp
+////--------------------------------------------------
+//- (void) f03_houghlines
+//{
+//    //_vertical_lines.clear();
+//    //_horizontal_lines.clear();
+//    //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+//    //thresh_dilate( _gray, _gray_threshed);
+//    
+//    // Warp the old points
+////    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
+////    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
+////    warp_points( _stone_or_empty, _Md, _stone_or_empty);
+//
+//    // Find blobs after dewarp
+//    _stone_or_empty.clear();
+//    _vertical_lines.clear();
+//    _horizontal_lines.clear();
+//    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
+//    thresh_dilate( _gray, _gray_threshed, 2);
+//    BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
+//    BlobFinder::find_stones_perp( _gray, _stone_or_empty);
+//    //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
+//
+//    // Find lines
+//    perp_houghlines( _small_img, _stone_or_empty,
+//                    _vertical_lines, _horizontal_lines);
+//    
+//
+//} // f03_houghlines()
+//
+//// Debug wrapper for f03_blobs
+////-------------------------------
+//- (UIImage *) f03_houghlines_dbg
+//{
+//    g_app.mainVC.lbBottom.text = @"Stones and Intersections";
+//    [self f03_houghlines];
+//    
+//    // Show results
+//    cv::Mat drawing = _small_img.clone();
+//    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
+//    UIImage *res = MatToUIImage( drawing);
+//    return res;
+//} // f03_houghlines_dbg()
 
 
 // Find vertical grid lines
@@ -623,7 +630,7 @@ cv::Vec2f vert_line, horiz_line;
 //--------------------------------
 - (UIImage *) f07_zoom_in_dbg
 {
-    g_app.mainVC.lbBottom.text = @"Perspective transform";
+    g_app.mainVC.lbBottom.text = @"Zoom in";
     [self f07_zoom_in];
     cv::Mat drawing = _small_zoomed.clone();
     ISLOOP (_intersections_zoomed) {
@@ -692,7 +699,7 @@ cv::Vec2f vert_line, horiz_line;
         _orig_small = small_img;
         [self f00_dots_and_verticals];
         [self f02_warp];
-        [self f03_houghlines];
+        //[self f03_houghlines];
         if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(_board_sz)) break;
         [self f04_vert_lines:0];
         [self f04_vert_lines:1];
