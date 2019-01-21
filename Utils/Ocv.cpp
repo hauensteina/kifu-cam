@@ -81,7 +81,7 @@ cv::Point2f unit_vector( cv::Point p)
 {
     double norm = cv::norm(p);
     return cv::Point2f(p.x / (double)norm, p.y / (double)norm);
-}
+} // unit_vector()
 
 // Sort points by x coord and remove duplicates.
 //-------------------------------------------------
@@ -209,9 +209,37 @@ void draw_contours( const Contours cont, cv::Mat &dst)
     }
 } // draw_contours()
 
-
 // Line
 //=========
+
+// Unit vector from line segment
+//----------------------------------------
+cv::Point2f unit_vector( cv::Vec4f line)
+{
+    double dx = line[2]-line[0];
+    double dy = line[3]-line[1];
+    cv::Point2f res( dx, dy);
+    if (fabs(dx) > fabs(dy)) { // horizontal
+        if (dx < 0) {
+            res *= -1.0;
+        }
+    }
+    else { // vertical
+        if (dy < 0) {
+            res *= -1.0;
+        }
+    }
+    res /= cv::norm(res);
+    return res;
+} // unit_vector()
+
+// Unit vector from polar line
+//-----------------------------------------
+cv::Point2f unit_vector( cv::Vec2f pline)
+{
+    return unit_vector( polar2segment( pline));
+} // unit_vector()
+
 //----------------------------------------------------
 double angle_between_lines( cv::Point pa, cv::Point pe,
                            cv::Point qa, cv::Point qe)
@@ -271,7 +299,6 @@ double dist_point_line( cv::Point p, const cv::Vec2f &pline)
     cv::Vec4f line = polar2segment( pline);
     return dist_point_line( p, line);
 }
-
 
 // Intersection of two lines defined by point pairs
 //----------------------------------------------------------

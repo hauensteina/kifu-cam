@@ -298,28 +298,37 @@ inline cv::Point2f vanishing_point( std::vector<cv::Vec2f> &plines)
     return res;
 } // vanishing_point()
 
-// Find a prespective transform to make all lines sharing a vanishing point
-// parallel and vertical.
+// Find a perspective transform to make gridlines orthogonal.
+// Use vanishing points to get there.
 //------------------------------------------------------------------------
-inline void vp_vertical_perspective( cv::Size sz, cv::Point2f vp,
+inline void vp_perspective( cv::Size sz, cv::Point2f vvp, cv::Point2f hvp,
                                     cv::Mat &M, cv::Mat &invM)
 {
     Point2f c( sz.width / 2.0, sz.height / 2.0); // screen center
-    auto d = 20.0;
-    auto tl = cv::Point2f( vp.x - d, c.y);
-    auto tr = cv::Point2f( vp.x + d, c.y);
-    auto dir0 = unit_vector( tl - vp);
-    auto dir1 = unit_vector( tr - vp);
-    auto bl = tl + d * dir0;
-    auto br = tr + d * dir1;
+    auto d = 0.1;
+    auto point_left = cv::Point2f( c.x - d, c.y);
+    auto point_right = cv::Point2f( c.x + d, c.y);
+    auto point_top = cv::Point2f( c.x, c.y - d);
+    auto point_bot = cv::Point2f( c.x, c.y + d);
+    
+    auto left_line = cv::Vec4f( point_left.x, point_left.y, vvp.x, vvp.y);
+    auto right_line = cv::Vec4f( point_right.x, point_right.y, vvp.x, vvp.y);
+    auto top_line = cv::Vec4f( point_top.x, point_top.y, hvp.x, hvp.y);
+    auto bot_line = cv::Vec4f( point_bot.x, point_bot.y, hvp.x, hvp.y);
+    
+    auto tl = intersection( left_line, top_line);
+    auto tr = intersection( right_line, top_line);
+    auto br = intersection( right_line, bot_line);
+    auto bl = intersection( left_line, bot_line);
+    
     auto tl_target = cv::Point2f( bl.x, tl.y);
-    auto tr_target = cv::Point2f( br.x, tr.y);
-    auto br_target = cv::Point2f( br.x, br.y);
+    auto tr_target = cv::Point2f( br.x, tl.y);
+    auto br_target = cv::Point2f( br.x, bl.y);
     auto bl_target = cv::Point2f( bl.x, bl.y);
     Points2f src = { tl, tr, br, bl };
     Points2f dst = { tl_target, tr_target, br_target, bl_target };
     M = cv::getPerspectiveTransform( src, dst);
-    // Add a translation to make sure we are on the screen
+    // Shift down to make sure we are on the screen
     Points2f top_left;
     Points2f zero_zero = { cv::Point2f( 0,0) };
     cv::perspectiveTransform( zero_zero, top_left, M);
@@ -329,6 +338,6 @@ inline void vp_vertical_perspective( cv::Size sz, cv::Point2f vp,
     M = A * M;
     invM = M.inv();
     //invM = cv::getPerspectiveTransform( dst, src);
-} // vp_vertical_perspective()
+} // vp_perspective()
 
 #endif /* Perspective_hpp */

@@ -414,6 +414,21 @@ inline void dedup_horizontals( std::vector<cv::Vec2f> &lines, const cv::Mat &img
     average_cluster_lines( horiz_line_cuts, clusters, lines);
 } // dedup_horizontals()
 
+// A line through the screen center, with median theta
+//---------------------------------------------------------------------------------------
+inline cv::Vec2f median_center_line( const std::vector<cv::Vec2f> &plines, cv::Size sz)
+{
+    auto thetas = vec_extract( plines, [](cv::Vec2f line) { return line[1]; } );
+    auto med_theta = vec_median( thetas);
+    auto seg = polar2segment( cv::Vec2f( 0, med_theta));
+    cv::Point2f dir( seg[2]-seg[0], seg[3]-seg[1]);
+    float cx = sz.width / 2.0;
+    float cy = sz.height / 2.0;
+    cv::Vec4f seg1( cx, cy, cx+dir.x, cy+dir.y);
+    auto res = segment2polar( seg1);
+    return res;
+} // median_line()
+
 // Find a line close to the middle with roughly median theta.
 // The lines should be sorted by rho.
 //-------------------------------------------------------------------

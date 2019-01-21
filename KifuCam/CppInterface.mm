@@ -211,9 +211,9 @@ extern cv::Mat mat_dbg;
     cv::Mat drawing = _small_img.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
     get_color(true);
-//    ISLOOP( _vertical_lines) {
-//        draw_polar_line( _vertical_lines[i], drawing, get_color());
-//    }
+    ISLOOP( _vertical_lines) {
+        draw_polar_line( _vertical_lines[i], drawing, get_color());
+    }
     ISLOOP( _horizontal_lines) {
         draw_polar_line( _horizontal_lines[i], drawing, get_color());
     }
@@ -221,17 +221,83 @@ extern cv::Mat mat_dbg;
     return res;
 } // f00_dots_and_verticals_dbg()
 
+cv::Point2f p_i, p_v, p_h, p_w;
+cv::Point2f p_tl, p_tr, p_br, p_bl;
+cv::Vec2f vert_line, horiz_line;
 // Make verticals parallel and really vertical
 //----------------------------------------------
 - (void) f02_warp //@@@
 {
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
-    auto vp = vanishing_point( _vertical_lines);
-    vp_vertical_perspective( sz, vp, _Ms, _invMs);
+    vert_line = median_center_line( _vertical_lines, sz);
+    horiz_line = median_center_line( _horizontal_lines, sz);
+    p_i = intersection( vert_line, horiz_line);
+    auto vvec = unit_vector( vert_line);
+    auto hvec = unit_vector( horiz_line);
+    double d = 100.0;
+    p_v = p_i + d * vvec;
+    p_h = p_i + d * hvec;
+    p_w = p_v + d * hvec;
+    
+    p_tl = p_i;
+    p_tr = cv::Point2f( p_i.x + d,  p_i.y);
+    p_br = cv::Point2f( p_i.x + d,  p_i.y + d);
+    p_bl = cv::Point2f( p_i.x,  p_i.y + d);
+
+    Points2f pin = { p_i, p_h, p_w, p_v };
+    Points2f pout = { p_tl, p_tr, p_br, p_bl };
+    //_Ms = cv::getPerspectiveTransform( pin, pout);
+    ///_invMs = _Ms.inv();
+    
+    auto parallelity = [self]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> vplines;
+        warp_plines( self.vertical_lines, M, vplines);
+        auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
+        double vq1 = vec_q1( vthetas);
+        double vq3 = vec_q3( vthetas);
+        double vdq = vq3 - vq1;
+
+        std::vector<cv::Vec2f> hplines;
+        warp_plines( self.horizontal_lines, M, hplines);
+        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
+        double hq1 = vec_q1( hthetas);
+        double hq3 = vec_q3( hthetas);
+        double hdq = hq3 - hq1;
+        
+        return vdq+hdq;
+    }; // parallelity()
+
+    // Wiggle p_w (bottom right corner)
+    int r = 10;
+    double eps = 1.0;
+    double minpary = 1E9;
+    for (int xstep = -r; xstep <= r; xstep++) {
+        double x = p_w.x + xstep * eps;
+        for (int ystep = -r; ystep <= r; ystep++) {
+            double y = p_w.y + ystep * eps;
+            pin[2] = cv::Point2f( x, y); // wiggle p_w
+            auto M = cv::getPerspectiveTransform( pin, pout);
+            auto pary = parallelity( M);
+            if (pary < minpary) {
+                minpary = pary;
+                _Ms = M;
+            }
+        } // for ystep
+    } // for xstep
+    _invMs = _Ms.inv();
+    
+    //auto vvp = vanishing_point( _vertical_lines);
+    //if (vvp.y >= 1E9) { vvp.x = sz.width / 2; } // parallel
+    //dedup_horizontals( _horizontal_lines, _orig_small);
+    //filter_lines( _horizontal_lines);
+    //auto hvp = vanishing_point( _horizontal_lines);
+    //if (hvp.x >= 1E9) { hvp.y = sz.height / 2; } // parallel
+    //vp_perspective( sz, vvp, hvp, _Ms, _invMs);
     
     //bool success = wiggle_transform(_horizontal_lines, _vertical_lines, _small_img.cols, _small_img.rows, _Mp, _invProj);
     // Straighten horizontals
     //straight_horiz_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
+    
     cv::warpPerspective( _small_img, _small_img, _Ms, sz);
     warp_plines( _vertical_lines, _Ms, _vertical_lines);
 
@@ -246,14 +312,14 @@ extern cv::Mat mat_dbg;
     //warp_plines( _vertical_lines, _Ms, _vertical_lines);
     
     // Find lines
-    std::vector<cv::Vec2f> hlines, vlines;
-    perp_houghlines( _small_img, _stone_or_empty,
-                    vlines, hlines);
-    dedup_verticals( vlines, _small_img);
+    //std::vector<cv::Vec2f> hlines, vlines;
+    //perp_houghlines( _small_img, _stone_or_empty,
+    //                vlines, hlines);
+    //dedup_verticals( vlines, _small_img);
     
     // Scale so line distance is CROPSIZE
-    fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
-    warp_plines( _vertical_lines, _Md, _vertical_lines);
+    //fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
+    //warp_plines( _vertical_lines, _Md, _vertical_lines);
     
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
 } // f02_warp()
@@ -267,9 +333,15 @@ extern cv::Mat mat_dbg;
 
     cv::Mat drawing = _small_img.clone();
     get_color(true);
-    ISLOOP( _vertical_lines) {
-        draw_polar_line( _vertical_lines[i], drawing, get_color());
-    }
+    //ISLOOP( _vertical_lines) {
+    //    draw_polar_line( _vertical_lines[i], drawing, get_color());
+    //}
+    draw_point( p_i, drawing, 5, cv::Scalar(255,0,0));
+    draw_point( p_h, drawing, 5, cv::Scalar(0,255,0));
+    draw_point( p_w, drawing, 5, cv::Scalar(0,0,255));
+    draw_point( p_v, drawing, 5, cv::Scalar(255,255,0));
+    draw_polar_line( vert_line, drawing, cv::Scalar(255,0,0));
+    draw_polar_line( horiz_line, drawing, cv::Scalar(0,255,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f02_warp_dbg()

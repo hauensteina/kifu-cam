@@ -144,6 +144,10 @@ void rho_positive( cv::Vec2f &pline);
 Points stretch_line(Points line, double factor );
 // Stretch a line by factor, on both ends
 cv::Vec4f stretch_line(cv::Vec4f line, double factor );
+// Unit vector from line segment
+cv::Point2f unit_vector( cv::Vec4f line);
+// Unit vector from polar line
+cv::Point2f unit_vector( cv::Vec2f pline);
 // x given y for polar line
 double x_from_y( double y, cv::Vec2f pline);
 // y given x for polar line
