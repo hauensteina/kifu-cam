@@ -593,7 +593,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     synth_lines.push_back(med_line);
     double top_rho, bot_rho;
     // If there is a close line, use it. Else interpolate.
-    const double X_THRESH = x_thresh; //6;
+    const double X_THRESH = 0; // x_thresh; //6;
     // Lines to the right
     top_rho = x_from_y( top_y, med_line);
     bot_rho = x_from_y( bot_y, med_line);
@@ -681,7 +681,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     synth_lines.push_back(med_line);
     double left_rho, right_rho;
     // If there is a close line, use it. Else interpolate.
-    const double Y_THRESH = y_thresh; //6;
+    const double Y_THRESH = 0; //y_thresh; //6;
     // Lines below
     left_rho = y_from_x( left_x, med_line);
     right_rho = y_from_x( right_x, med_line);

@@ -221,6 +221,52 @@ extern cv::Mat mat_dbg;
     return res;
 } // f00_dots_and_verticals_dbg()
 
+// Wiggle one source point along x or y to optimize paralellity of lines
+//---------------------------------------------------------------------------------------------
+cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv::Vec2f> &hlines,
+                         Points2f &src, int idx, char dir, Points2f target,
+                         int radius, double epsilon)
+{
+    auto parallelity = [&vlines, &hlines]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> vplines;
+        warp_plines( vlines, M, vplines);
+        auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
+        double vq1 = vec_q1( vthetas);
+        double vq3 = vec_q3( vthetas);
+        double vdq = vq3 - vq1;
+        
+        std::vector<cv::Vec2f> hplines;
+        warp_plines( hlines, M, hplines);
+        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
+        double hq1 = vec_q1( hthetas);
+        double hq3 = vec_q3( hthetas);
+        double hdq = hq3 - hq1;
+        
+        return vdq+hdq;
+    }; // parallelity()
+
+    double minpary = 1E9;
+    float xymin = 1E9;
+    cv::Mat res;
+    
+    auto xy = (dir == 'x' ? src[idx].x : src[idx].y);
+    auto &resval = (dir == 'x' ? src[idx].x : src[idx].y);
+    
+    for (int step = -radius; step <= radius; step++) {
+        auto xy_wiggle = xy + epsilon * step;
+        resval = xy_wiggle;
+        auto M = cv::getPerspectiveTransform( src, target);
+        auto pary = parallelity( M);
+        if (pary < minpary) {
+            minpary = pary;
+            xymin = xy_wiggle;
+            res = M;
+        }
+    } // for
+    resval = xymin;
+    return res;
+} // wiggle_transform()
+
 cv::Point2f p_i, p_v, p_h, p_w;
 cv::Point2f p_tl, p_tr, p_br, p_bl;
 cv::Vec2f vert_line, horiz_line;
@@ -244,59 +290,60 @@ cv::Vec2f vert_line, horiz_line;
     p_br = cv::Point2f( p_i.x + d,  p_i.y + d);
     p_bl = cv::Point2f( p_i.x,  p_i.y + d);
 
+    // A good initial guess for persp trans
     Points2f pin = { p_i, p_h, p_w, p_v };
     Points2f pout = { p_tl, p_tr, p_br, p_bl };
-    //_Ms = cv::getPerspectiveTransform( pin, pout);
-    ///_invMs = _Ms.inv();
     
-    auto parallelity = [self]( const cv::Mat &M) {
-        std::vector<cv::Vec2f> vplines;
-        warp_plines( self.vertical_lines, M, vplines);
-        auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
-        double vq1 = vec_q1( vthetas);
-        double vq3 = vec_q3( vthetas);
-        double vdq = vq3 - vq1;
+    //dedup_verticals( _vertical_lines, _small_img);
+    //dedup_horizontals( _horizontal_lines, _small_img);
+    // Improve it
+    int rad = 10; double eps = 0.5;
+//    // br = 2
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
 
-        std::vector<cv::Vec2f> hplines;
-        warp_plines( self.horizontal_lines, M, hplines);
-        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
-        double hq1 = vec_q1( hthetas);
-        double hq3 = vec_q3( hthetas);
-        double hdq = hq3 - hq1;
-        
-        return vdq+hdq;
-    }; // parallelity()
-
-    // Wiggle p_w (bottom right corner)
-    int r = 10;
-    double eps = 1.0;
-    double minpary = 1E9;
-    for (int xstep = -r; xstep <= r; xstep++) {
-        double x = p_w.x + xstep * eps;
-        for (int ystep = -r; ystep <= r; ystep++) {
-            double y = p_w.y + ystep * eps;
-            pin[2] = cv::Point2f( x, y); // wiggle p_w
-            auto M = cv::getPerspectiveTransform( pin, pout);
-            auto pary = parallelity( M);
-            if (pary < minpary) {
-                minpary = pary;
-                _Ms = M;
-            }
-        } // for ystep
-    } // for xstep
     _invMs = _Ms.inv();
-    
-    //auto vvp = vanishing_point( _vertical_lines);
-    //if (vvp.y >= 1E9) { vvp.x = sz.width / 2; } // parallel
-    //dedup_horizontals( _horizontal_lines, _orig_small);
-    //filter_lines( _horizontal_lines);
-    //auto hvp = vanishing_point( _horizontal_lines);
-    //if (hvp.x >= 1E9) { hvp.y = sz.height / 2; } // parallel
-    //vp_perspective( sz, vvp, hvp, _Ms, _invMs);
-    
-    //bool success = wiggle_transform(_horizontal_lines, _vertical_lines, _small_img.cols, _small_img.rows, _Mp, _invProj);
-    // Straighten horizontals
-    //straight_horiz_rotation( sz, _horizontal_lines, _theta, _Ms, _invRot);
+
+//    auto parallelity = [self]( const cv::Mat &M) {
+//        std::vector<cv::Vec2f> vplines;
+//        warp_plines( self.vertical_lines, M, vplines);
+//        auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
+//        double vq1 = vec_q1( vthetas);
+//        double vq3 = vec_q3( vthetas);
+//        double vdq = vq3 - vq1;
+//
+//        std::vector<cv::Vec2f> hplines;
+//        warp_plines( self.horizontal_lines, M, hplines);
+//        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
+//        double hq1 = vec_q1( hthetas);
+//        double hq3 = vec_q3( hthetas);
+//        double hdq = hq3 - hq1;
+//
+//        return vdq+hdq;
+//    }; // parallelity()
+//
+//    // Wiggle p_w (bottom right corner)
+//    int r = 40;
+//    double eps = 0.5;
+//    double minpary = 1E9;
+//    for (int xstep = -r; xstep <= r; xstep++) {
+//        double x = p_w.x + xstep * eps;
+//        for (int ystep = -r; ystep <= r; ystep++) {
+//            double y = p_w.y + ystep * eps;
+//            pin[2] = cv::Point2f( x, y); // wiggle p_w
+//            auto M = cv::getPerspectiveTransform( pin, pout);
+//            auto pary = parallelity( M);
+//            if (pary < minpary) {
+//                minpary = pary;
+//                _Ms = M;
+//            }
+//        } // for ystep
+//    } // for xstep
+//    _invMs = _Ms.inv();
     
     cv::warpPerspective( _small_img, _small_img, _Ms, sz);
     warp_plines( _vertical_lines, _Ms, _vertical_lines);
@@ -423,7 +470,7 @@ cv::Vec2f vert_line, horiz_line;
         }
         case 3:
         {
-            const double x_thresh = CROPSIZE / 4.0;
+            const double x_thresh = CROPSIZE / 8.0; // 4.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
         }
@@ -506,7 +553,7 @@ cv::Vec2f vert_line, horiz_line;
         }
         case 3:
         {
-            const double y_thresh = CROPSIZE / 4.0;
+            const double y_thresh = CROPSIZE / 8.0; //4.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
