@@ -253,8 +253,8 @@ cv::Vec2f vert_line, horiz_line;
     //dedup_verticals( _vertical_lines, _small_img);
     //dedup_horizontals( _horizontal_lines, _small_img);
     // Improve it
-    int rad = 10; double eps = 0.5;
-//    // br = 2
+    int rad = 20; double eps = 0.25;
+    // br = 2
     _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
     _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
     _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
