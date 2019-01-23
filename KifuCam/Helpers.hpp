@@ -577,6 +577,24 @@ inline std::vector<cv::Vec2f> gen_parallel_lines( double rho, double theta, doub
     return res;
 } // gen_parallel_lines()
 
+// See how closely a set of equidistant parallel lines matches a set of lines.
+// Mode is 'v' or 'h' for horizontal or vertical.
+//-----------------------------------------------------------------------------------------------------
+inline double match_lines( std::vector<cv::Vec2f> parlines, std::vector<cv::Vec2f> lines, char mode)
+{
+    std::vector<double> dists;
+    ISLOOP( lines) {
+        double mindist = 1E9;
+        JSLOOP( parlines) {
+            auto d = line_dist( lines[i], parlines[j], mode);
+            if (d < mindist) { mindist = d; }
+        }
+        dists.push_back( mindist);
+    } // ISLOOP
+    double res = vec_median( dists);
+    return res;
+} // match_lines()
+
 // Find the x-change per line in in upper and lower screen area and synthesize
 // the whole bunch starting at the middle. Replace synthesized lines with real
 // ones if close enough.
@@ -611,14 +629,59 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     }
     cv::Vec2f med_line = lines[good_idx];
     
+    // Initial set of parallels
     std::vector<cv::Vec2f> synth_lines;
     synth_lines = gen_parallel_lines( med_line[0], med_line[1], d_rho, img.rows, img.cols);
+    auto dist = match_lines( synth_lines, all_vert_lines, 'v');
+
+    // Optimize
+    const double eps_theta = 0.01;
+    const double eps_rho = 0.5;
+    const double eps_d = 0.1;
+    auto rho = med_line[0];
+    auto theta = med_line[1];
+    auto d = d_rho;
+    
+    bool change = true; int loops = 0;
+    while (change and loops < 3) {
+        change = false; loops++;
+        for ( auto ntheta: { theta - eps_theta, theta + eps_theta}) {
+            auto parlines = gen_parallel_lines( rho, ntheta, d, img.rows, img.cols);
+            auto ndist = match_lines( parlines, all_vert_lines, 'v');
+            if (ndist < dist) {
+                dist = ndist;
+                theta = ntheta;
+                change = true;
+            }
+        }
+        for ( auto nrho: { rho - eps_rho, rho + eps_rho}) {
+            auto parlines = gen_parallel_lines( nrho, theta, d, img.rows, img.cols);
+            auto ndist = match_lines( parlines, all_vert_lines, 'v');
+            if (ndist < dist) {
+                dist = ndist;
+                rho = nrho;
+                change = true;
+            }
+        }
+        for ( auto nd: { d - eps_d, d + eps_d}) {
+            auto parlines = gen_parallel_lines( rho, theta, nd, img.rows, img.cols);
+            auto ndist = match_lines( parlines, all_vert_lines, 'v');
+            if (ndist < dist) {
+                dist = ndist;
+                d = nd;
+                change = true;
+            }
+        }
+    } // while
+    
+    synth_lines = gen_parallel_lines( rho, theta, d, img.rows, img.cols);
     std::sort( synth_lines.begin(), synth_lines.end(),
               [bot_y](cv::Vec2f a, cv::Vec2f b) {
                   return x_from_y( bot_y, a) < x_from_y( bot_y, b);
               });
     lines = synth_lines;
 } // fix_vertical_lines()
+
 
 // Find the y-change per line in in left and right screen area and synthesize
 // the whole bunch starting at the middle. Replace synthesized lines with real
