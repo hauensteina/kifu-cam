@@ -125,6 +125,8 @@ double dist_point_line( cv::Point p, const cv::Vec2f &pline);
 Point2f intersection( cv::Vec4f line1, cv::Vec4f line2);
 // Intersection of polar lines (rho, theta)
 Point2f intersection( cv::Vec2f line1, cv::Vec2f line2);
+// Distance metric for line similarity
+double line_dist( cv::Vec2f line1, cv::Vec2f line2, char mode);
 // Length of a line segment
 double line_len( cv::Point p, cv::Point q);
 // Median pixel val on line segment
@@ -132,8 +134,6 @@ int median_on_segment( const cv::Mat &gray, cv::Point p1, cv::Point p2);
 int median_on_segment( const cv::Mat &gray, cv::Vec4f seg);
 // Sum of values on line segment
 double sum_on_segment( const cv::Mat &gray, cv::Point p1, cv::Point p2);
-// Median polar line bt theta
-//cv::Vec4f median_slope_line( const std::vector<cv::Vec2f> &plines );
 // Get a line segment representation of a polar line (rho, theta)
 cv::Vec4f polar2segment( const cv::Vec2f &pline);
 // Line segment to polar, with positive rho

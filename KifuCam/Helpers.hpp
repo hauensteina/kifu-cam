@@ -553,14 +553,37 @@ inline int closest_horiz_line( const std::vector<cv::Vec2f> &lines, double left_
 } // closest_horiz_line()
 
 
+// Generate a set of parallel lines to line( rho,theta) with distance d.
+//---------------------------------------------------------------------------------------------------------
+inline std::vector<cv::Vec2f> gen_parallel_lines( double rho, double theta, double d, int rows, int cols)
+{
+    assert( rho >= 0); assert( d > 0);
+    auto rho_0 = fmod( rho,d);
+    auto line_0 = cv::Vec2f( rho_0, theta);
+    double diag = sqrt( rows*rows + cols*cols);
+    cv::Point2f center( cols/2.0, rows/2.0);
+    std::vector<cv::Vec2f> res;
+    auto line = line_0;
+    while (fabs( dist_point_line( center, line)) < diag / 2.0) {
+        res.push_back( line);
+        line[0] += d;
+    }
+    line = line_0;
+    while (fabs( dist_point_line( center, line)) < diag / 2.0) {
+        res.push_back( line);
+        line[0] -= d;
+    }
+    
+    return res;
+} // gen_parallel_lines()
+
 // Find the x-change per line in in upper and lower screen area and synthesize
 // the whole bunch starting at the middle. Replace synthesized lines with real
 // ones if close enough.
-//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector<cv::Vec2f> &all_vert_lines,
                         const cv::Mat &img, double x_thresh = 4.0)
 {
-    const double width = img.cols;
     const int top_y = 0.2 * img.rows;
     const int bot_y = 0.8 * img.rows;
 
@@ -588,52 +611,8 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     }
     cv::Vec2f med_line = lines[good_idx];
     
-    // Interpolate the rest
     std::vector<cv::Vec2f> synth_lines;
-    synth_lines.push_back(med_line);
-    double top_rho, bot_rho;
-    // If there is a close line, use it. Else interpolate.
-    const double X_THRESH = 0; // x_thresh; //6;
-    // Lines to the right
-    top_rho = x_from_y( top_y, med_line);
-    bot_rho = x_from_y( bot_y, med_line);
-    ILOOP(100) {
-        //top_rho += d_top_rho;
-        top_rho += d_rho;
-        bot_rho += d_rho;
-        double dtop, dbot, err, top_x, bot_x;
-        //closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
-        closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
-                          dtop, dbot, err, top_x, bot_x); // out
-        if (dbot < X_THRESH && dtop < X_THRESH) {
-            top_rho   = top_x;
-            bot_rho   = bot_x;
-        }
-        cv::Vec2f line = segment2polar( cv::Vec4f( top_rho, top_y, bot_rho, bot_y));
-        if (top_rho > width) break;
-        if (i > 19) break;
-        synth_lines.push_back( line);
-    } // ILOOP
-    // Lines to the left
-    top_rho = x_from_y( top_y, med_line);
-    bot_rho = x_from_y( bot_y, med_line);
-    ILOOP(100) {
-        //top_rho -= d_top_rho;
-        top_rho -= d_rho;
-        bot_rho -= d_rho;
-        double dtop, dbot, err, top_x, bot_x;
-        //closest_vert_line( all_vert_lines, top_rho, bot_rho, top_y, bot_y, // in
-        closest_vert_line( lines, top_rho, bot_rho, top_y, bot_y, // in
-                          dtop, dbot, err, top_x, bot_x); // out
-        if (dbot < X_THRESH && dtop < X_THRESH) {
-            top_rho   = top_x;
-            bot_rho   = bot_x;
-        }
-        cv::Vec2f line = segment2polar( cv::Vec4f( top_rho, top_y, bot_rho, bot_y));
-        if (top_rho < 0) break;
-        if (i > 19) break;
-        synth_lines.push_back( line);
-    } // ILOOP
+    synth_lines = gen_parallel_lines( med_line[0], med_line[1], d_rho, img.rows, img.cols);
     std::sort( synth_lines.begin(), synth_lines.end(),
               [bot_y](cv::Vec2f a, cv::Vec2f b) {
                   return x_from_y( bot_y, a) < x_from_y( bot_y, b);

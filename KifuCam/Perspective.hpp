@@ -340,4 +340,51 @@ inline void vp_perspective( cv::Size sz, cv::Point2f vvp, cv::Point2f hvp,
     //invM = cv::getPerspectiveTransform( dst, src);
 } // vp_perspective()
 
+// Wiggle one source point along x or y to optimize paralellity of lines
+//-----------------------------------------------------------------------------------------------
+inline cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv::Vec2f> &hlines,
+                                Points2f &src, int idx, char dir, Points2f target,
+                                int radius, double epsilon)
+{
+    auto parallelity = [&vlines, &hlines]( const cv::Mat &M) {
+        std::vector<cv::Vec2f> vplines;
+        warp_plines( vlines, M, vplines);
+        auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
+        double vq1 = vec_q1( vthetas);
+        double vq3 = vec_q3( vthetas);
+        double vdq = vq3 - vq1;
+        
+        std::vector<cv::Vec2f> hplines;
+        warp_plines( hlines, M, hplines);
+        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
+        double hq1 = vec_q1( hthetas);
+        double hq3 = vec_q3( hthetas);
+        double hdq = hq3 - hq1;
+        
+        return vdq+hdq;
+    }; // parallelity()
+    
+    double minpary = 1E9;
+    float xymin = 1E9;
+    cv::Mat res;
+    
+    auto xy = (dir == 'x' ? src[idx].x : src[idx].y);
+    auto &resval = (dir == 'x' ? src[idx].x : src[idx].y);
+    
+    for (int step = -radius; step <= radius; step++) {
+        auto xy_wiggle = xy + epsilon * step;
+        resval = xy_wiggle;
+        auto M = cv::getPerspectiveTransform( src, target);
+        auto pary = parallelity( M);
+        if (pary < minpary) {
+            minpary = pary;
+            xymin = xy_wiggle;
+            res = M;
+        }
+    } // for
+    resval = xymin;
+    return res;
+} // wiggle_transform()
+
+
 #endif /* Perspective_hpp */

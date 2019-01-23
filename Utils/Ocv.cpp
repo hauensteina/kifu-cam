@@ -320,6 +320,23 @@ Point2f intersection( cv::Vec2f line1, cv::Vec2f line2)
     return intersection( seg1, seg2);
 }
 
+// Distance metric to compare two polar lines.
+// Mode is either 'h' or 'v' for horiz or vert line comparison.
+// Sum the distances at 0 and 500.
+//---------------------------------------------------------------------
+double line_dist( cv::Vec2f line1, cv::Vec2f line2, char mode)
+{
+    double lim = 500.0;
+    auto lineval = [mode]( cv::Vec2f line, double xy) {
+        if (mode == 'h') { return y_from_x( xy, line); }
+        else { return x_from_y( xy, line); }
+    };
+    double res = fabs( lineval( line1, 0) - lineval( line2, 0)) +
+    fabs( lineval( line1, lim) - lineval( line2, lim));
+    
+    return res;
+} // line_dist()
+
 // Length of a line segment
 //---------------------------------------------------------
 double line_len( cv::Point p, cv::Point q)
