@@ -680,15 +680,13 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     lines = synth_lines;
 } // fix_vertical_lines()
 
-
 // Find the y-change per line in in left and right screen area and synthesize
 // the whole bunch starting at the middle. Replace synthesized lines with real
 // ones if close enough.
-//-------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
 inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vector<cv::Vec2f> &all_horiz_lines,
-                                 const cv::Mat &img, double y_thresh = 4.0)
+                                 const cv::Mat &img)
 {
-    const double height = img.rows;
     const int left_x = 0.2 * img.cols;
     const int right_x = 0.8 * img.cols;
 
@@ -702,8 +700,6 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
                                                  [right_x](cv::Vec2f a) { return y_from_x( right_x, a); });
     auto d_left_rhos = vec_delta( left_rhos);
     auto d_right_rhos = vec_delta( right_rhos);
-    vec_filter( d_left_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 2 * CROPSIZE;});
-    vec_filter( d_right_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 2 * CROPSIZE;});
     double d_left_rho  = vec_median( d_left_rhos);
     double d_right_rho = vec_median( d_right_rhos);
     double d_rho = (d_left_rho + d_right_rho) / 2.0;
@@ -716,57 +712,58 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     }
     cv::Vec2f med_line = lines[good_idx];
     
-    // Interpolate the rest
+    // Initial set of parallels
     std::vector<cv::Vec2f> synth_lines;
-    synth_lines.push_back(med_line);
-    double left_rho, right_rho;
-    // If there is a close line, use it. Else interpolate.
-    const double Y_THRESH = 0; //y_thresh; //6;
-    // Lines below
-    left_rho = y_from_x( left_x, med_line);
-    right_rho = y_from_x( right_x, med_line);
-    ILOOP(100) {
-        left_rho += d_rho;
-        right_rho += d_rho;
-        double dleft, dright, err, left_y, right_y;
-        //closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
-        closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
-                           dleft, dright, err, left_y, right_y); // out
-        if (dleft < Y_THRESH && dright < Y_THRESH) {
-            left_rho    = left_y;
-            right_rho   = right_y;
+    synth_lines = gen_parallel_lines( med_line[0], med_line[1], d_rho, img.rows, img.cols);
+    auto dist = match_lines( synth_lines, all_horiz_lines, 'h');
+
+    // Optimize
+    const double eps_theta = 0.01;
+    const double eps_rho = 0.5;
+    const double eps_d = 0.1;
+    auto rho = med_line[0];
+    auto theta = med_line[1];
+    auto d = d_rho;
+    
+    bool change = true; int loops = 0;
+    while (change and loops < 3) {
+        change = false; loops++;
+        for ( auto ntheta: { theta - eps_theta, theta + eps_theta}) {
+            auto parlines = gen_parallel_lines( rho, ntheta, d, img.rows, img.cols);
+            auto ndist = match_lines( parlines, all_horiz_lines, 'h');
+            if (ndist < dist) {
+                dist = ndist;
+                theta = ntheta;
+                change = true;
+            }
         }
-        cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
-        if (right_rho > height) break;
-        if (i > 19) break;
-        synth_lines.push_back( line);
-    } // ILOOP
-    // Lines above
-    left_rho = y_from_x( left_x, med_line);
-    right_rho = y_from_x( right_x, med_line);
-    ILOOP(100) {
-        left_rho -= d_rho;
-        right_rho -= d_rho;
-        double dleft, dright, err, left_y, right_y;
-        //closest_horiz_line( all_horiz_lines, left_rho, right_rho, left_x, right_x, // in
-        closest_horiz_line( lines, left_rho, right_rho, left_x, right_x, // in
-                           dleft, dright, err, left_y, right_y); // out
-        if (dleft < Y_THRESH && dright < Y_THRESH) {
-            left_rho    = left_y;
-            right_rho   = right_y;
+        for ( auto nrho: { rho - eps_rho, rho + eps_rho}) {
+            auto parlines = gen_parallel_lines( nrho, theta, d, img.rows, img.cols);
+            auto ndist = match_lines( parlines, all_horiz_lines, 'h');
+            if (ndist < dist) {
+                dist = ndist;
+                rho = nrho;
+                change = true;
+            }
         }
-        cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
-        if (left_rho < 0) break;
-        if (i > 19) break;
-        synth_lines.push_back( line);
-    } // ILOOP
+        for ( auto nd: { d - eps_d, d + eps_d}) {
+            auto parlines = gen_parallel_lines( rho, theta, nd, img.rows, img.cols);
+            auto ndist = match_lines( parlines, all_horiz_lines, 'h');
+            if (ndist < dist) {
+                dist = ndist;
+                d = nd;
+                change = true;
+            }
+        }
+    } // while
+    
+    synth_lines = gen_parallel_lines( rho, theta, d, img.rows, img.cols);
     std::sort( synth_lines.begin(), synth_lines.end(),
-              [right_x](cv::Vec2f a, cv::Vec2f b) {
-                  return y_from_x( right_x, a) < y_from_x( right_x, b);
+              [left_x](cv::Vec2f a, cv::Vec2f b) {
+                  return y_from_x( left_x, a) < y_from_x( left_x, b);
               });
     lines = synth_lines;
 } // fix_horizontal_lines()
-
 
 // Find the median distance between vert lines for given horizontal.
 // We use the result to find the next horizontal line.

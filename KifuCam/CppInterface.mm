@@ -220,15 +220,14 @@ extern cv::Mat mat_dbg;
     return res;
 } // f00_dots_and_lines_dbg()
 
-
-
-cv::Point2f p_i, p_v, p_h, p_w;
-cv::Point2f p_tl, p_tr, p_br, p_bl;
-cv::Vec2f vert_line, horiz_line;
-// Make verticals parallel and really vertical
-//----------------------------------------------
+// Make lines parallel
+//-------------------------
 - (void) f02_warp //@@@
 {
+    cv::Point2f p_i, p_v, p_h, p_w;
+    cv::Point2f p_tl, p_tr, p_br, p_bl;
+    cv::Vec2f vert_line, horiz_line;
+
     dedup_horizontals( _horizontal_lines, _orig_small);
     dedup_verticals( _vertical_lines, _orig_small);
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
@@ -289,15 +288,9 @@ cv::Vec2f vert_line, horiz_line;
     ISLOOP( _vertical_lines) {
         draw_polar_line( _vertical_lines[i], drawing, get_color());
     }
-//    ISLOOP( _horizontal_lines) {
-//        draw_polar_line( _horizontal_lines[i], drawing, get_color());
-//    }
-//    draw_point( p_i, drawing, 5, cv::Scalar(255,0,0));
-//    draw_point( p_h, drawing, 5, cv::Scalar(0,255,0));
-//    draw_point( p_w, drawing, 5, cv::Scalar(0,0,255));
-//    draw_point( p_v, drawing, 5, cv::Scalar(255,255,0));
-//    draw_polar_line( vert_line, drawing, cv::Scalar(255,0,0));
-//    draw_polar_line( horiz_line, drawing, cv::Scalar(0,255,0));
+    ISLOOP( _horizontal_lines) {
+        draw_polar_line( _horizontal_lines[i], drawing, get_color());
+    }
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f02_warp_dbg()
@@ -389,15 +382,9 @@ cv::Vec2f vert_line, horiz_line;
             dedup_horizontals( _horizontal_lines, _gray);
             break;
         }
-        case 2:
-        {
-            //filter_lines( _horizontal_lines);
-            break;
-        }
         case 3:
         {
-            const double y_thresh = CROPSIZE / 8.0; //4.0;
-            fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
+            fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray);
             break;
         }
         default:
@@ -427,12 +414,6 @@ cv::Vec2f vert_line, horiz_line;
             break;
         }
         case 2:
-        {
-            g_app.mainVC.lbBottom.text = @"Filter";
-            [self f05_horiz_lines:2];
-            break;
-        }
-        case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
             [self f05_horiz_lines:3];
