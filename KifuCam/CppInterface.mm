@@ -164,9 +164,9 @@ extern cv::Mat mat_dbg;
 //=== Debug Flow ===
 //==================
 
-// Find some intersections, blobs, verticals
+// Find some intersections, blobs, lines
 //--------------------------------------------------
-- (void) f00_dots_and_verticals
+- (void) f00_dots_and_lines
 {
     _vertical_lines.clear();
     _horizontal_lines.clear();
@@ -187,12 +187,11 @@ extern cv::Mat mat_dbg;
     // Find lines
     rough_houghlines( _small_img, _stone_or_empty,
                      _vertical_lines, _horizontal_lines);
-    //filter_lines( _horizontal_lines);
-} // f00_dots_and_verticals()
+} // f00_dots_and_lines()
 
-// Debug wrapper for f00_dots_and_verticals
+// Debug wrapper for f00_dots_and_lines
 //--------------------------------------------
-- (UIImage *) f00_dots_and_verticals_dbg
+- (UIImage *) f00_dots_and_lines_dbg
 {
     _board_sz = 19;
     g_app.mainVC.lbBottom.text = @"Tap the screen";
@@ -206,7 +205,7 @@ extern cv::Mat mat_dbg;
     }
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     UIImageToMat( img, _orig_small);
-    [self f00_dots_and_verticals];
+    [self f00_dots_and_lines];
     
     cv::Mat drawing = _small_img.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
@@ -219,7 +218,7 @@ extern cv::Mat mat_dbg;
     }
     UIImage *res = MatToUIImage( drawing);
     return res;
-} // f00_dots_and_verticals_dbg()
+} // f00_dots_and_lines_dbg()
 
 
 
@@ -230,6 +229,8 @@ cv::Vec2f vert_line, horiz_line;
 //----------------------------------------------
 - (void) f02_warp //@@@
 {
+    dedup_horizontals( _horizontal_lines, _orig_small);
+    dedup_verticals( _vertical_lines, _orig_small);
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
     vert_line = median_center_line( _vertical_lines, sz);
     horiz_line = median_center_line( _horizontal_lines, sz);
@@ -250,76 +251,21 @@ cv::Vec2f vert_line, horiz_line;
     Points2f pin = { p_i, p_h, p_w, p_v };
     Points2f pout = { p_tl, p_tr, p_br, p_bl };
     
-    //dedup_verticals( _vertical_lines, _small_img);
-    //dedup_horizontals( _horizontal_lines, _small_img);
     // Improve it
-    int rad = 20; double eps = 0.25;
-    // br = 2
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'x', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, 2, 'y', pout, rad, eps );
+    int rad = 30; double eps = 0.15;
+    const int bottom_right = 2;
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
+    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
 
     _invMs = _Ms.inv();
-
-//    auto parallelity = [self]( const cv::Mat &M) {
-//        std::vector<cv::Vec2f> vplines;
-//        warp_plines( self.vertical_lines, M, vplines);
-//        auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
-//        double vq1 = vec_q1( vthetas);
-//        double vq3 = vec_q3( vthetas);
-//        double vdq = vq3 - vq1;
-//
-//        std::vector<cv::Vec2f> hplines;
-//        warp_plines( self.horizontal_lines, M, hplines);
-//        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
-//        double hq1 = vec_q1( hthetas);
-//        double hq3 = vec_q3( hthetas);
-//        double hdq = hq3 - hq1;
-//
-//        return vdq+hdq;
-//    }; // parallelity()
-//
-//    // Wiggle p_w (bottom right corner)
-//    int r = 40;
-//    double eps = 0.5;
-//    double minpary = 1E9;
-//    for (int xstep = -r; xstep <= r; xstep++) {
-//        double x = p_w.x + xstep * eps;
-//        for (int ystep = -r; ystep <= r; ystep++) {
-//            double y = p_w.y + ystep * eps;
-//            pin[2] = cv::Point2f( x, y); // wiggle p_w
-//            auto M = cv::getPerspectiveTransform( pin, pout);
-//            auto pary = parallelity( M);
-//            if (pary < minpary) {
-//                minpary = pary;
-//                _Ms = M;
-//            }
-//        } // for ystep
-//    } // for xstep
-//    _invMs = _Ms.inv();
     
     cv::warpPerspective( _small_img, _small_img, _Ms, sz);
     warp_plines( _vertical_lines, _Ms, _vertical_lines);
     warp_plines( _horizontal_lines, _Ms, _horizontal_lines);
-
-    // Unwarp verticals
-    //parallel_projection( sz, _vertical_lines, _phi, _Mp, _invProj);
-    //cv::warpPerspective( _small_img, _small_img, _Mp, sz);
-    //warp_plines( _vertical_lines, _Mp, _vertical_lines);
-
-    // Straighten verticals
-    //straight_vert_rotation( sz, _vertical_lines, _theta, _Ms, _invRot);
-    //cv::warpAffine( _small_img, _small_img, _Ms, sz);
-    //warp_plines( _vertical_lines, _Ms, _vertical_lines);
-    
-    // Find lines
-    //std::vector<cv::Vec2f> hlines, vlines;
-    //perp_houghlines( _small_img, _stone_or_empty,
-    //                vlines, hlines);
-    //dedup_verticals( vlines, _small_img);
     
     // Scale so line distance is CROPSIZE
     auto vlines = _vertical_lines;
@@ -420,14 +366,7 @@ cv::Vec2f vert_line, horiz_line;
         }
         case 2:
         {
-            // Distance between verticals should be CROPSIZE
-            //fix_vertical_distance( _vertical_lines, _small_img);
-            break;
-        }
-        case 3:
-        {
-            const double x_thresh = CROPSIZE / 8.0; // 4.0;
-            fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
+            fix_vertical_lines( _vertical_lines, all_vert_lines, _gray);
             break;
         }
         default:
@@ -458,12 +397,6 @@ cv::Vec2f vert_line, horiz_line;
             break;
         }
         case 2:
-        {
-            g_app.mainVC.lbBottom.text = @"Filter";
-            [self f04_vert_lines:state];
-            break;
-        }
-        case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
             [self f04_vert_lines:state];
@@ -700,7 +633,7 @@ cv::Vec2f vert_line, horiz_line;
     bool success = false;
     do {
         _orig_small = small_img;
-        [self f00_dots_and_verticals];
+        [self f00_dots_and_lines];
         [self f02_warp];
         //[self f03_houghlines];
         if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(_board_sz)) break;

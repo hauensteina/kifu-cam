@@ -600,7 +600,7 @@ inline double match_lines( std::vector<cv::Vec2f> parlines, std::vector<cv::Vec2
 // ones if close enough.
 //------------------------------------------------------------------------------------------------------------
 inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector<cv::Vec2f> &all_vert_lines,
-                        const cv::Mat &img, double x_thresh = 4.0)
+                        const cv::Mat &img)
 {
     const int top_y = 0.2 * img.rows;
     const int bot_y = 0.8 * img.rows;
@@ -615,8 +615,6 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
                                                [bot_y](cv::Vec2f a) { return x_from_y( bot_y, a); });
     auto d_top_rhos = vec_delta( top_rhos);
     auto d_bot_rhos = vec_delta( bot_rhos);
-    vec_filter( d_top_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.5 * CROPSIZE;});
-    vec_filter( d_bot_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.5 * CROPSIZE;});
     double d_top_rho = vec_median( d_top_rhos);
     double d_bot_rho = vec_median( d_bot_rhos);
     double d_rho = (d_top_rho + d_bot_rho) / 2.0;

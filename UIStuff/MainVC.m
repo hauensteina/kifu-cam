@@ -367,7 +367,7 @@
             case 0:
                 _debugstate=2;
                 [self.frameExtractor suspend];
-                img = [self.cppInterface f00_dots_and_verticals_dbg];
+                img = [self.cppInterface f00_dots_and_lines_dbg];
                 [self.cameraView setImage:img];
                 break;
             case 1:

@@ -34,7 +34,7 @@
 
 // Individual steps for debugging
 //---------------------------------
-- (UIImage *) f00_dots_and_verticals_dbg;
+- (UIImage *) f00_dots_and_lines_dbg;
 - (UIImage *) f02_warp_dbg;
 //- (UIImage *) f03_houghlines_dbg;
 - (UIImage *) f04_vert_lines_dbg;
@@ -43,7 +43,7 @@
 - (UIImage *) f07_zoom_in_dbg;
 - (UIImage *) f08_classify_dbg;
 
-- (void) f00_dots_and_verticals;
+- (void) f00_dots_and_lines;
 - (void) f02_warp;
 //- (void) f03_houghlines;
 - (void) f04_vert_lines:(int)state;

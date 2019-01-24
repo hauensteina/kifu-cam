@@ -386,5 +386,4 @@ inline cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv:
     return res;
 } // wiggle_transform()
 
-
 #endif /* Perspective_hpp */
