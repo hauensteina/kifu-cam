@@ -289,9 +289,9 @@ cv::Vec2f vert_line, horiz_line;
     ISLOOP( _vertical_lines) {
         draw_polar_line( _vertical_lines[i], drawing, get_color());
     }
-    ISLOOP( _horizontal_lines) {
-        draw_polar_line( _horizontal_lines[i], drawing, get_color());
-    }
+//    ISLOOP( _horizontal_lines) {
+//        draw_polar_line( _horizontal_lines[i], drawing, get_color());
+//    }
 //    draw_point( p_i, drawing, 5, cv::Scalar(255,0,0));
 //    draw_point( p_h, drawing, 5, cv::Scalar(0,255,0));
 //    draw_point( p_w, drawing, 5, cv::Scalar(0,0,255));
@@ -301,52 +301,6 @@ cv::Vec2f vert_line, horiz_line;
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f02_warp_dbg()
-
-//// Find lines after dewarp
-////--------------------------------------------------
-//- (void) f03_houghlines
-//{
-//    //_vertical_lines.clear();
-//    //_horizontal_lines.clear();
-//    //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-//    //thresh_dilate( _gray, _gray_threshed);
-//    
-//    // Warp the old points
-////    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
-////    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
-////    warp_points( _stone_or_empty, _Md, _stone_or_empty);
-//
-//    // Find blobs after dewarp
-//    _stone_or_empty.clear();
-//    _vertical_lines.clear();
-//    _horizontal_lines.clear();
-//    cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-//    thresh_dilate( _gray, _gray_threshed, 2);
-//    BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
-//    BlobFinder::find_stones_perp( _gray, _stone_or_empty);
-//    //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
-//
-//    // Find lines
-//    perp_houghlines( _small_img, _stone_or_empty,
-//                    _vertical_lines, _horizontal_lines);
-//    
-//
-//} // f03_houghlines()
-//
-//// Debug wrapper for f03_blobs
-////-------------------------------
-//- (UIImage *) f03_houghlines_dbg
-//{
-//    g_app.mainVC.lbBottom.text = @"Stones and Intersections";
-//    [self f03_houghlines];
-//    
-//    // Show results
-//    cv::Mat drawing = _small_img.clone();
-//    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
-//    UIImage *res = MatToUIImage( drawing);
-//    return res;
-//} // f03_houghlines_dbg()
-
 
 // Find vertical grid lines
 //----------------------------------

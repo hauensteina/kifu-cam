@@ -361,7 +361,7 @@ inline cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv:
         double hq3 = vec_q3( hthetas);
         double hdq = hq3 - hq1;
         
-        return vdq+hdq;
+        return vdq*vdq + hdq*hdq;
     }; // parallelity()
     
     double minpary = 1E9;
