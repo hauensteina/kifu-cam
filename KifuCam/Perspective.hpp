@@ -346,20 +346,20 @@ inline cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv:
                                 Points2f &src, int idx, char dir, Points2f target,
                                 int radius, double epsilon)
 {
-    auto parallelity = [&vlines, &hlines]( const cv::Mat &M) {
+    auto parallelity = [&vlines, &hlines]( const cv::Mat &M, double &vdq, double &hdq) {
         std::vector<cv::Vec2f> vplines;
         warp_plines( vlines, M, vplines);
         auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
-        double vq1 = vec_q1( vthetas);
-        double vq3 = vec_q3( vthetas);
-        double vdq = vq3 - vq1;
+        double vq1 = vec_perc( vthetas, 0.1);
+        double vq3 = vec_perc( vthetas, 0.9);
+        vdq = vq3 - vq1;
         
         std::vector<cv::Vec2f> hplines;
         warp_plines( hlines, M, hplines);
         auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
-        double hq1 = vec_q1( hthetas);
-        double hq3 = vec_q3( hthetas);
-        double hdq = hq3 - hq1;
+        double hq1 = vec_perc( hthetas, 0.1);
+        double hq3 = vec_perc( hthetas, 0.9);
+        hdq = hq3 - hq1;
         
         return vdq*vdq + hdq*hdq;
     }; // parallelity()
@@ -375,8 +375,10 @@ inline cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv:
         auto xy_wiggle = xy + epsilon * step;
         resval = xy_wiggle;
         auto M = cv::getPerspectiveTransform( src, target);
-        auto pary = parallelity( M);
+        double vdq, hdq;
+        auto pary = parallelity( M, vdq, hdq);
         if (pary < minpary) {
+            NSLog( @",%4f,%4f,%4f", pary, vdq, hdq);
             minpary = pary;
             xymin = xy_wiggle;
             res = M;

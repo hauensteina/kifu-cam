@@ -288,6 +288,19 @@ T vec_median( std::vector<T> vec)
     return vec[vec.size() / 2];
 }
 
+// Any percentile of a vector. Percentile in [0.0, 1.0].
+//-------------------------------------------------------
+template <typename T>
+T vec_perc( std::vector<T> vec, double percentile)
+{
+    assert( percentile >= 0);
+    assert( percentile <= 1);
+    if (!vec.size()) return T(0);
+    std::sort( vec.begin(), vec.end(), [](T a, T b) { return a < b; });
+    int idx = int((vec.size()-1) * percentile);
+    return vec[idx];
+} // vec_perc()
+
 // Bottom quartile
 //---------------------------------
 template <typename T>

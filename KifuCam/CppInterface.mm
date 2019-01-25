@@ -253,13 +253,12 @@ extern cv::Mat mat_dbg;
     // Improve it
     int rad = 30; double eps = 0.15;
     const int bottom_right = 2;
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
-    _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
-
+    
+    ILOOP(3) {
+        _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
+        _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
+    }
+    
     _invMs = _Ms.inv();
     
     cv::warpPerspective( _small_img, _small_img, _Ms, sz);
