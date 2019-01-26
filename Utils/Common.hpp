@@ -547,6 +547,18 @@ std::vector<double> vec_extract(  const std::vector<T> &vec, F getter)
     return res;
 }
 
+// Sum processed vector elements.
+//--------------------------------------------------------
+template <typename T, typename F>
+double vec_sum(  const std::vector<T> &vec, F getter)
+{
+    double res = 0.0;
+    ISLOOP (vec) {
+        res += getter( vec[i]);
+    }
+    return res;
+} // vec_sum()
+
 // Find index of closest element in a vec
 //---------------------------------------------------------------------
 template <typename T>

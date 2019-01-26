@@ -251,33 +251,29 @@ extern cv::Mat mat_dbg;
     Points2f pout = { p_tl, p_tr, p_br, p_bl };
     
     // Improve it
-    //int rad = 30; double eps = 0.15;
-    int rad = 1; double eps = 0.01;
+    int rad = 10; // Best value is 10. Do not change. Breaks at 5.
+    double eps_wiggle = 0.1; // Best value is 0.1. Do not change. Breaks at 0.05.
     const int bottom_right = 2;
     
-    auto clean_lines = []( std::vector<cv::Vec2f> &lines, double eps) {
-        auto med = vec_median( lines, [](cv::Vec2f line){ return line[1]; });
+    auto clean_lines = []( std::vector<cv::Vec2f> &lines, double theta_corr, double eps_clean) {
+        auto med = vec_median( lines, [](cv::Vec2f line){ return line[1]; })[1];
         auto q1 = vec_q1( lines, [](cv::Vec2f line){ return line[1]; })[1];
         auto q3 = vec_q3( lines, [](cv::Vec2f line){ return line[1]; })[1];
-        vec_filter( lines, [med,q1,q3,eps](cv::Vec2f line) {
-            auto iqr = q3 - q1;
+        vec_filter( lines, [theta_corr,eps_clean](cv::Vec2f line) {
+            //auto iqr = q3 - q1;
             //auto eps = 0.5;
-            return line[1] < q3 + eps * iqr && line[1] > q1 - eps * iqr; });
+            //return (line[1] < q3 + eps_clean * iqr) && (line[1] > q1 - eps_clean * iqr); });
+            return fabs(line[1] - theta_corr) < eps_clean; });
     }; // clean_lines()
     
     auto vlines = _vertical_lines; auto hlines = _horizontal_lines;
-    ILOOP(1800) {
-        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'x', pout, rad, eps );
-        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'y', pout, rad, eps );
+    ILOOP(10) { // Best value is 10. Do not change. Breaks at 5.
+        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'x', pout, rad, eps_wiggle );
+        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'y', pout, rad, eps_wiggle );
     }
-    //clean_lines( vlines, 0.25);
-    //clean_lines( hlines, 3.0);
-//    ILOOP(12) {
-//        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'x', pout, rad, eps );
-//        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'y', pout, rad, eps );
-//    }
     
     _horizontal_lines = hlines;
+    _vertical_lines = vlines;
 
     _invMs = _Ms.inv();
     
@@ -287,7 +283,7 @@ extern cv::Mat mat_dbg;
     
     // Scale so line distance is CROPSIZE
     auto vlines1 = _vertical_lines;
-    dedup_verticals( vlines1, _small_img);
+    //dedup_verticals( vlines1, _small_img);
     fix_vertical_distance( vlines1, _small_img, _scale, _Md, _invMd);
     warp_plines( _vertical_lines, _Md, _vertical_lines);
     warp_plines( _horizontal_lines, _Md, _horizontal_lines);

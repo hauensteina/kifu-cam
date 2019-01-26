@@ -350,18 +350,21 @@ inline cv::Mat wiggle_transform( std::vector<cv::Vec2f> &vlines, std::vector<cv:
         std::vector<cv::Vec2f> vplines;
         warp_plines( vlines, M, vplines);
         auto vthetas = vec_extract( vplines, [](cv::Vec2f line) { return line[1]; } );
-        double vq1 = vec_perc( vthetas, 0.4);
-        double vq3 = vec_perc( vthetas, 0.6);
+        double vq1 = vec_perc( vthetas, 0.25); // Best values are 0.25 and 0.75. Do not change.
+        double vq3 = vec_perc( vthetas, 0.75);
         vdq = vq3 - vq1;
+        //auto vloss = vec_sum( vthetas, [](double theta) { return theta * theta; } );
         
         std::vector<cv::Vec2f> hplines;
         warp_plines( hlines, M, hplines);
-        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { return line[1]; } );
-        double hq1 = vec_perc( hthetas, 0.4);
-        double hq3 = vec_perc( hthetas, 0.6);
+        auto hthetas = vec_extract( hplines, [](cv::Vec2f line) { assert( line[1] > 0); return line[1]; } );
+        double hq1 = vec_perc( hthetas, 0.25); // Best values are 0.25 and 0.75. Do not change.
+        double hq3 = vec_perc( hthetas, 0.75);
         hdq = hq3 - hq1;
-        
+        //auto hloss = vec_sum( hthetas, [](double theta) { return fabs(theta-PI/2.0) * fabs(theta-PI/2.0); } );
+
         return vdq*vdq + hdq*hdq;
+        //return vloss*vloss + hloss*hloss;
     }; // parallelity()
     
     double minpary = 1E9;
