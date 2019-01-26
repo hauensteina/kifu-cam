@@ -126,7 +126,7 @@ Point2f intersection( cv::Vec4f line1, cv::Vec4f line2);
 // Intersection of polar lines (rho, theta)
 Point2f intersection( cv::Vec2f line1, cv::Vec2f line2);
 // Distance metric for line similarity
-double line_dist( cv::Vec2f line1, cv::Vec2f line2, char mode);
+double line_dist( cv::Vec2f line1, cv::Vec2f line2, char mode, double lim);
 // Length of a line segment
 double line_len( cv::Point p, cv::Point q);
 // Median pixel val on line segment

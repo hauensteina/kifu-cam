@@ -251,14 +251,34 @@ extern cv::Mat mat_dbg;
     Points2f pout = { p_tl, p_tr, p_br, p_bl };
     
     // Improve it
-    int rad = 30; double eps = 0.15;
+    //int rad = 30; double eps = 0.15;
+    int rad = 1; double eps = 0.01;
     const int bottom_right = 2;
     
-    ILOOP(3) {
-        _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'x', pout, rad, eps );
-        _Ms = wiggle_transform( _vertical_lines, _horizontal_lines, pin, bottom_right, 'y', pout, rad, eps );
-    }
+    auto clean_lines = []( std::vector<cv::Vec2f> &lines, double eps) {
+        auto med = vec_median( lines, [](cv::Vec2f line){ return line[1]; });
+        auto q1 = vec_q1( lines, [](cv::Vec2f line){ return line[1]; })[1];
+        auto q3 = vec_q3( lines, [](cv::Vec2f line){ return line[1]; })[1];
+        vec_filter( lines, [med,q1,q3,eps](cv::Vec2f line) {
+            auto iqr = q3 - q1;
+            //auto eps = 0.5;
+            return line[1] < q3 + eps * iqr && line[1] > q1 - eps * iqr; });
+    }; // clean_lines()
     
+    auto vlines = _vertical_lines; auto hlines = _horizontal_lines;
+    ILOOP(1800) {
+        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'x', pout, rad, eps );
+        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'y', pout, rad, eps );
+    }
+    //clean_lines( vlines, 0.25);
+    //clean_lines( hlines, 3.0);
+//    ILOOP(12) {
+//        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'x', pout, rad, eps );
+//        _Ms = wiggle_transform( vlines, hlines, pin, bottom_right, 'y', pout, rad, eps );
+//    }
+    
+    _horizontal_lines = hlines;
+
     _invMs = _Ms.inv();
     
     cv::warpPerspective( _small_img, _small_img, _Ms, sz);
@@ -266,9 +286,9 @@ extern cv::Mat mat_dbg;
     warp_plines( _horizontal_lines, _Ms, _horizontal_lines);
     
     // Scale so line distance is CROPSIZE
-    auto vlines = _vertical_lines;
-    dedup_verticals( vlines, _small_img);
-    fix_vertical_distance( vlines, _small_img, _scale, _Md, _invMd);
+    auto vlines1 = _vertical_lines;
+    dedup_verticals( vlines1, _small_img);
+    fix_vertical_distance( vlines1, _small_img, _scale, _Md, _invMd);
     warp_plines( _vertical_lines, _Md, _vertical_lines);
     warp_plines( _horizontal_lines, _Md, _horizontal_lines);
 

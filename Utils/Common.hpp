@@ -311,6 +311,17 @@ T vec_q1( std::vector<T> vec)
     return vec[vec.size() / 4];
 }
 
+// Bottom quartile, with access func
+//--------------------------------------
+template <typename T, typename Func>
+T vec_q1( std::vector<T> vec, Func at)
+{
+    if (!vec.size()) return T();
+    std::sort( vec.begin(), vec.end(),
+              [at](T a, T b) { return at(a) < at(b); });
+    return vec[vec.size() / 4];
+}
+
 // Top quartile
 //---------------------------------
 template <typename T>

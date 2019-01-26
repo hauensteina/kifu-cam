@@ -462,41 +462,41 @@ inline int good_center_line( const std::vector<cv::Vec2f> &lines)
     return minidx;
 } // good_center_line()
 
-// Adjacent lines should have similar slope
-//-----------------------------------------------------------------
-inline void filter_lines( std::vector<cv::Vec2f> &lines)
-{
-    if (SZ(lines) < 3) { return; }
-    const double eps = 10.0;
-    std::sort( lines.begin(), lines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
-    int med_idx = good_center_line( lines);
-    if (med_idx < 0) return;
-    const double med_theta = lines[med_idx][1];
-    // Going left and right, theta should not change abruptly
-    std::vector<cv::Vec2f> good;
-    good.push_back( lines[med_idx]);
-    const double EPS = eps * PI/180;
-    double prev_theta;
-    // right
-    prev_theta = med_theta;
-    for (int i = med_idx+1; i < SZ(lines); i++ ) {
-        double d = fabs( lines[i][1] - prev_theta) + fabs( lines[i][1] - med_theta);
-        if (d < EPS) {
-            good.push_back( lines[i]);
-            prev_theta = lines[i][1];
-        }
-    }
-    // left
-    prev_theta = med_theta;
-    for (int i = med_idx-1; i >= 0; i-- ) {
-        double d = fabs( lines[i][1] - prev_theta) + fabs( lines[i][1] - med_theta);
-        if (d < EPS) {
-            good.push_back( lines[i]);
-            prev_theta = lines[i][1];
-        }
-    }
-    lines = good;
-} // filter_lines()
+//// Adjacent lines should have similar slope
+////-----------------------------------------------------------------
+//inline void filter_lines( std::vector<cv::Vec2f> &lines)
+//{
+//    if (SZ(lines) < 3) { return; }
+//    const double eps = 10.0;
+//    std::sort( lines.begin(), lines.end(), [](cv::Vec2f &a, cv::Vec2f &b) { return a[0] < b[0]; });
+//    int med_idx = good_center_line( lines);
+//    if (med_idx < 0) return;
+//    const double med_theta = lines[med_idx][1];
+//    // Going left and right, theta should not change abruptly
+//    std::vector<cv::Vec2f> good;
+//    good.push_back( lines[med_idx]);
+//    const double EPS = eps * PI/180;
+//    double prev_theta;
+//    // right
+//    prev_theta = med_theta;
+//    for (int i = med_idx+1; i < SZ(lines); i++ ) {
+//        double d = fabs( lines[i][1] - prev_theta) + fabs( lines[i][1] - med_theta);
+//        if (d < EPS) {
+//            good.push_back( lines[i]);
+//            prev_theta = lines[i][1];
+//        }
+//    }
+//    // left
+//    prev_theta = med_theta;
+//    for (int i = med_idx-1; i >= 0; i-- ) {
+//        double d = fabs( lines[i][1] - prev_theta) + fabs( lines[i][1] - med_theta);
+//        if (d < EPS) {
+//            good.push_back( lines[i]);
+//            prev_theta = lines[i][1];
+//        }
+//    }
+//    lines = good;
+//} // filter_lines()
 
 // Find line where top_x and bot_x match best.
 //------------------------------------------------------------------------------------------------------------------------------------
@@ -579,14 +579,14 @@ inline std::vector<cv::Vec2f> gen_parallel_lines( double rho, double theta, doub
 
 // See how closely a set of equidistant parallel lines matches a set of lines.
 // Mode is 'v' or 'h' for horizontal or vertical.
-//-----------------------------------------------------------------------------------------------------
-inline double match_lines( std::vector<cv::Vec2f> parlines, std::vector<cv::Vec2f> lines, char mode)
+//--------------------------------------------------------------------------------------------------------------
+inline double match_lines( std::vector<cv::Vec2f> parlines, std::vector<cv::Vec2f> lines, char mode, double lim)
 {
     std::vector<double> dists;
     ISLOOP( lines) {
         double mindist = 1E9;
         JSLOOP( parlines) {
-            auto d = line_dist( lines[i], parlines[j], mode);
+            auto d = line_dist( lines[i], parlines[j], mode, lim);
             if (d < mindist) { mindist = d; }
         }
         dists.push_back( mindist);
@@ -618,6 +618,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     double d_top_rho = vec_median( d_top_rhos);
     double d_bot_rho = vec_median( d_bot_rhos);
     double d_rho = (d_top_rho + d_bot_rho) / 2.0;
+    //d_rho = CROPSIZE;
     
     // Find a good line close to the middle
     int good_idx = good_center_line( lines);
@@ -630,7 +631,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     // Initial set of parallels
     std::vector<cv::Vec2f> synth_lines;
     synth_lines = gen_parallel_lines( med_line[0], med_line[1], d_rho, img.rows, img.cols);
-    auto dist = match_lines( synth_lines, all_vert_lines, 'v');
+    auto dist = match_lines( synth_lines, all_vert_lines, 'v', img.rows);
 
     // Optimize
     const double eps_theta = 0.01;
@@ -645,7 +646,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         change = false; loops++;
         for ( auto ntheta: { theta - eps_theta, theta + eps_theta}) {
             auto parlines = gen_parallel_lines( rho, ntheta, d, img.rows, img.cols);
-            auto ndist = match_lines( parlines, all_vert_lines, 'v');
+            auto ndist = match_lines( parlines, all_vert_lines, 'v', img.rows);
             if (ndist < dist) {
                 dist = ndist;
                 theta = ntheta;
@@ -654,7 +655,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         }
         for ( auto nrho: { rho - eps_rho, rho + eps_rho}) {
             auto parlines = gen_parallel_lines( nrho, theta, d, img.rows, img.cols);
-            auto ndist = match_lines( parlines, all_vert_lines, 'v');
+            auto ndist = match_lines( parlines, all_vert_lines, 'v', img.rows);
             if (ndist < dist) {
                 dist = ndist;
                 rho = nrho;
@@ -663,7 +664,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         }
         for ( auto nd: { d - eps_d, d + eps_d}) {
             auto parlines = gen_parallel_lines( rho, theta, nd, img.rows, img.cols);
-            auto ndist = match_lines( parlines, all_vert_lines, 'v');
+            auto ndist = match_lines( parlines, all_vert_lines, 'v', img.rows);
             if (ndist < dist) {
                 dist = ndist;
                 d = nd;
@@ -703,6 +704,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     double d_left_rho  = vec_median( d_left_rhos);
     double d_right_rho = vec_median( d_right_rhos);
     double d_rho = (d_left_rho + d_right_rho) / 2.0;
+    //d_rho = CROPSIZE;
     
     // Find a good line close to the middle
     int good_idx = good_center_line( lines);
@@ -715,7 +717,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     // Initial set of parallels
     std::vector<cv::Vec2f> synth_lines;
     synth_lines = gen_parallel_lines( med_line[0], med_line[1], d_rho, img.rows, img.cols);
-    auto dist = match_lines( synth_lines, all_horiz_lines, 'h');
+    auto dist = match_lines( synth_lines, all_horiz_lines, 'h', img.cols);
 
     // Optimize
     const double eps_theta = 0.01;
@@ -730,7 +732,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         change = false; loops++;
         for ( auto ntheta: { theta - eps_theta, theta + eps_theta}) {
             auto parlines = gen_parallel_lines( rho, ntheta, d, img.rows, img.cols);
-            auto ndist = match_lines( parlines, all_horiz_lines, 'h');
+            auto ndist = match_lines( parlines, all_horiz_lines, 'h', img.cols);
             if (ndist < dist) {
                 dist = ndist;
                 theta = ntheta;
@@ -739,7 +741,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         }
         for ( auto nrho: { rho - eps_rho, rho + eps_rho}) {
             auto parlines = gen_parallel_lines( nrho, theta, d, img.rows, img.cols);
-            auto ndist = match_lines( parlines, all_horiz_lines, 'h');
+            auto ndist = match_lines( parlines, all_horiz_lines, 'h', img.cols);
             if (ndist < dist) {
                 dist = ndist;
                 rho = nrho;
@@ -748,7 +750,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         }
         for ( auto nd: { d - eps_d, d + eps_d}) {
             auto parlines = gen_parallel_lines( rho, theta, nd, img.rows, img.cols);
-            auto ndist = match_lines( parlines, all_horiz_lines, 'h');
+            auto ndist = match_lines( parlines, all_horiz_lines, 'h', img.cols);
             if (ndist < dist) {
                 dist = ndist;
                 d = nd;
