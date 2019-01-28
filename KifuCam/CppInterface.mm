@@ -255,16 +255,16 @@ extern cv::Mat mat_dbg;
     double eps_wiggle = 0.1; // Best value is 0.1. Do not change. Breaks at 0.05.
     const int bottom_right = 2;
     
-    auto clean_lines = []( std::vector<cv::Vec2f> &lines, double theta_corr, double eps_clean) {
-        auto med = vec_median( lines, [](cv::Vec2f line){ return line[1]; })[1];
-        auto q1 = vec_q1( lines, [](cv::Vec2f line){ return line[1]; })[1];
-        auto q3 = vec_q3( lines, [](cv::Vec2f line){ return line[1]; })[1];
-        vec_filter( lines, [theta_corr,eps_clean](cv::Vec2f line) {
-            //auto iqr = q3 - q1;
-            //auto eps = 0.5;
-            //return (line[1] < q3 + eps_clean * iqr) && (line[1] > q1 - eps_clean * iqr); });
-            return fabs(line[1] - theta_corr) < eps_clean; });
-    }; // clean_lines()
+//    auto clean_lines = []( std::vector<cv::Vec2f> &lines, double theta_corr, double eps_clean) {
+//        auto med = vec_median( lines, [](cv::Vec2f line){ return line[1]; })[1];
+//        auto q1 = vec_q1( lines, [](cv::Vec2f line){ return line[1]; })[1];
+//        auto q3 = vec_q3( lines, [](cv::Vec2f line){ return line[1]; })[1];
+//        vec_filter( lines, [theta_corr,eps_clean](cv::Vec2f line) {
+//            //auto iqr = q3 - q1;
+//            //auto eps = 0.5;
+//            //return (line[1] < q3 + eps_clean * iqr) && (line[1] > q1 - eps_clean * iqr); });
+//            return fabs(line[1] - theta_corr) < eps_clean; });
+//    }; // clean_lines()
     
     auto vlines = _vertical_lines; auto hlines = _horizontal_lines;
     ILOOP(10) { // Best value is 10. Do not change. Breaks at 5.
