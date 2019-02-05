@@ -559,10 +559,10 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
     auto d_bot_rhos = vec_delta( bot_rhos);
     vec_filter( d_top_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.5 * CROPSIZE;});
     vec_filter( d_bot_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 1.5 * CROPSIZE;});
-    double d_top_rho = vec_median( d_top_rhos);
-    double d_bot_rho = vec_median( d_bot_rhos);
-    double d_rho = (d_top_rho + d_bot_rho) / 2.0;
-    
+    //double d_top_rho = vec_median( d_top_rhos);
+    //double d_bot_rho = vec_median( d_bot_rhos);
+    double d_rho = vec_median( vconc( d_top_rhos, d_bot_rhos));
+
     // Find a good line close to the middle
     int good_idx = good_center_line( lines);
     if (good_idx < 0) {
@@ -647,10 +647,10 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
     auto d_right_rhos = vec_delta( right_rhos);
     vec_filter( d_left_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 2 * CROPSIZE;});
     vec_filter( d_right_rhos, [](double d){ return d > 0.8 * CROPSIZE && d < 2 * CROPSIZE;});
-    double d_left_rho  = vec_median( d_left_rhos);
-    double d_right_rho = vec_median( d_right_rhos);
-    double d_rho = (d_left_rho + d_right_rho) / 2.0;
-    
+    //double d_left_rho  = vec_median( d_left_rhos);
+    //double d_right_rho = vec_median( d_right_rhos);
+    double d_rho = vec_median( vconc( d_left_rhos, d_right_rhos));
+
     // Find a good line close to the middle
     int good_idx = good_center_line( lines);
     if (good_idx < 0) {
