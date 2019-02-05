@@ -265,7 +265,17 @@ template <typename T>
 void vapp( std::vector<T> &v1, const std::vector<T> &v2)
 {
     v1.insert( v1.end(), v2.begin(), v2.end());
-}
+} // vapp()
+
+// Concatenate two vectors
+//--------------------------------------------------------
+template <typename T>
+std::vector<T> vconc( const std::vector<T> &v1, const std::vector<T> &v2)
+{
+    std::vector<T> res = v1;
+    vapp( res, v2);
+    return res;
+} // vconc()
 
 // Median value of a vector, with access func
 //----------------------------------------------

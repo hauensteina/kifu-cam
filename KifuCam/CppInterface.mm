@@ -328,7 +328,8 @@ extern cv::Mat mat_dbg;
         }
         case 2:
         {
-            fix_vertical_lines( _vertical_lines, all_vert_lines, _gray);
+            const double x_thresh = CROPSIZE / 2.0; // 8.0;
+            fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
         }
         default:
@@ -399,7 +400,8 @@ extern cv::Mat mat_dbg;
         }
         case 3:
         {
-            fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray);
+            const double y_thresh = CROPSIZE / 2.0; // 8.0;
+            fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
         default:
