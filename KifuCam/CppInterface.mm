@@ -178,7 +178,7 @@ extern cv::Mat mat_dbg;
     cv::cvtColor( _orig_small, _orig_small, CV_RGBA2RGB);
     _small_img = _orig_small.clone();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-    thresh_dilate( _gray, _gray_threshed);
+    thresh_dilate( _gray, _gray_threshed, 14);
     _stone_or_empty.clear();
     BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones( _gray, _stone_or_empty);
@@ -207,12 +207,13 @@ extern cv::Mat mat_dbg;
     UIImageToMat( img, _orig_small);
     [self f00_dots_and_verticals];
     
-    cv::Mat drawing = _small_img.clone();
+    //cv::Mat drawing = _small_img.clone();
+    cv::Mat drawing = _gray_threshed.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
-    get_color(true);
-    ISLOOP( _vertical_lines) {
-        draw_polar_line( _vertical_lines[i], drawing, get_color());
-    }
+//    get_color(true);
+//    ISLOOP( _vertical_lines) {
+//        draw_polar_line( _vertical_lines[i], drawing, get_color());
+//    }
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f00_dots_and_verticals_dbg()

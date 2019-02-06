@@ -112,9 +112,10 @@ void BlobFinder::find_stones( const cv::Mat &img, Points &result)
                      1, // acumulator res == image res; Larger means less acc res
                      img.rows/30, // minimum distance between circles
                      260, // upper canny thresh; half of this is the lower canny
-                     12, // less means more circles. The higher ones come first in the result
+                     18, // 12, // less means more circles. The higher ones come first in the result
                      3,   // min radius
-                     25 ); // max radius
+                     12 // 25 // max radius
+                     );
     if (!circles.size()) return;
     
     // Keep the ones where radius close to median radius
