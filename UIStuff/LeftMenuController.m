@@ -64,7 +64,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
                        @{ @"txt": @"Saved Images", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"Import Photo", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"", @"state": @(ITEM_NOT_SELECTED) },
-                       @{ @"txt": @"Settings", @"state": @(ITEM_NOT_SELECTED) },
+                       //@{ @"txt": @"Settings", @"state": @(ITEM_NOT_SELECTED) },
                        @{ @"txt": @"About", @"state": @(ITEM_NOT_SELECTED) },
                        ];
         _titlesArray = [NSMutableArray new];

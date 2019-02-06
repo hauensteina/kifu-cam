@@ -261,6 +261,9 @@
     else if ([g_app.menuVC videoMode]) {
         [self btnCam:nil];
     }
+    else if ([g_app.menuVC photoMode]) {
+        [self btnCam:nil];
+    }
 } // touchesBegan()
 
 //// Slider for Debugging

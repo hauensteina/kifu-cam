@@ -419,6 +419,7 @@ inline void dedup_horizontals( std::vector<cv::Vec2f> &lines, const cv::Mat &img
 //-------------------------------------------------------------------
 inline int good_center_line( const std::vector<cv::Vec2f> &lines)
 {
+    if (SZ(lines) < 3) return -1;
     const int r = 2;
     //const double EPS = 4 * PI/180;
     auto thetas = vec_extract( lines, [](cv::Vec2f line) { return line[1]; } );

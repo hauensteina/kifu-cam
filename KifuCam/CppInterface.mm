@@ -207,8 +207,8 @@ extern cv::Mat mat_dbg;
     UIImageToMat( img, _orig_small);
     [self f00_dots_and_verticals];
     
-    //cv::Mat drawing = _small_img.clone();
-    cv::Mat drawing = _gray_threshed.clone();
+    cv::Mat drawing = _small_img.clone();
+    //cv::Mat drawing = _gray_threshed.clone();
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
 //    get_color(true);
 //    ISLOOP( _vertical_lines) {
@@ -272,7 +272,7 @@ extern cv::Mat mat_dbg;
     //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     //thresh_dilate( _gray, _gray_threshed);
     
-    // Warp the old points
+//    // Warp the old points
 //    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
 //    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
 //    warp_points( _stone_or_empty, _Md, _stone_or_empty);
@@ -290,8 +290,6 @@ extern cv::Mat mat_dbg;
     // Find lines
     perp_houghlines( _small_img, _stone_or_empty,
                     _vertical_lines, _horizontal_lines);
-    
-
 } // f03_houghlines()
 
 // Debug wrapper for f03_blobs
@@ -302,7 +300,9 @@ extern cv::Mat mat_dbg;
     [self f03_houghlines];
     
     // Show results
-    cv::Mat drawing = _small_img.clone();
+    cv::Mat drawing;
+    drawing = _small_img.clone();
+    //cv::cvtColor( _gray_threshed, drawing, cv::COLOR_GRAY2RGB);
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
