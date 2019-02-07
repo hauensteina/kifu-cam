@@ -282,8 +282,8 @@ extern cv::Mat mat_dbg;
     _vertical_lines.clear();
     _horizontal_lines.clear();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
-    thresh_dilate( _gray, _gray_threshed, 2);
-    BlobFinder::find_empty_places_perp( _gray_threshed, _stone_or_empty); // has to be first
+    thresh_dilate( _gray, _gray_threshed, 3);
+    BlobFinder::find_empty_places_perp ( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones_perp( _gray, _stone_or_empty);
     //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
 
@@ -303,7 +303,7 @@ extern cv::Mat mat_dbg;
     cv::Mat drawing;
     drawing = _small_img.clone();
     //cv::cvtColor( _gray_threshed, drawing, cv::COLOR_GRAY2RGB);
-    draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
+    draw_points( _stone_or_empty, drawing, 3, cv::Scalar( 255,0,0));
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f03_houghlines_dbg()

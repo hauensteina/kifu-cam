@@ -96,7 +96,7 @@ void BlobFinder::find_empty_places_perp( const cv::Mat &threshed, Points &result
     cv::Mat mcross  = 255 * cv::Mat(tsz, tsz, CV_8UC1, cross);
     
     // Match
-    double thresh = 70;
+    double thresh = 70; // smaller => more dots
     matchTemplate( threshed, mcross, result, thresh);
 } // find_empty_places_perp()
 
