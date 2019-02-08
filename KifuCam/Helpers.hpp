@@ -947,7 +947,7 @@ inline Points2f get_intersections( const std::vector<cv::Vec2f> &hlines,
 inline void zoom_in( const Points2f &corners, cv::Mat &M)
 {
     int lmarg = IMG_WIDTH / 20;
-    int tmarg = IMG_WIDTH / 15;
+    int tmarg = IMG_WIDTH / 20; // 15;
     // Target square for transform
     Points2f square = {
         cv::Point( lmarg, tmarg),
