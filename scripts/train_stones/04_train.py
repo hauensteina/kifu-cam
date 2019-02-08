@@ -121,19 +121,27 @@ class BEWModelConv:
         nb_colors=3
         inputs = kl.Input( shape = ( self.resolution, self.resolution, nb_colors), name = 'image')
 
-        x = kl.Conv2D( 2, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization(axis=-1)(x) # -1 for tf back end, 1 for theano
         x = kl.MaxPooling2D()(x)
-        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_b')(x)
-        x = kl.MaxPooling2D()(x)
-
-        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_a')(x)
-        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='two_b')(x)
-        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
         x = kl.MaxPooling2D()(x)
 
-        x = kl.Conv2D( 16,(3,3), activation='relu', padding='same', name='three_a1')(x)
-        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='three_b1')(x)
-        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='three_c1')(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 32,(3,3), activation='relu', padding='same', name='three_a1')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 16, (1,1), activation='relu', padding='same', name='three_b1')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 32, (3,3), activation='relu', padding='same', name='three_c1')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
         x = kl.MaxPooling2D()(x)
 
         # Classification block
