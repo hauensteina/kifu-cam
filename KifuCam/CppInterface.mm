@@ -272,10 +272,11 @@ extern cv::Mat mat_dbg;
     //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     //thresh_dilate( _gray, _gray_threshed);
     
-//    // Warp the old points
-//    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
-//    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
-//    warp_points( _stone_or_empty, _Md, _stone_or_empty);
+    // Warp the old points
+    warp_points( _stone_or_empty, _Ms, _stone_or_empty);
+    warp_points( _stone_or_empty, _Mp, _stone_or_empty);
+    warp_points( _stone_or_empty, _Md, _stone_or_empty);
+    auto old_points = _stone_or_empty;
 
     // Find blobs after dewarp
     _stone_or_empty.clear();
@@ -285,6 +286,7 @@ extern cv::Mat mat_dbg;
     thresh_dilate( _gray, _gray_threshed, 3);
     BlobFinder::find_empty_places_perp ( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones_perp( _gray, _stone_or_empty);
+    vapp( _stone_or_empty, old_points);
     //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
 
     // Find lines
