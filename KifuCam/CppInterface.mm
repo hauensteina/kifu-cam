@@ -207,8 +207,9 @@ extern cv::Mat mat_dbg;
     UIImageToMat( img, _orig_small);
     [self f00_dots_and_verticals];
     
-    //cv::Mat drawing = _small_img.clone();
-    cv::Mat drawing = _gray_threshed.clone();
+    cv::Mat drawing;
+    drawing = _small_img.clone();
+    // cv::cvtColor( _gray_threshed, drawing, cv::COLOR_GRAY2RGB);
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
 //    get_color(true);
 //    ISLOOP( _vertical_lines) {
@@ -287,7 +288,7 @@ extern cv::Mat mat_dbg;
     BlobFinder::find_empty_places_perp ( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones_perp( _gray, _stone_or_empty);
     vapp( _stone_or_empty, old_points);
-    //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
+    _stone_or_empty = BlobFinder::clean( _stone_or_empty);
 
     // Find lines
     perp_houghlines( _small_img, _stone_or_empty,
@@ -715,7 +716,7 @@ extern cv::Mat mat_dbg;
         _stone_or_empty.clear();
         BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
         BlobFinder::find_stones( _gray, _stone_or_empty);
-        //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
+        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
         if (SZ(_stone_or_empty) > maxBlobs) {
             maxBlobs = SZ(_stone_or_empty);
             best = _small_img;

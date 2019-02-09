@@ -720,7 +720,7 @@ void perp_houghlines (const cv::Mat &img, const Points &ps,
     std::vector<std::vector<cv::Vec2f> > horiz_vert_other_lines;
     horiz_vert_other_lines = partition( lines, 3,
                                        [](cv::Vec2f &line) {
-                                           const double thresh = 1.0;
+                                           const double thresh = 5.0;
                                            double theta = line[1] * (180.0 / PI);
                                            if (fabs(theta - 180) < thresh) return 1;   // vert
                                            else if (fabs(theta) < thresh) return 1;
