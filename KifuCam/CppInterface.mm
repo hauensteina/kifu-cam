@@ -288,7 +288,7 @@ extern cv::Mat mat_dbg;
     BlobFinder::find_empty_places_perp ( _gray_threshed, _stone_or_empty); // has to be first
     BlobFinder::find_stones_perp( _gray, _stone_or_empty);
     vapp( _stone_or_empty, old_points);
-    _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+    //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
 
     // Find lines
     perp_houghlines( _small_img, _stone_or_empty,
@@ -716,7 +716,7 @@ extern cv::Mat mat_dbg;
         _stone_or_empty.clear();
         BlobFinder::find_empty_places( _gray_threshed, _stone_or_empty); // has to be first
         BlobFinder::find_stones( _gray, _stone_or_empty);
-        _stone_or_empty = BlobFinder::clean( _stone_or_empty);
+        //_stone_or_empty = BlobFinder::clean( _stone_or_empty);
         if (SZ(_stone_or_empty) > maxBlobs) {
             maxBlobs = SZ(_stone_or_empty);
             best = _small_img;
