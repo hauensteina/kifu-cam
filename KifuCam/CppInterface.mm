@@ -328,13 +328,13 @@ extern cv::Mat mat_dbg;
             dedup_verticals( _vertical_lines, _gray);
             break;
         }
+//        case 2:
+//        {
+//            // Distance between verticals should be CROPSIZE
+//            //fix_vertical_distance( _vertical_lines, _small_img);
+//            break;
+//        }
         case 2:
-        {
-            // Distance between verticals should be CROPSIZE
-            //fix_vertical_distance( _vertical_lines, _small_img);
-            break;
-        }
-        case 3:
         {
             const double x_thresh = CROPSIZE / 2.0; // 4.0;
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
@@ -367,13 +367,13 @@ extern cv::Mat mat_dbg;
             [self f04_vert_lines:state];
             break;
         }
+//        case 2:
+//        {
+//            g_app.mainVC.lbBottom.text = @"Filter";
+//            [self f04_vert_lines:state];
+//            break;
+//        }
         case 2:
-        {
-            g_app.mainVC.lbBottom.text = @"Filter";
-            [self f04_vert_lines:state];
-            break;
-        }
-        case 3:
         {
             g_app.mainVC.lbBottom.text = @"Generate";
             [self f04_vert_lines:state];
@@ -412,12 +412,12 @@ extern cv::Mat mat_dbg;
             dedup_horizontals( _horizontal_lines, _gray);
             break;
         }
+//        case 2:
+//        {
+//            //filter_lines( _horizontal_lines);
+//            break;
+//        }
         case 2:
-        {
-            //filter_lines( _horizontal_lines);
-            break;
-        }
-        case 3:
         {
             const double y_thresh = CROPSIZE / 2.0; //4.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
@@ -440,25 +440,25 @@ extern cv::Mat mat_dbg;
         case 0:
         {
             g_app.mainVC.lbBottom.text = @"Find horizontals";
-            [self f05_horiz_lines:0];
+            [self f05_horiz_lines:state];
             break;
         }
         case 1:
         {
             g_app.mainVC.lbBottom.text = @"Remove duplicates";
-            [self f05_horiz_lines:1];
+            [self f05_horiz_lines:state];
             break;
         }
+//        case 2:
+//        {
+//            g_app.mainVC.lbBottom.text = @"Filter";
+//            [self f05_horiz_lines:2];
+//            break;
+//        }
         case 2:
         {
-            g_app.mainVC.lbBottom.text = @"Filter";
-            [self f05_horiz_lines:2];
-            break;
-        }
-        case 3:
-        {
             g_app.mainVC.lbBottom.text = @"Generate";
-            [self f05_horiz_lines:3];
+            [self f05_horiz_lines:state];
             break;
         }
         default:
@@ -617,13 +617,13 @@ extern cv::Mat mat_dbg;
         [self f04_vert_lines:0];
         [self f04_vert_lines:1];
         [self f04_vert_lines:2];
-        [self f04_vert_lines:3];
+        //[self f04_vert_lines:3];
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
         if (breakIfBad && SZ( _vertical_lines) < 5) break;
         [self f05_horiz_lines:0];
         [self f05_horiz_lines:1];
         [self f05_horiz_lines:2];
-        [self f05_horiz_lines:3];
+        //[self f05_horiz_lines:3];
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
         if (breakIfBad && SZ( _horizontal_lines) < 5) break;
         [self f06_corners];
