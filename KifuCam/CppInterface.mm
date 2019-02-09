@@ -573,25 +573,26 @@ extern cv::Mat mat_dbg;
     [self f08_classify];
 
     cv::Mat drawing;
-    cv::cvtColor( _gray_zoomed, drawing, cv::COLOR_GRAY2RGB);
+    //cv::cvtColor( _gray_zoomed, drawing, cv::COLOR_GRAY2RGB);
+    drawing = _small_zoomed.clone();
     
     Points2f dummy;
     double dxd, dyd;
     get_intersections_from_corners( _corners_zoomed, _board_sz, dummy, dxd, dyd);
-    int dx = ROUND( dxd/4.0);
-    int dy = ROUND( dyd/4.0);
+    //int dx = ROUND( dxd/4.0);
+    //int dy = ROUND( dyd/4.0);
     ISLOOP (_diagram) {
         cv::Point p(ROUND(_intersections_zoomed[i].x), ROUND(_intersections_zoomed[i].y));
-        cv::Rect rect( p.x - dx,
-                      p.y - dy,
-                      2*dx + 1,
-                      2*dy + 1);
-        cv::rectangle( drawing, rect, cv::Scalar(0,0,255,255));
+//        cv::Rect rect( p.x - dx,
+//                      p.y - dy,
+//                      2*dx + 1,
+//                      2*dy + 1);
+//        cv::rectangle( drawing, rect, cv::Scalar(0,0,255,255));
         if (_diagram[i] == BBLACK) {
             draw_point( p, drawing, 2, cv::Scalar(0,255,0,255));
         }
         else if (_diagram[i] == WWHITE) {
-            draw_point( p, drawing, 5, cv::Scalar(255,0,0,255));
+            draw_point( p, drawing, 3, cv::Scalar(255,0,0,255));
         }
     }
     UIImage *res = MatToUIImage( drawing);
