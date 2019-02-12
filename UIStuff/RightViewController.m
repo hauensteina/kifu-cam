@@ -43,6 +43,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
 @property UIFont *selectedFont;
 @property NSMutableArray *s3_testcase_imgfiles;
 @property NSMutableArray *s3_testcase_sgffiles;
+//@property dispatch_queue_t testQ;
 
 @end
 
@@ -75,6 +76,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];
     }
+    //self.testQ = dispatch_queue_create( "com.ahaux.testQ", DISPATCH_QUEUE_SERIAL);
     return self;
 } // init()
 
@@ -196,35 +198,50 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
     for (id fname in testfiles ) {
         idx++;
         NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @TESTCASE_FOLDER, fname));
-        // Load the image
-        UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
-        // Load the sgf
-        fullfname = changeExtension( fullfname, @".sgf");
-        NSString *sgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
-        // Classify
-        int nerrs = [g_app.mainVC.cppInterface runTestImg:img withSgf: sgf];
-        if (overwrite) {
-            if ([getProp( @"opt_overwrite_sgf", @"off") isEqualToString:@"on"]) {
-                [g_app.mainVC.cppInterface save_current_sgf:fullfname overwrite:YES];
+        UIImage *img;
+        @autoreleasepool {
+            // Load the image
+            img = nil;
+            img = [UIImage imageWithContentsOfFile:fullfname];
+            // Load the sgf
+            fullfname = changeExtension( fullfname, @".sgf");
+            NSString *sgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
+            // Classify
+            int nerrs = [g_app.mainVC.cppInterface runTestImg:img withSgf: sgf];
+            if (overwrite) {
+                if ([getProp( @"opt_overwrite_sgf", @"off") isEqualToString:@"on"]) {
+                    [g_app.mainVC.cppInterface save_current_sgf:fullfname overwrite:YES];
+                }
+                else {
+                    [g_app.mainVC.cppInterface save_current_sgf:fullfname overwrite:NO];
+                }
             }
-            else {
-                [g_app.mainVC.cppInterface save_current_sgf:fullfname overwrite:NO];
-            }
-        }
-        [errCounts addObject:@(nerrs)];
+            [errCounts addObject:@(nerrs)];
+        } // @autoreleasepool
     } // for
-    // Show error counts in a separate View Controller
-    UITextView *tv = g_app.testResultsVC.tv;
+    
+    // Show error counts in a separate view controller
+    int i = -1;
+    int totErrs = 0;
+    for (id fname in testfiles) {
+        (void)fname;
+        i++;
+        totErrs += [errCounts[i] integerValue];
+    }
     NSMutableString *msg = [NSMutableString new];
+    [msg appendString: nsprintf( @"Total Errors:%d\n", totErrs)];
     [msg appendString:@"Error Count by File\n"];
     [msg appendString:@"===================\n\n"];
-    int i = -1;
+
+    i = -1;
     for (id fname in testfiles) {
         i++;
         long count = [errCounts[i] integerValue];
         NSString *line = nsprintf( @"%@:\t%5ld\n", fname, count);
         [msg appendString:line];
-    }
+    } // for
+
+    UITextView *tv = g_app.testResultsVC.tv;
     tv.text = msg;
     [g_app.navVC pushViewController:g_app.testResultsVC animated:YES];
 } // mnuRunTestCases()

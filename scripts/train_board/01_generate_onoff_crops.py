@@ -465,7 +465,6 @@ def save_random_crops( img, intersections, r, basename, folder):
         points += [isec]
     save_intersections( img, points, r, basename, folder)
 
-
 # Return a perspective transform by angle phi
 #-----------------------------------------------
 def perspective_warp( rows, cols, phi):
@@ -555,7 +554,7 @@ def main():
             	inner_isecs.append( isec)
             else:
 	            outer_isecs.append( isec)
-        # Make sure same number of example for each class
+        # Make sure same number of examples for each class
         save_intersections( img, inner_isecs[:len(outer_isecs)], CROPSZ, k, args.outfolder)
         save_intersections( img, outer_isecs, CROPSZ, k, args.outfolder)
 

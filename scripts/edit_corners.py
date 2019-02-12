@@ -30,24 +30,27 @@ SELECTED_CORNER = 'TL'
 SELECTED_BEW = 'Black'
 CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
 AX_IMAGE = None
+AX_STATUS = None
 FIG = None
 IMG = None
 BOARDSZ = 19
 NEW_INTERSECTIONS=[]
 INTERSECTIONS=[]
 DIAGRAM = []
+FNAMES = []
 
 #---------------------------
 def usage(printmsg=False):
     name = os.path.basename(__file__)
     msg = '''
     Name: %s
-    Synopsis: %s --fname <somepic.png>
+    Synopsis: %s --run
     Description:
        Editor to define four corners in a Goban picture and save the intersections
        to an sgf in the GC[] tag.
+       Goes through all png files in the current folder.
     Example:
-      %s --fname testcase_00002.png
+      %s --run
     ''' % (name,name,name)
     if printmsg:
         print(msg)
@@ -55,18 +58,130 @@ def usage(printmsg=False):
     else:
         return msg
 
+#-----------
+def main():
+    global AX_IMAGE, AX_STATUS
+    global FIG
+    global FNAMES,FNUM
+
+    if len(sys.argv) == 1:
+        usage(True)
+
+    parser = argparse.ArgumentParser(usage=usage())
+    parser.add_argument( '--run', required=True, action='store_true')
+    args = parser.parse_args()
+
+    FNAMES = os.listdir('.')
+    FNAMES = [f for f in FNAMES if f.endswith('.png')]
+    FNAMES = sorted(FNAMES)
+
+    FIG = plt.figure( figsize=(9,8))
+
+    AX_IMAGE = FIG.add_axes( [0.07, 0.06, 0.5, 0.9] )
+    cid = FIG.canvas.mpl_connect('button_press_event', onclick)
+
+    # Show button computes and shows intersections
+    ax_show  = FIG.add_axes( [0.70, 0.28, 0.1, 0.05] )
+    btn_show = Button( ax_show, 'Show')
+    btn_show.on_clicked( cb_btn_show)
+
+    # Clear button sets all intersections to clear
+    ax_clear  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
+    btn_clear = Button( ax_clear, 'Clear')
+    btn_clear.on_clicked( cb_btn_clear)
+
+    # Save button
+    ax_save  = FIG.add_axes( [0.70, 0.16, 0.1, 0.05] )
+    btn_save = Button( ax_save, 'Save')
+    btn_save.on_clicked( cb_btn_save)
+
+    # Next button
+    ax_next  = FIG.add_axes( [0.70, 0.09, 0.1, 0.05] )
+    btn_next = Button( ax_next, 'Next')
+    btn_next.on_clicked( cb_btn_next)
+
+    # Prev button
+    ax_prev  = FIG.add_axes( [0.70, 0.03, 0.1, 0.05] )
+    btn_prev = Button( ax_prev, 'Prev')
+    btn_prev.on_clicked( cb_btn_prev)
+
+    # Radiobutton for corner and Black Empty White
+    ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
+    rbtn_corner_bew = RadioButtons( ax_radio, ('TL', 'TR', 'BR', 'BL', 'Black', 'Empty', 'White' ))
+    rbtn_corner_bew.on_clicked( cb_rbtn_corner_bew)
+
+    # Status Message
+    AX_STATUS = FIG.add_axes( [0.07, 0.02, 0.5, 0.05] )
+    AX_STATUS.axis('off')
+    #show_text( AX_STATUS, 'Status', 'red')
+
+    FNUM=-1
+    cb_btn_next()
+
+    plt.show()
+
+
+# Show next file
+#-----------------------------
+def cb_btn_next( event=None):
+    global FNUM
+    FNUM += 1
+    FNUM %= len(FNAMES)
+    show_next_prev()
+
+# Show prev file
+#-----------------------------
+def cb_btn_prev( event=None):
+    global FNUM
+    FNUM -= 1
+    FNUM %= len(FNAMES)
+    show_next_prev()
+
+# Display current file for the first time
+#------------------------------------------
+def show_next_prev():
+    global IMG
+    global INTERSECTIONS
+    global DIAGRAM
+    global SGF_FILE
+    global CORNER_COORDS
+
+    fname = FNAMES[FNUM]
+    show_text( AX_STATUS, '%d/%d %s' % (FNUM+1, len(FNAMES), fname))
+
+    # Load image
+    try:
+        IMG = mpl.image.imread( fname)
+    except: # maybe a jpg saved with png extension
+        shutil.copy( fname, 'tt.jpg')
+        IMG = cv2.imread( 'tt.jpg')
+        print( 'converting to png: %s' % fname)
+        cv2.imwrite( fname, IMG)
+        IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
+
+    AX_IMAGE.cla()
+    AX_IMAGE.imshow( IMG, origin='upper')
+
+    # Sgf
+    SGF_FILE = os.path.splitext( fname)[0] + '.sgf'
+    INTERSECTIONS, DIAGRAM = get_isec_coords( SGF_FILE)
+    CORNER_COORDS = { 'TL': [0.0, 0.0], 'TR': [0.0, 0.0], 'BR': [0.0, 0.0], 'BL': [0.0, 0.0] }
+    draw_intersections( INTERSECTIONS, 5, 'g')
+
+
+
 #===========
 #=== Sgf ===
 #===========
 
-# Read and sgf file and linearize it into a list
+# Read an sgf file and linearize it into a list
 # ['b','w','e',...]
 #-------------------------------------------------
 def linearize_sgf( sgf):
     boardsz = int( get_sgf_tag( 'SZ', sgf))
     if not 'KifuCam' in sgf:
         # The AW[ab][ce]... case
-        match = re.search ( 'AW(\[[a-s][a-s]\])*', sgf)
+        match = re.search( 'AW(\[[a-s][a-s]\])*', sgf)
         whites = match.group(0)
         whites = re.sub( 'AW', '', whites)
         whites = re.sub( '\[', 'AW[', whites)
@@ -156,7 +271,6 @@ def isecs2sgf( sgffile, intersections):
     res = re.sub( '(SZ\[[^\]]*\])', r'\1' + tstr, res)
     res = re.sub( r'\s*','', res)
     open( sgffile, 'w').write( res)
-
 
 # Replace anything after the GC tag with the new position
 #----------------------------------------------------------
@@ -291,7 +405,7 @@ def cb_btn_clear( event):
         DIAGRAM[idx] = 'EMPTY'
     cb_btn_show( event)
 
-# Compute ans show intersections from corners
+# Compute and show intersections from corners
 #------------------------------------------------
 def cb_btn_show( event):
     global NEW_INTERSECTIONS
@@ -349,7 +463,7 @@ def draw_intersections( intersections, r, col):
     FIG.canvas.draw()
 
 # Choose corner
-#----------------------------
+#--------------------------------
 def cb_rbtn_corner_bew( label):
     global SELECTED_CORNER
     global SELECTED_BEW
@@ -362,72 +476,17 @@ def cb_rbtn_corner_bew( label):
         SELECTED_CORNER = label
         print( 'rbtn_corner %s' % label)
 
-#-----------
-def main():
-    global SELECTED_CORNER
-    global AX_IMAGE
-    global CORNER_COORDS
-    global FIG
-    global IMG
-    global SGF_FILE
-    global INTERSECTIONS
-    global DIAGRAM
-
-    if len(sys.argv) == 1:
-        usage(True)
-
-    parser = argparse.ArgumentParser(usage=usage())
-    parser.add_argument( '--fname',      required=True)
-    args = parser.parse_args()
-
-    FIG = plt.figure( figsize=(9,8))
-
-    # Image
-    try:
-        IMG = mpl.image.imread( args.fname)
-    except: # maybe a jpg saved with png extension
-        shutil.copy( args.fname, 'tt.jpg')
-        IMG = cv2.imread( 'tt.jpg')
-        print( 'converting to png: %s' % args.fname)
-        cv2.imwrite( args.fname, IMG)
-        IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
-
-    AX_IMAGE = FIG.add_axes( [0.07, 0.06, 0.5, 0.9] )
-    AX_IMAGE.imshow( IMG, origin='upper')
-    cid = FIG.canvas.mpl_connect('button_press_event', onclick)
-
-    # Sgf
-    SGF_FILE = os.path.splitext( args.fname)[0]+'.sgf'
-    INTERSECTIONS, DIAGRAM = get_isec_coords( SGF_FILE)
-
-    draw_intersections( INTERSECTIONS, 5, 'g')
-
-    # # Reset button
-    # ax_reset = FIG.add_axes( [0.70, 0.1, 0.1, 0.05] )
-    # btn_reset = Button( ax_reset, 'Reset')
-    # btn_reset.on_clicked( cb_btn_reset)
-
-    # Save button
-    ax_save  = FIG.add_axes( [0.70, 0.16, 0.1, 0.05] )
-    btn_save = Button( ax_save, 'Save')
-    btn_save.on_clicked( cb_btn_save)
-
-    # Show button computes and shows intersections
-    ax_show  = FIG.add_axes( [0.70, 0.28, 0.1, 0.05] )
-    btn_show = Button( ax_show, 'Show')
-    btn_show.on_clicked( cb_btn_show)
-
-    # Clear button sets all intersections to clear
-    ax_clear  = FIG.add_axes( [0.70, 0.22, 0.1, 0.05] )
-    btn_clear = Button( ax_clear, 'Clear')
-    btn_clear.on_clicked( cb_btn_clear)
-
-    # Radiobutton for corner and Black Empty White
-    ax_radio = FIG.add_axes( [0.70, 0.5, 0.2, 0.2] )
-    rbtn_corner_bew = RadioButtons( ax_radio, ('TL', 'TR', 'BR', 'BL', 'Black', 'Empty', 'White' ))
-    rbtn_corner_bew.on_clicked( cb_rbtn_corner_bew)
-
-    plt.show()
+#-------------------------------------------------
+def show_text( ax, txt, color='black', size=10):
+    ax.cla()
+    ax.axis( 'off')
+    ax.text( 0,0, txt,
+             verticalalignment='bottom', horizontalalignment='left',
+             transform = ax.transAxes,
+             fontname = 'monospace', style = 'normal',
+             color=color, fontsize=size)
+    #FIG.canvas.draw()
+    plt.pause( 0.0001)
 
 
 if __name__ == '__main__':

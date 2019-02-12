@@ -124,7 +124,7 @@ extern cv::Mat mat_dbg;
     _imgQ.clear();
 }
 
-// Detect position on image and count erros
+// Detect position on image and count errors
 //------------------------------------------------------------
 - (int) runTestImg:(UIImage *)img withSgf:(NSString *)sgf
 {
@@ -561,7 +561,9 @@ extern cv::Mat mat_dbg;
     if (_small_zoomed.rows > 0) {
         [self nn_classify_intersections];
     }
-    fix_diagram( _diagram, _intersections, _small_img);
+    Points2f orig_intersections;
+    unwarp_points( _invProj, _invRot, _invMd, _intersections, orig_intersections);
+    fix_diagram( _diagram, orig_intersections, _orig_small); //_small_img);
 } // f08_classify()
 
 // Debug wrapper for f08_classify
