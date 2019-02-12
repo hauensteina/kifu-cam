@@ -161,6 +161,7 @@
     _sgf = replaceRegex( re, _sgf, templ);
     
     NSString *fname = [self savePhotoAndSgf];
+    
     [SaveDiscardVC uploadToS3:fname];
     
     // Show saved images
