@@ -1,0 +1,38 @@
+<html><body>
+
+<p>
+This privacy policy governs your use of the software application Kifu Cam ("Application") for mobile devices. <br>
+The application was created by Andreas Hauenstein. <br>
+<br>
+Stored Information<br>
+====================<br>
+<br>
+The Application extracts the board position from a photo of a Go board.<br>
+Go, also known as Baduk or Weiqi, is an ancient asian strategy game.<br>
+<br>
+The app does not track users or user behavior. There is no login, and you are entirely anonymous.<br>
+<br>
+However, the app does anonymously upload the pictures you take to a secured AWS S3 bucket to improve the<br>
+algorithm. No link between the image and a user is stored.<br>
+<br>
+Changes<br>
+=========<br>
+<br>
+This Privacy Policy may be updated from time to time for any reason. We will notify you of any changes to our<br>
+Privacy Policy by posting the new Privacy Policy here. You are advised to consult this Privacy Policy regularly<br>
+for any changes, as continued use is deemed approval of all changes.<br>
+<br>
+Your Consent<br>
+==============<br>
+<br>
+By using the Application, you are consenting to our processing of your information as set forth in this Privacy Policy<br>
+now and as amended by us. If you reside outside the United States, your information will be transferred,<br>
+processed and stored there under United States privacy standards.<br>
+<br>
+Contact us<br>
+===========<br>
+<br>
+If you have any questions regarding privacy while using the Application, or have questions about our practices,<br>
+please contact us via email at kifucam@gmail.com .<br>
+
+</body></html>
