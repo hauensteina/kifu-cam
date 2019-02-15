@@ -53,7 +53,7 @@
 
 
 - (UIImage *) video_mode;
-- (UIImage *) photo_mode;
+- (UIImage *) get_best_frame;
 
 // Methods for the Obj-C View Controllers
 //=============================================

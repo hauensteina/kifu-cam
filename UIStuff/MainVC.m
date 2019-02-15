@@ -277,8 +277,8 @@
 //----------------------
 - (void) processImgQ
 {
-    g_app.saveDiscardVC.photo = [_cppInterface photo_mode];
-    g_app.saveDiscardVC.sgf = [g_app.mainVC.cppInterface get_sgf];
+    g_app.saveDiscardVC.photo = [_cppInterface get_best_frame];
+    g_app.saveDiscardVC.sgf = [_cppInterface get_sgf];
     [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
 }
 

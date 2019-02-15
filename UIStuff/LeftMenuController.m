@@ -78,13 +78,16 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];
         
-        //if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 9) {
-        if (iPhoneVersion() >= 9) {
+        setProp( @"opt_mode", @"photo");
+        if (iPhoneVersion() >= 9) { setProp( @"opt_mode", @"video"); }
+        if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 9) {
             [self gotoVideoMode];
         }
         else {
             [self gotoPhotoMode];
         }
+        [self unselectAll];
+        [self setState:ITEM_SELECTED forMenuItem:@"Photo Mode"];
     }
     return self;
 } // init()
@@ -239,7 +242,7 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         return;
     }
     [self unselectAll];
-    [self setState:ITEM_SELECTED forMenuItem:@"Video Mode"];
+    [self setState:ITEM_SELECTED forMenuItem:@"Photo Mode"];
     _mode = VIDEO_MODE;
     g_app.mainVC.btnCam.hidden = NO;
     [g_app.mainVC.frameExtractor resume];

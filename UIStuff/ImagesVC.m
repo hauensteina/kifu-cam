@@ -305,7 +305,7 @@
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     [g_app.mainVC.cppInterface clearImgQ];
     [g_app.mainVC.cppInterface qImg:img];
-    [g_app.mainVC.cppInterface photo_mode];
+    [g_app.mainVC.cppInterface get_best_frame];
     NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
     fname = changeExtension( fullfname, @".sgf");
     NSError *error;

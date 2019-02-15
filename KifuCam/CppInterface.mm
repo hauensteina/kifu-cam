@@ -168,6 +168,7 @@ extern cv::Mat mat_dbg;
 //--------------------------------------------------
 - (void) f00_dots_and_verticals
 {
+    //NSLog(@"f00");
     _vertical_lines.clear();
     _horizontal_lines.clear();
     // Find Blobs
@@ -223,6 +224,7 @@ extern cv::Mat mat_dbg;
 //----------------------------------------------
 - (void) f02_warp
 {
+    //NSLog(@"f02");
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
     
     // Straighten horizontals
@@ -268,6 +270,7 @@ extern cv::Mat mat_dbg;
 //--------------------------------------------------
 - (void) f03_houghlines
 {
+    //NSLog(@"f03");
     //_vertical_lines.clear();
     //_horizontal_lines.clear();
     //cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
@@ -316,6 +319,7 @@ extern cv::Mat mat_dbg;
 //----------------------------------
 - (void) f04_vert_lines:(int)state
 {
+    //NSLog(@"f04");
     static std::vector<cv::Vec2f> all_vert_lines;
     switch (state) {
         case 0:
@@ -400,6 +404,7 @@ extern cv::Mat mat_dbg;
 //-----------------------------
 - (void) f05_horiz_lines:(int)state
 {
+    //NSLog(@"f05");
     static std::vector<cv::Vec2f> all_horiz_lines;
     switch (state) {
         case 0:
@@ -483,6 +488,7 @@ extern cv::Mat mat_dbg;
 //----------------------------
 - (void) f06_corners
 {
+    //NSLog(@"f06");
     _intersections = get_intersections( _horizontal_lines, _vertical_lines);
     _corners.clear();
     cv::Mat boardness;
@@ -522,6 +528,7 @@ extern cv::Mat mat_dbg;
 //----------------------------
 - (void) f07_zoom_in
 {
+    //NSLog(@"f07");
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
@@ -558,6 +565,7 @@ extern cv::Mat mat_dbg;
 //-----------------------------------------------------------
 - (void) f08_classify
 {
+    //NSLog(@"f08");
     if (_small_zoomed.rows > 0) {
         [self nn_classify_intersections];
     }
@@ -705,7 +713,7 @@ extern cv::Mat mat_dbg;
 // Find the best frame in the queue and process it.
 // Called when the camera button is pressed.
 //----------------------------------------------------
-- (UIImage *) photo_mode
+- (UIImage *) get_best_frame
 {
     // Pick best frame from Q
     cv::Mat best;
@@ -728,9 +736,10 @@ extern cv::Mat mat_dbg;
         }
     }
     UIImage *img = MatToUIImage( best);
-    [self recognize_position:best breakIfBad:NO];
+    //[self recognize_position:best breakIfBad:NO];
+    [self recognize_position:best breakIfBad:YES];
     return img;
-} // photo_mode()
+} // get_best_frame()
 
 
 //=== Neural Network CoreML interface ===
@@ -888,7 +897,7 @@ extern cv::Mat mat_dbg;
 {
     [self clearImgQ];
     [self qImg:img];
-    [self photo_mode];
+    [self get_best_frame];
     NSString *sgf = [self get_sgf];
     return sgf;
 } // get_sgf_for_img()

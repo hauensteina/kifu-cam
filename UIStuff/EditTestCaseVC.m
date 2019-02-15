@@ -297,7 +297,7 @@
     
     [g_app.mainVC.cppInterface clearImgQ];
     [g_app.mainVC.cppInterface qImg:img];
-    [g_app.mainVC.cppInterface photo_mode];
+    [g_app.mainVC.cppInterface get_best_frame];
     NSString *sgfname = changeExtension( fullfname, @".sgf");
     [g_app.mainVC.cppInterface save_current_sgf:sgfname overwrite:YES];
 
