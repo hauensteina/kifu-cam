@@ -922,7 +922,6 @@ extern cv::Mat mat_dbg;
     // Remove backslashes
     std::regex re_back( "\\\\");
     std::string tstr = std::regex_replace( gc, re_back, "" );
-    //std::regex re( "intersections:(\\([^#]*\\))[#].*");
     std::regex re( "intersections:(\\(\\(.*\\)\\)).*");
     tstr = std::regex_replace( tstr, re, "$1" );
     // Turn it into json
@@ -936,6 +935,10 @@ extern cv::Mat mat_dbg;
     int boardsz = 19;
     if (len == 13*13) boardsz = 13;
     else if (len == 9*9) boardsz = 9;
+    else {
+        res = [@[@[@0,@0],@[@0,@0],@[@0,@0],@[@0,@0]] mutableCopy];
+        return res;
+    }
     [res addObject:points[0]];
     [res addObject:points[boardsz-1]];
     [res addObject:points[boardsz*boardsz-1]];

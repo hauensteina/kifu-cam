@@ -78,7 +78,8 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];
         
-        if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 9) {
+        //if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 9) {
+        if (iPhoneVersion() >= 9) {
             [self gotoVideoMode];
         }
         else {
