@@ -79,8 +79,8 @@ enum {VIDEO_MODE=0, PHOTO_MODE=1, DEBUG_MODE=2, DEMO_MODE=3};
         self.tableView.backgroundColor = [UIColor clearColor];
         
         setProp( @"opt_mode", @"photo");
-        if (iPhoneVersion() >= 9) { setProp( @"opt_mode", @"video"); }
-        if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 9) {
+        if (iPhoneVersion() >= 8) { setProp( @"opt_mode", @"video"); }
+        if ([g_app.settingsVC defaultToVideo] && iPhoneVersion() >= 8) {
             [self gotoVideoMode];
         }
         else {
