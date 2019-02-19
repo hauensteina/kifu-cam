@@ -44,6 +44,8 @@ extern "C" {
     NSString* platform(void);
     // @"iPhone8,1" -> 8, @"iPad4,8" -> 0
     int iPhoneVersion(void);
+    // @"iPad6,12" -> 6, @"iPhone4,8" -> 0
+    int iPadVersion(void);
     
     // Drawing
     //==========

@@ -62,7 +62,22 @@ int iPhoneVersion()
     tstr = replaceRegex( @",.*", tstr, @"");
     int res = atoi([tstr UTF8String]);
     return res;
-}
+} // iPhoneVersion()
+
+// @"iPad6,12" -> 6, @"iPhone4,8" -> 0
+//-------------------------------------
+int iPadVersion()
+{
+    NSString *platf = platform();
+    if (![platf hasPrefix:@"iPad"]) {
+        return 0;
+    }
+    NSString *tstr = replaceRegex( @"[a-zA-Z]*", platf, @"");
+    tstr = replaceRegex( @",.*", tstr, @"");
+    int res = atoi([tstr UTF8String]);
+    return res;
+} // iPadVersion()
+
 
 //==========
 // Drawing
