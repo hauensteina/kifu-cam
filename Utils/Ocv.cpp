@@ -681,11 +681,25 @@ void rough_houghlines (const cv::Mat &img, const Points &ps,
                                        });
     // Get the best ones
     auto vlines = horiz_vert_other_lines[1];
-    vert_lines.clear();
     vert_lines  = vec_slice( vlines, 0, 30);
     auto hlines = horiz_vert_other_lines[0];
-    horiz_lines.clear();
-    horiz_lines = vec_slice( hlines, 0, 30);
+    
+    // Split the hlines into those at the top and those at the bottom
+    std::vector<cv::Vec2f> hlines_top; 
+    std::vector<cv::Vec2f> hlines_bot;
+    ISLOOP( hlines) {
+        auto rho = hlines[i][0];
+        if (rho < 0.5 * img.rows) {
+            hlines_top.push_back( hlines[i]);
+        }
+        else {
+            hlines_bot.push_back( hlines[i]);
+        }
+    }
+    
+    horiz_lines = vec_slice( hlines_top, 0, 15);
+    vapp( horiz_lines, vec_slice( hlines_bot, 0, 15));
+//    horiz_lines = vec_slice( hlines, 0, 30);
 
     // Make sure rho is always positive
     ISLOOP( vert_lines) {
@@ -729,10 +743,25 @@ void perp_houghlines (const cv::Mat &img, const Points &ps,
                                        });
     // Get the best ones
     auto vlines = horiz_vert_other_lines[1];
-    vert_lines.clear();
     vert_lines  = vec_slice( vlines, 0, 30);
     auto hlines = horiz_vert_other_lines[0];
-    horiz_lines.clear();
+
+    // Split the hlines into those at the top and those at the bottom
+    std::vector<cv::Vec2f> hlines_top; //@@@
+    std::vector<cv::Vec2f> hlines_bot;
+    ISLOOP( hlines) {
+        auto rho = hlines[i][0];
+        if (rho < 0.5 * img.rows) {
+            hlines_top.push_back( hlines[i]);
+        }
+        else {
+            hlines_bot.push_back( hlines[i]);
+        }
+    }
+    
+    horiz_lines = vec_slice( hlines_top, 0, 15);
+    vapp( horiz_lines, vec_slice( hlines_bot, 0, 15));
+
     horiz_lines = vec_slice( hlines, 0, 30);
     
     // Make sure rho is always positive
