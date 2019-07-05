@@ -242,6 +242,7 @@
 		AC9814A3202152CD004375DD /* checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checked.png; sourceTree = "<group>"; };
 		AC9814A4202152CD004375DD /* unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unchecked.png; sourceTree = "<group>"; };
 		ACA185D7201BEA7000A3501E /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
+		ACA5B4A822CD6C5B008097A2 /* GoBoard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GoBoard.hpp; sourceTree = "<group>"; };
 		ACA69E4B1F9D077B00F5E068 /* Common.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		ACA86B70202508E700939F1A /* Icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-152.png"; sourceTree = "<group>"; };
 		ACA86B71202508E700939F1A /* Icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-120.png"; sourceTree = "<group>"; };
@@ -475,6 +476,7 @@
 				AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */,
 				AC9702191FBC88050057C4C2 /* Globals.h */,
 				AC9702171FBC87DF0057C4C2 /* Globals.mm */,
+				ACA5B4A822CD6C5B008097A2 /* GoBoard.hpp */,
 				AC1756CB200527770069EE99 /* Helpers.hpp */,
 				ACAB45722051A25D00958AC6 /* KerasBoardModel.h */,
 				ACAB45732051A25D00958AC6 /* KerasBoardModel.m */,
@@ -568,6 +570,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);

@@ -747,7 +747,7 @@ void perp_houghlines (const cv::Mat &img, const Points &ps,
     auto hlines = horiz_vert_other_lines[0];
 
     // Split the hlines into those at the top and those at the bottom
-    std::vector<cv::Vec2f> hlines_top; //@@@
+    std::vector<cv::Vec2f> hlines_top; 
     std::vector<cv::Vec2f> hlines_bot;
     ISLOOP( hlines) {
         auto rho = hlines[i][0];

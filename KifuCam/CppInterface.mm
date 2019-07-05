@@ -36,7 +36,7 @@
 
 #import "Common.h"
 #import "Globals.h"
-#include "Helpers.hpp"
+#import "Helpers.hpp"
 
 #import "AppDelegate.h"
 #import "BlobFinder.hpp"
@@ -45,6 +45,8 @@
 #import "KerasBoardModel.h"
 #import "KerasStoneModel.h"
 #import "Perspective.hpp"
+
+#import "GoBoard.hpp"
 
 extern cv::Mat mat_dbg;
 
@@ -88,6 +90,7 @@ extern cv::Mat mat_dbg;
 //----------------------
 - (instancetype)init
 {
+    GoString::test(); //@@@
     self = [super init];
     if (self) {
         g_docroot = [getFullPath(@"") UTF8String];
