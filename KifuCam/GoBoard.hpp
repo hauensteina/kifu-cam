@@ -32,6 +32,8 @@
 #define GoBoard_hpp
 
 #import <set>
+#import "Globals.h"
+#import "Common.hpp"
 
 // An intersection on a Go board. row, col 0 to boardsize - 1.
 //==============================================================
@@ -57,17 +59,22 @@ public:
     //-----------------------------------------------------------------------------------------
     GoString( int color, const std::set<GoPoint> &stones, const std::set<GoPoint> &liberties):
     m_color(color), m_stones(stones), m_liberties(liberties) {}
-    //-------------------------------
-    void add_liberty( GoPoint p) {
-        m_liberties.insert(p);
+    //------------------------------------
+    GoString add_liberty( GoPoint p) {
+        auto res = *this;
+        res.m_liberties.insert( p);
+        return res;
     } // add_liberty()
-    //---------------------------------
-    void rm_liberty( GoPoint p) {
-        if (m_liberties.count(p)) {
-            m_liberties.erase(p);
+    //-----------------------------------
+    GoString rm_liberty( GoPoint p) {
+        auto res = *this;
+        if (res.m_liberties.count(p)) {
+            res.m_liberties.erase(p);
         }
+        return res;
     } // rm_liberty()
     int color() { return m_color; }
+    const std::set<GoPoint> & stones() { return m_stones; }
     //--------------------------------------------------------
     int num_liberties() { return (int)m_liberties.size(); }
     //------------------------------------------------
@@ -98,14 +105,14 @@ public:
         GoString str3(0,stones3,libs3), str4(0,stones4,libs4);
         auto merged2 = str3.merged_with( str4);
         // Remove a liberty which exists
-        merged2.rm_liberty( GoPoint( 2,1));
+        merged2 = merged2.rm_liberty( GoPoint( 2,1));
         // Remove a liberty that does not exist
-        merged2.rm_liberty( GoPoint( 10,10));
+        merged2 = merged2.rm_liberty( GoPoint( 10,10));
         // Add a liberty
-        merged2.add_liberty( GoPoint( 2,1));
+        merged2 = merged2.add_liberty( GoPoint( 2,1));
     } // test()
 private:
-    int m_color; // black == 0, white == 1
+    int m_color; // BBLACK, WWHITE, EEMPTY
     std::set<GoPoint> m_stones;
     std::set<GoPoint> m_liberties;
 }; // class GoString
@@ -118,6 +125,18 @@ public:
     GoBoard( int sz=19) {
         m_sz = sz;
     } // GoBoard()
+    
+    // Make a GoBoard from a recognized position
+    //-----------------------------------------------
+    GoBoard( std::vector<int> &pos, int sz = 19) {
+        m_sz = sz;
+        ILOOP( sz*sz) {
+            int row = i / 19;
+            int col = i % 19;
+            place_stone( pos[i], GoPoint(row,col));
+        } // for
+    } // GoBoard( pos)
+    
     //------------------------------------------
     std::set<GoPoint> neighbors( GoPoint p) {
         std::set<GoPoint> res;
@@ -127,6 +146,7 @@ public:
         if (p.m_row < m_sz-1) { auto bot = GoPoint( p.m_row+1, p.m_col); res.insert( bot); }
         return res;
     } // neighbors()
+    
     //-------------------------------------------
     void place_stone( int color, GoPoint p_) {
         std::set<GoPoint> liberties;
@@ -135,7 +155,7 @@ public:
         for (auto &p : neighbors(p_)) {
             if (!m_grid.count(p)) { liberties.insert( p); }
             else {
-                auto neigh_str = m_grid[p];
+                GoString &neigh_str( m_grid[p]);
                 if (neigh_str.color() == color) {
                     if (!adj_same_color.count( &neigh_str)) {
                         adj_same_color.insert( &neigh_str);
@@ -153,7 +173,52 @@ public:
         for (auto str_ptr:adj_same_color) {
             new_string = new_string.merged_with( *str_ptr);
         } // for
+        for (auto &p : new_string.stones() ) {
+            m_grid[p] = new_string;
+        } // for
+        // Take this liberty off the other color strings
+        for( auto str_ptr:adj_other_color) {
+            auto repl = str_ptr->rm_liberty( p_);
+            if (!repl.num_liberties()) { // No libs, take it off
+                rm_string( *str_ptr);
+            }
+            else {
+                for (auto &p : repl.stones() ) {
+                    m_grid[p] = repl;
+                }
+            }
+        } // for str_ptr
     } // place_stone()
+    
+    // Remove a captured string from the board
+    //-------------------------------------------
+    void rm_string( GoString &gostr) {
+        for (auto p : gostr.stones()) {
+            // Create libs for the neighboring strings
+            auto neighs = neighbors(p);
+            for (auto neigh : neighs) {
+                if (!m_grid.count(neigh)) { continue; }
+                auto neighstr = m_grid[neigh];
+                auto repl = neighstr.add_liberty( p);
+                for (auto &p : repl.stones() ) {
+                    m_grid[p] = repl;
+                }
+            } // for neighs
+        } // for p in gostr
+    } // rm_string()
+    
+    //----------------------
+    static void test() {
+        std::vector<int> pos( 361, EEMPTY);
+        auto w = [&pos](int row,int col) { pos[(row)*19 + col] = WWHITE; };
+        auto b = [&pos](int row,int col) { pos[(row)*19 + col] = BBLACK; };
+        // Just two strings, B and W, no captures
+        b(0,0); b(0,1);
+        w(1,0); w(1,1); w(1,2); w(1,3); w(0,3);
+        auto board = GoBoard( pos);
+        int tt=42;
+        
+    } // test()
 private:
     int m_sz;
     std::map<GoPoint,GoString> m_grid;

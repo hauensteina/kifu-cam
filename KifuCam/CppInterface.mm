@@ -90,7 +90,7 @@ extern cv::Mat mat_dbg;
 //----------------------
 - (instancetype)init
 {
-    GoString::test(); //@@@
+    GoBoard::test(); //@@@
     self = [super init];
     if (self) {
         g_docroot = [getFullPath(@"") UTF8String];
