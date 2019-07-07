@@ -95,14 +95,14 @@ public:
         std::set<GoPoint> libs1 { GoPoint(1,0), GoPoint(1,1), GoPoint(0,2) };
         std::set<GoPoint> stones2 { GoPoint(0,2), GoPoint(0,3) };
         std::set<GoPoint> libs2 { GoPoint(0,1), GoPoint(0,4), GoPoint(1,2), GoPoint(1,3) };
-        GoString str1(0,stones1,libs1), str2(0,stones2,libs2);
+        GoString str1( BBLACK,stones1,libs1), str2( BBLACK,stones2,libs2);
         auto merged1 = str1.merged_with( str2);
         // Merge, common stones
         std::set<GoPoint> stones3 { GoPoint(0,0), GoPoint(0,1) };
         std::set<GoPoint> libs3 { GoPoint(1,0), GoPoint(1,1), GoPoint(0,2) };
         std::set<GoPoint> stones4 { GoPoint(0,1), GoPoint(1,1) };
         std::set<GoPoint> libs4 { GoPoint(0,0), GoPoint(1,0), GoPoint(0,2), GoPoint(1,2), GoPoint(2,1) };
-        GoString str3(0,stones3,libs3), str4(0,stones4,libs4);
+        GoString str3( BBLACK,stones3,libs3), str4( BBLACK,stones4, libs4);
         auto merged2 = str3.merged_with( str4);
         // Remove a liberty which exists
         merged2 = merged2.rm_liberty( GoPoint( 2,1));
@@ -131,6 +131,7 @@ public:
     GoBoard( std::vector<int> &pos, int sz = 19) {
         m_sz = sz;
         ILOOP( sz*sz) {
+            if (pos[i] == EEMPTY) { continue; }
             int row = i / 19;
             int col = i % 19;
             place_stone( pos[i], GoPoint(row,col));
@@ -192,7 +193,7 @@ public:
     
     // Remove a captured string from the board
     //-------------------------------------------
-    void rm_string( GoString &gostr) {
+    void rm_string( GoString gostr) {
         for (auto p : gostr.stones()) {
             // Create libs for the neighboring strings
             auto neighs = neighbors(p);
@@ -204,6 +205,7 @@ public:
                     m_grid[p] = repl;
                 }
             } // for neighs
+            m_grid.erase( p);
         } // for p in gostr
     } // rm_string()
     
@@ -212,12 +214,26 @@ public:
         std::vector<int> pos( 361, EEMPTY);
         auto w = [&pos](int row,int col) { pos[(row)*19 + col] = WWHITE; };
         auto b = [&pos](int row,int col) { pos[(row)*19 + col] = BBLACK; };
+
         // Just two strings, B and W, no captures
+        /*
+         x x . o .
+         o o o o .
+         */
         b(0,0); b(0,1);
         w(1,0); w(1,1); w(1,2); w(1,3); w(0,3);
         auto board = GoBoard( pos);
-        int tt=42;
         
+        // Two stones captured
+        /*
+         x x o o .
+         o o o o .
+         */
+        pos = std::vector<int>( 361, EEMPTY);
+        b(0,0); b(0,1);
+        w(1,0); w(1,1); w(1,2); w(1,3); w(0,3);
+        w(0,2);
+        board = GoBoard( pos);
     } // test()
 private:
     int m_sz;
