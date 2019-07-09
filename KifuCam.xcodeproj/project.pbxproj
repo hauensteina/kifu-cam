@@ -47,7 +47,6 @@
 		AC9814A5202152CD004375DD /* checked.png in Resources */ = {isa = PBXBuildFile; fileRef = AC9814A3202152CD004375DD /* checked.png */; };
 		AC9814A6202152CD004375DD /* unchecked.png in Resources */ = {isa = PBXBuildFile; fileRef = AC9814A4202152CD004375DD /* unchecked.png */; };
 		ACA185D8201BEA7100A3501E /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA185D7201BEA7000A3501E /* demo.png */; };
-		ACA5B4AD22D3C5C2008097A2 /* nn_score.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = ACA5B4AC22D3C5C2008097A2 /* nn_score.mlmodel */; };
 		ACA69E4C1F9D077B00F5E068 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = ACA69E4B1F9D077B00F5E068 /* Common.m */; };
 		ACA86B73202508E800939F1A /* Icon-152.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B70202508E700939F1A /* Icon-152.png */; };
 		ACA86B74202508E800939F1A /* Icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B71202508E700939F1A /* Icon-120.png */; };
@@ -56,6 +55,7 @@
 		ACAB45742051A25E00958AC6 /* KerasBoardModel.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAB45732051A25D00958AC6 /* KerasBoardModel.m */; };
 		ACAFE424201FD1AB00E26773 /* kifu-cam.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE416201FD1AB00E26773 /* kifu-cam.png */; };
 		ACB0C40C22D4E94B00356EA4 /* KerasScoreModel.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB0C40B22D4E94B00356EA4 /* KerasScoreModel.m */; };
+		ACB0C41022D5100C00356EA4 /* nn_score.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = ACB0C40F22D5100C00356EA4 /* nn_score.mlmodel */; };
 		ACC91313201694C700B62682 /* SaveDiscardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC91312201694C600B62682 /* SaveDiscardVC.m */; };
 		ACC913162017F4F400B62682 /* ImagesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC913142017F4F300B62682 /* ImagesVC.m */; };
 		ACD6C84520152B3000759875 /* AWSPolly.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C82420152B1C00759875 /* AWSPolly.framework */; };
@@ -245,7 +245,6 @@
 		AC9814A4202152CD004375DD /* unchecked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unchecked.png; sourceTree = "<group>"; };
 		ACA185D7201BEA7000A3501E /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
 		ACA5B4A822CD6C5B008097A2 /* GoBoard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GoBoard.hpp; sourceTree = "<group>"; };
-		ACA5B4AC22D3C5C2008097A2 /* nn_score.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = nn_score.mlmodel; path = ../../../../marfa/nn_score.mlmodel; sourceTree = "<group>"; };
 		ACA69E4B1F9D077B00F5E068 /* Common.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
 		ACA86B70202508E700939F1A /* Icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-152.png"; sourceTree = "<group>"; };
 		ACA86B71202508E700939F1A /* Icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-120.png"; sourceTree = "<group>"; };
@@ -257,6 +256,7 @@
 		ACAFE416201FD1AB00E26773 /* kifu-cam.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kifu-cam.png"; sourceTree = "<group>"; };
 		ACB0C40B22D4E94B00356EA4 /* KerasScoreModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasScoreModel.m; sourceTree = "<group>"; };
 		ACB0C40E22D4E99A00356EA4 /* KerasScoreModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasScoreModel.h; sourceTree = "<group>"; };
+		ACB0C40F22D5100C00356EA4 /* nn_score.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_score.mlmodel; sourceTree = "<group>"; };
 		ACC91311201694C500B62682 /* SaveDiscardVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveDiscardVC.h; sourceTree = "<group>"; };
 		ACC91312201694C600B62682 /* SaveDiscardVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveDiscardVC.m; sourceTree = "<group>"; };
 		ACC913142017F4F300B62682 /* ImagesVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagesVC.m; sourceTree = "<group>"; };
@@ -517,7 +517,7 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				ACA5B4AC22D3C5C2008097A2 /* nn_score.mlmodel */,
+				ACB0C40F22D5100C00356EA4 /* nn_score.mlmodel */,
 				ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */,
 				AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
@@ -651,6 +651,7 @@
 				AC5540771F9BE71900922557 /* CppInterface.mm in Sources */,
 				AC13BB3B200BD6C600369CAE /* LeftMenuController.m in Sources */,
 				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
+				ACB0C41022D5100C00356EA4 /* nn_score.mlmodel in Sources */,
 				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
@@ -671,7 +672,6 @@
 				AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */,
 				ACAB45742051A25E00958AC6 /* KerasBoardModel.m in Sources */,
 				AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */,
-				ACA5B4AD22D3C5C2008097A2 /* nn_score.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

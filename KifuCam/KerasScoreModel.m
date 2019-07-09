@@ -118,7 +118,6 @@
     };
     KerasScoreModel *model = [[KerasScoreModel alloc] initWithModel: [nn_score new]];
     NSArray *res = [model nnScorePos:pos turn:0];
-    int tt = 42;
     (void)res;
 } // test()
 @end
