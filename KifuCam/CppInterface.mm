@@ -43,6 +43,7 @@
 #import "Clust1D.hpp"
 #import "CppInterface.h"
 #import "KerasBoardModel.h"
+#import "KerasScoreModel.h"
 #import "KerasStoneModel.h"
 #import "Perspective.hpp"
 
@@ -90,7 +91,7 @@ extern cv::Mat mat_dbg;
 //----------------------
 - (instancetype)init
 {
-    GoBoard::test(); //@@@
+    [KerasScoreModel test]; //@@@
     self = [super init];
     if (self) {
         g_docroot = [getFullPath(@"") UTF8String];
