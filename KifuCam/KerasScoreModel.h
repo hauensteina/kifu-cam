@@ -20,8 +20,9 @@
 @interface KerasScoreModel : NSObject
 
 - (nonnull instancetype)initWithModel:(nullable nn_score *)kerasModel;
-- (nullable NSArray *) nnScorePos:(int[_Nonnull])pos turn:(int)turn;
+- (nullable double *) nnScorePos:(int[_Nonnull])pos turn:(int)turn;
 - (MLMultiArray *_Nonnull) MultiArrayFromPos:(int[_Nonnull])pos turn:(int)turn;
-+ (void) test;
++ (double *_Nonnull) test:(int*_Nonnull*_Nonnull)pos_out;
+
 @end
 

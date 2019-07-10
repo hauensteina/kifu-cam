@@ -221,6 +221,7 @@
 		AC5F340F20151C59002FEF06 /* S3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = S3.h; sourceTree = "<group>"; };
 		AC61AD551FBCCB0B00DEBCDA /* Common.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
 		AC61AD561FBCCB0B00DEBCDA /* Common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Common.hpp; sourceTree = "<group>"; };
+		AC620A6222D6562900FDCB82 /* Scoring.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Scoring.hpp; sourceTree = "<group>"; };
 		AC628C131F9A7D3F0043FCEE /* KifuCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KifuCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC628C171F9A7D3F0043FCEE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AC628C191F9A7D3F0043FCEE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -490,6 +491,7 @@
 				AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */,
 				AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */,
 				ACAB4579205AC76F00958AC6 /* Perspective.hpp */,
+				AC620A6222D6562900FDCB82 /* Scoring.hpp */,
 				AC628C221F9A7D3F0043FCEE /* Assets.xcassets */,
 				AC628C271F9A7D3F0043FCEE /* Info.plist */,
 				AC628C161F9A7D3F0043FCEE /* Supporting Files */,

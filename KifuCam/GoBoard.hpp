@@ -41,6 +41,7 @@ class GoPoint
 {
 public:
     GoPoint( int row, int col) : m_row(row), m_col(col) {}
+    GoPoint( int idx) : m_row(idx/19), m_col(idx % 19) {}
     bool operator < (const GoPoint& rhs) const {
         return (m_row < rhs.m_row) || ((m_row == rhs.m_row) && (m_col < rhs.m_col));
     }
@@ -128,7 +129,7 @@ public:
     
     // Make a GoBoard from a recognized position
     //-----------------------------------------------
-    GoBoard( std::vector<int> &pos, int sz = 19) {
+    GoBoard( const int pos[], int sz = 19) {
         m_sz = sz;
         ILOOP( sz*sz) {
             if (pos[i] == EEMPTY) { continue; }
@@ -211,7 +212,8 @@ public:
     
     //----------------------
     static void test() {
-        std::vector<int> pos( 361, EEMPTY);
+        int pos[361];
+        ILOOP(361) { pos[i] = EEMPTY; }
         auto w = [&pos](int row,int col) { pos[(row)*19 + col] = WWHITE; };
         auto b = [&pos](int row,int col) { pos[(row)*19 + col] = BBLACK; };
 
@@ -229,7 +231,7 @@ public:
          x x o o .
          o o o o .
          */
-        pos = std::vector<int>( 361, EEMPTY);
+        ILOOP(361) { pos[i] = EEMPTY; }
         b(0,0); b(0,1);
         w(1,0); w(1,1); w(1,2); w(1,3); w(0,3);
         w(0,2);

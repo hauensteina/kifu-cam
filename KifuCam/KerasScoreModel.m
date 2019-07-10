@@ -16,8 +16,6 @@
 @interface KerasScoreModel()
 //================================
 @property nn_score *model;
-// Swap out the image data between calls to featureMap()
-//@property MLMultiArray *image;
 @end
 
 @implementation KerasScoreModel
@@ -36,19 +34,17 @@
 // intersection is colored white.
 // Input array of size 361, 0~Black, 1~Empty, 2~White
 //-----------------------------------------------------------------------------
-- (NSArray *) nnScorePos:(int[])pos turn:(int)turn
+- (double *) nnScorePos:(int[])pos turn:(int)turn
 {
+    static double wprobs[361];
     MLMultiArray *input = [self MultiArrayFromPos:pos turn:turn];
     nn_scoreInput *nn_input = [[nn_scoreInput alloc] initWithInput1:input];
     NSError *err;
     nn_scoreOutput *nnoutput = [_model predictionFromFeatures:nn_input error:&err];
     MLMultiArray *out1 = nnoutput.output1;
     double *darr = (double *)out1.dataPointer;
-    NSMutableArray *res = [NSMutableArray new];
-    ILOOP(361) {
-        [res addObject:@(darr[i])];
-    }
-    return res;
+    memcpy( wprobs, darr, 361 * sizeof(double));
+    return wprobs;
 } // nnScorePos()
 
 // Make an MLMultiArray from an array of size 361, 0~Black, 1~Empty, 2~White.
@@ -92,10 +88,10 @@
     return res;
 } // MultiArrayFromPos()
 
-//---------------
-+ (void) test
+//------------------------------------
++ (double *) test:(int**)pos_out
 {
-    int pos[] = {
+    static int pos[] = {
         2,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
         0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -117,8 +113,9 @@
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,0
     };
     KerasScoreModel *model = [[KerasScoreModel alloc] initWithModel: [nn_score new]];
-    NSArray *res = [model nnScorePos:pos turn:0];
-    (void)res;
+    double *wprobs = [model nnScorePos:pos turn:0];
+    *pos_out = pos;
+    return wprobs;
 } // test()
 @end
 

@@ -47,7 +47,7 @@
 #import "KerasStoneModel.h"
 #import "Perspective.hpp"
 
-#import "GoBoard.hpp"
+#import "Scoring.hpp"
 
 extern cv::Mat mat_dbg;
 
@@ -91,7 +91,12 @@ extern cv::Mat mat_dbg;
 //----------------------
 - (instancetype)init
 {
-    [KerasScoreModel test]; //@@@
+    // Test scoring
+    int *pos_out;
+    double *wprobs = [KerasScoreModel test:&pos_out];
+    Scoring scoring;
+    scoring.score( pos_out, wprobs, BBLACK);
+    
     self = [super init];
     if (self) {
         g_docroot = [getFullPath(@"") UTF8String];
@@ -105,7 +110,7 @@ extern cv::Mat mat_dbg;
         _stoneModel = [[KerasStoneModel alloc] initWithModel:_bewmodel];
     }
     return self;
-}
+} // init()
 
 //=== Misc Public ===
 //===================
