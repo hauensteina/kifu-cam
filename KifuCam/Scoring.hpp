@@ -42,11 +42,40 @@ public:
     //---------------------
     Scoring() {}
     
-    //---------------------------------------------------------------
-    void score( const int pos[], const double wprobs[], int turn) {
+    //--------------------------------------------------------------------------------------------------
+    std::tuple<int,int> score( const int pos[], const double wprobs[], int turn, char *&terrmap_out) {
         replay_game( pos);
-        int tt=42;
+        static char terrmap[361];
+        ILOOP (361) {
+            terrmap[i] = color( wprobs[i]);
+        }
+        enforce_strings( terrmap, wprobs);
+        // Compute score. Split neutral points between players.
+        auto player = turn;
+        int wpoints = 0, bpoints = 0;
+        ILOOP( 361) {
+            auto col = terrmap[i];
+            if (col == 'w') {
+                wpoints++;
+            }
+            else if (col == 'b') {
+                bpoints++;
+            }
+            else { // neutral
+                if (player == BBLACK) {
+                    bpoints++; player = WWHITE;
+                }
+                else {
+                    wpoints++; player = BBLACK;
+                }
+            }
+        } // ILOOP
+        terrmap_out = terrmap;
+        return {wpoints, bpoints};
     } // score()
+    
+private:
+    GoBoard m_board;
     
     //--------------------------------------
     void replay_game( const int pos[]) {
@@ -58,9 +87,35 @@ public:
             }
         } // ILOOP
     } // replay_game()
+
+    // Decide color from wprob for each point
+    //-------------------------------------------
+    char color( double wprob) {
+        const double NEUTRAL_THRESH = 0.4; // 0.30; // 0.40 0.15
+        if (fabs(0.5 - wprob) < NEUTRAL_THRESH) { return 'n'; }
+        else if (wprob > 0.5) { return 'w'; }
+        else { return 'b'; }
+    } // color()
     
-private:
-    GoBoard m_board;
+    // Make sure all stones in a string have the same color
+    //--------------------------------------------------------------
+    void enforce_strings( char terrmap[], const double wprobs[]) {
+        auto strs = m_board.strings();
+        for (auto &gostr : strs) {
+            auto avg_col = 0.0;
+            double i = -1;
+            for (auto &point : gostr.stones()) {
+                i++;
+                auto wprob = wprobs[point.idx()];
+                avg_col = avg_col * (i/(i+1)) + wprob / (i+1);
+            } // for point
+            auto truecolor = avg_col < 0.5 ? 'b' : 'w';
+            for (auto &point : gostr.stones()) {
+                terrmap[point.idx()] = truecolor;
+            }
+        } // for gostr
+    } // enforce_strings()
+    
 }; // class Scoring
 
 

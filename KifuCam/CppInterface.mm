@@ -91,11 +91,12 @@ extern cv::Mat mat_dbg;
 //----------------------
 - (instancetype)init
 {
-    // Test scoring
+    // Test scoring //@@@
     int *pos_out;
     double *wprobs = [KerasScoreModel test:&pos_out];
+    char *terrmap_out;
     Scoring scoring;
-    scoring.score( pos_out, wprobs, BBLACK);
+    auto [wpoints, bpoints] = scoring.score( pos_out, wprobs, BBLACK, terrmap_out);
     
     self = [super init];
     if (self) {

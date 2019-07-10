@@ -42,9 +42,11 @@ class GoPoint
 public:
     GoPoint( int row, int col) : m_row(row), m_col(col) {}
     GoPoint( int idx) : m_row(idx/19), m_col(idx % 19) {}
+    //---------------------------------------------
     bool operator < (const GoPoint& rhs) const {
         return (m_row < rhs.m_row) || ((m_row == rhs.m_row) && (m_col < rhs.m_col));
     }
+    int idx() const { return m_row * 19 + m_col; }
     int m_row;
     int m_col;
 }; // class GoPoint
@@ -60,6 +62,12 @@ public:
     //-----------------------------------------------------------------------------------------
     GoString( int color, const std::set<GoPoint> &stones, const std::set<GoPoint> &liberties):
     m_color(color), m_stones(stones), m_liberties(liberties) {}
+    //----------------------------------------------
+    bool operator < (const GoString& rhs) const {
+        auto myfirst = *(m_stones.begin());
+        auto rightfirst = *(rhs.m_stones.begin());
+        return myfirst < rightfirst;
+    }
     //------------------------------------
     GoString add_liberty( GoPoint p) {
         auto res = *this;
@@ -75,7 +83,7 @@ public:
         return res;
     } // rm_liberty()
     int color() { return m_color; }
-    const std::set<GoPoint> & stones() { return m_stones; }
+    const std::set<GoPoint> & stones() const { return m_stones; }
     //--------------------------------------------------------
     int num_liberties() { return (int)m_liberties.size(); }
     //------------------------------------------------
@@ -209,6 +217,15 @@ public:
             m_grid.erase( p);
         } // for p in gostr
     } // rm_string()
+    
+    //---------------------------------
+    std::set<GoString> strings() {
+        std::set<GoString> res;
+        for( auto const& [key, val] : m_grid ) {
+            res.insert( val);
+        } // for
+        return res;
+    } // strings()
     
     //----------------------
     static void test() {
