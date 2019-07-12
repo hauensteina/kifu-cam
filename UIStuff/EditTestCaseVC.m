@@ -172,11 +172,6 @@
         sgf = [g_app.mainVC.cppInterface get_sgf_for_img:img];
         [g_app.mainVC.cppInterface save_current_sgf:sgfname overwrite:YES];
     }
-    NSArray *corners = [CppInterface corners_from_sgf:sgf];
-    img = drawCircleOnImg( img, [corners[0][0] intValue], [corners[0][1] intValue], 20, RED);
-    img = drawCircleOnImg( img, [corners[1][0] intValue], [corners[1][1] intValue], 20, RED);
-    img = drawCircleOnImg( img, [corners[2][0] intValue], [corners[2][1] intValue], 20, RED);
-    img = drawCircleOnImg( img, [corners[3][0] intValue], [corners[3][1] intValue], 20, RED);
     imgView1.image = img;
     [cell addSubview: imgView1];
     // Diagram

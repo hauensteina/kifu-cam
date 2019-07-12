@@ -79,9 +79,9 @@ inline std::string generate_sgf( const std::string &title,
 {
     const int BUFSZ = 10000;
     char buf[BUFSZ+1];
-    int boardsz = 19; // default
-    if (SZ(diagram) == 13*13) boardsz = 13;
-    else if (SZ(diagram) == 9*9) boardsz = 9;
+//    int boardsz = 19; // default
+//    if (SZ(diagram) == 13*13) boardsz = 13;
+//    else if (SZ(diagram) == 9*9) boardsz = 9;
     
     // Intersection coordinate string
     std::string coords = "intersections:(";
@@ -111,13 +111,13 @@ inline std::string generate_sgf( const std::string &title,
              " DT[%s]"
              " KM[%f]"
              " GC[%s#%s#%s#]"
-             ,title.c_str(), boardsz, local_date_stamp().c_str(), komi,
+             ,title.c_str(), BOARD_SZ, local_date_stamp().c_str(), komi,
              coords.c_str(), phistr.c_str(), thetastr.c_str());
 
     std::string moves="";
     ISLOOP (diagram) {
-        int row = i / boardsz;
-        int col = i % boardsz;
+        int row = i / BOARD_SZ;
+        int col = i % BOARD_SZ;
         char ccol = 'a' + col;
         char crow = 'a' + row;
         std::string tag;
@@ -257,7 +257,7 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
         cv::line( dst, q1, q2, cv::Scalar(0,0,0), 1, CV_AA);
     }
     // Draw the hoshis
-    int r = ROUND( 0.25 * innerwidth / (boardsz-1.0));
+    int r = ROUND( 0.15 * innerwidth / (boardsz-1.0));
     cv::Point p;
     p = rc2p( 3, 3);
     cv::circle( dst, p, r, 0, -1);
@@ -279,17 +279,17 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     cv::circle( dst, p, r, 0, -1);
 
     // Draw the stones
-    int rad = ROUND( 0.5 * innerwidth / (boardsz-1.0));
+    int rad = ROUND( 0.5 * innerwidth / (boardsz-1.0)) - 1;
     ISLOOP (diagram) {
         int r = i / boardsz;
         int c = i % boardsz;
         cv::Point p = rc2p( r,c);
         if (diagram[i] == WWHITE) {
-            cv::circle( dst, p, rad, 255, -1);
-            cv::circle( dst, p, rad, 0, 2);
+            cv::circle( dst, p, rad, 255, -1, CV_AA);
+            cv::circle( dst, p, rad, 0, 1, CV_AA);
         }
         else if (diagram[i] == BBLACK) {
-            cv::circle( dst, p, rad, 0, -1);
+            cv::circle( dst, p, rad, 0, -1, CV_AA);
         }
     } // ISLOOP
 } // draw_sgf()
@@ -595,7 +595,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( top_rho, top_y, bot_rho, bot_y));
         if (top_rho > width) break;
-        if (i > 19) break;
+        if (i > BOARD_SZ) break;
         synth_lines.push_back( line);
     } // ILOOP
     // Lines to the left
@@ -615,7 +615,7 @@ inline void fix_vertical_lines( std::vector<cv::Vec2f> &lines, const std::vector
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( top_rho, top_y, bot_rho, bot_y));
         if (top_rho < 0) break;
-        if (i > 19) break;
+        if (i > BOARD_SZ) break;
         synth_lines.push_back( line);
     } // ILOOP
     std::sort( synth_lines.begin(), synth_lines.end(),
@@ -682,7 +682,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (right_rho > height) break;
-        if (i > 19) break;
+        if (i > BOARD_SZ) break;
         synth_lines.push_back( line);
     } // ILOOP
     // Lines above
@@ -701,7 +701,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         }
         cv::Vec2f line = segment2polar( cv::Vec4f( left_x, left_rho, right_x, right_rho));
         if (left_rho < 0) break;
-        if (i > 19) break;
+        if (i > BOARD_SZ) break;
         synth_lines.push_back( line);
     } // ILOOP
     std::sort( synth_lines.begin(), synth_lines.end(),
@@ -862,7 +862,7 @@ inline cv::Point tiebreak( const cv::Mat &m1, const cv::Mat &m2)
 //-------------------------------------------------------------------------------------------------------------------
 inline
 Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vector<cv::Vec2f> &vert_lines,
-                                 const Points2f &intersections, const cv::Mat &pixel_boardness, int board_sz = 19)
+                                 const Points2f &intersections, const cv::Mat &pixel_boardness, int board_sz = BOARD_SZ)
 {
     int i;
     if (SZ(horiz_lines) < 3 || SZ(vert_lines) < 3) return Points2f();

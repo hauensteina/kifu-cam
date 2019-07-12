@@ -34,7 +34,7 @@
 @interface SaveDiscardVC ()
 @property UIImage *sgfImg;
 @property UIImageView *sgfView;
-@property UIImageView *photoView;
+//@property UIImageView *photoView;
 @property UIButton *btnDiscard;
 @property UIButton *btnB2Play;
 @property UIButton *btnW2Play;
@@ -53,9 +53,9 @@
         v.backgroundColor = BGCOLOR;
         
         // Image View for photo
-        _photoView = [UIImageView new];
-        _photoView.contentMode = UIViewContentModeScaleAspectFit;
-        [v addSubview:_photoView];
+        //_photoView = [UIImageView new];
+        //_photoView.contentMode = UIViewContentModeScaleAspectFit;
+        //[v addSubview:_photoView];
         
         // Image View for sgf
         _sgfView = [UIImageView new];
@@ -200,27 +200,31 @@
 {
     float W = SCREEN_WIDTH;
     float topmarg = g_app.navVC.navigationBar.frame.size.height;
-    float lmarg = W/40;
-    float rmarg = W/40;
-    float sep = W/40;
-    float imgWidth = (W  - lmarg - rmarg) / 2 - sep;
-    
+//    float lmarg = W/40;
+//    float rmarg = W/40;
+//    float sep = W/40;
+    float marg = W/20;
+    //float imgWidth = (W  - lmarg - rmarg) / 2 - sep;
+    float imgWidth = (W  - 2*marg);
+
     // Photo view
-    _photoView.frame = CGRectMake( lmarg, topmarg + 80, imgWidth , imgWidth);
-    _photoView.hidden = NO;
-    if (_photo) {
-        [_photoView setImage:_photo];
-    }
+    //_photoView.frame = CGRectMake( lmarg, topmarg + 80, imgWidth , imgWidth);
+    //_photoView.hidden = NO;
+    //if (_photo) {
+    //    [_photoView setImage:_photo];
+    //}
+    
     // Sgf View
     _sgfView.hidden = NO;
-    _sgfView.frame = CGRectMake( lmarg + imgWidth + sep, topmarg + 80, imgWidth , imgWidth);
+    //_sgfView.frame = CGRectMake( lmarg + imgWidth + sep, topmarg + 80, imgWidth , imgWidth);
+    _sgfView.frame = CGRectMake( marg, topmarg + 40, imgWidth , imgWidth);
     if (_sgf) {
         _sgfImg = [CppInterface sgf2img:_sgf];
         [_sgfView setImage:_sgfImg];
     }
     // Buttons
     float btnWidth, btnHeight;
-    int y = topmarg + 40 + imgWidth + 100;;
+    int y = topmarg + 40 + imgWidth + 50;
     
     _btnB2Play.hidden = NO;
     [_btnB2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];

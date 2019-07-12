@@ -41,12 +41,12 @@ class GoPoint
 {
 public:
     GoPoint( int row, int col) : m_row(row), m_col(col) {}
-    GoPoint( int idx) : m_row(idx/19), m_col(idx % 19) {}
+    GoPoint( int idx) : m_row(idx/BOARD_SZ), m_col(idx % BOARD_SZ) {}
     //---------------------------------------------
     bool operator < (const GoPoint& rhs) const {
         return (m_row < rhs.m_row) || ((m_row == rhs.m_row) && (m_col < rhs.m_col));
     }
-    int idx() const { return m_row * 19 + m_col; }
+    int idx() const { return m_row * BOARD_SZ + m_col; }
     int m_row;
     int m_col;
 }; // class GoPoint
@@ -131,18 +131,18 @@ class GoBoard
 {
 public:
     //---------------------
-    GoBoard( int sz=19) {
+    GoBoard( int sz=BOARD_SZ) {
         m_sz = sz;
     } // GoBoard()
     
     // Make a GoBoard from a recognized position
     //-----------------------------------------------
-    GoBoard( const int pos[], int sz = 19) {
+    GoBoard( const int pos[], int sz=BOARD_SZ) {
         m_sz = sz;
         ILOOP( sz*sz) {
             if (pos[i] == EEMPTY) { continue; }
-            int row = i / 19;
-            int col = i % 19;
+            int row = i / BOARD_SZ;
+            int col = i % BOARD_SZ;
             place_stone( pos[i], GoPoint(row,col));
         } // for
     } // GoBoard( pos)
@@ -231,8 +231,8 @@ public:
     static void test() {
         int pos[361];
         ILOOP(361) { pos[i] = EEMPTY; }
-        auto w = [&pos](int row,int col) { pos[(row)*19 + col] = WWHITE; };
-        auto b = [&pos](int row,int col) { pos[(row)*19 + col] = BBLACK; };
+        auto w = [&pos](int row,int col) { pos[(row)*BOARD_SZ + col] = WWHITE; };
+        auto b = [&pos](int row,int col) { pos[(row)*BOARD_SZ + col] = BBLACK; };
 
         // Just two strings, B and W, no captures
         /*

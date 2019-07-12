@@ -78,8 +78,6 @@
 
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;
-// Get the corner coords fom GC tag of sgf
-+ (NSArray *) corners_from_sgf:(NSString *)sgf;
 // Extract an sgf tag
 + (NSString *) get_sgf_tag:(NSString *)tag sgf:(NSString *)sgf;
 // Set an sgf tag. Do not try to set the SZ tag.

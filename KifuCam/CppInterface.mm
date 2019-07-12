@@ -66,7 +66,6 @@ extern cv::Mat mat_dbg;
 @property cv::Mat gray;  // Grayscale version of small
 @property cv::Mat gray_threshed;  // gray with inv_thresh and dilation
 @property cv::Mat gray_zoomed;   // Grayscale version of small, zoomed into the board
-@property int board_sz; // board size, 9 or 19
 @property Points stone_or_empty; // places where we suspect stones or empty
 @property std::vector<cv::Vec2f> horizontal_lines;
 @property std::vector<cv::Vec2f> vertical_lines;
@@ -82,6 +81,8 @@ extern cv::Mat mat_dbg;
 @property KerasBoardModel *boardModel; // wrapper around iomodel
 @property nn_bew *bewmodel; // Keras model to classify intersections int B,W,E
 @property KerasStoneModel *stoneModel; // wrapper around bewmodel
+@property nn_score *scoreNN; // Keras model to get white prob for each intersection
+@property KerasScoreModel *scoreModel; // wrapper around scoreNN
 
 @end
 
@@ -92,11 +93,11 @@ extern cv::Mat mat_dbg;
 - (instancetype)init
 {
     // Test scoring //@@@
-    int *pos_out;
-    double *wprobs = [KerasScoreModel test:&pos_out];
-    char *terrmap_out;
-    Scoring scoring;
-    auto [wpoints, bpoints] = scoring.score( pos_out, wprobs, BBLACK, terrmap_out);
+//    int *pos_out;
+//    double *wprobs = [KerasScoreModel test:&pos_out];
+//    char *terrmap_out;
+//    Scoring scoring;
+//    auto [wpoints, bpoints] = scoring.score( pos_out, wprobs, BBLACK, terrmap_out);
     
     self = [super init];
     if (self) {
@@ -109,6 +110,9 @@ extern cv::Mat mat_dbg;
         // The stone model
         _bewmodel = [nn_bew new];
         _stoneModel = [[KerasStoneModel alloc] initWithModel:_bewmodel];
+        // The scoring model
+        _scoreNN = [nn_score new];
+        _scoreModel = [[KerasScoreModel alloc] initWithModel:_scoreNN];
     }
     return self;
 } // init()
@@ -162,11 +166,11 @@ extern cv::Mat mat_dbg;
 //----------------------------------------------------------------
 - (bool) check_debug_trigger
 {
-    std::vector<int> templ( SQR(_board_sz), EEMPTY);
+    std::vector<int> templ( SQR(BOARD_SZ), EEMPTY);
     templ[0] = BBLACK;
     templ[1] = BBLACK;
-    templ[_board_sz] = BBLACK;
-    templ[_board_sz+1] = BBLACK;
+    templ[BOARD_SZ] = BBLACK;
+    templ[BOARD_SZ+1] = BBLACK;
     bool res = templ == _diagram;
     return res;
 } // check_debug_trigger()
@@ -204,7 +208,6 @@ extern cv::Mat mat_dbg;
 //--------------------------------------------
 - (UIImage *) f00_dots_and_verticals_dbg
 {
-    _board_sz = 19;
     g_app.mainVC.lbBottom.text = @"Tap the screen";
     NSString *fullfname;
     if ([g_app.menuVC demoMode]) {
@@ -598,7 +601,7 @@ extern cv::Mat mat_dbg;
     
     Points2f dummy;
     double dxd, dyd;
-    get_intersections_from_corners( _corners_zoomed, _board_sz, dummy, dxd, dyd);
+    get_intersections_from_corners( _corners_zoomed, BOARD_SZ, dummy, dxd, dyd);
     //int dx = ROUND( dxd/4.0);
     //int dy = ROUND( dyd/4.0);
     ISLOOP (_diagram) {
@@ -619,6 +622,19 @@ extern cv::Mat mat_dbg;
     return res;
 } // f08_classify_dbg()
 
+// Try to score the detected diagram
+//-------------------------------------
+- (void) f09_score:(int)turn
+{
+    int pos[361];
+    ILOOP(361) { pos[i] = _diagram[i]; }
+    double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
+    char *terrmap_out;
+    Scoring scoring;
+    scoring.score( pos, wprobs, turn, terrmap_out);
+    int tt = 42;
+} // f09_score()
+
 //=== Production Flow ===
 //=======================
 
@@ -627,14 +643,13 @@ extern cv::Mat mat_dbg;
 //---------------------------------------------------------------
 - (bool)find_board:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
-    _board_sz = 19;
     bool success = false;
     do {
         _orig_small = small_img;
         [self f00_dots_and_verticals];
         [self f02_warp];
         [self f03_houghlines];
-        if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(_board_sz)) break;
+        if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(BOARD_SZ)) break;
         [self f04_vert_lines:0];
         [self f04_vert_lines:1];
         [self f04_vert_lines:2];
@@ -658,7 +673,6 @@ extern cv::Mat mat_dbg;
 //---------------------------------------------------------------------------
 - (bool)recognize_position:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
-    _board_sz = 19;
     bool success = false;
     do {
         success = [self find_board:small_img breakIfBad:breakIfBad];
@@ -925,45 +939,10 @@ extern cv::Mat mat_dbg;
 {
     if (!sgf) sgf = @"";
     cv::Mat m;
-    draw_sgf( [sgf UTF8String], m, IMG_WIDTH);
+    draw_sgf( [sgf UTF8String], m, 1.5 * IMG_WIDTH);
     UIImage *res = MatToUIImage( m);
     return res;
 } // sgf2img()
-
-// Return the four corner coords as an array of 4 pairs [[x0,y0],[x1,y1],...]
-// Ordered clockwise tl,tr,br,bl
-//-----------------------------------------------------------------------------
-+ (NSArray *) corners_from_sgf:(NSString *)sgf_
-{
-    std::string sgf = [sgf_ UTF8String];
-    NSMutableArray *res = [NSMutableArray new];
-    std::string gc = get_sgf_tag( sgf, "GC");
-    // Remove backslashes
-    std::regex re_back( "\\\\");
-    std::string tstr = std::regex_replace( gc, re_back, "" );
-    std::regex re( "intersections:(\\(\\(.*\\)\\)).*");
-    tstr = std::regex_replace( tstr, re, "$1" );
-    // Turn it into json
-    std::regex re1( "\\(");
-    tstr = std::regex_replace( tstr, re1, "[" );
-    std::regex re2( "\\)");
-    tstr = std::regex_replace( tstr, re2, "]" );
-    // Parse it
-    NSArray *points = parseJSON( @(tstr.c_str()));
-    long len = [points count];
-    int boardsz = 19;
-    if (len == 13*13) boardsz = 13;
-    else if (len == 9*9) boardsz = 9;
-    else {
-        res = [@[@[@0,@0],@[@0,@0],@[@0,@0],@[@0,@0]] mutableCopy];
-        return res;
-    }
-    [res addObject:points[0]];
-    [res addObject:points[boardsz-1]];
-    [res addObject:points[boardsz*boardsz-1]];
-    [res addObject:points[boardsz*boardsz-boardsz]];
-    return res;
-} // corners_from_sgf()
 
 //-----------------------------------------------------------------
 + (NSString *) get_sgf_tag:(NSString *)tag_ sgf:(NSString *)sgf_

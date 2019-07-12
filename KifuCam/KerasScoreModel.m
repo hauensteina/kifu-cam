@@ -64,8 +64,8 @@
     }
 
     // Make input MLMultiArray
-    NSArray *shape = @[@(3), @(19), @(19)];
-    NSArray *strides = @[@(19 * 19), @(19), @(1)];
+    NSArray *shape = @[@(3), @(BOARD_SZ), @(BOARD_SZ)];
+    NSArray *strides = @[@(BOARD_SZ * BOARD_SZ), @(BOARD_SZ), @(1)];
     MLMultiArray *res = [[MLMultiArray alloc] initWithDataPointer:input_mem
                                                             shape:shape
                                                          dataType:MLMultiArrayDataTypeDouble

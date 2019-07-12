@@ -175,12 +175,6 @@
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
     NSString *sgfname = changeExtension( fullfname, @".sgf");
     NSString *sgf = [NSString stringWithContentsOfFile:sgfname encoding:NSUTF8StringEncoding error:NULL];
-    // Draw circles where we think the corners are
-    NSArray *corners = [CppInterface corners_from_sgf:sgf];
-    img = drawCircleOnImg( img, [corners[0][0] intValue], [corners[0][1] intValue], 20, RED);
-    img = drawCircleOnImg( img, [corners[1][0] intValue], [corners[1][1] intValue], 20, RED);
-    img = drawCircleOnImg( img, [corners[2][0] intValue], [corners[2][1] intValue], 20, RED);
-    img = drawCircleOnImg( img, [corners[3][0] intValue], [corners[3][1] intValue], 20, RED);
     imgView1.image = img;
     [cell addSubview: imgView1];
     // Diagram
