@@ -50,6 +50,7 @@
 - (void) f05_horiz_lines:(int)state;
 - (void) f06_corners;
 - (void) f07_zoom_in;
+- (void) f09_score:(int)turn bpoints:(int *)bpoints surepoints:(int *)surepoints terrmap:(char**)terrmap;
 
 
 - (UIImage *) video_mode;

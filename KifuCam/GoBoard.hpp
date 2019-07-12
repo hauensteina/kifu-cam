@@ -229,8 +229,8 @@ public:
     
     //----------------------
     static void test() {
-        int pos[361];
-        ILOOP(361) { pos[i] = EEMPTY; }
+        int pos[BOARD_SZ * BOARD_SZ];
+        ILOOP(BOARD_SZ * BOARD_SZ) { pos[i] = EEMPTY; }
         auto w = [&pos](int row,int col) { pos[(row)*BOARD_SZ + col] = WWHITE; };
         auto b = [&pos](int row,int col) { pos[(row)*BOARD_SZ + col] = BBLACK; };
 
@@ -248,7 +248,7 @@ public:
          x x o o .
          o o o o .
          */
-        ILOOP(361) { pos[i] = EEMPTY; }
+        ILOOP(BOARD_SZ * BOARD_SZ) { pos[i] = EEMPTY; }
         b(0,0); b(0,1);
         w(1,0); w(1,1); w(1,2); w(1,3); w(0,3);
         w(0,2);

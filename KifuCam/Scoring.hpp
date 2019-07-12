@@ -45,15 +45,15 @@ public:
     //--------------------------------------------------------------------------------------------------
     std::tuple<int,int> score( const int pos[], const double wprobs[], int turn, char *&terrmap_out) {
         replay_game( pos);
-        static char terrmap[361];
-        ILOOP (361) {
+        static char terrmap[BOARD_SZ * BOARD_SZ];
+        ILOOP (BOARD_SZ * BOARD_SZ) {
             terrmap[i] = color( wprobs[i]);
         }
         enforce_strings( terrmap, wprobs);
         // Compute score. Split neutral points between players.
         auto player = turn;
         int wpoints = 0, bpoints = 0;
-        ILOOP( 361) {
+        ILOOP( BOARD_SZ * BOARD_SZ) {
             auto col = terrmap[i];
             if (col == 'w') {
                 wpoints++;
@@ -81,7 +81,7 @@ private:
     void replay_game( const int pos[]) {
         // Put all the stones on the board
         m_board = GoBoard( pos);
-        ILOOP( 361) {
+        ILOOP( BOARD_SZ * BOARD_SZ) {
             if (pos[i] != EEMPTY) {
                 m_board.place_stone( pos[i], GoPoint(i));
             }

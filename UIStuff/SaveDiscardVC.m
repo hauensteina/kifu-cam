@@ -35,9 +35,11 @@
 @property UIImage *sgfImg;
 @property UIImageView *sgfView;
 //@property UIImageView *photoView;
+@property UIButton *btnSave;
 @property UIButton *btnDiscard;
 @property UIButton *btnB2Play;
 @property UIButton *btnW2Play;
+@property UILabel * lbInfo;
 @end
 
 @implementation SaveDiscardVC
@@ -62,6 +64,14 @@
         _sgfView.contentMode = UIViewContentModeScaleAspectFit;
         [v addSubview:_sgfView];
         
+        // Info label
+        UILabel *l = [UILabel new];
+        l.hidden = false;
+        l.text = @"";
+        l.backgroundColor = BGCOLOR;
+        [v addSubview:l];
+        self.lbInfo = l;
+        
         // Buttons
         //=========
         // Black to play
@@ -78,10 +88,16 @@
         [_btnW2Play sizeToFit];
         [_btnW2Play addTarget:self action:@selector(btnW2Play:) forControlEvents: UIControlEventTouchUpInside];
         [v addSubview:_btnW2Play];
+        // Save
+        _btnSave = [UIButton new];
+        [_btnSave setTitle:@"Save" forState:UIControlStateNormal];
+        [_btnSave.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:30.0]];
+        [_btnSave sizeToFit];
+        [_btnSave addTarget:self action:@selector(btnSave:) forControlEvents: UIControlEventTouchUpInside];
+        [v addSubview:_btnSave];
         // Discard
         _btnDiscard = [UIButton new];
         [_btnDiscard setTitle:@"Discard" forState:UIControlStateNormal];
-        [_btnDiscard setTitleColor:RED forState:UIControlStateNormal];
         [_btnDiscard.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:30.0]];
         [_btnDiscard sizeToFit];
         [_btnDiscard addTarget:self action:@selector(btnDiscard:) forControlEvents: UIControlEventTouchUpInside];
@@ -149,40 +165,43 @@
     S3_upload_file( fname, s3name , ^(NSError *err) {});
 } // uploadToS3()
 
+// Display result. Take numbers from CppInterface.
+//--------------------------------------------------
+- (void) displayResult:(int)turn {
+    CppInterface *cpp = g_app.mainVC.cppInterface;
+    int bpoints, surepoints;
+    char *terrmap;
+    [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
+    if (surepoints < 120) {
+        _lbInfo.text = @"Too early to score";
+    }
+} // displayResult()
+
 // Button Callbacks
 //======================
 
 //-----------------------------
 - (void) btnB2Play:(id)sender
 {
+    [self displayResult:BBLACK];
     // Regex to insert PL[B] right after the SZ tag
     NSString *re = @"(.*SZ\\[[0-9]+\\])(.*)";
     NSString *templ = @"$1 PL[B] $2";
     _sgf = replaceRegex( re, _sgf, templ);
-    
-    NSString *fname = [self savePhotoAndSgf];
-    
-    [SaveDiscardVC uploadToS3:fname];
-    
-    // Show saved images
-    [g_app.navVC popViewControllerAnimated:NO];
-    [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
+    _btnSave.hidden = NO;
+    _btnDiscard.hidden = NO;
 } // btnB2Play()
 
 //-----------------------------
 - (void) btnW2Play:(id)sender
 {
+    [self displayResult:WWHITE];
     // Regex to insert PL[W] rigth after the SZ tag
     NSString *re = @"(.*SZ\\[[0-9]+\\])(.*)";
     NSString *templ = @"$1 PL[W] $2";
     _sgf = replaceRegex( re, _sgf, templ);
-
-    NSString *fname = [self savePhotoAndSgf];
-    [SaveDiscardVC uploadToS3:fname];
-
-    // Show saved images
-    [g_app.navVC popViewControllerAnimated:NO];
-    [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
+    _btnSave.hidden = NO;
+    _btnDiscard.hidden = NO;
 } // btnW2Play()
 
 //------------------------------
@@ -190,6 +209,17 @@
 {
     [g_app.navVC popViewControllerAnimated:YES];
 } // btnDiscard()
+
+//------------------------------
+- (void) btnSave:(id)sender
+{
+    NSString *fname = [self savePhotoAndSgf];
+    [SaveDiscardVC uploadToS3:fname];
+    
+    // Show saved images
+    [g_app.navVC popViewControllerAnimated:NO];
+    [g_app.navVC pushViewController:g_app.imagesVC animated:YES];
+} // btnSave()
 
 // Layout
 //==========
@@ -222,9 +252,18 @@
         _sgfImg = [CppInterface sgf2img:_sgf];
         [_sgfView setImage:_sgfImg];
     }
+    
+    // Info label
+    _lbInfo.hidden = NO;
+    int lw = SCREEN_WIDTH;
+    int lmarg = (SCREEN_WIDTH - lw) / 2;
+    int y = topmarg + 40 + imgWidth + 10;
+    _lbInfo.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    _lbInfo.textAlignment = NSTextAlignmentCenter;
+    
     // Buttons
     float btnWidth, btnHeight;
-    int y = topmarg + 40 + imgWidth + 50;
+    y = topmarg + 40 + imgWidth + 50;
     
     _btnB2Play.hidden = NO;
     [_btnB2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];
@@ -240,11 +279,18 @@
     _btnW2Play.frame = CGRectMake( W/2 - btnWidth/2, y, btnWidth, btnHeight);
     
     y += btnHeight * 1.3;
-    _btnDiscard.hidden = NO;
+
+    _btnSave.hidden = YES;
+    [_btnSave setTitleColor:DARKGREEN forState:UIControlStateNormal];
+    btnWidth = _btnSave.frame.size.width;
+    btnHeight = _btnSave.frame.size.height;
+    _btnSave.frame = CGRectMake( W/2 - btnWidth - W/20 - 0.04 * W, y, btnWidth, btnHeight);
+
+    _btnDiscard.hidden = YES;
     [_btnDiscard setTitleColor:RED forState:UIControlStateNormal];
     btnWidth = _btnDiscard.frame.size.width;
     btnHeight = _btnDiscard.frame.size.height;
-    _btnDiscard.frame = CGRectMake( W/2 - btnWidth/2, y, btnWidth, btnHeight);
+    _btnDiscard.frame = CGRectMake( W/2 + W/20 - 0.04 * W, y, btnWidth, btnHeight);
 } // doLayout()
 
 @end

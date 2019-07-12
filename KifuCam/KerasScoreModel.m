@@ -36,14 +36,14 @@
 //-----------------------------------------------------------------------------
 - (double *) nnScorePos:(int[])pos turn:(int)turn
 {
-    static double wprobs[361];
+    static double wprobs[BOARD_SZ * BOARD_SZ];
     MLMultiArray *input = [self MultiArrayFromPos:pos turn:turn];
     nn_scoreInput *nn_input = [[nn_scoreInput alloc] initWithInput1:input];
     NSError *err;
     nn_scoreOutput *nnoutput = [_model predictionFromFeatures:nn_input error:&err];
     MLMultiArray *out1 = nnoutput.output1;
     double *darr = (double *)out1.dataPointer;
-    memcpy( wprobs, darr, 361 * sizeof(double));
+    memcpy( wprobs, darr, BOARD_SZ * BOARD_SZ * sizeof(double));
     return wprobs;
 } // nnScorePos()
 
@@ -59,7 +59,7 @@
     // Get input memory
     static double *input_mem = NULL;
     if (input_mem == NULL) {
-        int input_size = 3 * 361 * sizeof(double);
+        int input_size = 3 * BOARD_SZ * BOARD_SZ * sizeof(double);
         input_mem = malloc( input_size);
     }
 
@@ -74,16 +74,16 @@
                                                             error:nil];
 
     // Black stones
-    ILOOP( 361) {
+    ILOOP( BOARD_SZ * BOARD_SZ) {
         input_mem[i] = (pos[i] == BBLACK) ? 1.0 : 0.0;
     }
     // White stones
-    ILOOP( 361) {
+    ILOOP( BOARD_SZ * BOARD_SZ) {
         input_mem[361 + i] = (pos[i] == WWHITE) ? 1.0 : 0.0;
     }
     // Turn
-    ILOOP( 361) {
-        input_mem[2 * 361 + i] = turn?1.0:0.0;
+    ILOOP( BOARD_SZ * BOARD_SZ) {
+        input_mem[2 * BOARD_SZ * BOARD_SZ + i] = turn?1.0:0.0;
     }
     return res;
 } // MultiArrayFromPos()

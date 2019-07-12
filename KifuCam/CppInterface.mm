@@ -622,17 +622,28 @@ extern cv::Mat mat_dbg;
     return res;
 } // f08_classify_dbg()
 
-// Try to score the detected diagram
-//-------------------------------------
-- (void) f09_score:(int)turn
+// Try to score the detected diagram.
+// Returns the number of Black points.
+// All others are White.
+// Populates _terrmap, _bpoints, _surepoints.
+// Called from SaveDiscardVC.
+//---------------------------------------------------
+- (void) f09_score:(int)turn // in
+           bpoints:(int *)bpoints // out
+        surepoints:(int *)surepoints
+           terrmap:(char**)terrmap //@@@
 {
-    int pos[361];
-    ILOOP(361) { pos[i] = _diagram[i]; }
+    int pos[BOARD_SZ * BOARD_SZ];
+    ILOOP(BOARD_SZ * BOARD_SZ) { pos[i] = _diagram[i]; }
     double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
-    char *terrmap_out;
+    *surepoints = 0;
+    ILOOP(BOARD_SZ*BOARD_SZ) {
+        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
+    }
+    //char *terrmap_out;
     Scoring scoring;
-    scoring.score( pos, wprobs, turn, terrmap_out);
-    int tt = 42;
+    auto [wwpoints, bbpoints] = scoring.score( pos, wprobs, turn, *terrmap);
+    *bpoints = bbpoints;
 } // f09_score()
 
 //=== Production Flow ===
