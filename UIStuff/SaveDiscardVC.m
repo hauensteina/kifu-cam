@@ -33,13 +33,15 @@
 
 @interface SaveDiscardVC ()
 @property UIImage *sgfImg;
+@property UIImage *scoreImg;
 @property UIImageView *sgfView;
 //@property UIImageView *photoView;
 @property UIButton *btnSave;
 @property UIButton *btnDiscard;
 @property UIButton *btnB2Play;
 @property UIButton *btnW2Play;
-@property UILabel * lbInfo;
+@property UILabel *lbInfo;
+@property UILabel *lbInfo2;
 @end
 
 @implementation SaveDiscardVC
@@ -54,23 +56,23 @@
         v.opaque = YES;
         v.backgroundColor = BGCOLOR;
         
-        // Image View for photo
-        //_photoView = [UIImageView new];
-        //_photoView.contentMode = UIViewContentModeScaleAspectFit;
-        //[v addSubview:_photoView];
-        
         // Image View for sgf
         _sgfView = [UIImageView new];
         _sgfView.contentMode = UIViewContentModeScaleAspectFit;
         [v addSubview:_sgfView];
         
-        // Info label
+        // Info labels
         UILabel *l = [UILabel new];
-        l.hidden = false;
         l.text = @"";
         l.backgroundColor = BGCOLOR;
         [v addSubview:l];
         self.lbInfo = l;
+        
+        UILabel *l2 = [UILabel new];
+        l2.text = @"";
+        l2.backgroundColor = BGCOLOR;
+        [v addSubview:l2];
+        self.lbInfo2 = l2;
         
         // Buttons
         //=========
@@ -167,14 +169,22 @@
 
 // Display result. Take numbers from CppInterface.
 //--------------------------------------------------
-- (void) displayResult:(int)turn {
+- (void) displayResult:(int)turn { //@@@
     CppInterface *cpp = g_app.mainVC.cppInterface;
     int bpoints, surepoints;
     char *terrmap;
     [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-    if (surepoints < 120) {
+    if (surepoints < 100) {
         _lbInfo.text = @"Too early to score";
+        return;
     }
+    _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
+    [_sgfView setImage:_scoreImg];
+    NSString *winner = @"B";
+    if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
+    int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
+    _lbInfo.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
+    _lbInfo2.text = nsprintf( @"%@+%d before komi and handicap", winner, delta);
 } // displayResult()
 
 // Button Callbacks
@@ -190,6 +200,8 @@
     _sgf = replaceRegex( re, _sgf, templ);
     _btnSave.hidden = NO;
     _btnDiscard.hidden = NO;
+    _btnB2Play.hidden = YES;
+    _btnW2Play.hidden = YES;
 } // btnB2Play()
 
 //-----------------------------
@@ -202,6 +214,8 @@
     _sgf = replaceRegex( re, _sgf, templ);
     _btnSave.hidden = NO;
     _btnDiscard.hidden = NO;
+    _btnB2Play.hidden = YES;
+    _btnW2Play.hidden = YES;
 } // btnW2Play()
 
 //------------------------------
@@ -230,37 +244,30 @@
 {
     float W = SCREEN_WIDTH;
     float topmarg = g_app.navVC.navigationBar.frame.size.height;
-//    float lmarg = W/40;
-//    float rmarg = W/40;
-//    float sep = W/40;
     float marg = W/20;
-    //float imgWidth = (W  - lmarg - rmarg) / 2 - sep;
     float imgWidth = (W  - 2*marg);
-
-    // Photo view
-    //_photoView.frame = CGRectMake( lmarg, topmarg + 80, imgWidth , imgWidth);
-    //_photoView.hidden = NO;
-    //if (_photo) {
-    //    [_photoView setImage:_photo];
-    //}
     
     // Sgf View
     _sgfView.hidden = NO;
-    //_sgfView.frame = CGRectMake( lmarg + imgWidth + sep, topmarg + 80, imgWidth , imgWidth);
     _sgfView.frame = CGRectMake( marg, topmarg + 40, imgWidth , imgWidth);
     if (_sgf) {
         _sgfImg = [CppInterface sgf2img:_sgf];
         [_sgfView setImage:_sgfImg];
     }
     
-    // Info label
-    _lbInfo.hidden = NO;
+    // Info labels
     int lw = SCREEN_WIDTH;
     int lmarg = (SCREEN_WIDTH - lw) / 2;
     int y = topmarg + 40 + imgWidth + 10;
     _lbInfo.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
+    _lbInfo.text = @"";
     
+    y = topmarg + 40 + imgWidth + 40;
+    _lbInfo2.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    _lbInfo2.textAlignment = NSTextAlignmentCenter;
+    _lbInfo2.text = @"";
+
     // Buttons
     float btnWidth, btnHeight;
     y = topmarg + 40 + imgWidth + 50;

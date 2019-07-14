@@ -640,7 +640,6 @@ extern cv::Mat mat_dbg;
     ILOOP(BOARD_SZ*BOARD_SZ) {
         if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
     }
-    //char *terrmap_out;
     Scoring scoring;
     auto [wwpoints, bbpoints] = scoring.score( pos, wprobs, turn, *terrmap);
     *bpoints = bbpoints;
@@ -954,6 +953,18 @@ extern cv::Mat mat_dbg;
     UIImage *res = MatToUIImage( m);
     return res;
 } // sgf2img()
+
+// Draw sgf and territory map
+//----------------------------------------------------------------
++ (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap
+{
+    if (!sgf) sgf = @"";
+    cv::Mat m;
+    draw_sgf( [sgf UTF8String], m, 1.5 * IMG_WIDTH);
+    draw_score( m, terrmap);
+    UIImage *res = MatToUIImage( m);
+    return res;
+} // scoreimg()
 
 //-----------------------------------------------------------------
 + (NSString *) get_sgf_tag:(NSString *)tag_ sgf:(NSString *)sgf_

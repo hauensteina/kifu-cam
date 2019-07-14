@@ -79,6 +79,8 @@
 
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;
+// Draw scoring map on sgf img
++ (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap;
 // Extract an sgf tag
 + (NSString *) get_sgf_tag:(NSString *)tag sgf:(NSString *)sgf;
 // Set an sgf tag. Do not try to set the SZ tag.

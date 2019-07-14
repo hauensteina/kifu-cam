@@ -232,32 +232,30 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     int height = width;
     dst = cv::Mat( height, width, CV_8UC1);
     dst = 180;
-    int boardsz = 19;
-    std::vector<int> diagram( boardsz*boardsz,EEMPTY);
+    std::vector<int> diagram( BOARD_SZ*BOARD_SZ,EEMPTY);
     int marg = width * 0.05;
     int innerwidth = width - 2*marg;
     if (SZ(sgf) > 3) {
-        boardsz = std::stoi( get_sgf_tag( sgf, "SZ"));
         diagram = sgf2vec( sgf);
     }
-    auto rc2p = [boardsz, innerwidth, marg](int row, int col) {
+    auto rc2p = [innerwidth, marg](int row, int col) {
         cv::Point res;
-        float d = innerwidth / (boardsz-1.0) ;
+        float d = innerwidth / (BOARD_SZ-1.0) ;
         res.x = ROUND( marg + d*col);
         res.y = ROUND( marg + d*row);
         return res;
     };
     // Draw the lines
-    ILOOP (boardsz) {
+    ILOOP (BOARD_SZ) {
         cv::Point p1 = rc2p( i, 0);
-        cv::Point p2 = rc2p( i, boardsz-1);
+        cv::Point p2 = rc2p( i, BOARD_SZ-1);
         cv::Point q1 = rc2p( 0, i);
-        cv::Point q2 = rc2p( boardsz-1, i);
+        cv::Point q2 = rc2p( BOARD_SZ-1, i);
         cv::line( dst, p1, p2, cv::Scalar(0,0,0), 1, CV_AA);
         cv::line( dst, q1, q2, cv::Scalar(0,0,0), 1, CV_AA);
     }
     // Draw the hoshis
-    int r = ROUND( 0.15 * innerwidth / (boardsz-1.0));
+    int r = ROUND( 0.15 * innerwidth / (BOARD_SZ-1.0));
     cv::Point p;
     p = rc2p( 3, 3);
     cv::circle( dst, p, r, 0, -1);
@@ -279,10 +277,10 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     cv::circle( dst, p, r, 0, -1);
 
     // Draw the stones
-    int rad = ROUND( 0.5 * innerwidth / (boardsz-1.0)) - 1;
+    int rad = ROUND( 0.5 * innerwidth / (BOARD_SZ-1.0)) - 1;
     ISLOOP (diagram) {
-        int r = i / boardsz;
-        int c = i % boardsz;
+        int r = i / BOARD_SZ;
+        int c = i % BOARD_SZ;
         cv::Point p = rc2p( r,c);
         if (diagram[i] == WWHITE) {
             cv::circle( dst, p, rad, 255, -1, CV_AA);
@@ -293,6 +291,35 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
         }
     } // ISLOOP
 } // draw_sgf()
+
+// Draw score map on position image
+//------------------------------------------------------
+inline void draw_score( cv::Mat &img, char *terrmap)
+{
+    int width = img.cols;
+    int marg = width * 0.05;
+    int innerwidth = width - 2*marg;
+    int rad = ROUND( 0.2 * innerwidth / (BOARD_SZ-1.0)) - 1;
+    auto rc2p = [innerwidth, marg](int row, int col) {
+        cv::Point res;
+        float d = innerwidth / (BOARD_SZ-1.0) ;
+        res.x = ROUND( marg + d*col);
+        res.y = ROUND( marg + d*row);
+        return res;
+    };
+    ILOOP (BOARD_SZ*BOARD_SZ) {
+        char col = terrmap[i];
+        int r = i / BOARD_SZ;
+        int c = i % BOARD_SZ;
+        cv::Point p = rc2p( r,c);
+        if (col == 'b') {
+            cv::circle( img, p, rad, 0, -1, CV_AA);
+        }
+        else if (col == 'w') {
+            cv::circle( img, p, rad, 255, -1, CV_AA);
+        }
+    } // ILOOP
+} // draw_score()
 
 // Reject board if opposing lines not parallel
 // or adjacent lines not at right angles
