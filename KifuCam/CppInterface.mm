@@ -92,7 +92,7 @@ extern cv::Mat mat_dbg;
 //----------------------
 - (instancetype)init
 {
-    // Test scoring //@@@
+    // Test scoring 
 //    int *pos_out;
 //    double *wprobs = [KerasScoreModel test:&pos_out];
 //    char *terrmap_out;
@@ -631,7 +631,7 @@ extern cv::Mat mat_dbg;
 - (void) f09_score:(int)turn // in
            bpoints:(int *)bpoints // out
         surepoints:(int *)surepoints
-           terrmap:(char**)terrmap //@@@
+           terrmap:(char**)terrmap 
 {
     int pos[BOARD_SZ * BOARD_SZ];
     ILOOP(BOARD_SZ * BOARD_SZ) { pos[i] = _diagram[i]; }

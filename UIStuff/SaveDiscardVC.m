@@ -119,6 +119,12 @@
  {
      [super viewDidAppear: animated];
      [self doLayout];
+     if (_turn == BBLACK) {
+         [self btnB2Play:nil];
+     }
+     else if (_turn == WWHITE) {
+         [self btnW2Play:nil];
+     }
  }
 
 //----------------------------------
@@ -167,7 +173,7 @@
     S3_upload_file( fname, s3name , ^(NSError *err) {});
 } // uploadToS3()
 
-// Display result. Take numbers from CppInterface.
+// Score position and display result.
 //--------------------------------------------------
 - (void) displayResult:(int)turn { //@@@
     CppInterface *cpp = g_app.mainVC.cppInterface;

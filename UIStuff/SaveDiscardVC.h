@@ -30,6 +30,9 @@
 @interface SaveDiscardVC : UIViewController
 // Upload image and sgf to S3
 + (void) uploadToS3:(NSString*)fname;
+
+// Set this before pushing VC
 @property NSString *sgf;
 @property UIImage *photo;
+@property int turn;
 @end

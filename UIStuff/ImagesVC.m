@@ -291,22 +291,35 @@
 
 // Rerun recognition on a saved photo
 //--------------------------------------
-- (void)handleRerun
+- (void)handleRerun 
 {
     NSString *fname = _titlesArray[_selected_row];
-    fname = changeExtension( fname, @".png");
+    fname = changeExtension( fname, @".sgf");
     NSString *fullfname = getFullPath( nsprintf( @"%@/%@", @SAVED_FOLDER, fname));
+    NSString *oldsgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
+    int turn = DDONTKNOW;
+    if ([oldsgf containsString:@"PL[W]"]) {
+        turn = WWHITE;
+    }
+    else if ([oldsgf containsString:@"PL[B]"]) {
+        turn = BBLACK;
+    }
+    
+    fname = changeExtension( fname, @".png");
+    fullfname = getFullPath( nsprintf( @"%@/%@", @SAVED_FOLDER, fname));
     UIImage *img = [UIImage imageWithContentsOfFile:fullfname];
+    
     [g_app.mainVC.cppInterface clearImgQ];
     [g_app.mainVC.cppInterface qImg:img];
     [g_app.mainVC.cppInterface get_best_frame];
     NSString *sgf = [g_app.mainVC.cppInterface get_sgf];
     fname = changeExtension( fullfname, @".sgf");
-    NSError *error;
-    [sgf writeToFile:fname
-           atomically:YES encoding:NSUTF8StringEncoding error:&error];
-    [SaveDiscardVC uploadToS3:fname];
-    [self refresh];
+    
+    g_app.saveDiscardVC.photo = img;
+    g_app.saveDiscardVC.sgf = sgf;
+    g_app.saveDiscardVC.turn = turn;
+    [g_app.navVC popViewControllerAnimated:NO];
+    [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
 } // handleRerun()
 
 // Other

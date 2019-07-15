@@ -231,7 +231,7 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     std::string sgf = std::regex_replace( sgf_, std::regex("\\s+"), "" ); // no whitespace
     int height = width;
     dst = cv::Mat( height, width, CV_8UC1);
-    dst = 180;
+    dst = 180; // gray background
     std::vector<int> diagram( BOARD_SZ*BOARD_SZ,EEMPTY);
     int marg = width * 0.05;
     int innerwidth = width - 2*marg;

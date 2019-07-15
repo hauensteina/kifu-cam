@@ -279,6 +279,7 @@
 {
     g_app.saveDiscardVC.photo = [_cppInterface get_best_frame];
     g_app.saveDiscardVC.sgf = [_cppInterface get_sgf];
+    g_app.saveDiscardVC.turn = DDONTKNOW;
     [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
 }
 
