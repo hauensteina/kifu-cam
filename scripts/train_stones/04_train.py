@@ -22,10 +22,6 @@ import keras.optimizers as kopt
 import keras.preprocessing.image as kp
 import coremltools
 
-import matplotlib as mpl
-mpl.use('Agg') # This makes matplotlib work without a display
-from matplotlib import pyplot as plt
-
 # Look for modules in our pylib folder
 SCRIPTPATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append( SCRIPTPATH + '/..')
@@ -35,26 +31,28 @@ import ahnutil as ut
 
 import tensorflow as tf
 from keras import backend as K
+from keras.callbacks import ModelCheckpoint
 
 num_cores = 4
-
 GPU=1
+
 if GPU:
-    num_GPU = 1
-    num_CPU = 1
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    session = tf.Session( config=config)
+    K.set_session( session)
 else:
     num_CPU = 1
     num_GPU = 0
+    config = tf.ConfigProto( intra_op_parallelism_threads=num_cores,\
+                             inter_op_parallelism_threads=num_cores, allow_soft_placement=True,\
+                             device_count = {'CPU' : num_CPU, 'GPU' : num_GPU})
+    session = tf.Session( config=config)
+    K.set_session( session)
 
-config = tf.ConfigProto(intra_op_parallelism_threads=num_cores,\
-        inter_op_parallelism_threads=num_cores, allow_soft_placement=True,\
-        device_count = {'CPU' : num_CPU, 'GPU' : num_GPU})
-session = tf.Session(config=config)
-K.set_session(session)
-
-
-BATCH_SIZE=1024
-#BATCH_SIZE=32
+#BATCH_SIZE=1024
+BATCH_SIZE=32
+args = None
 
 #---------------------------
 def usage(printmsg=False):
@@ -160,52 +158,46 @@ class BEWModelConv:
         self.model.compile( loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
 #===================================================================================================
 
-# Get metadata from the image filenames
-#-----------------------------------------
-def get_meta_from_fnames( path):
-    batches = ut.get_batches(path, shuffle=False, batch_size=1)
-    train_batches = batches['train_batches']
-    valid_batches = batches['valid_batches']
+# Generate training batches on the fly
+#===================================================================================================
+class Generator:
+    #--------------------------------------
+    def __init__( self, data_directory):
+        self.datadir = data_directory #  + '/all_files'
+        # Data Augmentation
+        self.gen = kp.ImageDataGenerator( rotation_range=5,
+                                          width_shift_range=0.2,
+                                          height_shift_range=0.2,
+                                          horizontal_flip=True,
+                                          vertical_flip=True,
+                                          channel_shift_range=0.2)
+        self.get_one_batch_iter = self.gen.flow_from_directory( self.datadir,
+                                                           target_size = (args.resolution, args.resolution),
+                                                           class_mode  = None,
+                                                           shuffle     = True,
+                                                           batch_size  = BATCH_SIZE,
+                                                           color_mode  = 'rgb',
+                                                           save_to_dir = None)
+        self.class_vectors = { 'B':np.array([1,0,0]), 'E':np.array([0,1,0]), 'W':np.array([0,0,1]) }
 
-    train_classes=[]
-    for idx,fname in enumerate(train_batches.filenames):
-        if '/B_' in fname:
-            train_classes.append(0)
-        elif '/E_' in fname:
-            train_classes.append(1)
-        elif '/W_' in fname:
-            train_classes.append(2)
-        else:
-            print( 'ERROR: Bad filename %s' % fname)
-            exit(1)
-    train_classes_hot = ut.onehot(train_classes)
 
-    valid_classes=[]
-    for idx,fname in enumerate(valid_batches.filenames):
-        if '/B_' in fname:
-            valid_classes.append(0)
-        elif '/E_' in fname:
-            valid_classes.append(1)
-        elif '/W_' in fname:
-            valid_classes.append(2)
-        else:
-            print( 'ERROR: Bad filename %s' % fname)
-            exit(1)
-    valid_classes_hot = ut.onehot(valid_classes)
+    #-----------------------
+    def generate( self):
+        while 1:
+            batch = self.get_one_batch_iter.next()
+            ut.dumb_normalize( batch)
+            idx = self.get_one_batch_iter.batch_index - 1 # starts at 1
+            idxs = [ self.get_one_batch_iter.index_array[i] for i in range( idx*BATCH_SIZE, (idx+1)*BATCH_SIZE) ]
+            fnames = [ self.get_one_batch_iter.filenames[i] for i in idxs ]
+            classes = [ os.path.split(fname)[-1][0] for fname in fnames ]
+            labels = [ self.class_vectors[c] for c in classes ]
+            yield np.array(batch), np.array(labels)
 
-    res = {
-        'train_classes':train_classes,
-        'train_classes_hot':train_classes_hot,
-        'train_filenames':train_batches.filenames,
-        'valid_classes':valid_classes,
-        'valid_classes_hot':valid_classes_hot,
-        'valid_filenames':valid_batches.filenames
-    }
-    return res
-
+#=======================================================================================================
 
 #-----------
 def main():
+    global args
     if len(sys.argv) == 1:
         usage(True)
 
@@ -222,28 +214,21 @@ def main():
     if os.path.exists( wfname):
         model.model.load_weights( wfname)
 
-    # Data Augmentation
-    gen=kp.ImageDataGenerator( rotation_range=5,
-                               width_shift_range=0.2,
-                               height_shift_range=0.2,
-                               horizontal_flip=True,
-                               vertical_flip=True,
-                               channel_shift_range=0.2)
 
-    # Images
-    save_to_dir='augmented_samples'
-    if not os.path.exists( save_to_dir): save_to_dir = None
-    images = ut.get_data( SCRIPTPATH, (args.resolution,args.resolution), color_mode='rgb', gen=gen, save_to_dir=save_to_dir)
-    meta   = get_meta_from_fnames( SCRIPTPATH)
-    ut.dumb_normalize( images['train_data'])
-    ut.dumb_normalize( images['valid_data'])
+    STEPS_PER_EPOCH = 100
+    # checkpoint
+    filepath="model-improvement-{epoch:02d}-{val_acc:.2f}.hd5"
+    checkpoint = ModelCheckpoint( filepath, monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=False, mode='max')
+    callbacks_list = [checkpoint]
 
-    # Train
-    model.model.fit(images['train_data'], meta['train_classes_hot'],
-                    batch_size=BATCH_SIZE, epochs=args.epochs,
-                    validation_data=(images['valid_data'], meta['valid_classes_hot']))
-    ut.dump_n_best_and_worst( 10, model.model, images, meta, 'train')
-    ut.dump_n_best_and_worst( 10, model.model, images, meta, 'valid')
+    model.model.fit_generator( Generator( 'train').generate(),
+                               steps_per_epoch=STEPS_PER_EPOCH, epochs=args.epochs,
+                               validation_data = Generator( 'valid').generate(),
+                               validation_steps=int(STEPS_PER_EPOCH/10),
+                               callbacks=callbacks_list)
+
+    classnum = {'B':0,'E':1,'W':2}
+    ut.dump_n_best_worst_folder( 10, model.model, 'valid', args.resolution, lambda fname: classnum[os.path.split(fname)[-1][0]] )
 
     # Save weights and model
     if os.path.exists( wfname):

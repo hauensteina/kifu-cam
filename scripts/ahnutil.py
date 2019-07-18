@@ -360,6 +360,63 @@ def dump_n_best_and_worst( n, model, images, meta, sset='valid'):
              'hardest_%s_%02d_' % (sset,i) + os.path.basename( meta['%s_filenames' % sset][idx]))
 
 
+# Get all images from folder, use model on them, dump best and worst images.
+#------------------------------------------------------------------------------
+def dump_n_best_worst_folder( n, model, folder, resolution, class_getter):
+    BATCH_SIZE = 32
+    gen = kp.ImageDataGenerator( rotation_range=0,
+                                 width_shift_range=0,
+                                 height_shift_range=0,
+                                 horizontal_flip=False,
+                                 vertical_flip=False,
+                                 channel_shift_range=0)
+    batchgen = gen.flow_from_directory( folder,
+                                        target_size = (resolution, resolution),
+                                        class_mode  = None,
+                                        shuffle     = False,
+                                        batch_size  = BATCH_SIZE,
+                                        color_mode  = 'rgb')
+    true_classes = [ class_getter(fname) for fname in batchgen.filenames ]
+    nfiles = len(batchgen.filenames)
+    pred_classes = []
+    pred_confidences = []
+    count = 0
+    while count < nfiles:
+        count += BATCH_SIZE
+        imgs = batchgen.next()
+        dumb_normalize( imgs)
+        preds = model.predict(imgs)
+        pred_classes.extend( [np.argmax(x) for x in preds] )
+        pred_confidences.extend ([np.max(x) for x in preds])
+
+    good_indexes = [idx for idx,c in enumerate(true_classes) if c == pred_classes[idx]]
+    sorted_good_indexes = sorted( good_indexes, key=lambda idx: -pred_confidences[idx])
+    easiest_n = sorted_good_indexes[:n]
+    hardest_n = sorted_good_indexes[-n:]
+
+    bad_indexes = [idx for idx,c in enumerate(true_classes) if c != pred_classes[idx]]
+    sorted_bad_indexes = sorted( bad_indexes, key=lambda idx: -pred_confidences[idx])
+    worst_n = sorted_bad_indexes[:n]
+
+    # Dump easiest
+    for i,idx in enumerate( easiest_n):
+        fname = folder + '/' + batchgen.filenames[idx]
+        target = 'easiest_%s_%02d_%d_' % (folder,i,pred_classes[idx]) + os.path.basename(fname)
+        shutil.copy( fname, target)
+
+    # Dump hardest
+    for i,idx in enumerate( hardest_n):
+        fname = folder + '/' + batchgen.filenames[idx]
+        target = 'hardest_%s_%02d_%d_' % (folder,i,pred_classes[idx]) + os.path.basename(fname)
+        shutil.copy( fname, target)
+
+    # Dump worst
+    for i,idx in enumerate( worst_n):
+        fname = folder + '/' + batchgen.filenames[idx]
+        target = 'worst_%s_%02d_%d_' % (folder,i,pred_classes[idx]) + os.path.basename(fname)
+        shutil.copy( fname, target)
+
+
 # Randomly split the jpg files in a folder into
 # train, valid, test
 #-------------------------------------------------
