@@ -696,7 +696,6 @@ void rough_houghlines (const cv::Mat &img, const Points &ps,
             hlines_bot.push_back( hlines[i]);
         }
     }
-    
     horiz_lines = vec_slice( hlines_top, 0, 15);
     vapp( horiz_lines, vec_slice( hlines_bot, 0, 15));
 //    horiz_lines = vec_slice( hlines, 0, 30);

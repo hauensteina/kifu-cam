@@ -182,7 +182,10 @@ extern cv::Mat mat_dbg;
 //--------------------------------------------------
 - (void) f00_dots_and_verticals
 {
-    //NSLog(@"f00");
+    // Normalize image
+    auto ssum = 0.975 * _orig_small.rows * _orig_small.cols;
+    cv::normalize( _orig_small, _orig_small, ssum , 0, CV_L2);
+    
     _vertical_lines.clear();
     _horizontal_lines.clear();
     // Find Blobs
@@ -202,6 +205,7 @@ extern cv::Mat mat_dbg;
     // Find lines
     rough_houghlines( _small_img, _stone_or_empty,
                      _vertical_lines, _horizontal_lines);
+
 } // f00_dots_and_verticals()
 
 // Debug wrapper for f00_dots_and_verticals
@@ -225,10 +229,10 @@ extern cv::Mat mat_dbg;
     drawing = _small_img.clone();
     // cv::cvtColor( _gray_threshed, drawing, cv::COLOR_GRAY2RGB);
     draw_points( _stone_or_empty, drawing, 2, cv::Scalar( 255,0,0));
-//    get_color(true);
-//    ISLOOP( _vertical_lines) {
-//        draw_polar_line( _vertical_lines[i], drawing, get_color());
-//    }
+    get_color(true);
+    ISLOOP( _vertical_lines) {
+        draw_polar_line( _vertical_lines[i], drawing, get_color());
+    }
     UIImage *res = MatToUIImage( drawing);
     return res;
 } // f00_dots_and_verticals_dbg()
