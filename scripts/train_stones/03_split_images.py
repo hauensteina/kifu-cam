@@ -39,7 +39,6 @@ def usage(printmsg=False):
       Only use files containing <substring> in the name.
     Example:
       %s --folder kc-crops --trainpct 90 --validpct 10 --substr rgb
-      The remaining 10pct will be test data
     ''' % (name,name,name)
     if printmsg:
         print(msg)

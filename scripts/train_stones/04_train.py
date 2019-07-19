@@ -50,8 +50,8 @@ else:
     session = tf.Session( config=config)
     K.set_session( session)
 
-#BATCH_SIZE=1024
-BATCH_SIZE=32
+BATCH_SIZE=128
+#BATCH_SIZE=32
 args = None
 
 #---------------------------
@@ -181,16 +181,24 @@ class Generator:
         self.class_vectors = { 'B':np.array([1,0,0]), 'E':np.array([0,1,0]), 'W':np.array([0,0,1]) }
 
 
+    #--------------------
+    def nsamples( self):
+        return len(self.get_one_batch_iter.filenames)
+
     #-----------------------
     def generate( self):
         while 1:
             batch = self.get_one_batch_iter.next()
             ut.dumb_normalize( batch)
             idx = self.get_one_batch_iter.batch_index - 1 # starts at 1
-            idxs = [ self.get_one_batch_iter.index_array[i] for i in range( idx*BATCH_SIZE, (idx+1)*BATCH_SIZE) ]
+            #idxs = [ self.get_one_batch_iter.index_array[i] for i in range( idx*BATCH_SIZE, (idx+1)*BATCH_SIZE) ]
+            idxs = [ self.get_one_batch_iter.index_array[i] for i in range( idx*BATCH_SIZE, idx*BATCH_SIZE + len(batch)) ]
             fnames = [ self.get_one_batch_iter.filenames[i] for i in idxs ]
             classes = [ os.path.split(fname)[-1][0] for fname in fnames ]
             labels = [ self.class_vectors[c] for c in classes ]
+            if len(batch) != len(labels):
+                BP()
+                tt=42
             yield np.array(batch), np.array(labels)
 
 #=======================================================================================================
@@ -215,20 +223,23 @@ def main():
         model.model.load_weights( wfname)
 
 
-    STEPS_PER_EPOCH = 100
+    train_generator = Generator( 'train')
+    valid_generator = Generator( 'valid')
+    STEPS_PER_EPOCH = int( train_generator.nsamples() / BATCH_SIZE)
     # checkpoint
     filepath="model-improvement-{epoch:02d}-{val_acc:.2f}.hd5"
     checkpoint = ModelCheckpoint( filepath, monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=False, mode='max')
     callbacks_list = [checkpoint]
 
-    model.model.fit_generator( Generator( 'train').generate(),
+    model.model.fit_generator( train_generator.generate(),
                                steps_per_epoch=STEPS_PER_EPOCH, epochs=args.epochs,
-                               validation_data = Generator( 'valid').generate(),
+                               validation_data = valid_generator.generate(),
                                validation_steps=int(STEPS_PER_EPOCH/10),
                                callbacks=callbacks_list)
 
-    classnum = {'B':0,'E':1,'W':2}
-    ut.dump_n_best_worst_folder( 10, model.model, 'valid', args.resolution, lambda fname: classnum[os.path.split(fname)[-1][0]] )
+    # Dump easiest, hardest, worst samples
+    #classnum = {'B':0,'E':1,'W':2}
+    #ut.dump_n_best_worst_folder( 10, model.model, 'valid', args.resolution, lambda fname: classnum[os.path.split(fname)[-1][0]] )
 
     # Save weights and model
     if os.path.exists( wfname):

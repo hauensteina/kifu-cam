@@ -170,8 +170,10 @@ def zoom_in( imgfile, jsonfile):
 # Save intersection crops of size rxr
 #-----------------------------------------------------------------------------------
 def save_intersections( img, intersections, r, basename, folder):
-    #ray = cv2.cvtColor( img, cv2.COLOR_BGR2GRAY)
-    #threshed = cv2.adaptiveThreshold( gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, blockSize=5, C=4)
+    # Normalize image
+    alpha = 0.975 * img.shape[0] * img.shape[1]
+    img = cv2.normalize( img, img, alpha=alpha, beta=0, norm_type=cv2.NORM_L2)
+
     dx = int(r / 2)
     dy = int(r / 2)
     for i,isec in enumerate( intersections):
