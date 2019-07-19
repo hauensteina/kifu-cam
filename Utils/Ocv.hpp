@@ -79,13 +79,13 @@ int channel_q1( cv::Mat channel );
 // Elementwise L2 distance between two single channel mats.
 double mat_dist( const cv::Mat &m1, const cv::Mat &m2);
 // Store mat of uint8_t in vec of double
-inline std::vector<double> mat2vec( cv::Mat &m)
-{
-    std::vector<double> res(m.rows*m.cols);
-    int i=0;
-    m.forEach<uint8_t>( [&i,&res](uint8_t &v, const int *p) { res[i++]=v; } );
-    return res;
-}
+//inline std::vector<double> mat2vec( cv::Mat &m)
+//{
+//    std::vector<double> res(m.rows*m.cols);
+//    int i=0;
+//    m.forEach<uint8_t>( [&i,&res](uint8_t &v, const int *p) { res[i++]=v; } );
+//    return res;
+//}
 // Sum two uint8_t mats, scale back to 255
 inline cv::Mat mat_sumscale( const cv::Mat &m1, const cv::Mat &m2, double w1 = 1.0, double w2 = 1.0)
 {
