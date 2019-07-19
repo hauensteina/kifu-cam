@@ -789,7 +789,7 @@ inline int closest_hline( cv::Vec2f line, const std::vector<cv::Vec2f> &hlines, 
     return minidx;
 } // closest_hline()
 
-// Similarity between two horizontal lines.
+// Similarity between two vertical lines.
 // x_distance**2 above plus x_distance**2 below.
 //----------------------------------------------------------------------------
 inline double v_line_similarity( cv::Vec2f a, cv::Vec2f b, double middle_y)

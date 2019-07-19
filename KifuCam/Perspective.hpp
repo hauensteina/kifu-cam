@@ -105,7 +105,7 @@ inline void warp_points( const Points &points_in, const cv::Mat &M,
 
 // Find a transform that makes the lines parallel
 // Returns a number indicationg how parallel the best solution was.
-// Small numbers are more paralleinl.
+// Small numbers are more parallel.
 //----------------------------------------------------------------------------------------
 inline float parallel_projection( cv::Size sz, const std::vector<cv::Vec2f> &plines_,
                                  float &minphi, cv::Mat &minM, cv::Mat &invM)
