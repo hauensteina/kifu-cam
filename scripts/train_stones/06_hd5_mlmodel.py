@@ -3,7 +3,7 @@
 # /********************************************************************
 # Filename: hd5_mlmodel
 # Author: AHN
-# Creation Date: Jul, 2019
+# Creation Date: Jul 19, 2019
 # **********************************************************************/
 #
 # Convert an hd5 model to mlmodel usable in xcode
