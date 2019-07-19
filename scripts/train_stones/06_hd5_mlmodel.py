@@ -6,7 +6,7 @@
 # Creation Date: Jul 19, 2019
 # **********************************************************************/
 #
-# Convert an hd5 model to mlmodel usable in xcode
+# Convert an hd5 model to coreml mlmodel usable in xcode
 #
 
 from __future__ import division, print_function
@@ -63,7 +63,7 @@ def usage(printmsg=False):
     Synopsis:
       %s --file <file.hd5>
     Description:
-      Ouput goes to nn_bew.mlmodel
+      Ouput goes to nn_bew.mlmodel 
     Example:
       %s --file model-improvement-06-1.00.hd5
     ''' % (name,name,name)
