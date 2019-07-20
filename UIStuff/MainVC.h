@@ -29,6 +29,7 @@
 #import "Common.h"
 #import "CppInterface.h"
 #import "FrameExtractor.h"
+#import "UIViewController+LGSideMenuController.h"
 
 @interface MainVC : UIViewController <FrameExtractorDelegate>
 // Entry point to core app functionality.

@@ -91,7 +91,7 @@ private:
     // Decide color from wprob for each point
     //-------------------------------------------
     char color( double wprob) {
-        const double NEUTRAL_THRESH = 0.4; // 0.30; // 0.40 0.15
+        const double NEUTRAL_THRESH = 0.22; //0.4; // 0.30; // 0.40 0.15
         if (fabs(0.5 - wprob) < NEUTRAL_THRESH) { return 'n'; }
         else if (wprob > 0.5) { return 'w'; }
         else { return 'b'; }
