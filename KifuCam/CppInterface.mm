@@ -638,7 +638,11 @@ extern cv::Mat mat_dbg;
            terrmap:(char**)terrmap 
 {
     int pos[BOARD_SZ * BOARD_SZ];
-    ILOOP(BOARD_SZ * BOARD_SZ) { pos[i] = _diagram[i]; }
+    ILOOP(BOARD_SZ * BOARD_SZ) {
+        // The model thinks bottom to top. Mirror.
+        int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
+        pos[newidx] = _diagram[i];
+    }
     double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
     *surepoints = 0;
     ILOOP(BOARD_SZ*BOARD_SZ) {
