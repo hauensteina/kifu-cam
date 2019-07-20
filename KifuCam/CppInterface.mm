@@ -546,7 +546,7 @@ extern cv::Mat mat_dbg;
 //----------------------------
 - (void) f07_zoom_in
 {
-    //NSLog(@"f07");
+    NSLog(@"f07");
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
@@ -583,13 +583,16 @@ extern cv::Mat mat_dbg;
 //-----------------------------------------------------------
 - (void) f08_classify
 {
-    //NSLog(@"f08");
+    NSLog(@"f08");
     if (_small_zoomed.rows > 0) {
         [self nn_classify_intersections];
     }
+    NSLog(@"f08 after classify");
     Points2f orig_intersections;
     unwarp_points( _invProj, _invRot, _invMd, _intersections, orig_intersections);
+    NSLog(@"f08 after unwarp");
     fix_diagram( _diagram, orig_intersections, _orig_small); //_small_img);
+    NSLog(@"f08 after fix");
 } // f08_classify()
 
 // Debug wrapper for f08_classify
@@ -638,19 +641,24 @@ extern cv::Mat mat_dbg;
         surepoints:(int *)surepoints
            terrmap:(char**)terrmap 
 {
+    NSLog( @"f09 %d", (int)_diagram.size());
     int pos[BOARD_SZ * BOARD_SZ];
     ILOOP(BOARD_SZ * BOARD_SZ) {
         // The model thinks bottom to top. Mirror.
         int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
         pos[newidx] = _diagram[i];
     }
+    NSLog( @"before score model");
     double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
+    NSLog( @"after score model");
     *surepoints = 0;
     ILOOP(BOARD_SZ*BOARD_SZ) {
         if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
     }
+    NSLog( @"before scoring");
     Scoring scoring;
     auto [wwpoints, bbpoints] = scoring.score( pos, wprobs, turn, *terrmap);
+    NSLog( @"after scoring");
     *bpoints = bbpoints;
 } // f09_score()
 
@@ -781,6 +789,7 @@ extern cv::Mat mat_dbg;
     }
     UIImage *img = MatToUIImage( best);
     //[self recognize_position:best breakIfBad:NO];
+    NSLog( @"recpos");
     [self recognize_position:best breakIfBad:YES];
     return img;
 } // get_best_frame()

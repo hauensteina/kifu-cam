@@ -36,7 +36,7 @@
 @interface MainVC ()
 @property UIImageView *cameraView;
 // Data
-@property UIImage *img; // The current image
+//@property UIImage *img; // The current image
 
 @property UIImage *imgVideoBtn;
 @property UIImage *imgPhotoBtn;
@@ -322,17 +322,17 @@
     else if ([g_app.menuVC photoMode]) {
         [self.frameExtractor suspend];
         [self.cameraView setImage:image];
-        _img = image;
-        [_cppInterface qImg:_img];
+        //_img = image;
+        [_cppInterface qImg:image];
         [self.frameExtractor resume];
     } // photoMode
     else if ([g_app.menuVC videoMode]) {
         [self.frameExtractor suspend];
-        _img = image;
-        [_cppInterface qImg:_img];
+        //_img = image;
+        [_cppInterface qImg:image];
         UIImage *processedImg = [self.cppInterface video_mode];
-        self.img = processedImg;
-        [self.cameraView setImage:self.img];
+        //self.img = processedImg;
+        [self.cameraView setImage:processedImg];
         if (self.view.window) {
             [self.frameExtractor resume];
         }

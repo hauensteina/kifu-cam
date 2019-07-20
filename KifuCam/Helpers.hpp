@@ -1049,6 +1049,7 @@ inline void translate_points( const Points2f &pts, int dx, int dy, Points2f &dst
 inline
 void fix_diagram( std::vector<int> &diagram, const Points2f intersections, const cv::Mat &img)
 {
+    if (diagram.size() != intersections.size()) { return; }
     double marg = 10;
     ISLOOP (diagram) {
         Point2f p = intersections[i];

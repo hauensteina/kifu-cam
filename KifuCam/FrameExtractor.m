@@ -128,9 +128,6 @@
 {
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     CIImage *ciImage = [CIImage imageWithCVImageBuffer:imageBuffer];
-    if (!ciImage) {
-        int tt = 42;
-    }
     CGImageRef cgImage = [self.context createCGImage:ciImage fromRect:ciImage.extent];
     _imgExtent = ciImage.extent;
     UIImage *res = [UIImage imageWithCGImage:cgImage];
@@ -165,6 +162,7 @@
         fromConnection:(AVCaptureConnection * ) connection
 {
     UIImage *uiImage = [self imageFromSampleBuffer:sampleBuffer];
+    [self suspend];
     dispatch_async(dispatch_get_main_queue(),
                    ^{
                        [self.delegate captured:uiImage];
