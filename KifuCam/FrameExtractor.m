@@ -128,6 +128,9 @@
 {
     CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     CIImage *ciImage = [CIImage imageWithCVImageBuffer:imageBuffer];
+    if (!ciImage) {
+        int tt = 42;
+    }
     CGImageRef cgImage = [self.context createCGImage:ciImage fromRect:ciImage.extent];
     _imgExtent = ciImage.extent;
     UIImage *res = [UIImage imageWithCGImage:cgImage];

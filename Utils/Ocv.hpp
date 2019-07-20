@@ -194,6 +194,8 @@ void morph_closing( cv::Mat &m, cv::Size sz, int iterations, int type = cv::MORP
 int get_center_crop( const cv::Mat &img, cv::Mat &dst, double frac=4);
 // Get hue
 void get_hue_from_rgb( const cv::Mat &img, cv::Mat &dst);
+// CLAHE histogram equalization for color img
+void clahe( const cv::Mat &img, cv::Mat &dst, double limit);
 // Average over a center crop of img
 double center_avg( const cv::Mat &img, double frac=4);
 // Normalize mean and variance, per channel

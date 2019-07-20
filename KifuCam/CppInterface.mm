@@ -183,8 +183,9 @@ extern cv::Mat mat_dbg;
 - (void) f00_dots_and_verticals
 {
     // Normalize image
-    auto ssum = 0.975 * _orig_small.rows * _orig_small.cols;
-    cv::normalize( _orig_small, _orig_small, ssum , 0, CV_L2);
+//    auto ssum = 0.975 * _orig_small.rows * _orig_small.cols;
+//    cv::normalize( _orig_small, _orig_small, ssum , 0, CV_L2);
+    clahe( _orig_small, _orig_small, 0.5);
     
     _vertical_lines.clear();
     _horizontal_lines.clear();
