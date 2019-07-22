@@ -669,7 +669,7 @@ extern cv::Mat mat_dbg;
     [self f09_score:BBLACK bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
     UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
     NSString *winner = @"B";
-    if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
+    if (bpoints < BOARD_SZ * BOARD_SZ / 2) { winner = @"W"; }
     g_app.mainVC.lbBottom.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
     return scoreImg;
 } // f09_score_dbg()
