@@ -646,6 +646,7 @@ extern cv::Mat mat_dbg;
     ILOOP(BOARD_SZ * BOARD_SZ) {
         // The model thinks bottom to top. Mirror.
         int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
+        //int newidx = i;
         pos[newidx] = _diagram[i];
     }
     NSLog( @"before score model");

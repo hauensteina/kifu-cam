@@ -46,6 +46,7 @@ public:
     bool operator < (const GoPoint& rhs) const {
         return (m_row < rhs.m_row) || ((m_row == rhs.m_row) && (m_col < rhs.m_col));
     }
+    //int idx() const { return (BOARD_SZ - m_row) * BOARD_SZ + m_col; }
     int idx() const { return m_row * BOARD_SZ + m_col; }
     int m_row;
     int m_col;
