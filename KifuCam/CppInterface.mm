@@ -649,13 +649,14 @@ extern cv::Mat mat_dbg;
         pos[newidx] = _diagram[i];
     }
     double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
-    *surepoints = 0;
-    ILOOP(BOARD_SZ*BOARD_SZ) {
-        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
-    }
+//    *surepoints = 0;
+//    ILOOP(BOARD_SZ*BOARD_SZ) {
+//        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
+//    }
     Scoring scoring;
-    auto [wwpoints, bbpoints] = scoring.score( pos, wprobs, turn, *terrmap);
+    auto [wwpoints, bbpoints, dame] = scoring.score( pos, wprobs, turn, *terrmap);
     *bpoints = bbpoints;
+    *surepoints = BOARD_SZ * BOARD_SZ - dame;
 } // f09_score()
 
 // Debug wrapper for f09_score

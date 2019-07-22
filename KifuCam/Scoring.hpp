@@ -42,8 +42,8 @@ public:
     //---------------------
     Scoring() {}
     
-    //--------------------------------------------------------------------------------------------------
-    std::tuple<int,int> score( const int pos[], const double wprobs[], int turn, char *&terrmap_out) {
+    //-------------------------------------------------------------------------------------------------------
+    std::tuple<int,int,int> score( const int pos[], const double wprobs[], int turn, char *&terrmap_out) {
         replay_game( pos);
         static char terrmap[BOARD_SZ * BOARD_SZ];
         ILOOP (BOARD_SZ * BOARD_SZ) {
@@ -52,7 +52,7 @@ public:
         enforce_strings( terrmap, wprobs);
         // Compute score. Split neutral points between players.
         auto player = turn;
-        int wpoints = 0, bpoints = 0;
+        int wpoints = 0, bpoints = 0, dame = 0;
         ILOOP( BOARD_SZ * BOARD_SZ) {
             auto col = terrmap[i];
             if (col == 'w') {
@@ -62,6 +62,7 @@ public:
                 bpoints++;
             }
             else { // neutral
+                dame++;
                 if (player == BBLACK) {
                     bpoints++; player = WWHITE;
                 }
@@ -71,7 +72,7 @@ public:
             }
         } // ILOOP
         terrmap_out = terrmap;
-        return {wpoints, bpoints};
+        return {wpoints, bpoints, dame};
     } // score()
     
 private:
@@ -92,7 +93,7 @@ private:
     //-------------------------------------------
     char color( double wprob) {
         // smaller means less neutral points
-        const double NEUTRAL_THRESH = 0.22; //0.4; // 0.30; // 0.40 0.15
+        const double NEUTRAL_THRESH = 0.40; // 0.22; //0.4; // 0.30; // 0.40 0.15
         if (fabs(0.5 - wprob) < NEUTRAL_THRESH) { return 'n'; }
         else if (wprob > 0.5) { return 'w'; }
         else { return 'b'; }
