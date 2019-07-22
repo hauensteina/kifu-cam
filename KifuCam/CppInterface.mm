@@ -646,22 +646,33 @@ extern cv::Mat mat_dbg;
     ILOOP(BOARD_SZ * BOARD_SZ) {
         // The model thinks bottom to top. Mirror.
         int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
-        //int newidx = i;
         pos[newidx] = _diagram[i];
     }
-    NSLog( @"before score model");
     double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
-    NSLog( @"after score model");
     *surepoints = 0;
     ILOOP(BOARD_SZ*BOARD_SZ) {
         if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
     }
-    NSLog( @"before scoring");
     Scoring scoring;
     auto [wwpoints, bbpoints] = scoring.score( pos, wprobs, turn, *terrmap);
-    NSLog( @"after scoring");
     *bpoints = bbpoints;
 } // f09_score()
+
+// Debug wrapper for f09_score
+//---------------------------------------
+- (UIImage *) f09_score_dbg
+{
+    g_app.mainVC.lbBottom.text = @"";
+    char *terrmap;
+    int bpoints, surepoints;
+    NSString *sgf = [self get_sgf];
+    [self f09_score:BBLACK bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
+    UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
+    NSString *winner = @"B";
+    if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
+    g_app.mainVC.lbBottom.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
+    return scoreImg;
+} // f09_score_dbg()
 
 //=== Production Flow ===
 //=======================
