@@ -48,7 +48,7 @@ def usage(printmsg=False):
     Description:
        Editor to define four corners in a Goban picture and save the intersections
        to an sgf in the GC[] tag.
-       Goes through all png files in the current folder.
+       Goes through all png and jpg files in the current folder.
     Example:
       %s --run
     ''' % (name,name,name)
