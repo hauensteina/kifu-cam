@@ -42,6 +42,7 @@
 - (UIImage *) f06_corners_dbg;
 - (UIImage *) f07_zoom_in_dbg;
 - (UIImage *) f08_classify_dbg;
+- (UIImage *) f09_score_dbg;
 
 - (void) f00_dots_and_verticals;
 - (void) f02_warp;

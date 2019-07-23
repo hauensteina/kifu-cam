@@ -183,9 +183,9 @@ extern cv::Mat mat_dbg;
 - (void) f00_dots_and_verticals
 {
     // Normalize image
-    auto ssum = 0.975 * _orig_small.rows * _orig_small.cols;
-    cv::normalize( _orig_small, _orig_small, ssum , 0, CV_L2);
-    
+    //clahe( _orig_small, _orig_small, 2.0);
+    clahe( _orig_small, _orig_small, 0.5);
+
     _vertical_lines.clear();
     _horizontal_lines.clear();
     // Find Blobs
@@ -545,7 +545,7 @@ extern cv::Mat mat_dbg;
 //----------------------------
 - (void) f07_zoom_in
 {
-    //NSLog(@"f07");
+    NSLog(@"f07");
     cv::Mat threshed;
     cv::Mat dst;
     if (SZ(_corners) == 4) {
@@ -582,13 +582,16 @@ extern cv::Mat mat_dbg;
 //-----------------------------------------------------------
 - (void) f08_classify
 {
-    //NSLog(@"f08");
+    NSLog(@"f08");
     if (_small_zoomed.rows > 0) {
         [self nn_classify_intersections];
     }
+    NSLog(@"f08 after classify");
     Points2f orig_intersections;
     unwarp_points( _invProj, _invRot, _invMd, _intersections, orig_intersections);
+    NSLog(@"f08 after unwarp");
     fix_diagram( _diagram, orig_intersections, _orig_small); //_small_img);
+    NSLog(@"f08 after fix");
 } // f08_classify()
 
 // Debug wrapper for f08_classify
@@ -637,17 +640,39 @@ extern cv::Mat mat_dbg;
         surepoints:(int *)surepoints
            terrmap:(char**)terrmap 
 {
+    NSLog( @"f09 %d", (int)_diagram.size());
     int pos[BOARD_SZ * BOARD_SZ];
-    ILOOP(BOARD_SZ * BOARD_SZ) { pos[i] = _diagram[i]; }
-    double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
-    *surepoints = 0;
-    ILOOP(BOARD_SZ*BOARD_SZ) {
-        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
+    ILOOP(BOARD_SZ * BOARD_SZ) {
+        // The model thinks bottom to top. Mirror.
+        int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
+        pos[newidx] = _diagram[i];
     }
+    double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
+//    *surepoints = 0;
+//    ILOOP(BOARD_SZ*BOARD_SZ) {
+//        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
+//    }
     Scoring scoring;
-    auto [wwpoints, bbpoints] = scoring.score( pos, wprobs, turn, *terrmap);
+    auto [wwpoints, bbpoints, dame] = scoring.score( pos, wprobs, turn, *terrmap);
     *bpoints = bbpoints;
+    *surepoints = BOARD_SZ * BOARD_SZ - dame;
 } // f09_score()
+
+// Debug wrapper for f09_score
+//---------------------------------------
+- (UIImage *) f09_score_dbg
+{
+    g_app.mainVC.lbBottom.text = @"";
+    char *terrmap;
+    int bpoints, surepoints;
+    NSString *sgf = [self get_sgf];
+    [self f09_score:BBLACK bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
+    UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
+    NSString *winner = @"B";
+    if (bpoints < BOARD_SZ * BOARD_SZ / 2) { winner = @"W"; }
+    g_app.mainVC.lbBottom.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
+    return scoreImg;
+} // f09_score_dbg()
 
 //=== Production Flow ===
 //=======================
@@ -661,6 +686,8 @@ extern cv::Mat mat_dbg;
     do {
         _orig_small = small_img;
         [self f00_dots_and_verticals];
+        if (breakIfBad && SZ( _vertical_lines) < 5) break;
+        if (breakIfBad && SZ( _horizontal_lines) < 5) break;
         [self f02_warp];
         [self f03_houghlines];
         if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(BOARD_SZ)) break;
@@ -688,6 +715,7 @@ extern cv::Mat mat_dbg;
 - (bool)recognize_position:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
     bool success = false;
+    _diagram = std::vector<int> ( BOARD_SZ * BOARD_SZ, EEMPTY);
     do {
         success = [self find_board:small_img breakIfBad:breakIfBad];
         if (breakIfBad && !success) break;
@@ -711,38 +739,25 @@ extern cv::Mat mat_dbg;
     cv::Mat canvas;
     canvas = _orig_small;
     
-    static std::vector<cv::Vec2f> old_hlines, old_vlines;
-    static Points2f old_corners, old_intersections;
-    if (!success) {
-        _horizontal_lines = old_hlines;
-        _vertical_lines = old_vlines;
-        _corners = old_corners;
-        _intersections = old_intersections;
+    if (success) {
+        Points2f my_corners, my_intersections;
+        unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
+        unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
+        if (SZ(my_corners) == 4) {
+            draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            
+            ISLOOP (my_intersections) {
+                draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
+            }
+        } // if (SZ(my_corners) == 4)
     }
-    else {
-        old_hlines = _horizontal_lines;
-        old_vlines = _vertical_lines;
-        old_corners = _corners;
-        old_intersections = _intersections;
-    }
-    
-    Points2f my_corners, my_intersections;
-    unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
-    unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
-    if (SZ(my_corners) == 4) {
-        draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        
-        ISLOOP (my_intersections) {
-            draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
-        }
-    } // if (SZ(my_corners) == 4)
     
     UIImage *res = MatToUIImage( canvas);
     return res;
@@ -775,6 +790,7 @@ extern cv::Mat mat_dbg;
     }
     UIImage *img = MatToUIImage( best);
     //[self recognize_position:best breakIfBad:NO];
+    NSLog( @"recpos");
     [self recognize_position:best breakIfBad:YES];
     return img;
 } // get_best_frame()

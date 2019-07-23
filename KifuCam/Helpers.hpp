@@ -301,6 +301,7 @@ inline void draw_score( cv::Mat &img, char *terrmap)
     int innerwidth = width - 2*marg;
     int rad = ROUND( 0.2 * innerwidth / (BOARD_SZ-1.0)) - 1;
     auto rc2p = [innerwidth, marg](int row, int col) {
+        row = BOARD_SZ - 1 - row;
         cv::Point res;
         float d = innerwidth / (BOARD_SZ-1.0) ;
         res.x = ROUND( marg + d*col);
@@ -1049,6 +1050,7 @@ inline void translate_points( const Points2f &pts, int dx, int dy, Points2f &dst
 inline
 void fix_diagram( std::vector<int> &diagram, const Points2f intersections, const cv::Mat &img)
 {
+    if (diagram.size() != intersections.size()) { return; }
     double marg = 10;
     ISLOOP (diagram) {
         Point2f p = intersections[i];

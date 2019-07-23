@@ -34,7 +34,6 @@
 @property AVCaptureDevicePosition position;
 @property AVCaptureSessionPreset quality;
 @property AVCaptureSession *captureSession;
-@property CIContext *context;
 @property bool permissionGranted;
 @property dispatch_queue_t sessionQ;
 @property dispatch_queue_t bufferQ;
@@ -54,7 +53,6 @@
         self.position = AVCaptureDevicePositionFront;
         self.quality = AVCaptureSessionPresetMedium;
         self.captureSession = [AVCaptureSession new];
-        self.context = [CIContext new];
         self.sessionQ = dispatch_queue_create("com.ahaux.sessionQ", DISPATCH_QUEUE_SERIAL);
         self.bufferQ  = dispatch_queue_create("com.ahaux.bufferQ",  DISPATCH_QUEUE_SERIAL);
         [self checkPermission];
@@ -123,25 +121,13 @@
     return res;
 }
 
-//--------------------------------------------------------------------
-- (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef)sampleBuffer
-{
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    CIImage *ciImage = [CIImage imageWithCVImageBuffer:imageBuffer];
-    CGImageRef cgImage = [self.context createCGImage:ciImage fromRect:ciImage.extent];
-    _imgExtent = ciImage.extent;
-    UIImage *res = [UIImage imageWithCGImage:cgImage];
-    CFRelease(cgImage);
-    return res;
-}
-
 // Stop capturing frames while we're busy
 //-------------------------------------------
 - (void) suspend
 {
     if (_suspended) return;
-    dispatch_suspend( self.bufferQ);
     _suspended = true;
+    dispatch_suspend( self.bufferQ);
 }
 
 // Resume capturing frames
@@ -153,18 +139,40 @@
     _suspended = false;
 }
 
-//- (bool) suspended { return _suspended; }
-
 #pragma mark - AVCaptureVideoDataOutputSampleBufferDelegate
 //------------------------------------------------------------
 - (void) captureOutput:(AVCaptureOutput * ) captureOutput
  didOutputSampleBuffer:(CMSampleBufferRef ) sampleBuffer
         fromConnection:(AVCaptureConnection * ) connection
 {
-    UIImage *uiImage = [self imageFromSampleBuffer:sampleBuffer];
+    static bool s_suspended = false;
+    if (sampleBuffer == NULL) return;
+    if (_suspended || s_suspended) return;
+    s_suspended = true;
+    [self suspend];
+
+    // UIImage from samplebuffer. Bullshit Nonsense Nightmare.
+    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    CVPixelBufferLockBaseAddress( imageBuffer,0);
+    if (imageBuffer == NULL) return;
+    CIImage *ciImage = [CIImage imageWithCVImageBuffer:imageBuffer];
+    if (ciImage == NULL) return;
+    CIContext *context = [[CIContext alloc] initWithOptions:nil];
+    CGImageRef cgImage = [context createCGImage:ciImage fromRect:ciImage.extent];
+    UIImage *uiImage = [UIImage imageWithCGImage:cgImage];
+    CVPixelBufferUnlockBaseAddress( imageBuffer,0);
+    if (uiImage == NULL) return;
+    
     dispatch_async(dispatch_get_main_queue(),
                    ^{
-                       [self.delegate captured:uiImage];
+//                       CGImageRef newCgIm = CGImageCreateCopy( uiImage.CGImage);
+//                       UIImage *imgCopy = [UIImage imageWithCGImage:newCgIm scale:uiImage.scale orientation:uiImage.imageOrientation];
+                       if (uiImage != NULL) {
+                           [self.delegate captured:uiImage];
+                       }
+//                       CGImageRelease( newCgIm);
+                       CFRelease(cgImage);
+                       s_suspended = false;
                    });
 }
 

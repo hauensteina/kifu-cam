@@ -180,7 +180,7 @@
     int bpoints, surepoints;
     char *terrmap;
     [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-    if (surepoints < 70) {
+    if (surepoints < 250) {
         _lbInfo.text = @"Too early to score";
         return;
     }

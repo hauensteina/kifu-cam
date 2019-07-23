@@ -60,7 +60,7 @@
     static double *input_mem = NULL;
     if (input_mem == NULL) {
         int input_size = 3 * BOARD_SZ * BOARD_SZ * sizeof(double);
-        input_mem = malloc( input_size);
+        input_mem = malloc( 2 * input_size); // paranoia
     }
 
     // Make input MLMultiArray

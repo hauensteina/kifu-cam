@@ -912,6 +912,39 @@ void get_hue_from_rgb( const cv::Mat &img, cv::Mat &dst)
     planes[0].copyTo( dst);
 }
 
+// Contrast limited adaptive histogram equalization,
+// generalized for color images.
+// From 'simple illumination correction in images openCV c++'
+// on stackoverflow.
+//-----------------------------------------------------------
+void clahe( const cv::Mat &img, cv::Mat &dst, double limit)
+{
+    // READ RGB color image and convert it to Lab
+    cv::Mat lab_image;
+    cv::cvtColor( img, lab_image, CV_RGB2Lab);
+    
+    // Extract the L channel
+    std::vector<cv::Mat> lab_planes(3);
+    cv::split(lab_image, lab_planes);  // now we have the L image in lab_planes[0]
+    
+    // apply the CLAHE algorithm to the L channel
+    //cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    //clahe->setTilesGridSize( cv::Size(8,8));
+    //clahe->setTilesGridSize( cv::Size(32,32));
+    clahe->setTilesGridSize( cv::Size(8,8));
+    clahe->setClipLimit( limit);
+    cv::Mat res;
+    clahe->apply(lab_planes[0], res);
+    
+    // Merge the the color planes back into an Lab image
+    res.copyTo(lab_planes[0]);
+    cv::merge(lab_planes, lab_image);
+    
+    // convert back to RGB
+    cv::cvtColor(lab_image, dst, CV_Lab2RGB);
+} // clahe()
+
 // Average over a center crop of img
 //------------------------------------------------------
 double center_avg( const cv::Mat &img, double frac)
