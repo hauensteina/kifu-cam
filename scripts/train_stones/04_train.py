@@ -65,7 +65,7 @@ def usage(printmsg=False):
     Description:
       Build a NN model with Keras, train on the data in the train subfolder.
     Example:
-      %s --resolution 23 --epochs 10 --rate 0.001
+      %s --resolution 23 --epochs 100 --rate 0
     ''' % (name,name,name)
     if printmsg:
         print(msg)
@@ -170,7 +170,8 @@ class Generator:
                                           height_shift_range=0.2,
                                           horizontal_flip=True,
                                           vertical_flip=True,
-                                          channel_shift_range=0.2)
+                                          channel_shift_range=0.1)
+                                          #channel_shift_range=0.2)
         self.get_one_batch_iter = self.gen.flow_from_directory( self.datadir,
                                                            target_size = (args.resolution, args.resolution),
                                                            class_mode  = None,

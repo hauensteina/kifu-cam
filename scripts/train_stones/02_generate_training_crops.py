@@ -167,11 +167,31 @@ def zoom_in( imgfile, jsonfile):
     res = (warped_img, intersections_zoomed)
     return res
 
+# Contrast limited adaptive histogram equalization.
+# Basically we make sure brightness is the same everywhere.
+#-------------------------------------------------------------
+def clahe( img, limit):
+    # convert it to Lab color space
+    lab_img = cv2.cvtColor( img, cv2.COLOR_RGB2Lab)
+    # Extract the L channel
+    lab_planes = cv2.split( lab_img)
+    # apply the CLAHE algorithm to the L channel
+    clahe = cv2.createCLAHE( clipLimit=limit, tileGridSize=(8,8))
+    lab_planes[0] = clahe.apply( lab_planes[0])
+    # Merge planes back into an lab image
+    lab_img = cv2.merge( lab_planes)
+    # Convert back to RGB
+    res = cv2.cvtColor( lab_img, cv2.COLOR_Lab2RGB)
+    return res
+
 # Save intersection crops of size rxr
 #-----------------------------------------------------------------------------------
 def save_intersections( img, intersections, r, basename, folder):
+    img = clahe( img, 0.5)
+    #img = clahe( img, 2.0)
     # Normalize image
-    alpha = 0.975 * img.shape[0] * img.shape[1]
+    #alpha = 0.975 * img.shape[0] * img.shape[1]
+    alpha = 0.8 * img.shape[0] * img.shape[1]
     img = cv2.normalize( img, img, alpha=alpha, beta=0, norm_type=cv2.NORM_L2)
 
     dx = int(r / 2)
@@ -181,15 +201,10 @@ def save_intersections( img, intersections, r, basename, folder):
         x = isec['x']
         y = isec['y']
         hood = img[y-dy:y+dy+1, x-dx:x+dx+1]
+        # fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i)
         fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i)
-        #rgtname = "%s/%s_rgt_%s_hood_%03d.jpg" % (folder, color, basename, i)
         if color in ['B','W','E'] and not 'off_screen' in isec:
             cv2.imwrite( fname, hood)
-            #thood = threshed[y-dy:y+dy+1, x-dx:x+dx+1]
-            # replace blue channel with threshold result
-            #hood[:,:,2] = thood
-            #cv2.imwrite( rgtname, hood)
-
 
 # e.g for board size, call get_sgf_tag( sgf, "SZ")
 #---------------------------------------------------

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env pythonw
 
 # /********************************************************************
 # Filename: edit_corners.py
@@ -13,7 +13,7 @@
 from __future__ import division, print_function
 from pdb import set_trace as BP
 import os,sys,re,json,copy,shutil
-from StringIO import StringIO
+from io import StringIO
 import numpy as np
 from numpy.random import random
 import argparse
@@ -72,7 +72,7 @@ def main():
     args = parser.parse_args()
 
     FNAMES = os.listdir('.')
-    FNAMES = [f for f in FNAMES if f.endswith('.png')]
+    FNAMES = [f for f in FNAMES if f.endswith('.png') or f.endswith('.jpg') and not f.startswith('.') ]
     FNAMES = sorted(FNAMES)
 
     FIG = plt.figure( figsize=(9,8))
@@ -150,14 +150,8 @@ def show_next_prev():
     show_text( AX_STATUS, '%d/%d %s' % (FNUM+1, len(FNAMES), fname))
 
     # Load image
-    try:
-        IMG = mpl.image.imread( fname)
-    except: # maybe a jpg saved with png extension
-        shutil.copy( fname, 'tt.jpg')
-        IMG = cv2.imread( 'tt.jpg')
-        print( 'converting to png: %s' % fname)
-        cv2.imwrite( fname, IMG)
-        IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
+    IMG = cv2.imread( fname)
+    IMG = cv2.cvtColor( IMG, cv2.COLOR_BGR2RGB)
 
     AX_IMAGE.cla()
     AX_IMAGE.imshow( IMG, origin='upper')
