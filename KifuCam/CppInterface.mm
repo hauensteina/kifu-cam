@@ -183,10 +183,8 @@ extern cv::Mat mat_dbg;
 - (void) f00_dots_and_verticals
 {
     // Normalize image
-//    auto ssum = 0.975 * _orig_small.rows * _orig_small.cols;
-//    cv::normalize( _orig_small, _orig_small, ssum , 0, CV_L2);
-    clahe( _orig_small, _orig_small, 0.5);
-    
+    clahe( _orig_small, _orig_small, 2.0);
+
     _vertical_lines.clear();
     _horizontal_lines.clear();
     // Find Blobs
@@ -687,6 +685,8 @@ extern cv::Mat mat_dbg;
     do {
         _orig_small = small_img;
         [self f00_dots_and_verticals];
+        if (breakIfBad && SZ( _vertical_lines) < 5) break;
+        if (breakIfBad && SZ( _horizontal_lines) < 5) break;
         [self f02_warp];
         [self f03_houghlines];
         if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(BOARD_SZ)) break;
@@ -738,38 +738,25 @@ extern cv::Mat mat_dbg;
     cv::Mat canvas;
     canvas = _orig_small;
     
-    static std::vector<cv::Vec2f> old_hlines, old_vlines;
-    static Points2f old_corners, old_intersections;
-    if (!success) {
-        _horizontal_lines = old_hlines;
-        _vertical_lines = old_vlines;
-        _corners = old_corners;
-        _intersections = old_intersections;
+    if (success) {
+        Points2f my_corners, my_intersections;
+        unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
+        unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
+        if (SZ(my_corners) == 4) {
+            draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
+                      canvas, cv::Scalar( 255,0,0,255));
+            
+            ISLOOP (my_intersections) {
+                draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
+            }
+        } // if (SZ(my_corners) == 4)
     }
-    else {
-        old_hlines = _horizontal_lines;
-        old_vlines = _vertical_lines;
-        old_corners = _corners;
-        old_intersections = _intersections;
-    }
-    
-    Points2f my_corners, my_intersections;
-    unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
-    unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
-    if (SZ(my_corners) == 4) {
-        draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
-                  canvas, cv::Scalar( 255,0,0,255));
-        
-        ISLOOP (my_intersections) {
-            draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
-        }
-    } // if (SZ(my_corners) == 4)
     
     UIImage *res = MatToUIImage( canvas);
     return res;

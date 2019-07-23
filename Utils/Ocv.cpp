@@ -928,7 +928,11 @@ void clahe( const cv::Mat &img, cv::Mat &dst, double limit)
     cv::split(lab_image, lab_planes);  // now we have the L image in lab_planes[0]
     
     // apply the CLAHE algorithm to the L channel
+    //cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
     cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    //clahe->setTilesGridSize( cv::Size(8,8));
+    //clahe->setTilesGridSize( cv::Size(32,32));
+    clahe->setTilesGridSize( cv::Size(3,3));
     clahe->setClipLimit( limit);
     cv::Mat res;
     clahe->apply(lab_planes[0], res);
