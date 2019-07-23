@@ -932,7 +932,7 @@ void clahe( const cv::Mat &img, cv::Mat &dst, double limit)
     cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
     //clahe->setTilesGridSize( cv::Size(8,8));
     //clahe->setTilesGridSize( cv::Size(32,32));
-    clahe->setTilesGridSize( cv::Size(3,3));
+    clahe->setTilesGridSize( cv::Size(8,8));
     clahe->setClipLimit( limit);
     cv::Mat res;
     clahe->apply(lab_planes[0], res);

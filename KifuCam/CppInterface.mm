@@ -183,7 +183,8 @@ extern cv::Mat mat_dbg;
 - (void) f00_dots_and_verticals
 {
     // Normalize image
-    clahe( _orig_small, _orig_small, 2.0);
+    //clahe( _orig_small, _orig_small, 2.0);
+    clahe( _orig_small, _orig_small, 0.5);
 
     _vertical_lines.clear();
     _horizontal_lines.clear();
