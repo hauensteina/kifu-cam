@@ -72,7 +72,7 @@ def main():
     args = parser.parse_args()
 
     FNAMES = os.listdir('.')
-    FNAMES = [f for f in FNAMES if f.endswith('.png') or f.endswith('.jpg') and not f.startswith('.') ]
+    FNAMES = [f for f in FNAMES if (f.endswith('.png') or f.endswith('.jpg')) and not f.startswith('.') ]
     FNAMES = sorted(FNAMES)
 
     FIG = plt.figure( figsize=(9,8))
