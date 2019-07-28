@@ -163,13 +163,14 @@
     NSString *uuid = nsprintf( @"%@", [UIDevice currentDevice].identifierForVendor);
     NSArray *parts = [uuid componentsSeparatedByString:@"-"];
     NSString *s3name;
+    NSString *tstamp = tstampFname();
     // Photo
     fname = changeExtension( fname, @".png");
-    s3name = nsprintf( @"%@/%@-%@.png", @S3_UPLOAD_FOLDER, parts[0], tstampFname());
+    s3name = nsprintf( @"%@/%@-%@.png", @S3_UPLOAD_FOLDER, parts[0], tstamp);
     S3_upload_file( fname, s3name , ^(NSError *err) {});
     // Sgf
     fname = changeExtension( fname, @".sgf");
-    s3name = nsprintf( @"%@/%@-%@.sgf", @S3_UPLOAD_FOLDER, parts[0], tstampFname());
+    s3name = nsprintf( @"%@/%@-%@.sgf", @S3_UPLOAD_FOLDER, parts[0], tstamp);
     S3_upload_file( fname, s3name , ^(NSError *err) {});
 } // uploadToS3()
 
