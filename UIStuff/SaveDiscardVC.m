@@ -42,6 +42,7 @@
 @property UIButton *btnW2Play;
 @property UILabel *lbInfo;
 @property UILabel *lbInfo2;
+@property UILabel *lbInfo3;
 @end
 
 @implementation SaveDiscardVC
@@ -73,6 +74,12 @@
         l2.backgroundColor = BGCOLOR;
         [v addSubview:l2];
         self.lbInfo2 = l2;
+        
+        UILabel *l3 = [UILabel new];
+        l3.text = @"";
+        l3.backgroundColor = BGCOLOR;
+        [v addSubview:l3];
+        self.lbInfo3 = l3;
         
         // Buttons
         //=========
@@ -232,7 +239,7 @@
                        _sgfImg = [CppInterface nextmove2img:_sgf coord:bot_move color:turn];
                        [_sgfView setImage:_sgfImg];
                        float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
-                       int tt=42;
+                       _lbInfo3.text = nsprintf( @"P(B wins) = %.2f", pbwins);
                    }
                    else {
                        NSLog( @"Error hitting Leela endpoint");
@@ -323,7 +330,12 @@
     _lbInfo2.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
     _lbInfo2.textAlignment = NSTextAlignmentCenter;
     _lbInfo2.text = @"";
-
+    
+    y = topmarg + 40 + imgWidth + 70;
+    _lbInfo3.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    _lbInfo3.textAlignment = NSTextAlignmentCenter;
+    _lbInfo3.text = @"";
+    
     // Buttons
     float btnWidth, btnHeight;
     y = topmarg + 40 + imgWidth + 50;

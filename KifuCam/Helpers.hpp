@@ -308,7 +308,7 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
 inline void draw_next_move( const std::string &sgf, const std::string &coord, int color, cv::Mat &dst, int width) {
     draw_sgf( sgf, dst, width);
     if (coord.length() > 3) { return; }
-    std::string colchars = "ABCDEFGHIKLMNOPQRST";
+    std::string colchars = "ABCDEFGHJKLMNOPQRST";
     int row = BOARD_SZ - atoi( coord.c_str() + 1);
     auto col = (int)colchars.find( coord.c_str()[0]);
     int marg = width * 0.05;
