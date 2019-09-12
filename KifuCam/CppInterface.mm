@@ -945,6 +945,44 @@ extern cv::Mat mat_dbg;
     return @(generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta).c_str());
 } // get_sgf()
 
+// Convert current diagram to a sequence of moves I can feed to Leela
+//---------------------------------------------------------------------
+- (NSArray *) get_leela_moves:(int)turn
+{
+    auto colchars = "ABCDEFGHJKLMNOPQRST";
+    std::vector<std::string> wmoves;
+    std::vector<std::string> bmoves;
+    ISLOOP (_diagram) {
+        int row = i / BOARD_SZ;
+        int col = i % BOARD_SZ;
+        char buf[10];
+        sprintf( buf, "%c%d", colchars[col], BOARD_SZ-row);
+        std::string movestr = buf;
+        if (_diagram[i] == WWHITE) { wmoves.push_back( movestr); }
+        else if (_diagram[i] == BBLACK) { bmoves.push_back( movestr); }
+        else continue;
+    }
+    auto blen = SZ(bmoves); auto wlen = SZ(wmoves);
+    auto npasses = abs(blen-wlen);
+    if (blen > wlen) {
+        ILOOP(npasses) { wmoves.insert( wmoves.begin(), "pass");}
+    }
+    else if (wlen > blen) {
+        ILOOP(npasses) { bmoves.insert( bmoves.begin(), "pass");}
+    }
+    // If w turn, add a pass in front of B moves
+    if (turn == WWHITE) {
+        bmoves.insert( bmoves.begin(), "pass");
+    }
+    blen = SZ(bmoves); wlen = SZ(wmoves);
+    NSMutableArray *res = [NSMutableArray new];
+    ILOOP (blen) {
+        [res addObject: @(bmoves[i].c_str())];
+        if (i < wlen) { [res addObject: @(wmoves[i].c_str())]; }
+    }
+    return res;
+} // get_leela_moves()
+
 // Get sgf for a UIImage
 //-----------------------------------------------
 - (NSString *) get_sgf_for_img: (UIImage *)img

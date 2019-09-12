@@ -176,7 +176,7 @@
 
 // Score position and display result.
 //--------------------------------------------------
-- (void) displayResult:(int)turn { //@@@
+- (void) displayResult:(int)turn {
     CppInterface *cpp = g_app.mainVC.cppInterface;
     int bpoints, surepoints;
     char *terrmap;
@@ -194,6 +194,49 @@
     _lbInfo2.text = nsprintf( @"%@+%d before komi and handicap", winner, delta);
 } // displayResult()
 
+// Ask Leela about this position
+//-------------------------------------
+- (void) askLeela:(int)turn { //@@@
+    NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
+    NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
+    NSDictionary *parms =
+    @{@"board_size":@(19), @"moves":leelaMoves,
+      @"config":@{@"randomness": @"-1.0", @"playouts":@"512" } };
+    NSError *err;
+    NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
+    NSMutableURLRequest *request = [NSMutableURLRequest new];
+    request.HTTPMethod = @"POST";
+    
+    [request setURL:[NSURL URLWithString:urlstr]];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setHTTPBody:jsonBodyData];
+    
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config
+                                                          delegate:nil
+                                                     delegateQueue:[NSOperationQueue mainQueue]];
+    NSURLSessionDataTask *task =
+    [session dataTaskWithRequest:request
+               completionHandler:^(NSData * _Nullable data,
+                                   NSURLResponse * _Nullable response,
+                                   NSError * _Nullable error) {
+                   // The endpoint comes back with resp
+                   NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
+                   if (resp.statusCode == 200) {
+                       NSLog(@"The response is: %@", resp);
+                       NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                                                            options:kNilOptions
+                                                                              error:nil];
+                       int tt=42;
+                   }
+                   else {
+                       NSLog( @"Error hitting Leela endpoint");
+                   }
+               }];
+    [task resume];
+} // askLeela()
+
 // Button Callbacks
 //======================
 
@@ -209,6 +252,7 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
+    [self askLeela:BBLACK];
 } // btnB2Play()
 
 //-----------------------------
@@ -223,6 +267,7 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
+    [self askLeela:WWHITE];
 } // btnW2Play()
 
 //------------------------------
