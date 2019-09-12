@@ -224,6 +224,17 @@ inline std::vector<int> sgf2vec( const std::string &sgf_)
     return res;
 } // sgf2vec
 
+// Convert row, col to screen image coordinates.
+//--------------------------------------------------------------------
+inline cv::Point rc2p (int innerwidth, int marg, int row, int col)
+{
+    cv::Point res;
+    float d = innerwidth / (BOARD_SZ-1.0) ;
+    res.x = ROUND( marg + d*col);
+    res.y = ROUND( marg + d*row);
+    return res;
+} // rc2p()
+
 // Draw gray sgf on a square single channel Mat
 //----------------------------------------------------------------------
 inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
@@ -238,42 +249,42 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     if (SZ(sgf) > 3) {
         diagram = sgf2vec( sgf);
     }
-    auto rc2p = [innerwidth, marg](int row, int col) {
-        cv::Point res;
-        float d = innerwidth / (BOARD_SZ-1.0) ;
-        res.x = ROUND( marg + d*col);
-        res.y = ROUND( marg + d*row);
-        return res;
-    };
+//    auto rc2p = [innerwidth, marg](int row, int col) {
+//        cv::Point res;
+//        float d = innerwidth / (BOARD_SZ-1.0) ;
+//        res.x = ROUND( marg + d*col);
+//        res.y = ROUND( marg + d*row);
+//        return res;
+//    };
     // Draw the lines
     ILOOP (BOARD_SZ) {
-        cv::Point p1 = rc2p( i, 0);
-        cv::Point p2 = rc2p( i, BOARD_SZ-1);
-        cv::Point q1 = rc2p( 0, i);
-        cv::Point q2 = rc2p( BOARD_SZ-1, i);
+        cv::Point p1 = rc2p( innerwidth, marg, i, 0);
+        cv::Point p2 = rc2p( innerwidth, marg, i, BOARD_SZ-1);
+        cv::Point q1 = rc2p( innerwidth, marg, 0, i);
+        cv::Point q2 = rc2p( innerwidth, marg, BOARD_SZ-1, i);
         cv::line( dst, p1, p2, cv::Scalar(0,0,0), 1, CV_AA);
         cv::line( dst, q1, q2, cv::Scalar(0,0,0), 1, CV_AA);
     }
     // Draw the hoshis
     int r = ROUND( 0.15 * innerwidth / (BOARD_SZ-1.0));
     cv::Point p;
-    p = rc2p( 3, 3);
+    p = rc2p( innerwidth, marg, 3, 3);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 15, 15);
+    p = rc2p( innerwidth, marg, 15, 15);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 3, 15);
+    p = rc2p( innerwidth, marg, 3, 15);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 15, 3);
+    p = rc2p( innerwidth, marg, 15, 3);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 9, 9);
+    p = rc2p( innerwidth, marg, 9, 9);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 9, 3);
+    p = rc2p( innerwidth, marg, 9, 3);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 3, 9);
+    p = rc2p( innerwidth, marg, 3, 9);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 9, 15);
+    p = rc2p( innerwidth, marg, 9, 15);
     cv::circle( dst, p, r, 0, -1);
-    p = rc2p( 15, 9);
+    p = rc2p( innerwidth, marg, 15, 9);
     cv::circle( dst, p, r, 0, -1);
 
     // Draw the stones
@@ -281,7 +292,7 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     ISLOOP (diagram) {
         int r = i / BOARD_SZ;
         int c = i % BOARD_SZ;
-        cv::Point p = rc2p( r,c);
+        cv::Point p = rc2p( innerwidth, marg, r, c);
         if (diagram[i] == WWHITE) {
             cv::circle( dst, p, rad, 255, -1, CV_AA);
             cv::circle( dst, p, rad, 0, 1, CV_AA);
@@ -291,6 +302,31 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
         }
     } // ISLOOP
 } // draw_sgf()
+
+// Draw next move on the board
+//-------------------------------------------------------------------------------------------------------------------
+inline void draw_next_move( const std::string &sgf, const std::string &coord, int color, cv::Mat &dst, int width) {
+    draw_sgf( sgf, dst, width);
+    if (coord.length() > 3) { return; }
+    std::string colchars = "ABCDEFGHIKLMNOPQRST";
+    int row = BOARD_SZ - atoi( coord.c_str() + 1);
+    auto col = (int)colchars.find( coord.c_str()[0]);
+    int marg = width * 0.05;
+    int innerwidth = width - 2*marg;
+    auto p = rc2p( innerwidth, marg, row, col);
+    int rad = ROUND( 0.5 * innerwidth / (BOARD_SZ-1.0)) - 1;
+    if (color == WWHITE) {
+        cv::circle( dst, p, rad, 255, -1, CV_AA);
+        cv::circle( dst, p, rad, 0, 1, CV_AA);
+        // Black marker circle
+        cv::circle( dst, p, rad-4, 0, 1, CV_AA);
+    }
+    else {
+        cv::circle( dst, p, rad, 0, -1, CV_AA);
+        // White marker circle
+        cv::circle( dst, p, rad-4, 255, 1, CV_AA);
+    }
+} // draw_next_move()
 
 // Draw score map on position image
 //------------------------------------------------------

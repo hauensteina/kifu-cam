@@ -1012,6 +1012,17 @@ extern cv::Mat mat_dbg;
     return res;
 } // sgf2img()
 
+// Convert sgf + next move to UIImage
+//------------------------------------------------------------------------------------
++ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color
+{
+    if (!sgf) sgf = @"";
+    cv::Mat m;
+    draw_next_move( [sgf UTF8String], [coord UTF8String], color, m, 1.5 * IMG_WIDTH);
+    UIImage *res = MatToUIImage( m);
+    return res;
+} // nextmove2img()
+
 // Draw sgf and territory map
 //----------------------------------------------------------------
 + (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap

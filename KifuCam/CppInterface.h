@@ -53,7 +53,6 @@
 - (void) f07_zoom_in;
 - (void) f09_score:(int)turn bpoints:(int *)bpoints surepoints:(int *)surepoints terrmap:(char**)terrmap;
 
-
 - (UIImage *) video_mode;
 - (UIImage *) get_best_frame;
 
@@ -82,6 +81,8 @@
 
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;
+// Make a diagram from sgf and next move
++ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color;
 // Draw scoring map on sgf img
 + (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap;
 // Extract an sgf tag

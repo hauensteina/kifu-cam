@@ -201,7 +201,7 @@
     NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":leelaMoves,
-      @"config":@{@"randomness": @"-1.0", @"playouts":@"512" } };
+      @"config":@{@"randomness": @"-1.0", @"playouts":@"1000" } };
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
@@ -228,6 +228,10 @@
                        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                                                             options:kNilOptions
                                                                               error:nil];
+                       NSString *bot_move = json[@"bot_move"];
+                       _sgfImg = [CppInterface nextmove2img:_sgf coord:bot_move color:turn];
+                       [_sgfView setImage:_sgfImg];
+                       float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
                        int tt=42;
                    }
                    else {
