@@ -190,10 +190,12 @@
     [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
     if (surepoints < 250) {
         _lbInfo.text = @"Too early to score";
+        [self askLeela:turn terrmap:NULL];
         return;
     }
     _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
     [_sgfView setImage:_scoreImg];
+    [self askLeela:turn terrmap:terrmap];
     NSString *winner = @"B";
     if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
     int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
@@ -202,8 +204,8 @@
 } // displayResult()
 
 // Ask Leela about this position
-//-------------------------------------
-- (void) askLeela:(int)turn { //@@@
+//------------------------------------------------------
+- (void) askLeela:(int)turn terrmap:(char *)terrmap { //@@@
     NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
     NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
     NSDictionary *parms =
@@ -236,7 +238,11 @@
                                                                             options:kNilOptions
                                                                               error:nil];
                        NSString *bot_move = json[@"bot_move"];
-                       _sgfImg = [CppInterface nextmove2img:_sgf coord:bot_move color:turn];
+                       _sgfImg = [CppInterface nextmove2img:_sgf
+                                                      coord:bot_move
+                                                      color:turn
+                                                    terrmap:terrmap
+                                  ];
                        [_sgfView setImage:_sgfImg];
                        float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
                        _lbInfo3.text = nsprintf( @"P(B wins) = %.2f", pbwins);
@@ -263,7 +269,6 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
-    [self askLeela:BBLACK];
 } // btnB2Play()
 
 //-----------------------------
@@ -278,7 +283,6 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
-    [self askLeela:WWHITE];
 } // btnW2Play()
 
 //------------------------------

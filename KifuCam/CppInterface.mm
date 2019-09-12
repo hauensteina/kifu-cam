@@ -1013,12 +1013,14 @@ extern cv::Mat mat_dbg;
 } // sgf2img()
 
 // Convert sgf + next move to UIImage
-//------------------------------------------------------------------------------------
-+ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color
+//----------------------------------------------------------------------------------------------------------
++ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(char *)terrmap
 {
     if (!sgf) sgf = @"";
     cv::Mat m;
-    draw_next_move( [sgf UTF8String], [coord UTF8String], color, m, 1.5 * IMG_WIDTH);
+    draw_sgf( [sgf UTF8String], m,  1.5 * IMG_WIDTH);
+    if (terrmap) { draw_score( m, terrmap); }
+    draw_next_move( [coord UTF8String], color, m);
     UIImage *res = MatToUIImage( m);
     return res;
 } // nextmove2img()

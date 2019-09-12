@@ -305,8 +305,9 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
 
 // Draw next move on the board
 //-------------------------------------------------------------------------------------------------------------------
-inline void draw_next_move( const std::string &sgf, const std::string &coord, int color, cv::Mat &dst, int width) {
-    draw_sgf( sgf, dst, width);
+inline void draw_next_move( const std::string &coord, int color, cv::Mat &dst) {
+    //draw_sgf( sgf, dst, width);
+    auto width = dst.cols;
     if (coord.length() > 3) { return; }
     std::string colchars = "ABCDEFGHJKLMNOPQRST";
     int row = BOARD_SZ - atoi( coord.c_str() + 1);
@@ -336,19 +337,11 @@ inline void draw_score( cv::Mat &img, char *terrmap)
     int marg = width * 0.05;
     int innerwidth = width - 2*marg;
     int rad = ROUND( 0.2 * innerwidth / (BOARD_SZ-1.0)) - 1;
-    auto rc2p = [innerwidth, marg](int row, int col) {
-        row = BOARD_SZ - 1 - row;
-        cv::Point res;
-        float d = innerwidth / (BOARD_SZ-1.0) ;
-        res.x = ROUND( marg + d*col);
-        res.y = ROUND( marg + d*row);
-        return res;
-    };
     ILOOP (BOARD_SZ*BOARD_SZ) {
         char col = terrmap[i];
-        int r = i / BOARD_SZ;
+        int r = (BOARD_SZ - i / BOARD_SZ) - 1;
         int c = i % BOARD_SZ;
-        cv::Point p = rc2p( r,c);
+        cv::Point p = rc2p( innerwidth, marg, r,c);
         if (col == 'b') {
             cv::circle( img, p, rad, 0, -1, CV_AA);
         }
