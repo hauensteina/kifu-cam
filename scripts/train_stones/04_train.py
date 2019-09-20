@@ -239,8 +239,8 @@ def main():
                                callbacks=callbacks_list)
 
     # Dump easiest, hardest, worst samples
-    #classnum = {'B':0,'E':1,'W':2}
-    #ut.dump_n_best_worst_folder( 10, model.model, 'valid', args.resolution, lambda fname: classnum[os.path.split(fname)[-1][0]] )
+    classnum = {'B':0,'E':1,'W':2}
+    ut.dump_n_best_worst_folder( 10, model.model, 'valid', args.resolution, lambda fname: classnum[os.path.split(fname)[-1][0]] )
 
     # Save weights and model
     if os.path.exists( wfname):
