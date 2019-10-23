@@ -362,7 +362,7 @@ template <typename Points_>
 cv::Vec4f fit_line( const Points_ &p)
 {
     cv::Vec4f res,tt;
-    cv::fitLine( p, tt, CV_DIST_L2, 0.0, 0.01, 0.01);
+    cv::fitLine( p, tt, cv::DIST_L2, 0.0, 0.01, 0.01);
     res[0] = tt[2];
     res[1] = tt[3];
     res[2] = tt[2] + tt[0];

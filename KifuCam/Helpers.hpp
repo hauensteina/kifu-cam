@@ -262,8 +262,8 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
         cv::Point p2 = rc2p( innerwidth, marg, i, BOARD_SZ-1);
         cv::Point q1 = rc2p( innerwidth, marg, 0, i);
         cv::Point q2 = rc2p( innerwidth, marg, BOARD_SZ-1, i);
-        cv::line( dst, p1, p2, cv::Scalar(0,0,0), 1, CV_AA);
-        cv::line( dst, q1, q2, cv::Scalar(0,0,0), 1, CV_AA);
+        cv::line( dst, p1, p2, cv::Scalar(0,0,0), 1, cv::LINE_AA);
+        cv::line( dst, q1, q2, cv::Scalar(0,0,0), 1, cv::LINE_AA);
     }
     // Draw the hoshis
     int r = ROUND( 0.15 * innerwidth / (BOARD_SZ-1.0));
@@ -294,11 +294,11 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
         int c = i % BOARD_SZ;
         cv::Point p = rc2p( innerwidth, marg, r, c);
         if (diagram[i] == WWHITE) {
-            cv::circle( dst, p, rad, 255, -1, CV_AA);
-            cv::circle( dst, p, rad, 0, 1, CV_AA);
+            cv::circle( dst, p, rad, 255, -1, cv::LINE_AA);
+            cv::circle( dst, p, rad, 0, 1, cv::LINE_AA);
         }
         else if (diagram[i] == BBLACK) {
-            cv::circle( dst, p, rad, 0, -1, CV_AA);
+            cv::circle( dst, p, rad, 0, -1, cv::LINE_AA);
         }
     } // ISLOOP
 } // draw_sgf()
@@ -317,15 +317,15 @@ inline void draw_next_move( const std::string &coord, int color, cv::Mat &dst) {
     auto p = rc2p( innerwidth, marg, row, col);
     int rad = ROUND( 0.5 * innerwidth / (BOARD_SZ-1.0)) - 1;
     if (color == WWHITE) {
-        cv::circle( dst, p, rad, 255, -1, CV_AA);
-        cv::circle( dst, p, rad, 0, 1, CV_AA);
+        cv::circle( dst, p, rad, 255, -1, cv::LINE_AA);
+        cv::circle( dst, p, rad, 0, 1, cv::LINE_AA);
         // Black marker circle
-        cv::circle( dst, p, rad-4, 0, 1, CV_AA);
+        cv::circle( dst, p, rad-4, 0, 1, cv::LINE_AA);
     }
     else {
-        cv::circle( dst, p, rad, 0, -1, CV_AA);
+        cv::circle( dst, p, rad, 0, -1, cv::LINE_AA);
         // White marker circle
-        cv::circle( dst, p, rad-4, 255, 1, CV_AA);
+        cv::circle( dst, p, rad-4, 255, 1, cv::LINE_AA);
     }
 } // draw_next_move()
 
@@ -343,10 +343,10 @@ inline void draw_score( cv::Mat &img, char *terrmap)
         int c = i % BOARD_SZ;
         cv::Point p = rc2p( innerwidth, marg, r,c);
         if (col == 'b') {
-            cv::circle( img, p, rad, 0, -1, CV_AA);
+            cv::circle( img, p, rad, 0, -1, cv::LINE_AA);
         }
         else if (col == 'w') {
-            cv::circle( img, p, rad, 255, -1, CV_AA);
+            cv::circle( img, p, rad, 255, -1, cv::LINE_AA);
         }
     } // ILOOP
 } // draw_score()

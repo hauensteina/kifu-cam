@@ -67,11 +67,13 @@ PODS:
     - nanopb/encode (= 0.3.904)
   - nanopb/decode (0.3.904)
   - nanopb/encode (0.3.904)
+  - OpenCV (4.1.0)
 
 DEPENDENCIES:
   - Crashlytics (~> 3.14.0)
   - Fabric (~> 1.10.2)
   - Firebase/Analytics
+  - OpenCV
 
 SPEC REPOS:
   trunk:
@@ -88,6 +90,7 @@ SPEC REPOS:
     - GoogleDataTransportCCTSupport
     - GoogleUtilities
     - nanopb
+    - OpenCV
 
 SPEC CHECKSUMS:
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
@@ -103,7 +106,8 @@ SPEC CHECKSUMS:
   GoogleDataTransportCCTSupport: f6ab1962e9dc05ab1fb938b795e5b310209edeec
   GoogleUtilities: f895fde57977df4e0233edda0dbeac490e3703b6
   nanopb: 06f6030d554e6473f5e172460173fcf80f5548f4
+  OpenCV: 52cd4d72ff29e2be83421477aec5447320b7fb19
 
-PODFILE CHECKSUM: 86f6c4ab19d70f2d378bcded380acf1345dce8ee
+PODFILE CHECKSUM: d15997d6e46dd7031a30968d945e847fb16e2a28
 
 COCOAPODS: 1.8.4

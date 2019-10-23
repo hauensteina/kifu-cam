@@ -127,7 +127,7 @@ extern cv::Mat mat_dbg;
     cv::Mat m;
     UIImageToMat( img, m);
     resize( m, m, IMG_WIDTH);
-    cv::cvtColor( m, m, CV_RGBA2RGB);
+    cv::cvtColor( m, m, cv::COLOR_RGBA2RGB);
     int keep_n_frames = 4;
     ringpush( _imgQ , m, keep_n_frames); // keep 4 frames
 }
@@ -145,7 +145,7 @@ extern cv::Mat mat_dbg;
     cv::Mat m;
     UIImageToMat( img, m);
     resize( m, m, IMG_WIDTH);
-    cv::cvtColor( m, m, CV_RGBA2RGB);
+    cv::cvtColor( m, m, cv::COLOR_RGBA2RGB);
     if (![self recognize_position:m breakIfBad:NO]) {
         return -1;
     }
@@ -193,7 +193,7 @@ extern cv::Mat mat_dbg;
         resize( _orig_small, _orig_small, IMG_WIDTH);
     }
     const cv::Size sz( _orig_small.cols, _orig_small.rows);
-    cv::cvtColor( _orig_small, _orig_small, CV_RGBA2RGB);
+    cv::cvtColor( _orig_small, _orig_small, cv::COLOR_RGBA2RGB);
     _small_img = _orig_small.clone();
     cv::cvtColor( _small_img, _gray, cv::COLOR_RGB2GRAY);
     thresh_dilate( _gray, _gray_threshed, 10 /*14*/);

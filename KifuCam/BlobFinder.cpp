@@ -108,7 +108,7 @@ void BlobFinder::find_stones( const cv::Mat &img, Points &result)
     // Find circles
     std::vector<cv::Vec3f> circles;
     //cv::GaussianBlur( img, mtmp, cv::Size(5, 5), 2, 2 );
-    cv::HoughCircles( img, circles, CV_HOUGH_GRADIENT,
+    cv::HoughCircles( img, circles, cv::HOUGH_GRADIENT,
                      1, // acumulator res == image res; Larger means less acc res
                      img.rows/30, // minimum distance between circles
                      260, // upper canny thresh; half of this is the lower canny
@@ -147,7 +147,7 @@ void BlobFinder::find_stones_perp( const cv::Mat &img, Points &result)
     // Find circles
     std::vector<cv::Vec3f> circles;
     //cv::GaussianBlur( img, mtmp, cv::Size(5, 5), 2, 2 );
-    cv::HoughCircles( img, circles, CV_HOUGH_GRADIENT,
+    cv::HoughCircles( img, circles, cv::HOUGH_GRADIENT,
                      1, // acumulator res == image res; Larger means less acc res
                      15, // minimum distance between circles
                      130, // upper canny thresh; half of this is the lower canny
@@ -167,8 +167,8 @@ void BlobFinder::matchTemplate( const cv::Mat &img, const cv::Mat &templ, Points
     cv::Mat mtmp;
     int tsz = templ.rows;
     cv::copyMakeBorder( img, mtmp, tsz/2, tsz/2, tsz/2, tsz/2, cv::BORDER_REPLICATE, cv::Scalar(0));
-    cv::matchTemplate( mtmp, templ, m_matchRes, CV_TM_SQDIFF);
-    cv::normalize( m_matchRes, m_matchRes, 0 , 255, CV_MINMAX, CV_8UC1);
+    cv::matchTemplate( mtmp, templ, m_matchRes, cv::TM_SQDIFF);
+    cv::normalize( m_matchRes, m_matchRes, 0 , 255, cv::NORM_MINMAX, CV_8UC1);
     cv::adaptiveThreshold( m_matchRes, mtmp, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV,
                           11,  // neighborhood_size
                           thresh); // threshold; less is more

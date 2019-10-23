@@ -27,7 +27,6 @@
 		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
 		AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */; };
 		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
-		AC5540741F9BE6AD00922557 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC5540731F9BE6AD00922557 /* opencv2.framework */; };
 		AC5540771F9BE71900922557 /* CppInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC5540761F9BE71800922557 /* CppInterface.mm */; };
 		AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */; };
 		AC5F33A720128576002FEF06 /* TestResultsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F33A620128576002FEF06 /* TestResultsVC.m */; };
@@ -215,7 +214,6 @@
 		AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ocv.cpp; sourceTree = "<group>"; };
 		AC3C5EBB1FBC942000BB8B4F /* Ocv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Ocv.hpp; sourceTree = "<group>"; };
-		AC5540731F9BE6AD00922557 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = SOURCE_ROOT; };
 		AC5540751F9BE71800922557 /* CppInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppInterface.h; sourceTree = "<group>"; };
 		AC5540761F9BE71800922557 /* CppInterface.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CppInterface.mm; sourceTree = "<group>"; };
 		AC5F339E200FD370002FEF06 /* EditTestCaseVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditTestCaseVC.h; sourceTree = "<group>"; };
@@ -338,7 +336,6 @@
 				ACD6C84720152B3000759875 /* AWSAutoScaling.framework in Frameworks */,
 				ACD6C87920152B3000759875 /* AWSMobileAnalytics.framework in Frameworks */,
 				ACD6C85F20152B3000759875 /* AWSLambda.framework in Frameworks */,
-				AC5540741F9BE6AD00922557 /* opencv2.framework in Frameworks */,
 				ACD6C87B20152B3000759875 /* AWSCognito.framework in Frameworks */,
 				ACD6C85920152B3000759875 /* AWSCognitoAuth.framework in Frameworks */,
 				ACD6C84520152B3000759875 /* AWSPolly.framework in Frameworks */,
@@ -532,7 +529,6 @@
 			isa = PBXGroup;
 			children = (
 				ACF318522361048800C5E684 /* AssetsLibrary.framework */,
-				AC5540731F9BE6AD00922557 /* opencv2.framework */,
 				AC8040091FA92604000088D2 /* Accelerate.framework */,
 				6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */,
 			);

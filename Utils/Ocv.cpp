@@ -239,7 +239,7 @@ cv::Vec4f avg_lines( const std::vector<cv::Vec4f> &lines )
     }
     // Put a line through them
     cv::Vec4f lparms;
-    cv::fitLine( points, lparms, CV_DIST_L2, 0.0, 0.01, 0.01);
+    cv::fitLine( points, lparms, cv::DIST_L2, 0.0, 0.01, 0.01);
     cv::Vec4f res;
     res[0] = lparms[2];
     res[1] = lparms[3];
@@ -618,7 +618,7 @@ double diff_quads( const Points2f &q1, const Points2f &q2)
 bool save_img( const cv::Mat &img, const std::string &fname)
 {
     std::vector<int> compression_params;
-    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(cv::IMWRITE_PNG_COMPRESSION);
     compression_params.push_back(0);
     return cv::imwrite( fname, img);
 }
@@ -809,7 +809,7 @@ double direction (const cv::Mat &img, const Points &ps)
 void inv_thresh_median( const cv::Mat &gray, cv::Mat &dst)
 {
     double med = channel_median( gray);
-    cv::threshold( gray, dst, med, 1, CV_THRESH_BINARY_INV);
+    cv::threshold( gray, dst, med, 1, cv::THRESH_BINARY_INV);
 }
 
 // Inverse threshold at q1
@@ -817,7 +817,7 @@ void inv_thresh_median( const cv::Mat &gray, cv::Mat &dst)
 void inv_thresh_q1( const cv::Mat &gray, cv::Mat &dst)
 {
     double q1 = channel_q1( gray);
-    cv::threshold( gray, dst, q1, 1, CV_THRESH_BINARY_INV);
+    cv::threshold( gray, dst, q1, 1, cv::THRESH_BINARY_INV);
 }
 
 // Inverse threshold at average
@@ -826,7 +826,7 @@ void inv_thresh_avg( const cv::Mat &gray, cv::Mat &dst)
 {
     double avg = cv::sum( gray).val[0];
     avg /= (gray.rows * gray.cols);
-    cv::threshold( gray, dst, avg, 1, CV_THRESH_BINARY_INV);
+    cv::threshold( gray, dst, avg, 1, cv::THRESH_BINARY_INV);
 }
 
 // Automatic edge detection without parameters (from PyImageSearch)
@@ -921,7 +921,7 @@ void clahe( const cv::Mat &img, cv::Mat &dst, double limit)
 {
     // READ RGB color image and convert it to Lab
     cv::Mat lab_image;
-    cv::cvtColor( img, lab_image, CV_RGB2Lab);
+    cv::cvtColor( img, lab_image, cv::COLOR_RGB2Lab);
     
     // Extract the L channel
     std::vector<cv::Mat> lab_planes(3);
@@ -942,7 +942,7 @@ void clahe( const cv::Mat &img, cv::Mat &dst, double limit)
     cv::merge(lab_planes, lab_image);
     
     // convert back to RGB
-    cv::cvtColor(lab_image, dst, CV_Lab2RGB);
+    cv::cvtColor(lab_image, dst, cv::COLOR_Lab2RGB);
 } // clahe()
 
 // Average over a center crop of img
@@ -1094,7 +1094,7 @@ void draw_line( const cv::Vec4f &line, cv::Mat &dst, cv::Scalar col)
     pt1.y = cvRound(line[1]);
     pt2.x = cvRound(line[2]);
     pt2.y = cvRound(line[3]);
-    cv::line( dst, pt1, pt2, col, 1, CV_AA);
+    cv::line( dst, pt1, pt2, col, 1, cv::LINE_AA);
 }
 
 // Draw several line segments
@@ -1113,7 +1113,7 @@ void draw_polar_line( cv::Vec2f pline, cv::Mat &dst,
 {
     cv::Vec4f seg = polar2segment( pline);
     cv::Point pt1( seg[0], seg[1]), pt2( seg[2], seg[3]);
-    cv::line( dst, pt1, pt2, col, 1, CV_AA);
+    cv::line( dst, pt1, pt2, col, 1, cv::LINE_AA);
 }
 
 // Get a changing color
