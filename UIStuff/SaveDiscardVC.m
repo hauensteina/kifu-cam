@@ -206,6 +206,15 @@
 // Ask Leela about this position
 //------------------------------------------------------
 - (void) askLeela:(int)turn terrmap:(char *)terrmap { //@@@
+    _lbInfo3.text = @"Leela is thinking ...";
+    const int timeout = 9;
+    static NSTimer* timer = nil;
+    timer = [NSTimer scheduledTimerWithTimeInterval:timeout
+                                            repeats:false
+                                              block:^(NSTimer * _Nonnull timer) {
+        _lbInfo3.text = @"Leela timed out";
+    }];
+    
     NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
     NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
     NSDictionary *parms =
@@ -222,6 +231,9 @@
     [request setHTTPBody:jsonBodyData];
     
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.requestCachePolicy = NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
+    config.timeoutIntervalForRequest = timeout+1;
+                      
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config
                                                           delegate:nil
                                                      delegateQueue:[NSOperationQueue mainQueue]];
@@ -230,27 +242,32 @@
                completionHandler:^(NSData * _Nullable data,
                                    NSURLResponse * _Nullable response,
                                    NSError * _Nullable error) {
-                   // The endpoint comes back with resp
-                   NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
-                   if (resp.statusCode == 200) {
-                       NSLog(@"The response is: %@", resp);
-                       NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
-                                                                            options:kNilOptions
-                                                                              error:nil];
-                       NSString *bot_move = json[@"bot_move"];
-                       _sgfImg = [CppInterface nextmove2img:_sgf
-                                                      coord:bot_move
-                                                      color:turn
-                                                    terrmap:terrmap
-                                  ];
-                       [_sgfView setImage:_sgfImg];
-                       float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
-                       _lbInfo3.text = nsprintf( @"P(B wins) = %.2f", pbwins);
-                   }
-                   else {
-                       NSLog( @"Error hitting Leela endpoint");
-                   }
-               }];
+        [timer invalidate];
+        // The endpoint comes back with resp
+        NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
+        if (resp.statusCode == 200) {
+            NSLog(@"The response is: %@", resp);
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                                                 options:kNilOptions
+                                                                   error:nil];
+            NSString *bot_move = json[@"bot_move"];
+            _sgfImg = [CppInterface nextmove2img:_sgf
+                                           coord:bot_move
+                                           color:turn
+                                         terrmap:terrmap
+                       ];
+            [_sgfView setImage:_sgfImg];
+            float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
+            _lbInfo3.text = nsprintf( @"P(B wins) = %.2f", pbwins);
+        }
+        else {
+            if ([_lbInfo3.text containsString:@"timed out"]) {
+                _lbInfo3.text = @"Leela timed out";
+            } else {
+                _lbInfo3.text = @"Error contacting Leela";
+            }
+        }
+    }]; // [session ...
     [task resume];
 } // askLeela()
 
