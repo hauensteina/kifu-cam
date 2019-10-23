@@ -30,6 +30,8 @@
 #import "S3.h"
 #import "Globals.h"
 #import "ImagesVC.h"
+#import <Crashlytics/Crashlytics.h>
+
 
 @interface SaveDiscardVC ()
 @property UIImage *sgfImg;
@@ -280,6 +282,7 @@
 //-----------------------------
 - (void) btnB2Play:(id)sender
 {
+    // [[Crashlytics sharedInstance] crash];
     [self displayResult:BBLACK];
     // Regex to insert PL[B] right after the SZ tag
     NSString *re = @"(.*SZ\\[[0-9]+\\])(.*)";

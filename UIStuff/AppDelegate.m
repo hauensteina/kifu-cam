@@ -31,6 +31,7 @@
 #import "MainVC.h"
 #import "TopViewController.h"
 #import "NavigationController.h"
+#import "Firebase.h"
 
 @interface AppDelegate ()
 @end
@@ -78,7 +79,7 @@
     if (!dirExists( @SAVED_FOLDER)) {
         makeDir( @SAVED_FOLDER);
     }
-    
+    [FIRApp configure];
     return YES;
 } // didFinishLaunchingWithOptions()
 
