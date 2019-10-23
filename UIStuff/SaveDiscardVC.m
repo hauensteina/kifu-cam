@@ -210,7 +210,7 @@
 //------------------------------------------------------
 - (void) askLeela:(int)turn terrmap:(char *)terrmap { //@@@
     _lbInfo3.text = @"Leela is thinking ...";
-    const int timeout = 9;
+    const int timeout = 15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
                                             repeats:false

@@ -126,6 +126,7 @@
 		ACD6C88420152B3000759875 /* AWSCloudWatch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ACD6C88520152B3000759875 /* AWSKMS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84420152B2F00759875 /* AWSKMS.framework */; };
 		ACD6C88620152B3000759875 /* AWSKMS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ACD6C84420152B2F00759875 /* AWSKMS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ACF318532361048800C5E684 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACF318522361048800C5E684 /* AssetsLibrary.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -301,6 +302,7 @@
 		ACD6C84320152B2F00759875 /* AWSCloudWatch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSCloudWatch.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSCloudWatch.framework"; sourceTree = "<group>"; };
 		ACD6C84420152B2F00759875 /* AWSKMS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AWSKMS.framework; path = "aws-ios-sdk-2.6.11/frameworks/AWSKMS.framework"; sourceTree = "<group>"; };
 		ACEF735F1FBDF53200DA4AD8 /* Clust1D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clust1D.hpp; sourceTree = "<group>"; };
+		ACF318522361048800C5E684 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		E99BC187D34273EA781AD5C4 /* Pods-KifuCam.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.release.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -309,6 +311,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACF318532361048800C5E684 /* AssetsLibrary.framework in Frameworks */,
 				AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */,
 				ACD6C87120152B3000759875 /* AWSElasticLoadBalancing.framework in Frameworks */,
 				ACD6C85B20152B3000759875 /* AWSIoT.framework in Frameworks */,
@@ -414,7 +417,6 @@
 				2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */,
 				E99BC187D34273EA781AD5C4 /* Pods-KifuCam.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -529,6 +531,7 @@
 		AC8040081FA92604000088D2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ACF318522361048800C5E684 /* AssetsLibrary.framework */,
 				AC5540731F9BE6AD00922557 /* opencv2.framework */,
 				AC8040091FA92604000088D2 /* Accelerate.framework */,
 				6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */,
