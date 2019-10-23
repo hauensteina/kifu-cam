@@ -66,18 +66,21 @@
         UILabel *l = [UILabel new];
         l.text = @"";
         l.backgroundColor = BGCOLOR;
+        l.textColor = UIColor.blackColor;
         [v addSubview:l];
         self.lbInfo = l;
         
         UILabel *l2 = [UILabel new];
         l2.text = @"";
         l2.backgroundColor = BGCOLOR;
+        l2.textColor = UIColor.blackColor;
         [v addSubview:l2];
         self.lbInfo2 = l2;
         
         UILabel *l3 = [UILabel new];
         l3.text = @"";
         l3.backgroundColor = BGCOLOR;
+        l3.textColor = UIColor.blackColor;
         [v addSubview:l3];
         self.lbInfo3 = l3;
         

@@ -101,6 +101,7 @@
     l.hidden = false;
     l.text = @"";
     l.backgroundColor = BGCOLOR;
+    l.textColor = UIColor.blackColor;
     [v addSubview:l];
     self.lbBottom = l;
     
@@ -109,6 +110,7 @@
     sl.hidden = false;
     sl.text = @"";
     sl.backgroundColor = BGCOLOR;
+    sl.textColor = UIColor.blackColor;
     [v addSubview:sl];
     self.lbSmall = sl;
     
