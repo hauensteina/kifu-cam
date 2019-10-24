@@ -220,8 +220,9 @@
         _lbInfo3.text = @"Leela timed out";
     }];
     
-    //NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
-    NSString *urlstr = @"https://leela-one-playout.herokuapp.com/select-move/leela_gtp_bot";
+    NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
+    //NSString *urlstr = @"https://leela-one-playout.herokuapp.com/select-move/leela_gtp_bot";
+    //NSString *urlstr = @"https://ahaux.com/leela_server_test/select-move/leela_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
     NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
