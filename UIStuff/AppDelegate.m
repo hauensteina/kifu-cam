@@ -25,6 +25,7 @@
 // SOFTWARE.
 //
 
+#import <AWSS3/AWSS3.h>
 
 #import "AppDelegate.h"
 #import "Globals.h"
@@ -59,7 +60,7 @@
     [self.topVC setupLeftOnly];
     self.menuVC  = (LeftMenuController *) self.topVC.leftViewController;
     self.rightVC = (RightViewController *) self.topVC.rightViewController;
-    //[self enableDebugMenu];
+    [self enableDebugMenu];
     
     // Other view controllers
     self.editTestCaseVC = [EditTestCaseVC new];
@@ -98,5 +99,11 @@
                                     action:@selector(showRightView)];
 } // enableDebugMenu()
 
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler {
+    //  Store the completion handler.
+    [AWSS3TransferUtility interceptApplication:application
+           handleEventsForBackgroundURLSession:identifier
+                             completionHandler:completionHandler];
+} // handleEventsForBackgroundURLSession()
 
 @end

@@ -49,49 +49,38 @@ void S3_login()
 } // S3_login()
 
 // Upload a file to kifu-cam bucket
-//-----------------------------------------------------------------------------------------
-void S3_upload_file( NSString *fname, NSString *target, void(^completion)(NSError *err))
+//---------------------------------------------------------
+void S3_upload_file( NSString *fname, NSString *target,
+                    void(^completion)(NSError *err))
 {
     S3_login();
     NSString *fullfname = getFullPath( fname);
     NSURL *uploadingFileURL = [NSURL fileURLWithPath: fullfname];
+    NSString *ext = [uploadingFileURL pathExtension];
     
-    AWSS3TransferManagerUploadRequest *uploadRequest = [AWSS3TransferManagerUploadRequest new];
+    NSString *content_type = @"text/plain";
+    if ([ext isEqualToString:@"png"]) {
+        content_type = @"image/png";
+    }
     
-    uploadRequest.bucket = BUCKET_NAME;
-    uploadRequest.key = target;
-    uploadRequest.body = uploadingFileURL;
-    
-    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    [[transferManager upload:uploadRequest]
-     continueWithExecutor:[AWSExecutor mainThreadExecutor]
-     withBlock:^id(AWSTask *task) {
-         if (task.error) {
-             if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
-                 switch (task.error.code) {
-                     case AWSS3TransferManagerErrorCancelled:
-                     case AWSS3TransferManagerErrorPaused:
-                         break;
-                     default:
-                         NSLog(@"Error: %@", task.error);
-                         //popup( nsprintf( @"S3 upload failed for %@. Error:%@", uploadRequest.key, task.error), @"Error");
-                         break;
-                 }
-             }
-             else {
-                 // Unknown error.
-                 //popup( nsprintf( @"S3 upload failed for %@. Error:%@", uploadRequest.key, task.error), @"Error");
-                 NSLog(@"Error: %@", task.error);
-             }
-         } // if (task.error)
-         
-         if (task.result) {
-             // Success
-             //AWSS3TransferManagerUploadOutput *uploadOutput = task.result;
-         }
-         completion( task.error);
-         return nil;
-     }];
+    AWSS3TransferUtility *transferUtility = [AWSS3TransferUtility defaultS3TransferUtility];
+    [[transferUtility uploadFile:uploadingFileURL
+                         bucket:BUCKET_NAME
+                            key:target
+                    contentType:content_type
+                     expression:nil
+              completionHandler:nil]
+    continueWithBlock:^id(AWSTask *task) {
+        if (task.error) {
+            NSLog(@"Error: %@", task.error);
+        }
+        if (task.result) {
+            // success
+            //AWSS3TransferUtilityUploadTask *uploadTask = task.result;
+        }
+        completion( task.error);
+        return nil;
+    }];
 } // S3_upload_file()
 
 
@@ -130,41 +119,39 @@ void S3_download_file( NSString *key, NSString *fname, void(^completion)(NSError
 {
     NSString *fullfname = getFullPath( fname);
     NSURL *downloadingFileURL = [NSURL fileURLWithPath:fullfname];
-    AWSS3TransferManagerDownloadRequest *downloadRequest = [AWSS3TransferManagerDownloadRequest new];
     
-    downloadRequest.bucket = BUCKET_NAME;
-    downloadRequest.key = key;
-    downloadRequest.downloadingFileURL = downloadingFileURL;
-    
-    AWSS3TransferManager *transferManager = [AWSS3TransferManager defaultS3TransferManager];
-    [[transferManager download:downloadRequest ]
-     continueWithExecutor:[AWSExecutor mainThreadExecutor]
-     withBlock:^id(AWSTask *task) {
-         if (task.error){
-             if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
-                 switch (task.error.code) {
-                     case AWSS3TransferManagerErrorCancelled:
-                     case AWSS3TransferManagerErrorPaused:
-                         break;
-                         
-                     default:
-                         NSLog(@"Error: %@", task.error);
-                         //popup( nsprintf( @"S3 downl failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
-                         break;
-                 }
-             }
-             else {
-                 // Unknown error.
-                 //popup( nsprintf( @"S3 download failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
-                 NSLog(@"Error: %@", task.error);
-             }
-         } // if (task.error)
-         if (task.result) {
-             // Success
-             //AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
-         }
-         completion( task.error);
-         return nil;
-     }];
+    AWSS3TransferUtility *transferUtility = [AWSS3TransferUtility defaultS3TransferUtility];
+    [[transferUtility downloadToURL:downloadingFileURL
+                             bucket:BUCKET_NAME
+                                key:key
+                         expression:nil
+                  completionHandler:nil]
+     continueWithBlock:^id(AWSTask *task) {
+        if (task.error){
+            if ([task.error.domain isEqualToString:AWSS3TransferManagerErrorDomain]) {
+                switch (task.error.code) {
+                    case AWSS3TransferManagerErrorCancelled:
+                    case AWSS3TransferManagerErrorPaused:
+                        break;
+                        
+                    default:
+                        NSLog(@"Error: %@", task.error);
+                        //popup( nsprintf( @"S3 downl failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
+                        break;
+                }
+            }
+            else {
+                // Unknown error.
+                //popup( nsprintf( @"S3 download failed for %@. Error:%@", downloadRequest.key, task.error), @"Error");
+                NSLog(@"Error: %@", task.error);
+            }
+        } // if (task.error)
+        if (task.result) {
+            // Success
+            //AWSS3TransferManagerDownloadOutput *downloadOutput = task.result;
+        }
+        completion( task.error);
+        return nil;
+    }];
 } // S3_download_file()
 

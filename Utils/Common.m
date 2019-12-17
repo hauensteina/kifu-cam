@@ -225,40 +225,44 @@ NSString *tstampFname()
 //-----------------------------------------------
 void popup (NSString *msg, NSString *title)
 {
-    UIAlertController *alert = [UIAlertController
-                                alertControllerWithTitle:title
-                                message:msg
-                                preferredStyle:UIAlertControllerStyleAlert];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alert = [UIAlertController
+                                    alertControllerWithTitle:title
+                                    message:msg
+                                    preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* yesButton = [UIAlertAction
+                                    actionWithTitle:@"OK"
+                                    style:UIAlertActionStyleDefault
+                                    handler:^(UIAlertAction * action) {
+        }];
+        [alert addAction:yesButton];
     
-    UIAlertAction* yesButton = [UIAlertAction
-                                actionWithTitle:@"OK"
-                                style:UIAlertActionStyleDefault
-                                handler:^(UIAlertAction * action) {
-                                }];
-    [alert addAction:yesButton];
-    
-    UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-    [vc presentViewController:alert animated:YES completion:nil];
+        UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        [vc presentViewController:alert animated:YES completion:nil];
+    });
 } // popup()
 
 // Alert with several choices
 //---------------------------------------------------------------------------------------
 void choicePopup (NSArray *choices, NSString *title, void(^callback)(UIAlertAction *))
 {
-    UIAlertController *alert = [UIAlertController
-                                 alertControllerWithTitle:title
-                                 message:@""
-                                 preferredStyle:UIAlertControllerStyleAlert];
-    for (NSString *str in choices) {
-        UIAlertAction *button =  [UIAlertAction
-                                  actionWithTitle:str
-                                  style:UIAlertActionStyleDefault
-                                  handler:callback];
-        [alert addAction:button];
-    }
-    
-    UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-    [vc presentViewController:alert animated:YES completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alert = [UIAlertController
+                                    alertControllerWithTitle:title
+                                    message:@""
+                                    preferredStyle:UIAlertControllerStyleAlert];
+        for (NSString *str in choices) {
+            UIAlertAction *button =  [UIAlertAction
+                                      actionWithTitle:str
+                                      style:UIAlertActionStyleDefault
+                                      handler:callback];
+            [alert addAction:button];
+        }
+        
+        UIViewController *vc = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        [vc presentViewController:alert animated:YES completion:nil];
+    });
 } // choicePopup()
 
 // Make a text label clickable

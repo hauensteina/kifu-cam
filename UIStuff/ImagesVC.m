@@ -125,8 +125,16 @@
 - (void) viewWillAppear:(BOOL) animated
 {
     [super viewWillAppear: animated];
+    //[self refresh];
+}
+
+//-------------------------------------------
+- (void) viewDidAppear:(BOOL) animated
+{
+    [super viewDidAppear: animated];
     [self refresh];
 }
+
 //-------------------------------
 - (BOOL)prefersStatusBarHidden
 {

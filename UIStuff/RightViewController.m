@@ -177,7 +177,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
     target = changeExtension( target, @".sgf");
     copyFile( source, target);
     
-    [g_app.editTestCaseVC refresh];
+    //[g_app.editTestCaseVC refresh];
     popup( nsprintf( @"Added %@", fname), @"");
 } // mnuAddTestCase()
 
