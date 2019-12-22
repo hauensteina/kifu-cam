@@ -63,18 +63,21 @@ public:
     //-----------------------------------------------------------------------------------------
     GoString( int color, const std::set<GoPoint> &stones, const std::set<GoPoint> &liberties):
     m_color(color), m_stones(stones), m_liberties(liberties) {}
+    
     //----------------------------------------------
     bool operator < (const GoString& rhs) const {
         auto myfirst = *(m_stones.begin());
         auto rightfirst = *(rhs.m_stones.begin());
-        return myfirst < rightfirst;
+        return (myfirst < rightfirst);
     }
+    
     //------------------------------------
     GoString add_liberty( GoPoint p) {
         auto res = *this;
         res.m_liberties.insert( p);
         return res;
     } // add_liberty()
+        
     //-----------------------------------
     GoString rm_liberty( GoPoint p) {
         auto res = *this;
@@ -256,6 +259,20 @@ public:
         return false;
     } // is_self_capture()
     
+    //---------------------------------------------
+    bool is_weak_eye( int col, GoPoint p) {
+        if (m_grid[p].color() < 0) {
+            return false;
+        }
+        for (auto neighbor: neighbors(p)) {
+            auto ncol = m_grid[neighbor].color();
+            if (ncol != col) {
+                return false;
+            }
+        }
+        return true;
+    } // is_weak_eye()
+        
     //----------------------
     static void test() {
         int pos[BOARD_SZ * BOARD_SZ];

@@ -99,7 +99,9 @@
                                     action:@selector(showRightView)];
 } // enableDebugMenu()
 
-- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler {
+// Black magic for background AWS S3 uploads
+//-----------------------------------------------------------------------------------------------------------
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)(void))completionHandler {
     //  Store the completion handler.
     [AWSS3TransferUtility interceptApplication:application
            handleEventsForBackgroundURLSession:identifier
@@ -107,3 +109,4 @@
 } // handleEventsForBackgroundURLSession()
 
 @end
+

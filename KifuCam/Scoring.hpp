@@ -43,10 +43,15 @@ public:
     Scoring() {}
     
     //-------------------------------------------------------------------------------------------------------
-    std::tuple<int,int,int> score( const int pos[], const double wprobs[], int turn, char *&terrmap_out) {
+    std::tuple<int,int,int> score( const int pos[], const double wprobs_[], int turn, char *&terrmap_out) {
+        double *wprobs;
         replay_game( pos);
         
+        //auto [wwpoints, bbpoints, dame] = probs2terr( wprobs_, turn, terrmap_out);
+        probs2terr( wprobs_, turn, terrmap_out);
+        fix_seki( terrmap_out, wprobs );
         auto [wwpoints, bbpoints, dame] = probs2terr( wprobs, turn, terrmap_out);
+
         return {wwpoints, bbpoints, dame};
     } // score()
     
@@ -75,12 +80,12 @@ private:
 
             while( couldfill) {
                 couldfill = false;
-                auto gostr = tboard.get_go_string( point);
-                if (gostr.color() < 0) { //captured
+                auto gstr = tboard.get_go_string( point);
+                if (gstr.color() < 0) { //captured
                     break;
                 }
                 // Fill all liberties that aren't self atari
-                for (auto &lib : gostr.liberties()) {
+                for (auto &lib : gstr.liberties()) {
                     if (!tboard.is_self_capture( other_player, lib)) {
                         auto temp = tboard;
                         temp.place_stone( other_player, lib);
@@ -96,8 +101,24 @@ private:
                 }
                 seki = true;
             } // while( couldfill)
-            // @@@
+            if (seki) {
+                auto myprob = gostr.color() == WWHITE ? 1.0 : 0.0;
+                // All the dead stones are alive
+                for (auto s : gostr.stones()) {
+                    wprobs_out[s.idx()] = myprob;
+                }
+                // Non eye libs are neutral
+                for (auto lib : gostr.liberties()) {
+                    if (!m_board.is_weak_eye( gostr.color(), lib)) {
+                        wprobs_out[lib.idx()] = 0.5;
+                    }
+                    else {
+                        wprobs_out[lib.idx()] = (gostr.color() == WWHITE ? 1.0 : 0.0 );
+                    }
+                } // for
+            }
         } // for all strings
+        wprobs = wprobs_out;
     } // fix_seki()
     
     //------------------------------------------------------------------------------------------
