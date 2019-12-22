@@ -39,12 +39,69 @@
 class Scoring
 {
 public:
-    //---------------------
+    //-------------
     Scoring() {}
     
     //-------------------------------------------------------------------------------------------------------
     std::tuple<int,int,int> score( const int pos[], const double wprobs[], int turn, char *&terrmap_out) {
         replay_game( pos);
+        
+        auto [wwpoints, bbpoints, dame] = probs2terr( wprobs, turn, terrmap_out);
+        return {wwpoints, bbpoints, dame};
+    } // score()
+    
+private:
+    GoBoard m_board;
+
+    // Some dead stones might actually be seki. Find them and fix. //@@@
+    //--------------------------------------------------------------
+    void fix_seki( char *&terrmap, double *&wprobs) {
+        static double wprobs_out[ BOARD_SZ * BOARD_SZ];
+        ILOOP (BOARD_SZ * BOARD_SZ) {
+            wprobs_out[i] = wprobs[i];
+        }
+        auto strs = m_board.strings();
+        for (auto &gostr : strs) {
+            auto &point = *(gostr.stones().begin());
+            auto terrcol = terrmap[point.idx()];
+            auto dead = (((gostr.color() == BBLACK) && (terrcol == 'w')) ||
+                         ((gostr.color() == WWHITE) && (terrcol == 'b')));
+            if (!dead) { continue; }
+            // Try to fill the liberties of the supposedly dead string
+            auto couldfill = true;
+            auto seki = false;
+            auto tboard = m_board; // Deep copy
+            auto other_player = gostr.color() == BBLACK ? WWHITE : BBLACK;
+
+            while( couldfill) {
+                couldfill = false;
+                auto gostr = tboard.get_go_string( point);
+                if (gostr.color() < 0) { //captured
+                    break;
+                }
+                // Fill all liberties that aren't self atari
+                for (auto &lib : gostr.liberties()) {
+                    if (!tboard.is_self_capture( other_player, lib)) {
+                        auto temp = tboard;
+                        temp.place_stone( other_player, lib);
+                        auto oppstr = temp.get_go_string( lib);
+                        if (oppstr.num_liberties() > 1) { // not self atari
+                            tboard.place_stone( other_player, lib); // Let's play there
+                            couldfill = true;
+                        }
+                    }
+                } // for
+                if (couldfill) {
+                    continue;
+                }
+                seki = true;
+            } // while( couldfill)
+            // @@@
+        } // for all strings
+    } // fix_seki()
+    
+    //------------------------------------------------------------------------------------------
+    std::tuple<int,int,int> probs2terr( const double wprobs[], int turn, char *&terrmap_out) {
         static char terrmap[BOARD_SZ * BOARD_SZ];
         ILOOP (BOARD_SZ * BOARD_SZ) {
             terrmap[i] = color( wprobs[i]);
@@ -73,11 +130,8 @@ public:
         } // ILOOP
         terrmap_out = terrmap;
         return {wpoints, bpoints, dame};
-    } // score()
-    
-private:
-    GoBoard m_board;
-    
+    } // probs2terr()
+        
     //--------------------------------------
     void replay_game( const int pos[]) {
         // Put all the stones on the board

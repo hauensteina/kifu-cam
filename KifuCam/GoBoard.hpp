@@ -83,8 +83,9 @@ public:
         }
         return res;
     } // rm_liberty()
-    int color() { return m_color; }
+    int color() const { return m_color; }
     const std::set<GoPoint> & stones() const { return m_stones; }
+    const std::set<GoPoint> & liberties() const { return m_liberties; }
     //--------------------------------------------------------
     int num_liberties() { return (int)m_liberties.size(); }
     //------------------------------------------------
@@ -157,7 +158,12 @@ public:
         if (p.m_row < m_sz-1) { auto bot = GoPoint( p.m_row+1, p.m_col); res.insert( bot); }
         return res;
     } // neighbors()
-    
+
+    //------------------------------------
+    GoString get_go_string( GoPoint p) {
+        return m_grid[p];
+    }
+        
     //-------------------------------------------
     void place_stone( int color, GoPoint p_) {
         std::set<GoPoint> liberties;
@@ -227,6 +233,28 @@ public:
         } // for
         return res;
     } // strings()
+        
+    //---------------------------------------------
+    bool is_self_capture( int col, GoPoint p) {
+        std::set<GoString> friendly_strings;
+        for (auto neighbor: neighbors(p)) {
+            auto neighbor_string = m_grid[neighbor];
+            if (neighbor_string.color() < 0) { // liberty
+               return false;
+            }
+            else if (neighbor_string.color() == col) {
+                friendly_strings.insert( neighbor_string);
+            }
+            else if (neighbor_string.num_liberties() == 1) { // capture
+               return false;
+            }
+        } // for
+        if (std::all_of( friendly_strings.begin(), friendly_strings.end(),
+                        [](GoString s) { return s.num_liberties() == 1; })) {
+            return true;
+        }
+        return false;
+    } // is_self_capture()
     
     //----------------------
     static void test() {
