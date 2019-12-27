@@ -44,12 +44,15 @@ public:
     
     //-------------------------------------------------------------------------------------------------------
     std::tuple<int,int,int> score( const int pos[], const double wprobs_[], int turn, char *&terrmap_out) {
-        const double *wprobs;
         m_board = GoBoard( pos);
         
         probs2terr( wprobs_, turn, terrmap_out);
-        wprobs = wprobs_;
+        const double *wprobs = wprobs_;
         fix_seki( terrmap_out, wprobs );
+        probs2terr( wprobs, turn, terrmap_out);
+        fix_mixed_neighbors( terrmap_out, wprobs );
+        probs2terr( wprobs, turn, terrmap_out);
+        fix_same_neighbors( terrmap_out, wprobs );
         auto [wwpoints, bbpoints, dame] = probs2terr( wprobs, turn, terrmap_out);
 
         return {wwpoints, bbpoints, dame};
@@ -58,7 +61,76 @@ public:
 private:
     GoBoard m_board;
 
-    // Some dead stones might actually be seki. Find them and fix. //@@@
+    // An empty point with both black and white neighbors is neutral.
+    //-----------------------------------------------------------------
+    void fix_mixed_neighbors( char *&terrmap, const double *&wprobs) {
+        static double wprobs_out[ BOARD_SZ * BOARD_SZ];
+        ILOOP (BOARD_SZ * BOARD_SZ) {
+            wprobs_out[i] = wprobs[i];
+        }
+        CLOOP( BOARD_SZ) {
+            RLOOP( BOARD_SZ) {
+                GoPoint p( r,c);
+                if (!m_board.isempty(p)) {
+                    continue;
+                }
+                // It's empty
+                auto w = false; auto b = false;
+                for (auto n : m_board.neighbors(p)) {
+                    auto ncol = m_board.color(n);
+                    if (ncol < 0) { continue; }
+                    auto terrcol = terrmap[n.idx()];
+                    auto dead = (((ncol == WWHITE) && (terrcol == 'b')) ||
+                                 ((ncol == BBLACK) && (terrcol == 'w')));
+                    if (dead) { continue; }
+                    if (ncol == WWHITE) { w = true; }
+                    if (ncol == BBLACK) { b = true; }
+                } // for neighbors
+                if (w && b) {
+                    wprobs_out[ p.idx()] = 0.5;
+                }
+            } // RLOOP
+        } // CLOOP
+        wprobs = wprobs_out;
+    } // fix_mixed_neighbors()
+
+    // An empty point were all neighbors are alive and have the same color is territory.
+    //-------------------------------------------------------------------------------------
+    void fix_same_neighbors( char *&terrmap, const double *&wprobs) {
+        static double wprobs_out[ BOARD_SZ * BOARD_SZ];
+        ILOOP (BOARD_SZ * BOARD_SZ) {
+            wprobs_out[i] = wprobs[i];
+        }
+        CLOOP( BOARD_SZ) {
+            RLOOP( BOARD_SZ) {
+                GoPoint p( r,c);
+                if (!m_board.isempty(p)) {
+                    continue;
+                }
+                // It's empty
+                int wcount = 0; int bcount = 0; int ncount = m_board.neighbors(p).size();
+                for (auto n : m_board.neighbors(p)) {
+                    auto ncol = m_board.color(n);
+                    if (ncol < 0) { continue; }
+                    auto terrcol = terrmap[n.idx()];
+                    auto dead = (((ncol == WWHITE) && (terrcol == 'b')) ||
+                                 ((ncol == BBLACK) && (terrcol == 'w')));
+                    if (dead) { continue; }
+                    if (ncol == WWHITE) { wcount += 1; }
+                    if (ncol == BBLACK) { bcount += 1; }
+                } // for neighbors
+                if (wcount == ncount) {
+                    wprobs_out[ p.idx()] = 1.0;
+                }
+                else if (bcount == ncount) {
+                    wprobs_out[ p.idx()] = 0.0;
+                }
+            } // RLOOP
+        } // CLOOP
+        wprobs = wprobs_out;
+    } // fix_same_neighbors()
+
+    // Some dead stones might actually be seki. Find them and fix.
     //--------------------------------------------------------------
     void fix_seki( char *&terrmap, const double *&wprobs) {
         static double wprobs_out[ BOARD_SZ * BOARD_SZ];
@@ -92,9 +164,7 @@ private:
                         auto temp = tboard;
                         temp.place_stone( other_player, lib);
                         auto oppstr = temp.get_go_string( lib);
-                        //auto tt = tboard.get_go_string( lib);
                         if (oppstr.num_liberties() > 1) { // not self atari
-                            //tboard.place_stone( other_player, lib); // Let's play there
                             tboard = temp;
                             couldfill = true;
                         }

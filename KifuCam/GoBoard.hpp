@@ -168,6 +168,11 @@ public:
         return m_grid[p];
     } // get_go_string()
 
+    //------------------------------------
+    int color( GoPoint p) {
+        return m_grid[p].color();
+    } // color()
+
     //--------------------------------
     bool isempty( GoPoint p) {
         return m_grid[p].color() < 0;
