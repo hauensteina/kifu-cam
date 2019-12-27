@@ -42,6 +42,7 @@ class GoPoint
 public:
     GoPoint( int row, int col) : m_row(row), m_col(col) {}
     GoPoint( int idx) : m_row(idx/BOARD_SZ), m_col(idx % BOARD_SZ) {}
+    GoPoint():m_row(-1), m_col(-1) {}
     //---------------------------------------------
     bool operator < (const GoPoint& rhs) const {
         return (m_row < rhs.m_row) || ((m_row == rhs.m_row) && (m_col < rhs.m_col));
@@ -165,49 +166,53 @@ public:
     //------------------------------------
     GoString get_go_string( GoPoint p) {
         return m_grid[p];
-    }
-        
+    } // get_go_string()
+
+    //--------------------------------
+    bool isempty( GoPoint p) {
+        return m_grid[p].color() < 0;
+    } // isempty()
+
     //-------------------------------------------
     void place_stone( int color, GoPoint p_) {
         std::set<GoPoint> liberties;
-        std::set<GoString*> adj_same_color;
-        std::set<GoString*> adj_other_color;
-        for (auto &p : neighbors(p_)) {
-            if (!m_grid.count(p)) { liberties.insert( p); }
-            else {
+        std::set<GoPoint> adj_same_color;
+        std::set<GoPoint> adj_other_color;
+        for (auto p : neighbors(p_)) {
+            if (isempty(p)) { liberties.insert( p); } // @@@
+            else { // there's a stone at p
                 GoString &neigh_str( m_grid[p]);
-                if (neigh_str.color() == color) {
-                    if (!adj_same_color.count( &neigh_str)) {
-                        adj_same_color.insert( &neigh_str);
-                    }
+                if (neigh_str.color() == color) { // a friend
+                    adj_same_color.insert( p);
                 }
-                else {
-                    if (!adj_other_color.count( &neigh_str)) {
-                        adj_other_color.insert( &neigh_str);
-                    }
+                else { // a foe
+                    adj_other_color.insert( p);
                 }
             }
         } // for neighbors
-        GoString new_string( color, {p_}, liberties);
+        GoString new_string( color, { p_ }, liberties);
         // Merge adjacent strings of same color
-        for (auto str_ptr:adj_same_color) {
-            new_string = new_string.merged_with( *str_ptr);
+        for (auto p:adj_same_color) {
+            new_string = new_string.merged_with( m_grid[p]);
         } // for
-        for (auto &p : new_string.stones() ) {
+        for (auto p : new_string.stones() ) {
             m_grid[p] = new_string;
         } // for
         // Take this liberty off the other color strings
-        for( auto str_ptr:adj_other_color) {
-            auto repl = str_ptr->rm_liberty( p_);
+        for( auto p:adj_other_color) {
+            auto gostr = get_go_string( p);
+            //std::cout << str_ptr << std::endl;
+            auto repl = gostr.rm_liberty( p_);
             if (!repl.num_liberties()) { // No libs, take it off
-                rm_string( *str_ptr);
+                rm_string( gostr);
             }
-            else {
-                for (auto &p : repl.stones() ) {
+            else { // take the lib off the neighbor string
+                for (auto p : repl.stones() ) {
                     m_grid[p] = repl;
                 }
             }
         } // for str_ptr
+        //std::cout << ">>>>>>>>>>>\n";
     } // place_stone()
     
     // Remove a captured string from the board
@@ -217,7 +222,8 @@ public:
             // Create libs for the neighboring strings
             auto neighs = neighbors(p);
             for (auto neigh : neighs) {
-                if (!m_grid.count(neigh)) { continue; }
+                if (!m_grid.count(neigh)) { continue; } // empty
+                if (gostr.stones().count(neigh)) { continue; } // that's ourselves
                 auto neighstr = m_grid[neigh];
                 auto repl = neighstr.add_liberty( p);
                 for (auto &p : repl.stones() ) {
