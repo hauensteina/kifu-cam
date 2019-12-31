@@ -45,10 +45,9 @@ public:
     //-------------------------------------------------------------------------------------------------------
     std::tuple<int,int,int> score( const int pos[], const double wprobs_[], int turn, char *&terrmap_out) {
         m_board = GoBoard( pos);
-        
         probs2terr( wprobs_, turn, terrmap_out);
         const double *wprobs = wprobs_;
-        fix_seki( terrmap_out, wprobs );
+        fix_seki( terrmap_out, wprobs, turn );
         probs2terr( wprobs, turn, terrmap_out);
         fix_mixed_neighbors( terrmap_out, wprobs );
         probs2terr( wprobs, turn, terrmap_out);
@@ -93,6 +92,30 @@ private:
         } // CLOOP
         wprobs = wprobs_out;
     } // fix_mixed_neighbors()
+    
+    // Remove all stones in atari
+    //---------------------------------
+    GoBoard capture_ataris( int turn) {
+        auto board = m_board;
+        auto opp = (turn == BBLACK ? WWHITE : BBLACK);
+        auto astrs = m_board.strings_in_atari( opp);
+        // Our turn
+        for (auto astr:astrs) {
+            auto lib = *(astr.liberties().begin());
+            if (board.isempty( lib)) {
+                board.place_stone( turn, lib);
+            }
+        } // for()
+        // Opponent's turn
+        astrs = m_board.strings_in_atari( turn);
+        for (auto astr:astrs) {
+            auto lib = *(astr.liberties().begin());
+            if (board.isempty( lib)) {
+                board.place_stone( opp, lib);
+            }
+        } // for()
+        return board;
+    } // capture_ataris()
 
     // An empty point were all neighbors are alive and have the same color is territory.
     //-------------------------------------------------------------------------------------
@@ -108,7 +131,7 @@ private:
                     continue;
                 }
                 // It's empty
-                int wcount = 0; int bcount = 0; int ncount = m_board.neighbors(p).size();
+                int wcount = 0; int bcount = 0; int ncount = SZ(m_board.neighbors(p));
                 for (auto n : m_board.neighbors(p)) {
                     auto ncol = m_board.color(n);
                     if (ncol < 0) { continue; }
@@ -131,13 +154,14 @@ private:
     } // fix_same_neighbors()
 
     // Some dead stones might actually be seki. Find them and fix.
-    //--------------------------------------------------------------
-    void fix_seki( char *&terrmap, const double *&wprobs) {
+    //------------------------------------------------------------------
+    void fix_seki( char *&terrmap, const double *&wprobs, int turn) {
         static double wprobs_out[ BOARD_SZ * BOARD_SZ];
         ILOOP (BOARD_SZ * BOARD_SZ) {
             wprobs_out[i] = wprobs[i];
         }
-        auto strs = m_board.strings();
+        auto board = capture_ataris( turn);
+        auto strs = board.strings();
         for (auto gostr : strs) {
             if (gostr.color() < 0) { continue; }
             auto point = *(gostr.stones().begin());
@@ -149,7 +173,7 @@ private:
             // Try to fill the liberties of the supposedly dead string
             auto couldfill = true;
             auto seki = false;
-            auto tboard = m_board; // Deep copy
+            auto tboard = board; // Deep copy
             auto other_player = gostr.color() == BBLACK ? WWHITE : BBLACK;
 
             while( couldfill) {
@@ -177,7 +201,24 @@ private:
                     continue;
                 }
                 seki = true;
+                //  Maybe self atari is all we can do
+                gstr = tboard.get_go_string( point);
+                if (!gstr.isempty()) { // not captured
+                    for (auto lib : gstr.liberties()) {
+                        if (!tboard.is_self_capture( other_player, lib)) {
+                            seki = false;
+                            auto temp = tboard;
+                            temp.place_stone( other_player, lib);
+                            auto oppstr = temp.get_go_string( lib);
+                            if (oppstr.stones().size() > 6) { // not nakade, it's a seki
+                                seki = true;
+                            }
+                            break;
+                        } // if
+                    } // for
+                } // if
             } // while( couldfill)
+            
             if (seki) {
                 auto myprob = gostr.color() == WWHITE ? 1.0 : 0.0;
                 // All the dead stones are alive
@@ -186,7 +227,7 @@ private:
                 }
                 // Non eye libs are neutral
                 for (auto lib : gostr.liberties()) {
-                    if (!m_board.is_weak_eye( gostr.color(), lib)) {
+                    if (!board.is_weak_eye( gostr.color(), lib)) {
                         wprobs_out[lib.idx()] = 0.5;
                     }
                     else {
@@ -234,7 +275,7 @@ private:
     //-------------------------------------------
     char color( double wprob) {
         // smaller means less neutral points
-        const double NEUTRAL_THRESH = 0.40; // 0.22; //0.4; // 0.30; // 0.40 0.15
+        const double NEUTRAL_THRESH = 0.05; // 0.22; //0.30; // 0.22; //0.4; // 0.30; // 0.15
         if (fabs(0.5 - wprob) < NEUTRAL_THRESH) { return 'n'; }
         else if (wprob > 0.5) { return 'w'; }
         else { return 'b'; }

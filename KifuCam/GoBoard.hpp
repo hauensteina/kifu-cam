@@ -88,10 +88,11 @@ public:
         return res;
     } // rm_liberty()
     int color() const { return m_color; }
+    bool isempty() const { return m_color < 0 ? true : false; }
     const std::set<GoPoint> & stones() const { return m_stones; }
     const std::set<GoPoint> & liberties() const { return m_liberties; }
     //--------------------------------------------------------
-    int num_liberties() { return (int)m_liberties.size(); }
+    int num_liberties() const { return (int)m_liberties.size(); } 
     //------------------------------------------------
     GoString merged_with( const GoString & gostr) {
         auto stones = m_stones;
@@ -247,7 +248,20 @@ public:
         } // for
         return res;
     } // strings()
-        
+    
+    //-------------------------------------------------
+    std::set<GoString> strings_in_atari( int col) {
+        std::set<GoString> res;
+        for( auto const& [key, val] : m_grid ) {
+            if (val.num_liberties() == 1) {
+                if (val.color() == col) {
+                    res.insert( val);
+                }
+            }
+        } // for
+        return res;
+    } // strings_in_atari()
+    
     //---------------------------------------------
     bool is_self_capture( int col, GoPoint p) {
         std::set<GoString> friendly_strings;

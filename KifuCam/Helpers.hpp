@@ -343,7 +343,7 @@ inline void draw_score( cv::Mat &img, char *terrmap)
         int c = i % BOARD_SZ;
         cv::Point p = rc2p( innerwidth, marg, r,c);
         if (col == 'b') {
-            cv::circle( img, p, rad, 0, -1, cv::LINE_AA);
+            cv::circle( img, p, rad+1, 0, -1, cv::LINE_AA);
         }
         else if (col == 'w') {
             cv::circle( img, p, rad, 255, -1, cv::LINE_AA);
