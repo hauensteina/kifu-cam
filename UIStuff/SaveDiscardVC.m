@@ -200,7 +200,7 @@
     }
     _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
     [_sgfView setImage:_scoreImg];
-    //[self askLeela:turn terrmap:terrmap];
+    [self askLeela:turn terrmap:terrmap];
     NSString *winner = @"B";
     if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
     int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
