@@ -195,12 +195,12 @@
     [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
     if (surepoints < 250) {
         _lbInfo.text = @"Too early to score";
-        [self askLeela:turn terrmap:NULL];
+        [self askRemoteBot:turn terrmap:NULL];
         return;
     }
     _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
     [_sgfView setImage:_scoreImg];
-    [self askLeela:turn terrmap:terrmap];
+    [self askRemoteBot:turn terrmap:terrmap];
     NSString *winner = @"B";
     if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
     int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
@@ -208,26 +208,27 @@
     _lbInfo2.text = nsprintf( @"%@+%d before komi and handicap", winner, delta);
 } // displayResult()
 
-// Ask Leela about this position
+// Ask a remote bot about this position
 //------------------------------------------------------
-- (void) askLeela:(int)turn terrmap:(char *)terrmap { //@@@
-    _lbInfo3.text = @"Leela is thinking ...";
+- (void) askRemoteBot:(int)turn terrmap:(char *)terrmap { //@@@
+    _lbInfo3.text = @"Katago is thinking ...";
     const int timeout = 15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
                                             repeats:false
                                               block:^(NSTimer * _Nonnull timer) {
-        _lbInfo3.text = @"Leela timed out";
+        _lbInfo3.text = @"Katago timed out";
     }];
     
-    NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
+    //NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
+    NSString *urlstr = @"https://ahaux.com/katago_server/select-move/katago_gtp_bot";
     //NSString *urlstr = @"https://leela-one-playout.herokuapp.com/select-move/leela_gtp_bot";
     //NSString *urlstr = @"https://ahaux.com/leela_server_test/select-move/leela_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
-    NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn];
     NSDictionary *parms =
-    @{@"board_size":@(19), @"moves":leelaMoves,
+    @{@"board_size":@(19), @"moves":botMoves,
       @"config":@{@"randomness": @"-1.0", @"playouts":@"1000" } };
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
@@ -271,14 +272,14 @@
         }
         else {
             if ([_lbInfo3.text containsString:@"timed out"]) {
-                _lbInfo3.text = @"Leela timed out";
+                _lbInfo3.text = @"Katago timed out";
             } else {
-                _lbInfo3.text = @"Error contacting Leela";
+                _lbInfo3.text = @"Error contacting Katago";
             }
         }
     }]; // [session ...
     [task resume];
-} // askLeela()
+} // askRemoteBot()
 
 // Button Callbacks
 //======================

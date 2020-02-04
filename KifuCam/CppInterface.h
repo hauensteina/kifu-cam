@@ -72,8 +72,8 @@
 - (void) save_current_sgf:(NSString *)fname overwrite:(bool)overwrite;
 // Get current diagram as sgf
 - (NSString *) get_sgf;
-// Convert diagram to a sequence of leela moves
-- (NSArray *) get_leela_moves:(int)turn;
+// Convert diagram to a sequence of bot moves
+- (NSArray *) get_bot_moves:(int)turn;
 // Get sgf for a UIImage
 - (NSString *) get_sgf_for_img: (UIImage *)img;
 // Get an empty sgf

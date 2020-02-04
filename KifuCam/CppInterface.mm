@@ -945,9 +945,9 @@ extern cv::Mat mat_dbg;
     return @(generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta).c_str());
 } // get_sgf()
 
-// Convert current diagram to a sequence of moves I can feed to Leela
+// Convert current diagram to a sequence of moves I can feed to a bot
 //---------------------------------------------------------------------
-- (NSArray *) get_leela_moves:(int)turn
+- (NSArray *) get_bot_moves:(int)turn
 {
     auto colchars = "ABCDEFGHJKLMNOPQRST";
     std::vector<std::string> wmoves;
@@ -981,7 +981,7 @@ extern cv::Mat mat_dbg;
         if (i < wlen) { [res addObject: @(wmoves[i].c_str())]; }
     }
     return res;
-} // get_leela_moves()
+} // get_bot_moves()
 
 // Get sgf for a UIImage
 //-----------------------------------------------
