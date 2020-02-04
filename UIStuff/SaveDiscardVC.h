@@ -35,4 +35,6 @@
 @property NSString *sgf;
 @property UIImage *photo;
 @property int turn;
+@property int handicap;
+@property double komi;
 @end

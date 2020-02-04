@@ -42,7 +42,6 @@
 //------------------------------------------------------------------------------------------------------------
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     setProp( @"opt_debug", @"off");
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor =  [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.95];
@@ -66,6 +65,9 @@
     self.editTestCaseVC = [EditTestCaseVC new];
     self.testResultsVC = [TestResultsVC new];
     self.saveDiscardVC = [SaveDiscardVC new];
+    self.saveDiscardVC.handicap = 0;
+    self.saveDiscardVC.komi = 7.5;
+
     self.imagesVC = [ImagesVC new];
     self.aboutVC = [AboutVC new];
     self.window.rootViewController = self.topVC;

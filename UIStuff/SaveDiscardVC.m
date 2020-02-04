@@ -193,14 +193,14 @@
     int bpoints, surepoints;
     char *terrmap;
     [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-    if (surepoints < 250) {
-        _lbInfo.text = @"Too early to score";
-        [self askRemoteBot:turn terrmap:NULL];
-        return;
-    }
-    _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
-    [_sgfView setImage:_scoreImg];
-    [self askRemoteBot:turn terrmap:terrmap];
+//    if (surepoints < 250) {
+//        _lbInfo.text = @"Too early to score";
+//        [self askRemoteBot:turn terrmap:NULL komi:self.komi handicap:self.handicap];
+//        return;
+//    }
+//    _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
+//    [_sgfView setImage:_scoreImg];
+    [self askRemoteBot:turn terrmap:terrmap komi:self.komi handicap:self.handicap];
     NSString *winner = @"B";
     if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
     int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
@@ -208,11 +208,11 @@
     _lbInfo2.text = nsprintf( @"%@+%d before komi and handicap", winner, delta);
 } // displayResult()
 
-// Ask a remote bot about this position
-//------------------------------------------------------
-- (void) askRemoteBot:(int)turn terrmap:(char *)terrmap { //@@@
+// Ask a remote bot about this position //@@@
+//-------------------------------------------------------------------------------------------------
+- (void) askRemoteBot:(int)turn terrmap:(char *)terrmap komi:(double)komi handicap:(int)handicap {
     _lbInfo3.text = @"Katago is thinking ...";
-    const int timeout = 15;
+    const int timeout = 10000; //15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
                                             repeats:false
@@ -229,7 +229,7 @@
     NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
-      @"config":@{@"randomness": @"-1.0", @"playouts":@"1000" } };
+      @"config":@{@"komi": @(komi) } };
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
