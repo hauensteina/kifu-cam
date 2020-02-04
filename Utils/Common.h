@@ -47,6 +47,10 @@ extern "C" {
     // @"iPad6,12" -> 6, @"iPhone4,8" -> 0
     int iPadVersion(void);
     
+    // Math
+    //==========
+    int sign(double f);
+
     // Drawing
     //==========
     // Draw a massive rectangle on a view

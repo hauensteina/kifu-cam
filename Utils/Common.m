@@ -78,6 +78,10 @@ int iPadVersion()
     return res;
 } // iPadVersion()
 
+//==========
+// Math
+//==========
+int sign(double f) { return (f < 0) ? -1 : 1; }
 
 //==========
 // Drawing

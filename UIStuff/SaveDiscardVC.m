@@ -267,8 +267,16 @@
                                          terrmap:terrmap
                        ];
             [_sgfView setImage:_sgfImg];
-            float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
-            _lbInfo3.text = nsprintf( @"P(B wins) = %.2f", pbwins);
+            double pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
+            NSString *tstr = nsprintf( @"P(B wins)=%.2f", pbwins);
+            double score = [json[@"diagnostics"][@"score"] floatValue];
+            score = ((int)( fabs(score) * 2 + 0.5)) * sign(score) / 2.0;
+            if (score > 0) {
+                tstr = nsprintf( @"%@ B+%.1f", tstr, fabs(score));
+            } else {
+                tstr = nsprintf( @"%@ W+%f.1", tstr, fabs(score));
+            }
+            _lbInfo3.text = tstr;
         }
         else {
             if ([_lbInfo3.text containsString:@"timed out"]) {
