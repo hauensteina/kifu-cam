@@ -947,8 +947,9 @@ extern cv::Mat mat_dbg;
 
 // Convert current diagram to a sequence of moves I can feed to a bot
 //---------------------------------------------------------------------
-- (NSArray *) get_bot_moves:(int)turn
+- (NSArray *) get_bot_moves:(int)turn handicap:(int)handicap
 {
+    if (handicap == 0) { handicap = 1; }
     auto colchars = "ABCDEFGHJKLMNOPQRST";
     std::vector<std::string> wmoves;
     std::vector<std::string> bmoves;
@@ -962,23 +963,27 @@ extern cv::Mat mat_dbg;
         else if (_diagram[i] == BBLACK) { bmoves.push_back( movestr); }
         else continue;
     }
-    auto blen = SZ(bmoves); auto wlen = SZ(wmoves);
-    auto npasses = abs(blen-wlen);
-    if (blen > wlen) {
-        ILOOP(npasses) { wmoves.insert( wmoves.begin(), "pass");}
-    }
-    else if (wlen > blen) {
-        ILOOP(npasses) { bmoves.insert( bmoves.begin(), "pass");}
-    }
-    // If w turn, add a pass in front of B moves
-    if (turn == WWHITE) {
-        bmoves.insert( bmoves.begin(), "pass");
-    }
-    blen = SZ(bmoves); wlen = SZ(wmoves);
+    auto blen = SZ(bmoves); auto wlen = SZ(wmoves) + handicap - 1;
+    auto maxlen = std::max( blen, wlen);
     NSMutableArray *res = [NSMutableArray new];
-    ILOOP (blen) {
-        [res addObject: @(bmoves[i].c_str())];
-        if (i < wlen) { [res addObject: @(wmoves[i].c_str())]; }
+    int i_white = 0;
+    ILOOP (maxlen) {
+        i_white = i - handicap + 1; // Games starts with black handi stones and white passes
+        if (i < blen) {
+            [res addObject: @(bmoves[i].c_str())];
+        } else {
+            [res addObject: @("pass")];
+        }
+        if (i_white >= 0 && i_white < wlen) {
+            [res addObject: @(wmoves[i_white].c_str())];
+        }
+        else {
+            [res addObject: @("pass")];
+        }
+    } // ILOOP
+    auto last_played = ([res count] % 2) ? BBLACK : WWHITE;
+    if (last_played == turn) {
+        [res addObject: @("pass")];
     }
     return res;
 } // get_bot_moves()

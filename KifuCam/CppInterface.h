@@ -73,7 +73,7 @@
 // Get current diagram as sgf
 - (NSString *) get_sgf;
 // Convert diagram to a sequence of bot moves
-- (NSArray *) get_bot_moves:(int)turn;
+- (NSArray *) get_bot_moves:(int)turn handicap:(int)handicap;
 // Get sgf for a UIImage
 - (NSString *) get_sgf_for_img: (UIImage *)img;
 // Get an empty sgf

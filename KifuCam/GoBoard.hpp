@@ -185,7 +185,7 @@ public:
         std::set<GoPoint> adj_same_color;
         std::set<GoPoint> adj_other_color;
         for (auto p : neighbors(p_)) {
-            if (isempty(p)) { liberties.insert( p); } // @@@
+            if (isempty(p)) { liberties.insert( p); } 
             else { // there's a stone at p
                 GoString &neigh_str( m_grid[p]);
                 if (neigh_str.color() == color) { // a friend

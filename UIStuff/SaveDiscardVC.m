@@ -189,24 +189,11 @@
 // Score position and display result.
 //--------------------------------------
 - (void) displayResult:(int)turn {
-    //CppInterface *cpp = g_app.mainVC.cppInterface;
-    //int bpoints, surepoints;
     static char terrmap[BOARD_SZ * BOARD_SZ];
-    //[cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-//    if (surepoints < 250) {
-//        _lbInfo.text = @"Too early to score";
-//        [self askRemoteBot:turn terrmap:NULL komi:self.komi handicap:self.handicap];
-//        return;
-//    }
 //    _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
 //    [_sgfView setImage:_scoreImg];
     [self askRemoteBot:turn terrmap:terrmap komi:self.komi handicap:self.handicap];
     [self askRemoteBotTerr:turn terrmap:terrmap komi:self.komi handicap:self.handicap];
-    //NSString *winner = @"B";
-    //if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
-    //int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
-    //_lbInfo.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
-    //_lbInfo2.text = nsprintf( @"%@+%d before komi and handicap", winner, delta);
 } // displayResult()
 
 // Ask remote bot for winning probability and next move
@@ -221,13 +208,10 @@
         _lbInfo3.text = @"Katago timed out";
     }];
     
-    //NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
     NSString *urlstr = @"https://ahaux.com/katago_server/select-move/katago_gtp_bot";
-    //NSString *urlstr = @"https://leela-one-playout.herokuapp.com/select-move/leela_gtp_bot";
-    //NSString *urlstr = @"https://ahaux.com/leela_server_test/select-move/leela_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
-    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn];
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn handicap:self.handicap];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
       @"config":@{@"komi": @(komi) } };
@@ -275,7 +259,7 @@
             if (score > 0) {
                 tstr = nsprintf( @"%@ B+%.1f", tstr, fabs(score));
             } else {
-                tstr = nsprintf( @"%@ W+%f.1", tstr, fabs(score));
+                tstr = nsprintf( @"%@ W+%.1f", tstr, fabs(score));
             }
             _lbInfo3.text = tstr;
         }
@@ -305,7 +289,7 @@
     NSString *urlstr = @"https://ahaux.com/katago_server/score/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
-    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn];
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn handicap:self.handicap];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
       @"config":@{}};
