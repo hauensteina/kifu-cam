@@ -416,11 +416,13 @@
                 img = [self.cppInterface f08_classify_dbg];
                 [self.cameraView setImage:img];
                 break;
-            case 9:
+            case 9: {
                 _debugstate++;
-                img = [self.cppInterface f09_score_dbg];
-                [self.cameraView setImage:img];
+                [self.cppInterface f09_score_dbg:^(UIImage *img) {
+                    [self.cameraView setImage:img];
+                }];
                 break;
+            }
             default:
                 _debugstate=0;
                 continue;

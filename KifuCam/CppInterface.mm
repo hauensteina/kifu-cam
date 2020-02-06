@@ -629,49 +629,24 @@ extern cv::Mat mat_dbg;
     return res;
 } // f08_classify_dbg()
 
-// Try to score the detected diagram.
-// Returns the number of Black points.
-// All others are White.
-// Populates _terrmap, _bpoints, _surepoints.
-// Called from SaveDiscardVC.
-//---------------------------------------------------
-- (void) f09_score:(int)turn // in
-           bpoints:(int *)bpoints // out
-        surepoints:(int *)surepoints
-           terrmap:(char**)terrmap 
+// Debug wrapper for scoring
+//-----------------------------------------------------------------------
+- (void) f09_score_dbg:(CICompletionHandler)completion
 {
-    NSLog( @"f09 %d", (int)_diagram.size());
-    int pos[BOARD_SZ * BOARD_SZ];
-    ILOOP(BOARD_SZ * BOARD_SZ) {
-        // The model thinks bottom to top. Mirror.
-        int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
-        pos[newidx] = _diagram[i];
-    }
-    double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
-//    *surepoints = 0;
-//    ILOOP(BOARD_SZ*BOARD_SZ) {
-//        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
-//    }
-    Scoring scoring;
-    auto [wwpoints, bbpoints, dame] = scoring.score( pos, wprobs, turn, *terrmap);
-    *bpoints = bbpoints;
-    *surepoints = BOARD_SZ * BOARD_SZ - dame;
-} // f09_score()
-
-// Debug wrapper for f09_score
-//---------------------------------------
-- (UIImage *) f09_score_dbg
-{
+    int turn = BBLACK;
     g_app.mainVC.lbBottom.text = @"";
-    char *terrmap;
-    int bpoints, surepoints;
-    NSString *sgf = [self get_sgf];
-    [self f09_score:BBLACK bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-    UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
-    NSString *winner = @"B";
-    if (bpoints < BOARD_SZ * BOARD_SZ / 2) { winner = @"W"; }
-    g_app.mainVC.lbBottom.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
-    return scoreImg;
+    [g_app.saveDiscardVC askRemoteBotTerr:turn
+                                     komi:g_app.saveDiscardVC.komi
+                                 handicap:g_app.saveDiscardVC.handicap
+                               completion:^{
+        [g_app.saveDiscardVC askRemoteBot:turn
+                                     komi:g_app.saveDiscardVC.komi
+                                 handicap:g_app.saveDiscardVC.handicap];
+        double *terrmap = cterrmap( g_app.saveDiscardVC.terrmap);
+        NSString *sgf = [self get_sgf];
+        UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
+        completion( scoreImg);
+    }];
 } // f09_score_dbg()
 
 //=== Production Flow ===
@@ -1018,8 +993,8 @@ extern cv::Mat mat_dbg;
 } // sgf2img()
 
 // Convert sgf + next move to UIImage
-//----------------------------------------------------------------------------------------------------------
-+ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(char *)terrmap
+//------------------------------------------------------------------------------------------------------------
++ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(double *)terrmap
 {
     if (!sgf) sgf = @"";
     cv::Mat m;
@@ -1032,7 +1007,7 @@ extern cv::Mat mat_dbg;
 
 // Draw sgf and territory map
 //----------------------------------------------------------------
-+ (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap
++ (UIImage *) scoreimg:(NSString *)sgf terrmap:(double *)terrmap
 {
     if (!sgf) sgf = @"";
     cv::Mat m;

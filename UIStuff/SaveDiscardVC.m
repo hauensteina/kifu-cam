@@ -186,19 +186,23 @@
     S3_upload_file( fname, s3name , ^(NSError *err) {});
 } // uploadToS3()
 
+
+
 // Score position and display result.
 //--------------------------------------
 - (void) displayResult:(int)turn {
-    static char terrmap[BOARD_SZ * BOARD_SZ];
-//    _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
-//    [_sgfView setImage:_scoreImg];
-    [self askRemoteBot:turn terrmap:terrmap komi:self.komi handicap:self.handicap];
-    [self askRemoteBotTerr:turn terrmap:terrmap komi:self.komi handicap:self.handicap];
+    [self askRemoteBotTerr:turn komi:self.komi handicap:self.handicap
+                completion:^{
+        double *terrmap = cterrmap( self.terrmap);
+        _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
+        [_sgfView setImage:_scoreImg];
+        //[self askRemoteBot:turn komi:self.komi handicap:self.handicap];
+    }];
 } // displayResult()
 
 // Ask remote bot for winning probability and next move
-//-------------------------------------------------------------------------------------------------
-- (void) askRemoteBot:(int)turn terrmap:(char *)terrmap komi:(double)komi handicap:(int)handicap {
+//-----------------------------------------------------------------------------
+- (void) askRemoteBot:(int)turn komi:(double)komi handicap:(int)handicap {
     _lbInfo3.text = @"Katago is thinking ...";
     const int timeout = 15;
     static NSTimer* timer = nil;
@@ -249,7 +253,7 @@
             _sgfImg = [CppInterface nextmove2img:_sgf
                                            coord:bot_move
                                            color:turn
-                                         terrmap:terrmap
+                                         terrmap:nil
                        ];
             [_sgfView setImage:_sgfImg];
             double pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
@@ -274,9 +278,11 @@
     [task resume];
 } // askRemoteBot()
 
-// Ask remote bot for territory map
-//------------------------------------------------------------------------------------------------------
-- (void) askRemoteBotTerr:(int)turn terrmap:(char *)terrmap komi:(double)komi handicap:(int)handicap {
+// Ask remote bot for territory map. 
+//--------------------------------------------------------------------
+- (void) askRemoteBotTerr:(int)turn komi:(double)komi
+                 handicap:(int)handicap
+               completion:(SDCompletionHandler)completion {
     _lbInfo3.text = @"Getting territory map ...";
     const int timeout = 10000; //15;
     static NSTimer* timer = nil;
@@ -324,7 +330,12 @@
                                                                  options:kNilOptions
                                                                    error:nil];
             NSArray *probs = json[@"probs"];
-            int tt = 42;
+            self.terrmap = [NSMutableArray new];
+            ILOOP (BOARD_SZ * BOARD_SZ) {
+                [self.terrmap addObject: @([(NSString *)(probs[i]) doubleValue])];
+            } // ILOOP
+            self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
+            completion();
         }
         else {
             if ([_lbInfo3.text containsString:@"timed out"]) {

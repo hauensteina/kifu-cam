@@ -1085,6 +1085,19 @@ void draw_square( Point2f pf, int r, cv::Mat &dst, cv::Scalar col)
     cv::rectangle( dst, rect, col);
 }
 
+// Draw a translucent square with center p
+//--------------------------------------------------------------------------------------
+void draw_alpha_square( cv::Point p, int r, cv::Mat &dst, cv::Scalar col, double alpha)
+{
+    cv::Rect rect( p.x - r,
+                  p.y - r,
+                  2*r + 1,
+                  2*r + 1);
+    cv::Mat roi = dst( rect);
+    cv::Mat color( roi.size(), CV_8UC1, col);
+    cv::addWeighted( color, alpha, roi, 1.0 - alpha , 0.0, roi);
+} // draw_alpha_square()
+
 // Draw a line segment
 //-------------------------------------------------------------------------------------------
 void draw_line( const cv::Vec4f &line, cv::Mat &dst, cv::Scalar col)
@@ -1169,7 +1182,6 @@ void points2int( const Points2f &pf, Points &pi)
 // Misc
 //========
 
-
 //----------------------------
 std::string opencvVersion()
 {
@@ -1177,7 +1189,6 @@ std::string opencvVersion()
     out << "OpenCV version: " << CV_VERSION;
     return out.str();
 }
-
 
 // How to use mcluster()
 //------------------------

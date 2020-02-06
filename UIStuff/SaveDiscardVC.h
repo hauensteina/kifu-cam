@@ -27,9 +27,20 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void (^SDCompletionHandler)(void);
+
 @interface SaveDiscardVC : UIViewController
 // Upload image and sgf to S3
 + (void) uploadToS3:(NSString*)fname;
+// Get territory map from remote Katago
+- (void) askRemoteBotTerr:(int)turn
+                     komi:(double)komi
+                 handicap:(int)handicap
+               completion:(SDCompletionHandler)completion;
+// Get score from remote Katago
+- (void) askRemoteBot:(int)turn
+                 komi:(double)komi
+             handicap:(int)handicap;
 
 // Set this before pushing VC
 @property NSString *sgf;
@@ -37,4 +48,7 @@
 @property int turn;
 @property int handicap;
 @property double komi;
+@property double score;
+@property NSMutableArray *terrmap;
+
 @end
