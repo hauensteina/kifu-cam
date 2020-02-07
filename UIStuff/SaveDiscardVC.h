@@ -29,7 +29,7 @@
 
 typedef void (^SDCompletionHandler)(void);
 
-@interface SaveDiscardVC : UIViewController
+@interface SaveDiscardVC : UIViewController <UIPickerViewDelegate>
 // Upload image and sgf to S3
 + (void) uploadToS3:(NSString*)fname;
 // Get territory map from remote Katago

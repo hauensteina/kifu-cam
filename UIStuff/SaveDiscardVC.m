@@ -45,6 +45,9 @@
 @property UILabel *lbInfo;
 @property UILabel *lbInfo2;
 @property UILabel *lbInfo3;
+
+@property UIPickerView *ddKomi;
+
 @end
 
 @implementation SaveDiscardVC
@@ -116,6 +119,14 @@
         [_btnDiscard sizeToFit];
         [_btnDiscard addTarget:self action:@selector(btnDiscard:) forControlEvents: UIControlEventTouchUpInside];
         [v addSubview:_btnDiscard];
+        
+        // Dropdowns
+        //============
+        // Komi
+        _ddKomi = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 200, 320, 200)];
+        [v addSubview:_ddKomi];
+        _ddKomi.delegate = self;
+        _ddKomi.showsSelectionIndicator = YES;
     }
     return self;
 } // init()
@@ -399,6 +410,53 @@
     btnHeight = _btnDiscard.frame.size.height;
     _btnDiscard.frame = CGRectMake( W/2 + W/20 - 0.04 * W, y, btnWidth, btnHeight);
 } // doLayout()
+
+
+// UIPickerViewDelegate methods
+//================================
+
+//----------------------------------------------------------------------------------------------
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    NSUInteger numRows = 50;
+    return numRows;
+} // numberOfRowsInComponent()
+
+//-----------------------------------------------------------------------------
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+} // numberOfComponentsInPickerView()
+
+//-----------------------------------------------
+- (void)pickerView:(UIPickerView *)pickerView
+      didSelectRow:(NSInteger)row
+       inComponent:(NSInteger)component
+{
+    //[fromButton setText:[NSString stringWithFormat:@"%@",[array_from objectAtIndex:[pickerView //selectedRowInComponent:0]]]];
+
+} // didSelectRow()
+
+//-------------------------------------------------------
+- (NSString *)pickerView:(UIPickerView *)pickerView
+             titleForRow:(NSInteger)row
+            forComponent:(NSInteger)component
+{
+//    switch (row) {
+//        case 0:
+//            return @"-7.5";
+//            break;
+//        case 1:
+//            return @"0";
+//            break;
+//        case 2:
+//            return @"7.5";
+//            break;
+//    }
+//    return @"7.5";
+    return nsprintf( @"%d", row);
+} // titleForRow()
+
 
 @end
 
