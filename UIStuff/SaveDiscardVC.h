@@ -50,5 +50,7 @@ typedef void (^SDCompletionHandler)(void);
 @property double komi;
 @property double score;
 @property NSMutableArray *terrmap;
+@property NSString *botmove;
+@property double winprob;
 
 @end

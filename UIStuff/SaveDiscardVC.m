@@ -186,104 +186,34 @@
     S3_upload_file( fname, s3name , ^(NSError *err) {});
 } // uploadToS3()
 
-
-
 // Score position and display result.
 //--------------------------------------
 - (void) displayResult:(int)turn {
     [self askRemoteBotTerr:turn komi:self.komi handicap:self.handicap
                 completion:^{
         double *terrmap = cterrmap( self.terrmap);
-        _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
+        _scoreImg = [CppInterface nextmove2img:_sgf
+                                         coord:self.botmove
+                                         color:turn
+                                       terrmap:terrmap
+                     ];
         [_sgfView setImage:_scoreImg];
-        //[self askRemoteBot:turn komi:self.komi handicap:self.handicap];
+        NSString *tstr = nsprintf( @"P(B wins)=%.2f", self.winprob);
+        if (self.score > 0) {
+            tstr = nsprintf( @" %@ B+%.1f", tstr, fabs(self.score));
+        } else {
+            tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
+        }
+        _lbInfo3.text = tstr;
     }];
 } // displayResult()
-
-// Ask remote bot for winning probability and next move
-//-----------------------------------------------------------------------------
-- (void) askRemoteBot:(int)turn komi:(double)komi handicap:(int)handicap {
-    _lbInfo3.text = @"Katago is thinking ...";
-    const int timeout = 15;
-    static NSTimer* timer = nil;
-    timer = [NSTimer scheduledTimerWithTimeInterval:timeout
-                                            repeats:false
-                                              block:^(NSTimer * _Nonnull timer) {
-        _lbInfo3.text = @"Katago timed out";
-    }];
-    
-    NSString *urlstr = @"https://ahaux.com/katago_server/select-move/katago_gtp_bot";
-    NSString *uniq = nsprintf( @"%d", rand());
-    urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
-    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn handicap:self.handicap];
-    NSDictionary *parms =
-    @{@"board_size":@(19), @"moves":botMoves,
-      @"config":@{@"komi": @(komi) } };
-    NSError *err;
-    NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
-    NSMutableURLRequest *request = [NSMutableURLRequest new];
-    request.HTTPMethod = @"POST";
-    
-    [request setURL:[NSURL URLWithString:urlstr]];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setHTTPBody:jsonBodyData];
-    
-    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
-    config.requestCachePolicy = NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
-    config.timeoutIntervalForRequest = timeout+1;
-                      
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:config
-                                                          delegate:nil
-                                                     delegateQueue:[NSOperationQueue mainQueue]];
-    NSURLSessionDataTask *task =
-    [session dataTaskWithRequest:request
-               completionHandler:^(NSData * _Nullable data,
-                                   NSURLResponse * _Nullable response,
-                                   NSError * _Nullable error) {
-        [timer invalidate];
-        // The endpoint comes back with resp
-        NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
-        if (resp.statusCode == 200) {
-            NSLog(@"The response is:\n%@", resp);
-            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
-                                                                 options:kNilOptions
-                                                                   error:nil];
-            NSString *bot_move = json[@"bot_move"];
-            _sgfImg = [CppInterface nextmove2img:_sgf
-                                           coord:bot_move
-                                           color:turn
-                                         terrmap:nil
-                       ];
-            [_sgfView setImage:_sgfImg];
-            double pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
-            NSString *tstr = nsprintf( @"P(B wins)=%.2f", pbwins);
-            double score = [json[@"diagnostics"][@"score"] floatValue];
-            score = ((int)( fabs(score) * 2 + 0.5)) * sign(score) / 2.0;
-            if (score > 0) {
-                tstr = nsprintf( @"%@ B+%.1f", tstr, fabs(score));
-            } else {
-                tstr = nsprintf( @"%@ W+%.1f", tstr, fabs(score));
-            }
-            _lbInfo3.text = tstr;
-        }
-        else {
-            if ([_lbInfo3.text containsString:@"timed out"]) {
-                _lbInfo3.text = @"Katago timed out";
-            } else {
-                _lbInfo3.text = @"Error contacting Katago";
-            }
-        }
-    }]; // [session ...
-    [task resume];
-} // askRemoteBot()
 
 // Ask remote bot for territory map. 
 //--------------------------------------------------------------------
 - (void) askRemoteBotTerr:(int)turn komi:(double)komi
                  handicap:(int)handicap
                completion:(SDCompletionHandler)completion {
-    _lbInfo3.text = @"Getting territory map ...";
+    _lbInfo3.text = @"Katago is thinking ...";
     const int timeout = 10000; //15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
@@ -298,7 +228,7 @@
     NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn handicap:self.handicap];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
-      @"config":@{}};
+      @"config":@{@"komi": @(komi) }};
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
@@ -329,12 +259,15 @@
             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                                                  options:kNilOptions
                                                                    error:nil];
+            self.botmove = json[@"diagnostics"][@"bot_move"];
             NSArray *probs = json[@"probs"];
             self.terrmap = [NSMutableArray new];
             ILOOP (BOARD_SZ * BOARD_SZ) {
                 [self.terrmap addObject: @([(NSString *)(probs[i]) doubleValue])];
             } // ILOOP
             self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
+            self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
+            _lbInfo3.text = @"";
             completion();
         }
         else {
