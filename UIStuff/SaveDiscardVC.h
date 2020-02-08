@@ -29,7 +29,7 @@
 
 typedef void (^SDCompletionHandler)(void);
 
-@interface SaveDiscardVC : UIViewController <UIPickerViewDelegate>
+@interface SaveDiscardVC : UIViewController 
 // Upload image and sgf to S3
 + (void) uploadToS3:(NSString*)fname;
 // Get territory map from remote Katago
@@ -37,10 +37,6 @@ typedef void (^SDCompletionHandler)(void);
                      komi:(double)komi
                  handicap:(int)handicap
                completion:(SDCompletionHandler)completion;
-// Get score from remote Katago
-- (void) askRemoteBot:(int)turn
-                 komi:(double)komi
-             handicap:(int)handicap;
 
 // Set this before pushing VC
 @property NSString *sgf;

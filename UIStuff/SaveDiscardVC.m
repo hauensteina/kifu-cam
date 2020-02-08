@@ -30,6 +30,7 @@
 #import "S3.h"
 #import "Globals.h"
 #import "ImagesVC.h"
+#import "KifuCam-Swift.h"
 #import <Crashlytics/Crashlytics.h>
 
 
@@ -46,7 +47,8 @@
 @property UILabel *lbInfo2;
 @property UILabel *lbInfo3;
 
-@property UIPickerView *ddKomi;
+@property UITextField *tfKomi;
+@property AXPicker *pickKomi;
 
 @end
 
@@ -120,13 +122,20 @@
         [_btnDiscard addTarget:self action:@selector(btnDiscard:) forControlEvents: UIControlEventTouchUpInside];
         [v addSubview:_btnDiscard];
         
-        // Dropdowns
+        // Dropdowns //@@@
         //============
         // Komi
-        _ddKomi = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 200, 320, 200)];
-        [v addSubview:_ddKomi];
-        _ddKomi.delegate = self;
-        _ddKomi.showsSelectionIndicator = YES;
+        _tfKomi = [UITextField new];
+        [_tfKomi setFont:[UIFont fontWithName:@"HelveticaNeue" size:30.0]];
+        _tfKomi.textAlignment = NSTextAlignmentCenter;
+        [_tfKomi sizeToFit];
+        [_tfKomi setText:@"7.5"];
+        _pickKomi = [[AXPicker new] initWithVC:self
+                                            tf:_tfKomi
+                                       choices:@[@"7.5",@"6.5",@"5.5",@"0.5"
+                                                 ,@"0"
+                                                 ,@"-0.5",@"-5.5",@"-6.5",@"-7.5"]];
+        [v addSubview:_tfKomi];
     }
     return self;
 } // init()
@@ -348,7 +357,8 @@
 //---------------------------------------
 - (void) doLayout
 {
-    float W = SCREEN_WIDTH;
+    const float W = SCREEN_WIDTH;
+    const float H = SCREEN_HEIGHT;
     float topmarg = g_app.navVC.navigationBar.frame.size.height;
     float marg = W/20;
     float imgWidth = (W  - 2*marg);
@@ -362,20 +372,18 @@
     }
     
     // Info labels
-    int lw = SCREEN_WIDTH;
-    int lmarg = (SCREEN_WIDTH - lw) / 2;
     int y = topmarg + 40 + imgWidth + 10;
-    _lbInfo.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    _lbInfo.frame = CGRectMake( 0, y, H, 0.04 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
     
     y = topmarg + 40 + imgWidth + 40;
-    _lbInfo2.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    _lbInfo2.frame = CGRectMake( 0, y, H, 0.04 * H);
     _lbInfo2.textAlignment = NSTextAlignmentCenter;
     _lbInfo2.text = @"";
     
     y = topmarg + 40 + imgWidth + 70;
-    _lbInfo3.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    _lbInfo3.frame = CGRectMake( 0, y, H, 0.04 * H);
     _lbInfo3.textAlignment = NSTextAlignmentCenter;
     _lbInfo3.text = @"";
     
@@ -409,6 +417,17 @@
     btnWidth = _btnDiscard.frame.size.width;
     btnHeight = _btnDiscard.frame.size.height;
     _btnDiscard.frame = CGRectMake( W/2 + W/20 - 0.04 * W, y, btnWidth, btnHeight);
+    
+    // Dropdowns
+    _tfKomi.hidden = NO;
+    y = _btnW2Play.frame.origin.y;
+    y += 2 * _btnW2Play.frame.size.height;
+    float tfwidth = W/5.0;
+    int lmarg = 0.2 * W;
+    _tfKomi.frame = CGRectMake( lmarg, y, tfwidth, _btnW2Play.frame.size.height);
+    _tfKomi.layer.borderColor = [[UIColor blackColor] CGColor];
+    _tfKomi.layer.borderWidth = 1.0;
+    
 } // doLayout()
 
 

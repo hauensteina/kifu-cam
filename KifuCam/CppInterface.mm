@@ -639,9 +639,6 @@ extern cv::Mat mat_dbg;
                                      komi:g_app.saveDiscardVC.komi
                                  handicap:g_app.saveDiscardVC.handicap
                                completion:^{
-        [g_app.saveDiscardVC askRemoteBot:turn
-                                     komi:g_app.saveDiscardVC.komi
-                                 handicap:g_app.saveDiscardVC.handicap];
         double *terrmap = cterrmap( g_app.saveDiscardVC.terrmap);
         NSString *sgf = [self get_sgf];
         UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
