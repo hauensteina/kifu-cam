@@ -231,14 +231,19 @@
                                        terrmap:terrmap
                      ];
         [_sgfView setImage:_scoreImg];
-        NSString *tstr = nsprintf( @"P(B wins)=%.2f", self.winprob);
-        if (self.score > 0) {
-            tstr = nsprintf( @" %@ B+%.1f", tstr, fabs(self.score));
-        } else {
-            tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
-        }
-        _lbInfo.text = tstr;
-    }];
+        [self askRemoteBotMove:turn
+                          komi:[_tfKomi.text doubleValue]
+                      handicap:[_tfHandi.text intValue]
+                    completion:^{
+            NSString *tstr = nsprintf( @"P(B wins)=%.2f", self.winprob);
+            if (self.score > 0) {
+                tstr = nsprintf( @" %@ B+%.1f", tstr, fabs(self.score));
+            } else {
+                tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
+            }
+            _lbInfo.text = tstr;
+        }]; // askRemoteBotMove
+    }]; // askRemoteBotTerr
 } // displayResult()
 
 // Ask remote bot for territory map. 
@@ -246,8 +251,8 @@
 - (void) askRemoteBotTerr:(int)turn komi:(double)komi
                  handicap:(int)handicap
                completion:(SDCompletionHandler)completion {
-    _lbInfo.text = @"Katago is thinking ...";
-    const int timeout = 10000; //15;
+    _lbInfo.text = @"Katago is counting ...";
+    const int timeout = 15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
                                             repeats:false
@@ -299,9 +304,6 @@
             ILOOP (BOARD_SZ * BOARD_SZ) {
                 [self.terrmap addObject: @([(NSString *)(probs[i]) doubleValue])];
             } // ILOOP
-            self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
-            self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
-            self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
             _lbInfo.text = @"";
             completion();
         }
@@ -315,6 +317,77 @@
     }]; // [session ...
     [task resume];
 } // askRemoteBotTerr()
+
+// Ask remote bot for move and winprob
+//-------------------------------------------------------------
+- (void) askRemoteBotMove:(int)turn komi:(double)komi
+                 handicap:(int)handicap
+               completion:(SDCompletionHandler)completion {
+    _lbInfo.text = @"Katago is thinking ...";
+    const int timeout = 15;
+    static NSTimer* timer = nil;
+    timer = [NSTimer scheduledTimerWithTimeInterval:timeout
+                                            repeats:false
+                                              block:^(NSTimer * _Nonnull timer) {
+        _lbInfo.text = @"Katago timed out";
+    }];
+    
+    NSString *urlstr = @"https://ahaux.com/katago_server/select-move/katago_gtp_bot";
+    NSString *uniq = nsprintf( @"%d", rand());
+    urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
+                                                        handicap:[_tfHandi.text intValue]];
+    NSDictionary *parms =
+    @{@"board_size":@(19), @"moves":botMoves,
+      @"config":@{@"komi": @(komi) }};
+    NSError *err;
+    NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
+    NSMutableURLRequest *request = [NSMutableURLRequest new];
+    request.HTTPMethod = @"POST";
+    
+    [request setURL:[NSURL URLWithString:urlstr]];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setHTTPBody:jsonBodyData];
+    
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.requestCachePolicy = NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
+    config.timeoutIntervalForRequest = timeout+1;
+                      
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config
+                                                          delegate:nil
+                                                     delegateQueue:[NSOperationQueue mainQueue]];
+    NSURLSessionDataTask *task =
+    [session dataTaskWithRequest:request
+               completionHandler:^(NSData * _Nullable data,
+                                   NSURLResponse * _Nullable response,
+                                   NSError * _Nullable error) {
+        [timer invalidate];
+        // The endpoint comes back with resp
+        NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
+        if (resp.statusCode == 200) {
+            NSLog(@"The response is:\n%@", resp);
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                                                 options:kNilOptions
+                                                                   error:nil];
+            self.botmove = json[@"diagnostics"][@"bot_move"];
+            self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
+            self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
+            self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
+            _lbInfo.text = @"";
+            completion();
+        }
+        else {
+            if ([_lbInfo.text containsString:@"timed out"]) {
+                _lbInfo.text = @"Katago timed out";
+            } else {
+                _lbInfo.text = @"Error contacting Katago";
+            }
+        }
+    }]; // [session ...
+    [task resume];
+} // askRemoteBotMove()
+
 
 // Button Callbacks
 //======================

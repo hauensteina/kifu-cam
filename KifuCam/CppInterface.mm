@@ -43,11 +43,8 @@
 #import "Clust1D.hpp"
 #import "CppInterface.h"
 #import "KerasBoardModel.h"
-#import "KerasScoreModel.h"
 #import "KerasStoneModel.h"
 #import "Perspective.hpp"
-
-#import "Scoring.hpp"
 
 extern cv::Mat mat_dbg;
 
@@ -81,8 +78,6 @@ extern cv::Mat mat_dbg;
 @property KerasBoardModel *boardModel; // wrapper around iomodel
 @property nn_bew *bewmodel; // Keras model to classify intersections int B,W,E
 @property KerasStoneModel *stoneModel; // wrapper around bewmodel
-@property nn_score *scoreNN; // Keras model to get white prob for each intersection
-@property KerasScoreModel *scoreModel; // wrapper around scoreNN
 
 @end
 
@@ -91,14 +86,7 @@ extern cv::Mat mat_dbg;
 
 //----------------------
 - (instancetype)init
-{
-    // Test scoring 
-//    int *pos_out;
-//    double *wprobs = [KerasScoreModel test:&pos_out];
-//    char *terrmap_out;
-//    Scoring scoring;
-//    auto [wpoints, bpoints] = scoring.score( pos_out, wprobs, BBLACK, terrmap_out);
-    
+{    
     self = [super init];
     if (self) {
         g_docroot = [getFullPath(@"") UTF8String];
@@ -110,9 +98,6 @@ extern cv::Mat mat_dbg;
         // The stone model
         _bewmodel = [nn_bew new];
         _stoneModel = [[KerasStoneModel alloc] initWithModel:_bewmodel];
-        // The scoring model
-        _scoreNN = [nn_score new];
-        _scoreModel = [[KerasScoreModel alloc] initWithModel:_scoreNN];
     }
     return self;
 } // init()
