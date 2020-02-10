@@ -38,17 +38,21 @@
 @property UIImage *sgfImg;
 @property UIImage *scoreImg;
 @property UIImageView *sgfView;
-//@property UIImageView *photoView;
 @property UIButton *btnSave;
 @property UIButton *btnDiscard;
 @property UIButton *btnB2Play;
 @property UIButton *btnW2Play;
 @property UILabel *lbInfo;
-@property UILabel *lbInfo2;
-@property UILabel *lbInfo3;
 
+// Komi
+@property UILabel *lbKomi;
 @property UITextField *tfKomi;
 @property AXPicker *pickKomi;
+
+// Handicap
+@property UILabel *lbHandi;
+@property UITextField *tfHandi;
+@property AXPicker *pickHandi;
 
 @end
 
@@ -69,27 +73,13 @@
         _sgfView.contentMode = UIViewContentModeScaleAspectFit;
         [v addSubview:_sgfView];
         
-        // Info labels
+        // Info label
         UILabel *l = [UILabel new];
         l.text = @"";
         l.backgroundColor = BGCOLOR;
         l.textColor = UIColor.blackColor;
         [v addSubview:l];
         self.lbInfo = l;
-        
-        UILabel *l2 = [UILabel new];
-        l2.text = @"";
-        l2.backgroundColor = BGCOLOR;
-        l2.textColor = UIColor.blackColor;
-        [v addSubview:l2];
-        self.lbInfo2 = l2;
-        
-        UILabel *l3 = [UILabel new];
-        l3.text = @"";
-        l3.backgroundColor = BGCOLOR;
-        l3.textColor = UIColor.blackColor;
-        [v addSubview:l3];
-        self.lbInfo3 = l3;
         
         // Buttons
         //=========
@@ -122,13 +112,18 @@
         [_btnDiscard addTarget:self action:@selector(btnDiscard:) forControlEvents: UIControlEventTouchUpInside];
         [v addSubview:_btnDiscard];
         
-        // Dropdowns //@@@
+        // Dropdowns
         //============
         // Komi
+        _lbKomi = [UILabel new];
+        [_lbKomi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _lbKomi.textAlignment = NSTextAlignmentCenter;
+        _lbKomi.text = @"Komi";
+        [_lbKomi sizeToFit];
+        [v addSubview: _lbKomi];
         _tfKomi = [UITextField new];
-        [_tfKomi setFont:[UIFont fontWithName:@"HelveticaNeue" size:30.0]];
+        [_tfKomi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
         _tfKomi.textAlignment = NSTextAlignmentCenter;
-        [_tfKomi sizeToFit];
         [_tfKomi setText:@"7.5"];
         _pickKomi = [[AXPicker new] initWithVC:self
                                             tf:_tfKomi
@@ -136,6 +131,22 @@
                                                  ,@"0"
                                                  ,@"-0.5",@"-5.5",@"-6.5",@"-7.5"]];
         [v addSubview:_tfKomi];
+
+        // Handicap
+        _lbHandi = [UILabel new];
+        [_lbHandi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _lbHandi.textAlignment = NSTextAlignmentCenter;
+        _lbHandi.text = @"Handicap";
+        [_lbHandi sizeToFit];
+        [v addSubview: _lbHandi];
+        _tfHandi = [UITextField new];
+        [_tfHandi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _tfHandi.textAlignment = NSTextAlignmentCenter;
+        [_tfHandi setText:@"0"];
+        _pickHandi = [[AXPicker new] initWithVC:self
+                                             tf:_tfHandi
+                                        choices:@[@"0",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9"]];
+        [v addSubview:_tfHandi];
     }
     return self;
 } // init()
@@ -224,7 +235,7 @@
         } else {
             tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
         }
-        _lbInfo3.text = tstr;
+        _lbInfo.text = tstr;
     }];
 } // displayResult()
 
@@ -233,13 +244,13 @@
 - (void) askRemoteBotTerr:(int)turn komi:(double)komi
                  handicap:(int)handicap
                completion:(SDCompletionHandler)completion {
-    _lbInfo3.text = @"Katago is thinking ...";
+    _lbInfo.text = @"Katago is thinking ...";
     const int timeout = 10000; //15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
                                             repeats:false
                                               block:^(NSTimer * _Nonnull timer) {
-        _lbInfo3.text = @"Katago timed out";
+        _lbInfo.text = @"Katago timed out";
     }];
     
     NSString *urlstr = @"https://ahaux.com/katago_server/score/katago_gtp_bot";
@@ -287,14 +298,14 @@
             } // ILOOP
             self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
             self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
-            _lbInfo3.text = @"";
+            _lbInfo.text = @"";
             completion();
         }
         else {
-            if ([_lbInfo3.text containsString:@"timed out"]) {
-                _lbInfo3.text = @"Katago scoring timed out";
+            if ([_lbInfo.text containsString:@"timed out"]) {
+                _lbInfo.text = @"Katago scoring timed out";
             } else {
-                _lbInfo3.text = @"Error contacting Katago";
+                _lbInfo.text = @"Error contacting Katago";
             }
         }
     }]; // [session ...
@@ -317,6 +328,10 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
+    _lbKomi.hidden = YES;
+    _tfKomi.hidden = YES;
+    _lbHandi.hidden = YES;
+    _tfHandi.hidden = YES;
 } // btnB2Play()
 
 //-----------------------------
@@ -331,6 +346,10 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
+    _lbKomi.hidden = YES;
+    _tfKomi.hidden = YES;
+    _lbHandi.hidden = YES;
+    _tfHandi.hidden = YES;
 } // btnW2Play()
 
 //------------------------------
@@ -371,21 +390,11 @@
         [_sgfView setImage:_sgfImg];
     }
     
-    // Info labels
+    // Info label
     int y = topmarg + 40 + imgWidth + 10;
-    _lbInfo.frame = CGRectMake( 0, y, H, 0.04 * H);
+    _lbInfo.frame = CGRectMake( 0, y, W, 0.04 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
-    
-    y = topmarg + 40 + imgWidth + 40;
-    _lbInfo2.frame = CGRectMake( 0, y, H, 0.04 * H);
-    _lbInfo2.textAlignment = NSTextAlignmentCenter;
-    _lbInfo2.text = @"";
-    
-    y = topmarg + 40 + imgWidth + 70;
-    _lbInfo3.frame = CGRectMake( 0, y, H, 0.04 * H);
-    _lbInfo3.textAlignment = NSTextAlignmentCenter;
-    _lbInfo3.text = @"";
     
     // Buttons
     float btnWidth, btnHeight;
@@ -393,6 +402,7 @@
     
     _btnB2Play.hidden = NO;
     [_btnB2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];
+    // Keep size (auto), change origin
     btnWidth = _btnB2Play.frame.size.width;
     btnHeight = _btnB2Play.frame.size.height;
     _btnB2Play.frame = CGRectMake( W/2 - btnWidth/2, y, btnWidth, btnHeight);
@@ -417,64 +427,36 @@
     btnWidth = _btnDiscard.frame.size.width;
     btnHeight = _btnDiscard.frame.size.height;
     _btnDiscard.frame = CGRectMake( W/2 + W/20 - 0.04 * W, y, btnWidth, btnHeight);
-    
+
     // Dropdowns
-    _tfKomi.hidden = NO;
     y = _btnW2Play.frame.origin.y;
     y += 2 * _btnW2Play.frame.size.height;
-    float tfwidth = W/5.0;
-    int lmarg = 0.2 * W;
-    _tfKomi.frame = CGRectMake( lmarg, y, tfwidth, _btnW2Play.frame.size.height);
-    _tfKomi.layer.borderColor = [[UIColor blackColor] CGColor];
-    _tfKomi.layer.borderWidth = 1.0;
+    int lrmarg = 0.33 * W;
+    
+    // Komi Heading
+    _lbKomi.hidden = NO;
+    _lbKomi.frame = CGRectMake( lrmarg - 0.5 * _lbKomi.frame.size.width, y,
+                               _lbKomi.frame.size.width, _btnW2Play.frame.size.height);
+
+    // Handicap Heading
+    _lbHandi.hidden = NO;
+    _lbHandi.frame = CGRectMake( W - lrmarg - 0.5 * _lbHandi.frame.size.width, y,
+                                _lbHandi.frame.size.width, _btnW2Play.frame.size.height);
+
+    y += _btnW2Play.frame.size.height;
+    int ddw = 0.33 * W;
+
+    // Komi Dropdown
+    _tfKomi.hidden = NO;
+    _tfKomi.frame = CGRectMake( lrmarg - 0.5 * ddw, y,
+                               ddw, _btnW2Play.frame.size.height);
+    
+    // Handicap Dropdown
+    _tfHandi.hidden = NO;
+    _tfHandi.frame = CGRectMake( W - lrmarg - 0.5 * ddw, y,
+                                ddw, _btnW2Play.frame.size.height);
     
 } // doLayout()
-
-
-// UIPickerViewDelegate methods
-//================================
-
-//----------------------------------------------------------------------------------------------
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
-    NSUInteger numRows = 50;
-    return numRows;
-} // numberOfRowsInComponent()
-
-//-----------------------------------------------------------------------------
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    return 1;
-} // numberOfComponentsInPickerView()
-
-//-----------------------------------------------
-- (void)pickerView:(UIPickerView *)pickerView
-      didSelectRow:(NSInteger)row
-       inComponent:(NSInteger)component
-{
-    //[fromButton setText:[NSString stringWithFormat:@"%@",[array_from objectAtIndex:[pickerView //selectedRowInComponent:0]]]];
-
-} // didSelectRow()
-
-//-------------------------------------------------------
-- (NSString *)pickerView:(UIPickerView *)pickerView
-             titleForRow:(NSInteger)row
-            forComponent:(NSInteger)component
-{
-//    switch (row) {
-//        case 0:
-//            return @"-7.5";
-//            break;
-//        case 1:
-//            return @"0";
-//            break;
-//        case 2:
-//            return @"7.5";
-//            break;
-//    }
-//    return @"7.5";
-    return nsprintf( @"%d", row);
-} // titleForRow()
 
 
 @end

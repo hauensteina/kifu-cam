@@ -45,6 +45,7 @@ import UIKit
         toolbar.setItems( [doneButton,spaceButton,cancelButton], animated: false)
         tf.inputAccessoryView = toolbar
         tf.inputView = picker
+        tf.textColor = tf.tintColor
         
         //picker.dataSource = self
     } // init()
@@ -56,7 +57,7 @@ import UIKit
     
     //-------------------
     @objc func done() {
-        self.tf?.text = self.choice
+        self.tf?.text = self.choice 
         self.vc!.view.endEditing(true)
     } // done()
     
