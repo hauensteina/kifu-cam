@@ -42,8 +42,6 @@ typedef void (^SDCompletionHandler)(void);
 @property NSString *sgf;
 @property UIImage *photo;
 @property int turn;
-@property int handicap;
-@property double komi;
 @property double score;
 @property NSMutableArray *terrmap;
 @property NSString *botmove;

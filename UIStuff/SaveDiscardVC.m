@@ -220,7 +220,9 @@
 // Score position and display result.
 //--------------------------------------
 - (void) displayResult:(int)turn {
-    [self askRemoteBotTerr:turn komi:self.komi handicap:self.handicap
+    [self askRemoteBotTerr:turn
+                      komi:[_tfKomi.text doubleValue]
+                  handicap:[_tfHandi.text intValue]
                 completion:^{
         double *terrmap = cterrmap( self.terrmap);
         _scoreImg = [CppInterface nextmove2img:_sgf
@@ -256,7 +258,8 @@
     NSString *urlstr = @"https://ahaux.com/katago_server/score/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
-    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn handicap:self.handicap];
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
+                                                        handicap:[_tfHandi.text intValue]];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
       @"config":@{@"komi": @(komi) }};
@@ -297,6 +300,7 @@
                 [self.terrmap addObject: @([(NSString *)(probs[i]) doubleValue])];
             } // ILOOP
             self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
+            self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
             self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
             _lbInfo.text = @"";
             completion();
@@ -318,7 +322,6 @@
 //-----------------------------
 - (void) btnB2Play:(id)sender
 {
-    // [[Crashlytics sharedInstance] crash];
     [self displayResult:BBLACK];
     // Regex to insert PL[B] right after the SZ tag
     NSString *re = @"(.*SZ\\[[0-9]+\\])(.*)";

@@ -46,8 +46,6 @@ import UIKit
         tf.inputAccessoryView = toolbar
         tf.inputView = picker
         tf.textColor = tf.tintColor
-        
-        //picker.dataSource = self
     } // init()
     
     //---------------------

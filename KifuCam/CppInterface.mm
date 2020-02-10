@@ -636,8 +636,8 @@ extern cv::Mat mat_dbg;
     int turn = BBLACK;
     g_app.mainVC.lbBottom.text = @"";
     [g_app.saveDiscardVC askRemoteBotTerr:turn
-                                     komi:g_app.saveDiscardVC.komi
-                                 handicap:g_app.saveDiscardVC.handicap
+                                     komi:7.5
+                                 handicap:0
                                completion:^{
         double *terrmap = cterrmap( g_app.saveDiscardVC.terrmap);
         NSString *sgf = [self get_sgf];
@@ -946,7 +946,7 @@ extern cv::Mat mat_dbg;
         } else {
             [res addObject: @("pass")];
         }
-        if (i_white >= 0 && i_white < wlen) {
+        if (i_white >= 0 && i_white < SZ(wmoves)) {
             [res addObject: @(wmoves[i_white].c_str())];
         }
         else {

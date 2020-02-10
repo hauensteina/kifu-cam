@@ -65,8 +65,6 @@
     self.editTestCaseVC = [EditTestCaseVC new];
     self.testResultsVC = [TestResultsVC new];
     self.saveDiscardVC = [SaveDiscardVC new];
-    self.saveDiscardVC.handicap = 0;
-    self.saveDiscardVC.komi = 7.5;
 
     self.imagesVC = [ImagesVC new];
     self.aboutVC = [AboutVC new];
