@@ -455,26 +455,28 @@
     const float W = SCREEN_WIDTH;
     const float H = SCREEN_HEIGHT;
     float topmarg = g_app.navVC.navigationBar.frame.size.height;
-    float marg = W/20;
-    float imgWidth = (W  - 2*marg);
+    //float marg = W/20;
+    //float imgWidth = (W  - 2*marg);
+    
+    const float boardWidth = MIN( W, H * 0.5);
     
     // Sgf View
     _sgfView.hidden = NO;
-    _sgfView.frame = CGRectMake( marg, topmarg + 40, imgWidth , imgWidth);
+    _sgfView.frame = CGRectMake( 0, topmarg + 40, W , boardWidth);
     if (_sgf) {
         _sgfImg = [CppInterface sgf2img:_sgf];
         [_sgfView setImage:_sgfImg];
     }
     
     // Info label
-    int y = topmarg + 40 + imgWidth + 10;
+    int y = topmarg + 40 + boardWidth + 10;
     _lbInfo.frame = CGRectMake( 0, y, W, 0.04 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
     
     // Buttons
     float btnWidth, btnHeight;
-    y = topmarg + 40 + imgWidth + 50;
+    y = topmarg + 40 + boardWidth + 50;
     
     _btnB2Play.hidden = NO;
     [_btnB2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];
@@ -511,11 +513,13 @@
     
     // Komi Heading
     _lbKomi.hidden = NO;
+    [_lbKomi setTextColor:UIColor.blackColor];
     _lbKomi.frame = CGRectMake( lrmarg - 0.5 * _lbKomi.frame.size.width, y,
                                _lbKomi.frame.size.width, _btnW2Play.frame.size.height);
 
     // Handicap Heading
     _lbHandi.hidden = NO;
+    [_lbHandi setTextColor:UIColor.blackColor];
     _lbHandi.frame = CGRectMake( W - lrmarg - 0.5 * _lbHandi.frame.size.width, y,
                                 _lbHandi.frame.size.width, _btnW2Play.frame.size.height);
 
