@@ -21,15 +21,15 @@ import matplotlib as mpl
 mpl.use('Agg') # This makes matplotlib work without a display
 from matplotlib import pyplot as plt
 
-import keras.preprocessing.image as kp
-import keras.activations as ka
-import keras.metrics as kmet
-import keras.models as kmod
-import keras.losses as klo
-from keras.utils.np_utils import to_categorical
-import keras
+import tensorflow.keras.preprocessing.image as kp
+import tensorflow.keras.activations as ka
+import tensorflow.keras.metrics as kmet
+import tensorflow.keras.models as kmod
+import tensorflow.keras.losses as klo
+from tensorflow.keras.utils import to_categorical
+import tensorflow.keras
 
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 # Custom Softmax along axis 1 (channels).
 # Use as an activation
@@ -364,12 +364,18 @@ def dump_n_best_and_worst( n, model, images, meta, sset='valid'):
 #------------------------------------------------------------------------------
 def dump_n_best_worst_folder( n, model, folder, resolution, class_getter):
     BATCH_SIZE = 32
-    gen = kp.ImageDataGenerator( rotation_range=0,
-                                 width_shift_range=0,
-                                 height_shift_range=0,
-                                 horizontal_flip=False,
-                                 vertical_flip=False,
-                                 channel_shift_range=0)
+    # gen = kp.ImageDataGenerator( rotation_range=0,
+    #                              width_shift_range=0,
+    #                              height_shift_range=0,
+    #                              horizontal_flip=False,
+    #                              vertical_flip=False,
+    #                              channel_shift_range=0)
+    gen = kp.ImageDataGenerator( rotation_range=5,
+                                 width_shift_range=0.2,
+                                 height_shift_range=0.2,
+                                 horizontal_flip=True,
+                                 vertical_flip=True,
+                                 channel_shift_range=0.1)
     batchgen = gen.flow_from_directory( folder,
                                         target_size = (resolution, resolution),
                                         class_mode  = None,
