@@ -33,6 +33,8 @@
 
 #pragma clang diagnostic ignored "-Wunguarded-availability"
 
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,6 +49,10 @@ extern "C" {
     // @"iPad6,12" -> 6, @"iPhone4,8" -> 0
     int iPadVersion(void);
     
+    // Math
+    //==========
+    int sign(double f);
+
     // Drawing
     //==========
     // Draw a massive rectangle on a view
@@ -115,6 +121,10 @@ extern "C" {
     //=========
     // Parse Json into an NSObject
     id parseJSON( NSString *json);
+
+    // Misc
+    //============
+    double* cterrmap( NSArray *terrmap_in);
 
 #ifdef __cplusplus
 }

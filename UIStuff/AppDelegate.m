@@ -42,7 +42,6 @@
 //------------------------------------------------------------------------------------------------------------
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     setProp( @"opt_debug", @"off");
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor =  [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:0.95];
@@ -60,12 +59,13 @@
     [self.topVC setupLeftOnly];
     self.menuVC  = (LeftMenuController *) self.topVC.leftViewController;
     self.rightVC = (RightViewController *) self.topVC.rightViewController;
-    [self enableDebugMenu];
+    //[self enableDebugMenu];
     
     // Other view controllers
     self.editTestCaseVC = [EditTestCaseVC new];
     self.testResultsVC = [TestResultsVC new];
     self.saveDiscardVC = [SaveDiscardVC new];
+
     self.imagesVC = [ImagesVC new];
     self.aboutVC = [AboutVC new];
     self.window.rootViewController = self.topVC;

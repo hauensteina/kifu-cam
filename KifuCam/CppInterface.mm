@@ -43,11 +43,8 @@
 #import "Clust1D.hpp"
 #import "CppInterface.h"
 #import "KerasBoardModel.h"
-#import "KerasScoreModel.h"
 #import "KerasStoneModel.h"
 #import "Perspective.hpp"
-
-#import "Scoring.hpp"
 
 extern cv::Mat mat_dbg;
 
@@ -81,8 +78,6 @@ extern cv::Mat mat_dbg;
 @property KerasBoardModel *boardModel; // wrapper around iomodel
 @property nn_bew *bewmodel; // Keras model to classify intersections int B,W,E
 @property KerasStoneModel *stoneModel; // wrapper around bewmodel
-@property nn_score *scoreNN; // Keras model to get white prob for each intersection
-@property KerasScoreModel *scoreModel; // wrapper around scoreNN
 
 @end
 
@@ -91,14 +86,7 @@ extern cv::Mat mat_dbg;
 
 //----------------------
 - (instancetype)init
-{
-    // Test scoring 
-//    int *pos_out;
-//    double *wprobs = [KerasScoreModel test:&pos_out];
-//    char *terrmap_out;
-//    Scoring scoring;
-//    auto [wpoints, bpoints] = scoring.score( pos_out, wprobs, BBLACK, terrmap_out);
-    
+{    
     self = [super init];
     if (self) {
         g_docroot = [getFullPath(@"") UTF8String];
@@ -110,9 +98,6 @@ extern cv::Mat mat_dbg;
         // The stone model
         _bewmodel = [nn_bew new];
         _stoneModel = [[KerasStoneModel alloc] initWithModel:_bewmodel];
-        // The scoring model
-        _scoreNN = [nn_score new];
-        _scoreModel = [[KerasScoreModel alloc] initWithModel:_scoreNN];
     }
     return self;
 } // init()
@@ -629,49 +614,29 @@ extern cv::Mat mat_dbg;
     return res;
 } // f08_classify_dbg()
 
-// Try to score the detected diagram.
-// Returns the number of Black points.
-// All others are White.
-// Populates _terrmap, _bpoints, _surepoints.
-// Called from SaveDiscardVC.
-//---------------------------------------------------
-- (void) f09_score:(int)turn // in
-           bpoints:(int *)bpoints // out
-        surepoints:(int *)surepoints
-           terrmap:(char**)terrmap 
+// Debug wrapper for scoring
+//-----------------------------------------------------------------------
+- (void) f09_score_dbg:(CICompletionHandler)completion
 {
-    NSLog( @"f09 %d", (int)_diagram.size());
-    int pos[BOARD_SZ * BOARD_SZ];
-    ILOOP(BOARD_SZ * BOARD_SZ) {
-        // The model thinks bottom to top. Mirror.
-        int newidx = (BOARD_SZ - 1 - i/BOARD_SZ) * BOARD_SZ + i % BOARD_SZ;
-        pos[newidx] = _diagram[i];
-    }
-    double *wprobs = [_scoreModel nnScorePos:pos turn:turn];
-//    *surepoints = 0;
-//    ILOOP(BOARD_SZ*BOARD_SZ) {
-//        if (wprobs[i] < 1.0 / 20.0 || wprobs[i] > 19.0 / 20.0) { *surepoints += 1; }
-//    }
-    Scoring scoring;
-    auto [wwpoints, bbpoints, dame] = scoring.score( pos, wprobs, turn, *terrmap);
-    *bpoints = bbpoints;
-    *surepoints = BOARD_SZ * BOARD_SZ - dame;
-} // f09_score()
-
-// Debug wrapper for f09_score
-//---------------------------------------
-- (UIImage *) f09_score_dbg
-{
+    int turn = BBLACK;
     g_app.mainVC.lbBottom.text = @"";
-    char *terrmap;
-    int bpoints, surepoints;
-    NSString *sgf = [self get_sgf];
-    [self f09_score:BBLACK bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-    UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
-    NSString *winner = @"B";
-    if (bpoints < BOARD_SZ * BOARD_SZ / 2) { winner = @"W"; }
-    g_app.mainVC.lbBottom.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
-    return scoreImg;
+    [g_app.saveDiscardVC askRemoteBotTerr:turn
+                                     komi:7.5
+                                 handicap:0
+                               completion:^{
+        NSString *tstr = nsprintf( @"P(B wins)=%.2f", g_app.saveDiscardVC.winprob);
+        double score = g_app.saveDiscardVC.score;
+         if (score > 0) {
+             tstr = nsprintf( @" %@ B+%.1f", tstr, fabs( score));
+         } else {
+             tstr = nsprintf( @" %@ W+%.1f", tstr, fabs( score));
+         }
+        g_app.mainVC.lbBottom.text = tstr;
+        double *terrmap = cterrmap( g_app.saveDiscardVC.terrmap);
+        NSString *sgf = [self get_sgf];
+        UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
+        completion( scoreImg);
+    }];
 } // f09_score_dbg()
 
 //=== Production Flow ===
@@ -945,10 +910,11 @@ extern cv::Mat mat_dbg;
     return @(generate_sgf( "", _diagram, unwarped_intersections, _phi, _theta).c_str());
 } // get_sgf()
 
-// Convert current diagram to a sequence of moves I can feed to Leela
+// Convert current diagram to a sequence of moves I can feed to a bot
 //---------------------------------------------------------------------
-- (NSArray *) get_leela_moves:(int)turn
+- (NSArray *) get_bot_moves:(int)turn handicap:(int)handicap
 {
+    if (handicap == 0) { handicap = 1; }
     auto colchars = "ABCDEFGHJKLMNOPQRST";
     std::vector<std::string> wmoves;
     std::vector<std::string> bmoves;
@@ -962,26 +928,30 @@ extern cv::Mat mat_dbg;
         else if (_diagram[i] == BBLACK) { bmoves.push_back( movestr); }
         else continue;
     }
-    auto blen = SZ(bmoves); auto wlen = SZ(wmoves);
-    auto npasses = abs(blen-wlen);
-    if (blen > wlen) {
-        ILOOP(npasses) { wmoves.insert( wmoves.begin(), "pass");}
-    }
-    else if (wlen > blen) {
-        ILOOP(npasses) { bmoves.insert( bmoves.begin(), "pass");}
-    }
-    // If w turn, add a pass in front of B moves
-    if (turn == WWHITE) {
-        bmoves.insert( bmoves.begin(), "pass");
-    }
-    blen = SZ(bmoves); wlen = SZ(wmoves);
+    auto blen = SZ(bmoves); auto wlen = SZ(wmoves) + handicap - 1;
+    auto maxlen = std::max( blen, wlen);
     NSMutableArray *res = [NSMutableArray new];
-    ILOOP (blen) {
-        [res addObject: @(bmoves[i].c_str())];
-        if (i < wlen) { [res addObject: @(wmoves[i].c_str())]; }
+    int i_white = 0;
+    ILOOP (maxlen) {
+        i_white = i - handicap + 1; // Games starts with black handi stones and white passes
+        if (i < blen) {
+            [res addObject: @(bmoves[i].c_str())];
+        } else {
+            [res addObject: @("pass")];
+        }
+        if (i_white >= 0 && i_white < SZ(wmoves)) {
+            [res addObject: @(wmoves[i_white].c_str())];
+        }
+        else {
+            [res addObject: @("pass")];
+        }
+    } // ILOOP
+    auto last_played = ([res count] % 2) ? BBLACK : WWHITE;
+    if (last_played == turn) {
+        [res addObject: @("pass")];
     }
     return res;
-} // get_leela_moves()
+} // get_bot_moves()
 
 // Get sgf for a UIImage
 //-----------------------------------------------
@@ -1013,8 +983,8 @@ extern cv::Mat mat_dbg;
 } // sgf2img()
 
 // Convert sgf + next move to UIImage
-//----------------------------------------------------------------------------------------------------------
-+ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(char *)terrmap
+//------------------------------------------------------------------------------------------------------------
++ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(double *)terrmap
 {
     if (!sgf) sgf = @"";
     cv::Mat m;
@@ -1027,7 +997,7 @@ extern cv::Mat mat_dbg;
 
 // Draw sgf and territory map
 //----------------------------------------------------------------
-+ (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap
++ (UIImage *) scoreimg:(NSString *)sgf terrmap:(double *)terrmap
 {
     if (!sgf) sgf = @"";
     cv::Mat m;

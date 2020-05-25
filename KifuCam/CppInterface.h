@@ -30,6 +30,8 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^CICompletionHandler)(UIImage *img);
+
 @interface CppInterface : NSObject
 
 // Individual steps for debugging
@@ -42,7 +44,7 @@
 - (UIImage *) f06_corners_dbg;
 - (UIImage *) f07_zoom_in_dbg;
 - (UIImage *) f08_classify_dbg;
-- (UIImage *) f09_score_dbg;
+- (void) f09_score_dbg:(CICompletionHandler)completion;
 
 - (void) f00_dots_and_verticals;
 - (void) f02_warp;
@@ -51,7 +53,6 @@
 - (void) f05_horiz_lines:(int)state;
 - (void) f06_corners;
 - (void) f07_zoom_in;
-- (void) f09_score:(int)turn bpoints:(int *)bpoints surepoints:(int *)surepoints terrmap:(char**)terrmap;
 
 - (UIImage *) video_mode;
 - (UIImage *) get_best_frame;
@@ -72,8 +73,8 @@
 - (void) save_current_sgf:(NSString *)fname overwrite:(bool)overwrite;
 // Get current diagram as sgf
 - (NSString *) get_sgf;
-// Convert diagram to a sequence of leela moves
-- (NSArray *) get_leela_moves:(int)turn;
+// Convert diagram to a sequence of bot moves
+- (NSArray *) get_bot_moves:(int)turn handicap:(int)handicap;
 // Get sgf for a UIImage
 - (NSString *) get_sgf_for_img: (UIImage *)img;
 // Get an empty sgf
@@ -82,9 +83,9 @@
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;
 // Make a diagram with the next move
-+ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(char *)terrmap;
++ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(double *)terrmap;
 // Draw scoring map on sgf img
-+ (UIImage *) scoreimg:(NSString *)sgf terrmap:(char *)terrmap;
++ (UIImage *) scoreimg:(NSString *)sgf terrmap:(double *)terrmap;
 // Extract an sgf tag
 + (NSString *) get_sgf_tag:(NSString *)tag sgf:(NSString *)sgf;
 // Set an sgf tag. Do not try to set the SZ tag.

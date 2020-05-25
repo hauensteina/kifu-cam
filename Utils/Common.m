@@ -78,6 +78,10 @@ int iPadVersion()
     return res;
 } // iPadVersion()
 
+//==========
+// Math
+//==========
+int sign(double f) { return (f < 0) ? -1 : 1; }
 
 //==========
 // Drawing
@@ -421,8 +425,21 @@ id parseJSON( NSString *json)
     return objFromJson;
 } // parseJSON()
 
+//========
+// Misc
+//========
 
-
+// Convert terrmap in NSArray of NSNumber into double array
+//------------------------------------------------------------
+double* cterrmap( NSArray *terrmap_in)
+{
+    static double terrmap_out[19 * 19];
+    int i = 0;
+    for (NSNumber *p in terrmap_in) {
+        terrmap_out[i++] = [p doubleValue];
+    } // for
+    return terrmap_out;
+} // cterrmap()
 
 
 

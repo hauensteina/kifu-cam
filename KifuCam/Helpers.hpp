@@ -331,23 +331,24 @@ inline void draw_next_move( const std::string &coord, int color, cv::Mat &dst) {
 
 // Draw score map on position image
 //------------------------------------------------------
-inline void draw_score( cv::Mat &img, char *terrmap)
+inline void draw_score( cv::Mat &img, double *terrmap)
 {
     int width = img.cols;
     int marg = width * 0.05;
     int innerwidth = width - 2*marg;
-    int rad = ROUND( 0.2 * innerwidth / (BOARD_SZ-1.0)) - 1;
+    int rad = ROUND( 0.3 * innerwidth / (BOARD_SZ-1.0)) - 1;
     ILOOP (BOARD_SZ*BOARD_SZ) {
-        char col = terrmap[i];
-        int r = (BOARD_SZ - i / BOARD_SZ) - 1;
+        double prob = terrmap[i];
+        //int r = (BOARD_SZ - i / BOARD_SZ) - 1;
+        int r = i / BOARD_SZ;
         int c = i % BOARD_SZ;
         cv::Point p = rc2p( innerwidth, marg, r,c);
-        if (col == 'b') {
-            cv::circle( img, p, rad, 0, -1, cv::LINE_AA);
-        }
-        else if (col == 'w') {
-            cv::circle( img, p, rad, 255, -1, cv::LINE_AA);
-        }
+        if (prob < 0) { // white
+            draw_alpha_square( p, rad, img, 255, fabs(prob));
+        } // for
+        else { // black
+            draw_alpha_square( p, rad, img, 0, fabs(prob));
+        } // for
     } // ILOOP
 } // draw_score()
 

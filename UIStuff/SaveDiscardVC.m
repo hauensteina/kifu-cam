@@ -30,6 +30,7 @@
 #import "S3.h"
 #import "Globals.h"
 #import "ImagesVC.h"
+#import "KifuCam-Swift.h"
 #import <Crashlytics/Crashlytics.h>
 
 
@@ -37,14 +38,22 @@
 @property UIImage *sgfImg;
 @property UIImage *scoreImg;
 @property UIImageView *sgfView;
-//@property UIImageView *photoView;
 @property UIButton *btnSave;
 @property UIButton *btnDiscard;
 @property UIButton *btnB2Play;
 @property UIButton *btnW2Play;
 @property UILabel *lbInfo;
-@property UILabel *lbInfo2;
-@property UILabel *lbInfo3;
+
+// Komi
+@property UILabel *lbKomi;
+@property UITextField *tfKomi;
+@property AXPicker *pickKomi;
+
+// Handicap
+@property UILabel *lbHandi;
+@property UITextField *tfHandi;
+@property AXPicker *pickHandi;
+
 @end
 
 @implementation SaveDiscardVC
@@ -64,27 +73,13 @@
         _sgfView.contentMode = UIViewContentModeScaleAspectFit;
         [v addSubview:_sgfView];
         
-        // Info labels
+        // Info label
         UILabel *l = [UILabel new];
         l.text = @"";
         l.backgroundColor = BGCOLOR;
         l.textColor = UIColor.blackColor;
         [v addSubview:l];
         self.lbInfo = l;
-        
-        UILabel *l2 = [UILabel new];
-        l2.text = @"";
-        l2.backgroundColor = BGCOLOR;
-        l2.textColor = UIColor.blackColor;
-        [v addSubview:l2];
-        self.lbInfo2 = l2;
-        
-        UILabel *l3 = [UILabel new];
-        l3.text = @"";
-        l3.backgroundColor = BGCOLOR;
-        l3.textColor = UIColor.blackColor;
-        [v addSubview:l3];
-        self.lbInfo3 = l3;
         
         // Buttons
         //=========
@@ -116,6 +111,42 @@
         [_btnDiscard sizeToFit];
         [_btnDiscard addTarget:self action:@selector(btnDiscard:) forControlEvents: UIControlEventTouchUpInside];
         [v addSubview:_btnDiscard];
+        
+        // Dropdowns
+        //============
+        // Komi
+        _lbKomi = [UILabel new];
+        [_lbKomi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _lbKomi.textAlignment = NSTextAlignmentCenter;
+        _lbKomi.text = @"Komi";
+        [_lbKomi sizeToFit];
+        [v addSubview: _lbKomi];
+        _tfKomi = [UITextField new];
+        [_tfKomi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _tfKomi.textAlignment = NSTextAlignmentCenter;
+        [_tfKomi setText:@"7.5"];
+        _pickKomi = [[AXPicker new] initWithVC:self
+                                            tf:_tfKomi
+                                       choices:@[@"7.5",@"6.5",@"5.5",@"0.5"
+                                                 ,@"0"
+                                                 ,@"-0.5",@"-5.5",@"-6.5",@"-7.5"]];
+        [v addSubview:_tfKomi];
+
+        // Handicap
+        _lbHandi = [UILabel new];
+        [_lbHandi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _lbHandi.textAlignment = NSTextAlignmentCenter;
+        _lbHandi.text = @"Handicap";
+        [_lbHandi sizeToFit];
+        [v addSubview: _lbHandi];
+        _tfHandi = [UITextField new];
+        [_tfHandi setFont:[UIFont fontWithName:@"HelveticaNeue" size:20.0]];
+        _tfHandi.textAlignment = NSTextAlignmentCenter;
+        [_tfHandi setText:@"0"];
+        _pickHandi = [[AXPicker new] initWithVC:self
+                                             tf:_tfHandi
+                                        choices:@[@"0",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9"]];
+        [v addSubview:_tfHandi];
     }
     return self;
 } // init()
@@ -187,48 +218,56 @@
 } // uploadToS3()
 
 // Score position and display result.
-//--------------------------------------------------
+//--------------------------------------
 - (void) displayResult:(int)turn {
-    CppInterface *cpp = g_app.mainVC.cppInterface;
-    int bpoints, surepoints;
-    char *terrmap;
-    [cpp f09_score:turn bpoints:&bpoints surepoints:&surepoints terrmap:&terrmap];
-    if (surepoints < 250) {
-        _lbInfo.text = @"Too early to score";
-        [self askLeela:turn terrmap:NULL];
-        return;
-    }
-    _scoreImg = [CppInterface scoreimg:_sgf terrmap:terrmap];
-    [_sgfView setImage:_scoreImg];
-    [self askLeela:turn terrmap:terrmap];
-    NSString *winner = @"B";
-    if (bpoints < BOARD_SZ*BOARD_SZ / 2) { winner = @"W"; }
-    int delta = abs( bpoints - (BOARD_SZ*BOARD_SZ - bpoints));
-    _lbInfo.text = nsprintf( @"B:%d W:%d", bpoints, BOARD_SZ*BOARD_SZ - bpoints);
-    _lbInfo2.text = nsprintf( @"%@+%d before komi and handicap", winner, delta);
+    [self askRemoteBotTerr:turn
+                      komi:[_tfKomi.text doubleValue]
+                  handicap:[_tfHandi.text intValue]
+                completion:^{
+        double *terrmap = cterrmap( self.terrmap);
+        _scoreImg = [CppInterface nextmove2img:_sgf
+                                         coord:self.botmove
+                                         color:turn
+                                       terrmap:terrmap
+                     ];
+        [_sgfView setImage:_scoreImg];
+        [self askRemoteBotMove:turn
+                          komi:[_tfKomi.text doubleValue]
+                      handicap:[_tfHandi.text intValue]
+                    completion:^{
+            NSString *tstr = nsprintf( @"P(B wins)=%.2f", self.winprob);
+            if (self.score > 0) {
+                tstr = nsprintf( @" %@ B+%.1f", tstr, fabs(self.score));
+            } else {
+                tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
+            }
+            _lbInfo.text = tstr;
+        }]; // askRemoteBotMove
+    }]; // askRemoteBotTerr
 } // displayResult()
 
-// Ask Leela about this position
-//------------------------------------------------------
-- (void) askLeela:(int)turn terrmap:(char *)terrmap { //@@@
-    _lbInfo3.text = @"Leela is thinking ...";
+// Ask remote bot for territory map. 
+//--------------------------------------------------------------------
+- (void) askRemoteBotTerr:(int)turn komi:(double)komi
+                 handicap:(int)handicap
+               completion:(SDCompletionHandler)completion {
+    _lbInfo.text = @"Katago is counting ...";
     const int timeout = 15;
     static NSTimer* timer = nil;
     timer = [NSTimer scheduledTimerWithTimeInterval:timeout
                                             repeats:false
                                               block:^(NSTimer * _Nonnull timer) {
-        _lbInfo3.text = @"Leela timed out";
+        _lbInfo.text = @"Katago timed out";
     }];
     
-    NSString *urlstr = @"https://ahaux.com/leela_server/select-move/leela_gtp_bot";
-    //NSString *urlstr = @"https://leela-one-playout.herokuapp.com/select-move/leela_gtp_bot";
-    //NSString *urlstr = @"https://ahaux.com/leela_server_test/select-move/leela_gtp_bot";
+    NSString *urlstr = @"https://ahaux.com/katago_server/score/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
-    NSArray *leelaMoves = [g_app.mainVC.cppInterface get_leela_moves:turn];
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
+                                                        handicap:[_tfHandi.text intValue]];
     NSDictionary *parms =
-    @{@"board_size":@(19), @"moves":leelaMoves,
-      @"config":@{@"randomness": @"-1.0", @"playouts":@"1000" } };
+    @{@"board_size":@(19), @"moves":botMoves,
+      @"config":@{@"komi": @(komi) }};
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
@@ -255,30 +294,100 @@
         // The endpoint comes back with resp
         NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
         if (resp.statusCode == 200) {
-            NSLog(@"The response is: %@", resp);
+            NSLog(@"The response is:\n%@", resp);
             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                                                  options:kNilOptions
                                                                    error:nil];
-            NSString *bot_move = json[@"bot_move"];
-            _sgfImg = [CppInterface nextmove2img:_sgf
-                                           coord:bot_move
-                                           color:turn
-                                         terrmap:terrmap
-                       ];
-            [_sgfView setImage:_sgfImg];
-            float pbwins = [json[@"diagnostics"][@"winprob"] floatValue];
-            _lbInfo3.text = nsprintf( @"P(B wins) = %.2f", pbwins);
+            self.botmove = json[@"diagnostics"][@"bot_move"];
+            NSArray *probs = json[@"probs"];
+            self.terrmap = [NSMutableArray new];
+            ILOOP (BOARD_SZ * BOARD_SZ) {
+                [self.terrmap addObject: @([(NSString *)(probs[i]) doubleValue])];
+            } // ILOOP
+            _lbInfo.text = @"";
+            completion();
         }
         else {
-            if ([_lbInfo3.text containsString:@"timed out"]) {
-                _lbInfo3.text = @"Leela timed out";
+            if ([_lbInfo.text containsString:@"timed out"]) {
+                _lbInfo.text = @"Katago scoring timed out";
             } else {
-                _lbInfo3.text = @"Error contacting Leela";
+                _lbInfo.text = @"Error contacting Katago";
             }
         }
     }]; // [session ...
     [task resume];
-} // askLeela()
+} // askRemoteBotTerr()
+
+// Ask remote bot for move and winprob
+//-------------------------------------------------------------
+- (void) askRemoteBotMove:(int)turn komi:(double)komi
+                 handicap:(int)handicap
+               completion:(SDCompletionHandler)completion {
+    _lbInfo.text = @"Katago is thinking ...";
+    const int timeout = 15;
+    static NSTimer* timer = nil;
+    timer = [NSTimer scheduledTimerWithTimeInterval:timeout
+                                            repeats:false
+                                              block:^(NSTimer * _Nonnull timer) {
+        _lbInfo.text = @"Katago timed out";
+    }];
+    
+    NSString *urlstr = @"https://ahaux.com/katago_server/select-move/katago_gtp_bot";
+    NSString *uniq = nsprintf( @"%d", rand());
+    urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
+    NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
+                                                        handicap:[_tfHandi.text intValue]];
+    NSDictionary *parms =
+    @{@"board_size":@(19), @"moves":botMoves,
+      @"config":@{@"komi": @(komi) }};
+    NSError *err;
+    NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
+    NSMutableURLRequest *request = [NSMutableURLRequest new];
+    request.HTTPMethod = @"POST";
+    
+    [request setURL:[NSURL URLWithString:urlstr]];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [request setHTTPBody:jsonBodyData];
+    
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.requestCachePolicy = NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
+    config.timeoutIntervalForRequest = timeout+1;
+                      
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config
+                                                          delegate:nil
+                                                     delegateQueue:[NSOperationQueue mainQueue]];
+    NSURLSessionDataTask *task =
+    [session dataTaskWithRequest:request
+               completionHandler:^(NSData * _Nullable data,
+                                   NSURLResponse * _Nullable response,
+                                   NSError * _Nullable error) {
+        [timer invalidate];
+        // The endpoint comes back with resp
+        NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
+        if (resp.statusCode == 200) {
+            NSLog(@"The response is:\n%@", resp);
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
+                                                                 options:kNilOptions
+                                                                   error:nil];
+            self.botmove = json[@"diagnostics"][@"bot_move"];
+            self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
+            self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
+            self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
+            _lbInfo.text = @"";
+            completion();
+        }
+        else {
+            if ([_lbInfo.text containsString:@"timed out"]) {
+                _lbInfo.text = @"Katago timed out";
+            } else {
+                _lbInfo.text = @"Error contacting Katago";
+            }
+        }
+    }]; // [session ...
+    [task resume];
+} // askRemoteBotMove()
+
 
 // Button Callbacks
 //======================
@@ -286,7 +395,6 @@
 //-----------------------------
 - (void) btnB2Play:(id)sender
 {
-    // [[Crashlytics sharedInstance] crash];
     [self displayResult:BBLACK];
     // Regex to insert PL[B] right after the SZ tag
     NSString *re = @"(.*SZ\\[[0-9]+\\])(.*)";
@@ -296,6 +404,10 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
+    _lbKomi.hidden = YES;
+    _tfKomi.hidden = YES;
+    _lbHandi.hidden = YES;
+    _tfHandi.hidden = YES;
 } // btnB2Play()
 
 //-----------------------------
@@ -310,6 +422,10 @@
     _btnDiscard.hidden = NO;
     _btnB2Play.hidden = YES;
     _btnW2Play.hidden = YES;
+    _lbKomi.hidden = YES;
+    _tfKomi.hidden = YES;
+    _lbHandi.hidden = YES;
+    _tfHandi.hidden = YES;
 } // btnW2Play()
 
 //------------------------------
@@ -336,43 +452,35 @@
 //---------------------------------------
 - (void) doLayout
 {
-    float W = SCREEN_WIDTH;
+    const float W = SCREEN_WIDTH;
+    const float H = SCREEN_HEIGHT;
     float topmarg = g_app.navVC.navigationBar.frame.size.height;
-    float marg = W/20;
-    float imgWidth = (W  - 2*marg);
+    //float marg = W/20;
+    //float imgWidth = (W  - 2*marg);
+    
+    const float boardWidth = MIN( W, H * 0.5);
     
     // Sgf View
     _sgfView.hidden = NO;
-    _sgfView.frame = CGRectMake( marg, topmarg + 40, imgWidth , imgWidth);
+    _sgfView.frame = CGRectMake( 0, topmarg + 40, W , boardWidth);
     if (_sgf) {
         _sgfImg = [CppInterface sgf2img:_sgf];
         [_sgfView setImage:_sgfImg];
     }
     
-    // Info labels
-    int lw = SCREEN_WIDTH;
-    int lmarg = (SCREEN_WIDTH - lw) / 2;
-    int y = topmarg + 40 + imgWidth + 10;
-    _lbInfo.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
+    // Info label
+    int y = topmarg + 40 + boardWidth + 10;
+    _lbInfo.frame = CGRectMake( 0, y, W, 0.04 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
     
-    y = topmarg + 40 + imgWidth + 40;
-    _lbInfo2.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
-    _lbInfo2.textAlignment = NSTextAlignmentCenter;
-    _lbInfo2.text = @"";
-    
-    y = topmarg + 40 + imgWidth + 70;
-    _lbInfo3.frame = CGRectMake( lmarg, y, lw, 0.04 * SCREEN_HEIGHT);
-    _lbInfo3.textAlignment = NSTextAlignmentCenter;
-    _lbInfo3.text = @"";
-    
     // Buttons
     float btnWidth, btnHeight;
-    y = topmarg + 40 + imgWidth + 50;
+    y = topmarg + 40 + boardWidth + 50;
     
     _btnB2Play.hidden = NO;
     [_btnB2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];
+    // Keep size (auto), change origin
     btnWidth = _btnB2Play.frame.size.width;
     btnHeight = _btnB2Play.frame.size.height;
     _btnB2Play.frame = CGRectMake( W/2 - btnWidth/2, y, btnWidth, btnHeight);
@@ -397,7 +505,39 @@
     btnWidth = _btnDiscard.frame.size.width;
     btnHeight = _btnDiscard.frame.size.height;
     _btnDiscard.frame = CGRectMake( W/2 + W/20 - 0.04 * W, y, btnWidth, btnHeight);
+
+    // Dropdowns
+    y = _btnW2Play.frame.origin.y;
+    y += 2 * _btnW2Play.frame.size.height;
+    int lrmarg = 0.33 * W;
+    
+    // Komi Heading
+    _lbKomi.hidden = NO;
+    [_lbKomi setTextColor:UIColor.blackColor];
+    _lbKomi.frame = CGRectMake( lrmarg - 0.5 * _lbKomi.frame.size.width, y,
+                               _lbKomi.frame.size.width, _btnW2Play.frame.size.height);
+
+    // Handicap Heading
+    _lbHandi.hidden = NO;
+    [_lbHandi setTextColor:UIColor.blackColor];
+    _lbHandi.frame = CGRectMake( W - lrmarg - 0.5 * _lbHandi.frame.size.width, y,
+                                _lbHandi.frame.size.width, _btnW2Play.frame.size.height);
+
+    y += _btnW2Play.frame.size.height;
+    int ddw = 0.33 * W;
+
+    // Komi Dropdown
+    _tfKomi.hidden = NO;
+    _tfKomi.frame = CGRectMake( lrmarg - 0.5 * ddw, y,
+                               ddw, _btnW2Play.frame.size.height);
+    
+    // Handicap Dropdown
+    _tfHandi.hidden = NO;
+    _tfHandi.frame = CGRectMake( W - lrmarg - 0.5 * ddw, y,
+                                ddw, _btnW2Play.frame.size.height);
+    
 } // doLayout()
+
 
 @end
 

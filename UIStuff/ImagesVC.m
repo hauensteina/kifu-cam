@@ -294,7 +294,7 @@
     [jpgData writeToFile:fname atomically:YES];
     _documentController = [UIDocumentInteractionController
                            interactionControllerWithURL:[NSURL fileURLWithPath:fname]];
-    [_documentController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
+    [_documentController presentOptionsMenuFromRect:CGRectZero inView:self.view animated:YES];
 } // handleExportPhoto()
 
 // Rerun recognition on a saved photo

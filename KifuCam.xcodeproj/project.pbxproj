@@ -22,6 +22,7 @@
 		AC13BB3E200BD6C600369CAE /* RightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB38200BD6C500369CAE /* RightViewController.m */; };
 		AC13BB3F200BD6C600369CAE /* RightViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB39200BD6C500369CAE /* RightViewCell.m */; };
 		AC13BB40200BD6C600369CAE /* LeftMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB3A200BD6C600369CAE /* LeftMenuCell.m */; };
+		AC309B1523EF2EDD003AAAB1 /* AXPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */; };
 		AC3274412016836D009BEFD2 /* photo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC32743F2016836B009BEFD2 /* photo_icon.png */; };
 		AC3274422016836D009BEFD2 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC3274402016836C009BEFD2 /* video_icon.png */; };
 		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
@@ -54,8 +55,6 @@
 		ACAB4571204F0E7E00958AC6 /* nn_io.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */; };
 		ACAB45742051A25E00958AC6 /* KerasBoardModel.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAB45732051A25D00958AC6 /* KerasBoardModel.m */; };
 		ACAFE424201FD1AB00E26773 /* kifu-cam.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE416201FD1AB00E26773 /* kifu-cam.png */; };
-		ACB0C40C22D4E94B00356EA4 /* KerasScoreModel.m in Sources */ = {isa = PBXBuildFile; fileRef = ACB0C40B22D4E94B00356EA4 /* KerasScoreModel.m */; };
-		ACB0C41022D5100C00356EA4 /* nn_score.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = ACB0C40F22D5100C00356EA4 /* nn_score.mlmodel */; };
 		ACB76EEB2360FEFC00B0445B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ACB76EEA2360FEFB00B0445B /* GoogleService-Info.plist */; };
 		ACC91313201694C700B62682 /* SaveDiscardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC91312201694C600B62682 /* SaveDiscardVC.m */; };
 		ACC913162017F4F400B62682 /* ImagesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC913142017F4F300B62682 /* ImagesVC.m */; };
@@ -108,6 +107,8 @@
 		AC13BB39200BD6C500369CAE /* RightViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RightViewCell.m; sourceTree = "<group>"; };
 		AC13BB3A200BD6C600369CAE /* LeftMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftMenuCell.m; sourceTree = "<group>"; };
 		AC1756CB200527770069EE99 /* Helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Helpers.hpp; sourceTree = "<group>"; };
+		AC309B1123EF2E48003AAAB1 /* KifuCam-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KifuCam-Bridging-Header.h"; sourceTree = "<group>"; };
+		AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXPicker.swift; sourceTree = "<group>"; };
 		AC32743F2016836B009BEFD2 /* photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = photo_icon.png; path = Assets/photo_icon.png; sourceTree = SOURCE_ROOT; };
 		AC3274402016836C009BEFD2 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = video_icon.png; path = Assets/video_icon.png; sourceTree = SOURCE_ROOT; };
 		AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasStoneModel.h; sourceTree = "<group>"; };
@@ -125,7 +126,6 @@
 		AC5F340F20151C59002FEF06 /* S3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = S3.h; sourceTree = "<group>"; };
 		AC61AD551FBCCB0B00DEBCDA /* Common.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
 		AC61AD561FBCCB0B00DEBCDA /* Common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Common.hpp; sourceTree = "<group>"; };
-		AC620A6222D6562900FDCB82 /* Scoring.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Scoring.hpp; sourceTree = "<group>"; };
 		AC628C131F9A7D3F0043FCEE /* KifuCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KifuCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC628C171F9A7D3F0043FCEE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AC628C191F9A7D3F0043FCEE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -159,9 +159,6 @@
 		ACAB45732051A25D00958AC6 /* KerasBoardModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KerasBoardModel.m; sourceTree = "<group>"; };
 		ACAB4579205AC76F00958AC6 /* Perspective.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Perspective.hpp; sourceTree = "<group>"; };
 		ACAFE416201FD1AB00E26773 /* kifu-cam.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "kifu-cam.png"; sourceTree = "<group>"; };
-		ACB0C40B22D4E94B00356EA4 /* KerasScoreModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasScoreModel.m; sourceTree = "<group>"; };
-		ACB0C40E22D4E99A00356EA4 /* KerasScoreModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasScoreModel.h; sourceTree = "<group>"; };
-		ACB0C40F22D5100C00356EA4 /* nn_score.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_score.mlmodel; sourceTree = "<group>"; };
 		ACB76EEA2360FEFB00B0445B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ACC91311201694C500B62682 /* SaveDiscardVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveDiscardVC.h; sourceTree = "<group>"; };
 		ACC91312201694C600B62682 /* SaveDiscardVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaveDiscardVC.m; sourceTree = "<group>"; };
@@ -214,6 +211,7 @@
 				AC98149B2021167B004375DD /* AboutVC.m */,
 				AC628C191F9A7D3F0043FCEE /* AppDelegate.h */,
 				AC628C1A1F9A7D3F0043FCEE /* AppDelegate.m */,
+				AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */,
 				AC5F339E200FD370002FEF06 /* EditTestCaseVC.h */,
 				AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */,
 				ACC913152017F4F300B62682 /* ImagesVC.h */,
@@ -239,6 +237,7 @@
 				AC13BB36200BD6C400369CAE /* TopViewController.h */,
 				AC13BB34200BD6C400369CAE /* TopViewController.m */,
 				AC7402FA2023E81F0036ABC2 /* Launch.storyboard */,
+				AC309B1123EF2E48003AAAB1 /* KifuCam-Bridging-Header.h */,
 			);
 			path = UIStuff;
 			sourceTree = "<group>";
@@ -306,12 +305,9 @@
 				AC1756CB200527770069EE99 /* Helpers.hpp */,
 				ACAB45722051A25D00958AC6 /* KerasBoardModel.h */,
 				ACAB45732051A25D00958AC6 /* KerasBoardModel.m */,
-				ACB0C40E22D4E99A00356EA4 /* KerasScoreModel.h */,
-				ACB0C40B22D4E94B00356EA4 /* KerasScoreModel.m */,
 				AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */,
 				AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */,
 				ACAB4579205AC76F00958AC6 /* Perspective.hpp */,
-				AC620A6222D6562900FDCB82 /* Scoring.hpp */,
 				AC628C221F9A7D3F0043FCEE /* Assets.xcassets */,
 				AC628C271F9A7D3F0043FCEE /* Info.plist */,
 				AC628C161F9A7D3F0043FCEE /* Supporting Files */,
@@ -340,7 +336,6 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				ACB0C40F22D5100C00356EA4 /* nn_score.mlmodel */,
 				ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */,
 				AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
@@ -394,6 +389,7 @@
 					AC628C121F9A7D3F0043FCEE = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = J26TJ8F6WP;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -546,7 +542,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ACB0C40C22D4E94B00356EA4 /* KerasScoreModel.m in Sources */,
 				AC13BB2B200BD38600369CAE /* LGSideMenuGesturesHandler.m in Sources */,
 				AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */,
 				AC13BB2C200BD38700369CAE /* LGSideMenuController.m in Sources */,
@@ -555,13 +550,13 @@
 				ACA69E4C1F9D077B00F5E068 /* Common.m in Sources */,
 				AC98149C2021167B004375DD /* AboutVC.m in Sources */,
 				AC61AD571FBCCB0B00DEBCDA /* Common.cpp in Sources */,
+				AC309B1523EF2EDD003AAAB1 /* AXPicker.swift in Sources */,
 				AC13BB2D200BD38700369CAE /* LGSideMenuView.m in Sources */,
 				AC13BB40200BD6C600369CAE /* LeftMenuCell.m in Sources */,
 				AC5F340E20151C41002FEF06 /* S3.m in Sources */,
 				AC5540771F9BE71900922557 /* CppInterface.mm in Sources */,
 				AC13BB3B200BD6C600369CAE /* LeftMenuController.m in Sources */,
 				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
-				ACB0C41022D5100C00356EA4 /* nn_score.mlmodel in Sources */,
 				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
@@ -703,6 +698,7 @@
 			baseConfigurationReference = 2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -712,9 +708,12 @@
 				);
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.5;
+				MARKETING_VERSION = 3.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -724,6 +723,7 @@
 			baseConfigurationReference = E99BC187D34273EA781AD5C4 /* Pods-KifuCam.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -733,9 +733,11 @@
 				);
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.5;
+				MARKETING_VERSION = 3.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
