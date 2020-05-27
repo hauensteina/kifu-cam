@@ -16,9 +16,11 @@ import os,sys,re,json
 import numpy as np
 from numpy.random import random
 import argparse
-import keras.layers as kl
-import keras.models as km
-import keras.optimizers as kopt
+import tensorflow.keras.layers as kl
+import tensorflow.keras.models as km
+import tensorflow.keras.optimizers as kopt
+import tensorflow.keras.preprocessing.image as kp
+import tensorflow as tf
 import coremltools
 import cv2
 
@@ -32,6 +34,11 @@ sys.path.append( SCRIPTPATH + '/..')
 
 import ahnutil as ut
 
+# Limit GPU memory usage to 5GB
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_virtual_device_configuration(
+    gpus[0],
+    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=5*1024)])
 
 BATCH_SIZE=32
 
@@ -42,11 +49,11 @@ def usage(printmsg=False):
     Name:
       %s --  Run the model trained on small intersection crops on whole images
     Synopsis:
-      %s --img <image>
+      %s --image <image>
     Description:
       Run bew model on a big image
     Example:
-      %s --img
+      %s --image ~/kc-trainingdata/andreas/s3_2020-05-21/F7CCB0F8-20200414-161402.png
     ''' % (name,name,name)
     if printmsg:
         print(msg)
@@ -108,7 +115,10 @@ def main():
     parser = argparse.ArgumentParser( usage=usage())
     parser.add_argument( "--image", required=True)
     args = parser.parse_args()
-    img = cv2.imread( args.image, 1)[...,::-1].astype(np.float32) # bgr to rgb
+    tt = cv2.imread( args.image, 1)
+    BP()
+    # arr[...,::-1] reverses the order of the innermost dimension, thus bgr to rgb.
+    img = cv2.imread( args.image, 1)[...,::-1].astype(np.float32)
     img /= 255.0 # float images need values in [0,1]
     #plt.figure(); plt.imshow( img); plt.savefig( 'tt.jpg')
     #exit(0)

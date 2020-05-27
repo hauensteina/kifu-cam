@@ -16,10 +16,10 @@ import os,sys,re,json, shutil
 import numpy as np
 from numpy.random import random
 import argparse
-import keras.layers as kl
-import keras.models as km
-import keras.optimizers as kopt
-import keras.preprocessing.image as kp
+import tensorflow.keras.layers as kl
+import tensorflow.keras.models as km
+import tensorflow.keras.optimizers as kopt
+import tensorflow.keras.preprocessing.image as kp
 import coremltools
 
 # Look for modules in our pylib folder
@@ -30,28 +30,15 @@ import ahnutil as ut
 
 
 import tensorflow as tf
-from keras import backend as K
-from keras.callbacks import ModelCheckpoint
+from tensorflow.keras import backend as K
+from tensorflow.keras.callbacks import ModelCheckpoint
 
-num_cores = 4
-GPU=1
+# Limit GPU memory usage to 5GB
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_virtual_device_configuration(
+    gpus[0],
+    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=5*1024)])
 
-if GPU:
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
-    session = tf.Session( config=config)
-    K.set_session( session)
-else:
-    num_CPU = 1
-    num_GPU = 0
-    config = tf.ConfigProto( intra_op_parallelism_threads=num_cores,\
-                             inter_op_parallelism_threads=num_cores, allow_soft_placement=True,\
-                             device_count = {'CPU' : num_CPU, 'GPU' : num_GPU})
-    session = tf.Session( config=config)
-    K.set_session( session)
-
-#BATCH_SIZE=1024
-BATCH_SIZE=32
 args = None
 
 #---------------------------
@@ -63,7 +50,7 @@ def usage(printmsg=False):
     Synopsis:
       %s --file <file.hd5>
     Description:
-      Ouput goes to nn_bew.mlmodel 
+      Ouput goes to nn_bew.mlmodel
     Example:
       %s --file model-improvement-06-1.00.hd5
     ''' % (name,name,name)
@@ -85,6 +72,17 @@ def main():
 
     model = km.load_model( args.file)
 
+        # Convert for iOS CoreML
+    coreml_model = coremltools.converters.tensorflow.convert( args.file,
+                                                              #input_names=['image'],
+                                                              #image_input_names='image',
+                                                              class_labels = ['b', 'e', 'w'],
+                                                              predicted_feature_name='bew'
+                                                              #image_scale = 1/128.0,
+                                                              #red_bias = -1,
+                                                              #green_bias = -1,
+                                                              #blue_bias = -1
+    )
     # Convert for iOS CoreML
     coreml_model = coremltools.converters.keras.convert( model,
                                                          #input_names=['image'],
@@ -95,7 +93,7 @@ def main():
                                                          #red_bias = -1,
                                                          #green_bias = -1,
                                                          #blue_bias = -1
-    );
+    )
 
     coreml_model.author = 'ahn'
     coreml_model.license = 'MIT'

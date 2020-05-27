@@ -28,7 +28,6 @@ sys.path.append( SCRIPTPATH + '/..')
 
 import ahnutil as ut
 
-
 import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import ModelCheckpoint
@@ -38,23 +37,6 @@ gpus = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_virtual_device_configuration(
     gpus[0],
     [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=5*1024)])
-
-# num_cores = 4
-# GPU=1
-
-# if GPU:
-#     config = tf.ConfigProto()
-#     config.gpu_options.allow_growth = True
-#     session = tf.Session( config=config)
-#     K.set_session( session)
-# else:
-#     num_CPU = 1
-#     num_GPU = 0
-#     config = tf.ConfigProto( intra_op_parallelism_threads=num_cores,\
-#                              inter_op_parallelism_threads=num_cores, allow_soft_placement=True,\
-#                              device_count = {'CPU' : num_CPU, 'GPU' : num_GPU})
-#     session = tf.Session( config=config)
-#     K.set_session( session)
 
 BATCH_SIZE=128
 #BATCH_SIZE=32
@@ -265,7 +247,7 @@ def main():
     #                            #validation_freq=1,
     #                            callbacks=callbacks_list)
 
-    '''
+
     model.model.fit( train_generator.generate(),
                      steps_per_epoch=STEPS_PER_EPOCH,
                      epochs=args.epochs,
@@ -273,7 +255,7 @@ def main():
                      #validation_batch_size = BATCH_SIZE,
                      #validation_steps=int(STEPS_PER_EPOCH/10),
                      callbacks=callbacks_list)
-    '''
+
     _, accuracy = model.model.evaluate( vdata, vlabels)
     print('Accuracy: %.2f' % (accuracy*100))
 
@@ -302,7 +284,7 @@ def main():
                                                               #red_bias = -1,
                                                               #green_bias = -1,
                                                               #blue_bias = -1
-    );
+    )
 
     coreml_model.author = 'ahn'
     coreml_model.license = 'MIT'
