@@ -42,7 +42,7 @@ def usage(printmsg=False):
     Description:
       Gets crops from inside the board vs edge of board.
     Example:
-      %s --infolder ~/kc-trainingdata/andreas/phitheta --outfolder kc-inside-edge-crops
+      %s --infolder ~/kc-trainingdata/andreas --outfolder kc-inside-edge-crops
     ''' % (name,name,name)
     if printmsg:
         print(msg)
@@ -169,9 +169,10 @@ def save_intersections( img, intersections, r, basename, folder):
         x = isec['x']
         y = isec['y']
         hood = img[y-dy:y+dy+1, x-dx:x+dx+1]
-        fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i)
-        if color in ['I','O'] and not 'off_screen' in isec:
-            cv2.imwrite( fname, hood)
+        if hood.shape[0] > 0 and hood.shape[1] > 0:
+            fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i)
+            if color in ['I','O'] and not 'off_screen' in isec:
+                cv2.imwrite( fname, hood)
 
 # e.g for board size, call get_sgf_tag( sgf, "SZ")
 #---------------------------------------------------
@@ -515,9 +516,11 @@ def main():
         rows = img.shape[0]
         cols = img.shape[1]
         phi_comp, theta_comp = compute_phi_theta( rows, cols, f['sgf']) # recompute
-        phi_file, theta_file = get_phi_theta( f['sgf']) # from sgf
-        print( 'theta_file:%5d theta_comp:%5d' % (theta_file, theta_comp))
-        print( 'phi_file:%5d phi_comp:%5d' % (phi_file, phi_comp))
+        #phi_file, theta_file = get_phi_theta( f['sgf']) # from sgf
+        #print( 'theta_file:%5d theta_comp:%5d' % (theta_file, theta_comp))
+        #print( 'phi_file:%5d phi_comp:%5d' % (phi_file, phi_comp))
+        print( 'theta_comp:%5d' % (theta_comp))
+        print( 'phi_comp:%5d' % (phi_comp))
         print( '-------------------')
         Ms = cv2.getRotationMatrix2D( (cols/2.0, rows/2.0), theta_comp, 1.0)
         Mp = perspective_warp( rows, cols, phi_comp)

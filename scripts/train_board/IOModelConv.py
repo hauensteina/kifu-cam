@@ -16,10 +16,10 @@ import os,sys,re,json, shutil
 import numpy as np
 from numpy.random import random
 import argparse
-import keras.layers as kl
-import keras.models as km
-import keras.optimizers as kopt
-import keras.preprocessing.image as kp
+import tensorflow.keras.layers as kl
+import tensorflow.keras.models as km
+import tensorflow.keras.optimizers as kopt
+import tensorflow.keras.preprocessing.image as kp
 import coremltools
 
 import matplotlib as mpl
@@ -32,10 +32,8 @@ sys.path.append( SCRIPTPATH + '/..')
 
 import ahnutil as ut
 
-
 import tensorflow as tf
-from keras import backend as K
-
+from tensorflow.keras import backend as K
 
 # A convolutional model
 #===================================================================================================

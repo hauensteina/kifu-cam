@@ -37,7 +37,7 @@ def usage(printmsg=False):
       Splits the jpg files in folder into train, valid, and test files.
       Only use files containing <substring> in the name.
     Example:
-      %s --folder images --trainpct 80 --validpct 10 --substr rgb
+      %s --folder kc-inside-edge-crops --trainpct 80 --validpct 10 --substr rgb
       The remaining 10pct will be test data
     ''' % (name,name,name)
     if printmsg:

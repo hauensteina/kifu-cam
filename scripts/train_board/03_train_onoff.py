@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # /********************************************************************
-# Filename: train.py
+# Filename: train_onoff.py
 # Author: AHN
 # Creation Date: Mar 5, 2018
 # **********************************************************************/
@@ -16,10 +16,10 @@ import os,sys,re,json, shutil
 import numpy as np
 from numpy.random import random
 import argparse
-import keras.layers as kl
-import keras.models as km
-import keras.optimizers as kopt
-import keras.preprocessing.image as kp
+import tensorflow.keras.layers as kl
+import tensorflow.keras.models as km
+import tensorflow.keras.optimizers as kopt
+import tensorflow.keras.preprocessing.image as kp
 import coremltools
 
 import matplotlib as mpl
@@ -35,26 +35,15 @@ from IOModelConv import IOModelConv
 
 
 import tensorflow as tf
-from keras import backend as K
+from tensorflow.keras import backend as K
 
-num_cores = 4
+# Limit GPU memory usage to 5GB
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_virtual_device_configuration(
+    gpus[0],
+    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=5*1024)])
 
-GPU=1
-if GPU:
-    num_GPU = 1
-    num_CPU = 1
-else:
-    num_CPU = 1
-    num_GPU = 0
-
-config = tf.ConfigProto(intra_op_parallelism_threads=num_cores,\
-        inter_op_parallelism_threads=num_cores, allow_soft_placement=True,\
-        device_count = {'CPU' : num_CPU, 'GPU' : num_GPU})
-session = tf.Session(config=config)
-K.set_session(session)
-
-
-BATCH_SIZE=1024
+BATCH_SIZE=128
 
 #---------------------------
 def usage(printmsg=False):
@@ -130,9 +119,9 @@ def main():
 
     # Model
     model = IOModelConv( width=args.resolution, height=args.resolution, rate=args.rate, classify=True)
-    wfname =  'nn_io.weights'
-    if os.path.exists( wfname):
-        model.model.load_weights( wfname)
+    modelfname = 'nn_io.h5'
+    if os.path.exists( modelfname):
+        model.model = km.load_model( modelfname)
 
     # Data Augmentation
     gen=kp.ImageDataGenerator( rotation_range=5,
@@ -158,21 +147,39 @@ def main():
     ut.dump_n_best_and_worst( 5, model.model, images, meta, 'valid')
 
     # Save weights and model
-    if os.path.exists( wfname):
-        shutil.move( wfname, wfname + '.bak')
-    model.model.save( 'nn_io.hd5')
-    model.model.save_weights( wfname)
+    if os.path.exists( modelfname):
+        try:
+            shutil.rmtree( modelfname + '.bak')
+            shutil.move( modelfname, modelfname + '.bak')
+        except:
+            pass
+    model.model.save( modelfname, save_format='h5')
 
     # Convert convolutional layers for iOS CoreML
+    #model = IOModelConv( width=350, height=466, classify=False)
+    #model.model.load_weights( wfname, by_name=True)
+    #coreml_model = coremltools.converters.keras.convert( model.model)
+    classmodel = km.load_model( modelfname)
     model = IOModelConv( width=350, height=466, classify=False)
-    model.model.load_weights( wfname, by_name=True)
-    coreml_model = coremltools.converters.keras.convert( model.model)
+    model.model.set_weights( classmodel.get_weights())
+    convname = 'nn_io_conv_only.h5'
+    model.model.save( convname, save_format='h5')
 
+    coreml_model = coremltools.converters.tensorflow.convert( convname,
+                                                              #input_names=['image'],
+                                                              #image_input_names='image',
+                                                              #class_labels = ['b', 'e', 'w'],
+                                                              #predicted_feature_name='bew'
+                                                              #image_scale = 1/128.0,
+                                                              #red_bias = -1,
+                                                              #green_bias = -1,
+                                                              #blue_bias = -1
+    )
     coreml_model.author = 'ahn'
     coreml_model.license = 'MIT'
     coreml_model.short_description = 'Boardness feature'
     #coreml_model.input_description['image'] = 'A 23x23 pixel Image'
-    coreml_model.output_description['output1'] = 'A feature map for boardness'
+    #coreml_model.output_description['output1'] = 'A feature map for boardness'
     coreml_model.save("nn_io.mlmodel")
 
 if __name__ == '__main__':
