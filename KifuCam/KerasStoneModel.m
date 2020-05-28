@@ -36,9 +36,10 @@
 // Classify a crop with one intersection at the center
 //---------------------------------------------------------
 - (int) classify: (MLMultiArray *)image
+//- (int) classify: (UIImage *)image
 {
     if (!m_nninput) {
-        m_nninput = [[nn_bewInput alloc] initWithInput1:image];
+        m_nninput = [[nn_bewInput alloc] initWithImage:image];
     }
     NSError *err;
     nn_bewOutput *nnoutput = [_model predictionFromFeatures:m_nninput error:&err];

@@ -25,8 +25,8 @@
 		AC309B1523EF2EDD003AAAB1 /* AXPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */; };
 		AC3274412016836D009BEFD2 /* photo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC32743F2016836B009BEFD2 /* photo_icon.png */; };
 		AC3274422016836D009BEFD2 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC3274402016836C009BEFD2 /* video_icon.png */; };
+		AC37A0862480189B002A995C /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC37A0852480189B002A995C /* nn_bew.mlmodel */; };
 		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
-		AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */; };
 		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
 		AC5540771F9BE71900922557 /* CppInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC5540761F9BE71800922557 /* CppInterface.mm */; };
 		AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */; };
@@ -111,9 +111,9 @@
 		AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXPicker.swift; sourceTree = "<group>"; };
 		AC32743F2016836B009BEFD2 /* photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = photo_icon.png; path = Assets/photo_icon.png; sourceTree = SOURCE_ROOT; };
 		AC3274402016836C009BEFD2 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = video_icon.png; path = Assets/video_icon.png; sourceTree = SOURCE_ROOT; };
+		AC37A0852480189B002A995C /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasStoneModel.h; sourceTree = "<group>"; };
 		AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasStoneModel.m; sourceTree = "<group>"; };
-		AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ocv.cpp; sourceTree = "<group>"; };
 		AC3C5EBB1FBC942000BB8B4F /* Ocv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Ocv.hpp; sourceTree = "<group>"; };
 		AC5540751F9BE71800922557 /* CppInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppInterface.h; sourceTree = "<group>"; };
@@ -336,8 +336,8 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AC37A0852480189B002A995C /* nn_bew.mlmodel */,
 				ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */,
-				AC3A1BEB203A8B3900AC3E70 /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
 				AC785343202B6D0400E565F3 /* radio_on.png */,
 				ACA86B71202508E700939F1A /* Icon-120.png */,
@@ -465,6 +465,7 @@
 				"${BUILT_PRODUCTS_DIR}/AWSSQS/AWSSQS.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSSimpleDB/AWSSimpleDB.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -489,6 +490,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSSQS.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSSimpleDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -559,6 +561,7 @@
 				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
 				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
+				AC37A0862480189B002A995C /* nn_bew.mlmodel in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
 				AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */,
 				AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */,
@@ -576,7 +579,6 @@
 				AC628C181F9A7D3F0043FCEE /* main.m in Sources */,
 				AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */,
 				ACAB45742051A25E00958AC6 /* KerasBoardModel.m in Sources */,
-				AC3A1BEC203A8B3900AC3E70 /* nn_bew.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

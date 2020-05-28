@@ -808,6 +808,61 @@ extern cv::Mat mat_dbg;
     return res;
 } // MultiArrayFromCVMat()
 
+// For stone classifier on tensorflow 2.2
+//----------------------------------------------------------------------------------
+- (MLMultiArray *) MultiArrayFromCVMat_2:(cv::Mat)cvMat memId:(NSString *)memId
+{
+    // Get target memory
+    static NSMutableDictionary *memDict = [NSMutableDictionary new];
+    if (memDict[memId] == nil) {
+        int size = 3 * cvMat.rows * cvMat.cols * sizeof(double);
+        size *= 2; // paranoia
+        void *mem = malloc(size);
+        memDict[memId] = [NSValue valueWithPointer:mem];
+    }
+
+    // Split and normalize
+    cv::Mat channels[3];
+    cv::split( cvMat, channels);
+    channels[0].convertTo( channels[0], CV_64FC1);
+    channels[0] -= 128.0; channels[0] /= 128.0;
+    channels[1].convertTo( channels[1], CV_64FC1);
+    channels[1] -= 128.0; channels[1] /= 128.0;
+    channels[2].convertTo( channels[2], CV_64FC1);
+    channels[2] -= 128.0; channels[2] /= 128.0;
+    
+    // Make MLMultiArray
+    void *mem = [memDict[memId] pointerValue];
+    NSArray *shape = @[@(1),@(cvMat.rows), @(cvMat.cols), @(3)];
+    NSArray *strides = @[@(cvMat.cols*cvMat.rows*3), @(cvMat.cols*3), @(3), @(1)];
+    MLMultiArray *res = [[MLMultiArray alloc] initWithDataPointer:mem
+                                                            shape:shape
+                                                         dataType:MLMultiArrayDataTypeDouble
+                                                          strides:strides
+                                                      deallocator:^(void * _Nonnull bytes) {}
+                                                            error:nil];
+    
+    // Copy data over from cvMat
+    double *dmem = (double *)mem;
+    double *chan0 = channels[0].ptr<double>(0);
+    double *chan1 = channels[1].ptr<double>(0);
+    double *chan2 = channels[2].ptr<double>(0);
+//    ILOOP( cvMat.cols*cvMat.rows) {
+//        dmem[3*i] = chan0[i];
+//        dmem[3*i+1] = chan1[i];
+//        dmem[3*i+2] = chan2[i];
+//    }
+    RLOOP(cvMat.rows) {
+        CLOOP(cvMat.cols) {
+            double *p = dmem + r*cvMat.cols*3 + c*3;
+            *p++ = chan0[r*cvMat.cols + c];
+            *p++ = chan1[r*cvMat.cols + c];
+            *p++ = chan2[r*cvMat.cols + c];
+        } // cols
+    } // rows
+    return res;
+} // MultiArrayFromCVMat2()
+
 // Get one channel out of a MultiArray into a single channel float32 cv::Mat
 //----------------------------------------------------------------------------------------
 - (void) CVMatFromMultiArray:(MLMultiArray *)src channel:(int)channel dst:(cv::Mat &)dst
@@ -841,7 +896,8 @@ extern cv::Mat mat_dbg;
             0 <= rect.height &&
             rect.y + rect.height <= _small_zoomed.rows)
         {
-            MLMultiArray *nn_bew_input = [self MultiArrayFromCVMat:_small_zoomed( rect) memId:@"bew_input"];
+            MLMultiArray *nn_bew_input = [self MultiArrayFromCVMat_2:_small_zoomed( rect) memId:@"bew_input"];
+            //UIImage *nn_bew_input = MatToUIImage(_small_zoomed( rect) );
             clazz = [_stoneModel classify:nn_bew_input];
             diagram[i] = clazz;
         }

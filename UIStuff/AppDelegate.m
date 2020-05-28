@@ -59,7 +59,7 @@
     [self.topVC setupLeftOnly];
     self.menuVC  = (LeftMenuController *) self.topVC.leftViewController;
     self.rightVC = (RightViewController *) self.topVC.rightViewController;
-    //[self enableDebugMenu];
+    [self enableDebugMenu];
     
     // Other view controllers
     self.editTestCaseVC = [EditTestCaseVC new];
