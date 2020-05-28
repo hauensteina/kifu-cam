@@ -6,7 +6,8 @@
 # Creation Date: Mar 2, 2018
 # **********************************************************************/
 #
-# Run the model trained on small intersection crops on whole images
+# Run the model trained on small intersection crops on whole images.
+# The output has three channels, 'Blackness', 'Emptiness', 'Whiteness'.
 #
 
 from __future__ import division, print_function
@@ -73,31 +74,32 @@ class BEWModel:
         nb_colors=3
         inputs = kl.Input( shape = ( None, None, nb_colors), name = 'image')
 
-        x = kl.Conv2D( 2, (3,3), activation='relu', padding='same', name='one_a')(inputs)
-        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_a')(inputs)
+        x = kl.BatchNormalization(axis=-1)(x) # -1 for tf back end, 1 for theano
         x = kl.MaxPooling2D()(x)
-        x = kl.Conv2D( 4, (3,3), activation='relu', padding='same', name='one_b')(x)
-        x = kl.BatchNormalization()(x)
-        x = kl.MaxPooling2D()(x)
-
-        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_a')(x)
-        x = kl.BatchNormalization()(x)
-        x = kl.Conv2D( 4, (1,1), activation='relu', padding='same', name='two_b')(x)
-        x = kl.BatchNormalization()(x)
-        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='two_c')(x)
-        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 8, (3,3), activation='relu', padding='same', name='one_b')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
         x = kl.MaxPooling2D()(x)
 
-        x = kl.Conv2D( 16,(3,3), activation='relu', padding='same', name='three_a')(x)
-        x = kl.BatchNormalization()(x)
-        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='three_b')(x)
-        x = kl.BatchNormalization()(x)
-        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='three_c')(x)
-        x = kl.BatchNormalization()(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='two_a')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 8, (1,1), activation='relu', padding='same', name='two_b')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 16, (3,3), activation='relu', padding='same', name='two_c')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.MaxPooling2D()(x)
+
+        x = kl.Conv2D( 32,(3,3), activation='relu', padding='same', name='three_a1')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 16, (1,1), activation='relu', padding='same', name='three_b1')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
+        x = kl.Conv2D( 32, (3,3), activation='relu', padding='same', name='three_c1')(x)
+        x = kl.BatchNormalization(axis=-1)(x)
         x = kl.MaxPooling2D()(x)
 
         # Classification block
         lastconv = kl.Conv2D( 3, (1,1), padding='same', name='lastconv')(x)
+        # We don't want to classify. We want to viz the last layer.
         #x_class_pool = kl.GlobalAveragePooling2D()( x_class_conv)
         #output = kl.Activation( 'softmax', name='class')(x_class_pool)
 
@@ -115,8 +117,7 @@ def main():
     parser = argparse.ArgumentParser( usage=usage())
     parser.add_argument( "--image", required=True)
     args = parser.parse_args()
-    tt = cv2.imread( args.image, 1)
-    BP()
+    #tt = cv2.imread( args.image, 1)
     # arr[...,::-1] reverses the order of the innermost dimension, thus bgr to rgb.
     img = cv2.imread( args.image, 1)[...,::-1].astype(np.float32)
     img /= 255.0 # float images need values in [0,1]
@@ -124,8 +125,10 @@ def main():
     #exit(0)
     #img = cv2.imread( args.image, 1).astype(np.float32)
     model = BEWModel()
-    model.model.load_weights( 'nn_bew.weights', by_name=True)
-    ut.visualize_channels( model.model, 'lastconv', [0,1,2], img, 'viz.jpg')
+    classmodel = km.load_model( 'nn_bew.h5')
+    model.model.set_weights( classmodel.get_weights())
+    #model.model.load_weights( 'nn_bew.weights', by_name=True)
+    ut.visualize_channels( model.model, 'lastconv', [0,1,2], img, 'viz.png')
 
 if __name__ == '__main__':
     main()
