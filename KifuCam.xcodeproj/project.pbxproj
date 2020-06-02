@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5587A33D3780040F87ABFBF6 /* Pods_KifuCam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */; };
+		AC02301F2485E75F00893B32 /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC02301E2485E75F00893B32 /* nn_bew.mlmodel */; };
 		AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */; };
 		AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */; };
 		AC13BB29200BD38600369CAE /* LGSideMenuHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */; };
@@ -25,7 +26,6 @@
 		AC309B1523EF2EDD003AAAB1 /* AXPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */; };
 		AC3274412016836D009BEFD2 /* photo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC32743F2016836B009BEFD2 /* photo_icon.png */; };
 		AC3274422016836D009BEFD2 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC3274402016836C009BEFD2 /* video_icon.png */; };
-		AC37A0862480189B002A995C /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC37A0852480189B002A995C /* nn_bew.mlmodel */; };
 		AC37A08C24804E55002A995C /* nn_io.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC37A08B24804E55002A995C /* nn_io.mlmodel */; };
 		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
 		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
@@ -77,6 +77,7 @@
 /* Begin PBXFileReference section */
 		2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.debug.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.debug.xcconfig"; sourceTree = "<group>"; };
 		6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KifuCam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC02301E2485E75F00893B32 /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameExtractor.h; sourceTree = "<group>"; };
 		AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameExtractor.m; sourceTree = "<group>"; };
 		AC043D331F9BB9AB006CF7F0 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -111,7 +112,6 @@
 		AC309B1423EF2EDD003AAAB1 /* AXPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXPicker.swift; sourceTree = "<group>"; };
 		AC32743F2016836B009BEFD2 /* photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = photo_icon.png; path = Assets/photo_icon.png; sourceTree = SOURCE_ROOT; };
 		AC3274402016836C009BEFD2 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = video_icon.png; path = Assets/video_icon.png; sourceTree = SOURCE_ROOT; };
-		AC37A0852480189B002A995C /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC37A08B24804E55002A995C /* nn_io.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_io.mlmodel; sourceTree = "<group>"; };
 		AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasStoneModel.h; sourceTree = "<group>"; };
 		AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasStoneModel.m; sourceTree = "<group>"; };
@@ -336,8 +336,8 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AC02301E2485E75F00893B32 /* nn_bew.mlmodel */,
 				AC37A08B24804E55002A995C /* nn_io.mlmodel */,
-				AC37A0852480189B002A995C /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
 				AC785343202B6D0400E565F3 /* radio_on.png */,
 				ACA86B71202508E700939F1A /* Icon-120.png */,
@@ -561,7 +561,7 @@
 				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
 				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
-				AC37A0862480189B002A995C /* nn_bew.mlmodel in Sources */,
+				AC02301F2485E75F00893B32 /* nn_bew.mlmodel in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
 				AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */,
 				AC37A08C24804E55002A995C /* nn_io.mlmodel in Sources */,
