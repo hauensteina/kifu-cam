@@ -9,10 +9,13 @@
 # Convert an hd5 model to coreml mlmodel usable in xcode
 #
 
-from __future__ import division, print_function
+import os
+# Disable GPU. We don't need it.
+os.environ['CUDA_VISIBLE_DEVICES']='-1'
+
 from pdb import set_trace as BP
 import inspect
-import os,sys,re,json, shutil
+import sys,re,json, shutil
 import numpy as np
 from numpy.random import random
 import argparse
@@ -34,10 +37,10 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 # Limit GPU memory usage to 5GB
-gpus = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_virtual_device_configuration(
-    gpus[0],
-    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=5*1024)])
+#gpus = tf.config.experimental.list_physical_devices('GPU')
+#tf.config.experimental.set_virtual_device_configuration(
+#    gpus[0],
+#    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=5*1024)])
 
 args = None
 
@@ -71,9 +74,10 @@ def main():
     args = parser.parse_args()
 
     model = km.load_model( args.file)
+    model.save( 'tt.h5', save_format='h5')
 
-        # Convert for iOS CoreML
-    coreml_model = coremltools.converters.tensorflow.convert( args.file,
+    # Convert for iOS CoreML
+    coreml_model = coremltools.converters.tensorflow.convert( 'tt.h5',
                                                               #input_names=['image'],
                                                               #image_input_names='image',
                                                               class_labels = ['b', 'e', 'w'],
@@ -83,24 +87,13 @@ def main():
                                                               #green_bias = -1,
                                                               #blue_bias = -1
     )
-    # Convert for iOS CoreML
-    coreml_model = coremltools.converters.keras.convert( model,
-                                                         #input_names=['image'],
-                                                         #image_input_names='image',
-                                                         class_labels = ['b', 'e', 'w'],
-                                                         predicted_feature_name='bew'
-                                                         #image_scale = 1/128.0,
-                                                         #red_bias = -1,
-                                                         #green_bias = -1,
-                                                         #blue_bias = -1
-    )
 
     coreml_model.author = 'ahn'
     coreml_model.license = 'MIT'
     coreml_model.short_description = 'Classify go stones and intersections'
     #coreml_model.input_description['image'] = 'A 23x23 pixel Image'
-    coreml_model.output_description['output1'] = 'A one-hot vector for classes black empty white'
-    coreml_model.save('nn_bew.mlmodel')
+    #coreml_model.output_description['output1'] = 'A one-hot vector for classes black empty white'
+    coreml_model.save("nn_bew.mlmodel")
 
     print( 'Output is in nn_bew.mlmodel')
 
