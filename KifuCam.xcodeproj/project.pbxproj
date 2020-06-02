@@ -26,6 +26,7 @@
 		AC3274412016836D009BEFD2 /* photo_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC32743F2016836B009BEFD2 /* photo_icon.png */; };
 		AC3274422016836D009BEFD2 /* video_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = AC3274402016836C009BEFD2 /* video_icon.png */; };
 		AC37A0862480189B002A995C /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC37A0852480189B002A995C /* nn_bew.mlmodel */; };
+		AC37A08C24804E55002A995C /* nn_io.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC37A08B24804E55002A995C /* nn_io.mlmodel */; };
 		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
 		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
 		AC5540771F9BE71900922557 /* CppInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC5540761F9BE71800922557 /* CppInterface.mm */; };
@@ -52,7 +53,6 @@
 		ACA86B73202508E800939F1A /* Icon-152.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B70202508E700939F1A /* Icon-152.png */; };
 		ACA86B74202508E800939F1A /* Icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B71202508E700939F1A /* Icon-120.png */; };
 		ACA86B75202508E800939F1A /* Icon-167.png in Resources */ = {isa = PBXBuildFile; fileRef = ACA86B72202508E700939F1A /* Icon-167.png */; };
-		ACAB4571204F0E7E00958AC6 /* nn_io.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */; };
 		ACAB45742051A25E00958AC6 /* KerasBoardModel.m in Sources */ = {isa = PBXBuildFile; fileRef = ACAB45732051A25D00958AC6 /* KerasBoardModel.m */; };
 		ACAFE424201FD1AB00E26773 /* kifu-cam.png in Resources */ = {isa = PBXBuildFile; fileRef = ACAFE416201FD1AB00E26773 /* kifu-cam.png */; };
 		ACB76EEB2360FEFC00B0445B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ACB76EEA2360FEFB00B0445B /* GoogleService-Info.plist */; };
@@ -112,6 +112,7 @@
 		AC32743F2016836B009BEFD2 /* photo_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = photo_icon.png; path = Assets/photo_icon.png; sourceTree = SOURCE_ROOT; };
 		AC3274402016836C009BEFD2 /* video_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = video_icon.png; path = Assets/video_icon.png; sourceTree = SOURCE_ROOT; };
 		AC37A0852480189B002A995C /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
+		AC37A08B24804E55002A995C /* nn_io.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_io.mlmodel; sourceTree = "<group>"; };
 		AC3A1886203B8FE000A413A8 /* KerasStoneModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KerasStoneModel.h; sourceTree = "<group>"; };
 		AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasStoneModel.m; sourceTree = "<group>"; };
 		AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ocv.cpp; sourceTree = "<group>"; };
@@ -154,7 +155,6 @@
 		ACA86B70202508E700939F1A /* Icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-152.png"; sourceTree = "<group>"; };
 		ACA86B71202508E700939F1A /* Icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-120.png"; sourceTree = "<group>"; };
 		ACA86B72202508E700939F1A /* Icon-167.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-167.png"; sourceTree = "<group>"; };
-		ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_io.mlmodel; sourceTree = "<group>"; };
 		ACAB45722051A25D00958AC6 /* KerasBoardModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KerasBoardModel.h; sourceTree = "<group>"; };
 		ACAB45732051A25D00958AC6 /* KerasBoardModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KerasBoardModel.m; sourceTree = "<group>"; };
 		ACAB4579205AC76F00958AC6 /* Perspective.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Perspective.hpp; sourceTree = "<group>"; };
@@ -336,8 +336,8 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AC37A08B24804E55002A995C /* nn_io.mlmodel */,
 				AC37A0852480189B002A995C /* nn_bew.mlmodel */,
-				ACAB4570204F0E7E00958AC6 /* nn_io.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
 				AC785343202B6D0400E565F3 /* radio_on.png */,
 				ACA86B71202508E700939F1A /* Icon-120.png */,
@@ -564,6 +564,7 @@
 				AC37A0862480189B002A995C /* nn_bew.mlmodel in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
 				AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */,
+				AC37A08C24804E55002A995C /* nn_io.mlmodel in Sources */,
 				AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */,
 				AC628C341F9A80150043FCEE /* MainVC.m in Sources */,
 				AC13BB3E200BD6C600369CAE /* RightViewController.m in Sources */,
@@ -575,7 +576,6 @@
 				ACC913162017F4F400B62682 /* ImagesVC.m in Sources */,
 				AC13BB3C200BD6C600369CAE /* NavigationController.m in Sources */,
 				AC13BB3F200BD6C600369CAE /* RightViewCell.m in Sources */,
-				ACAB4571204F0E7E00958AC6 /* nn_io.mlmodel in Sources */,
 				AC628C181F9A7D3F0043FCEE /* main.m in Sources */,
 				AC13BB2A200BD38600369CAE /* UIViewController+LGSideMenuController.m in Sources */,
 				ACAB45742051A25E00958AC6 /* KerasBoardModel.m in Sources */,
@@ -710,7 +710,7 @@
 				);
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.7;
+				MARKETING_VERSION = 3.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";
@@ -735,7 +735,7 @@
 				);
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.7;
+				MARKETING_VERSION = 3.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";

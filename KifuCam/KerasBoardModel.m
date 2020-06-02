@@ -37,11 +37,12 @@
 //-------------------------------------------------------------------------------
 - (MLMultiArray *) featureMap:(MLMultiArray *)img
 {
-    nn_ioInput *nn_input = [[nn_ioInput alloc] initWithInput1:img];
+    nn_ioInput *nn_input = [[nn_ioInput alloc] initWithImage:img];
     NSError *err;
     nn_ioOutput *nnoutput = [_model predictionFromFeatures:nn_input error:&err];
-    MLMultiArray *res = nnoutput.output1;
+    MLMultiArray *res = nnoutput.Identity;
     return res;
+    //return [MLMultiArray new];
 } // featureMap()
 
 @end
