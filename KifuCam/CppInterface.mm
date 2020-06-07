@@ -129,7 +129,7 @@ extern cv::Mat mat_dbg;
 {
     cv::Mat m;
     UIImageToMat( img, m);
-    resize( m, m, IMG_WIDTH);
+    //resize( m, m, IMG_WIDTH);
     cv::cvtColor( m, m, cv::COLOR_RGBA2RGB);
     if (![self recognize_position:m breakIfBad:NO]) {
         return -1;
