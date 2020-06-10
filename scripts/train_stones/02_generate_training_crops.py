@@ -198,13 +198,31 @@ def save_intersections( img, intersections, r, basename, folder):
     dy = int(r / 2)
     for i,isec in enumerate( intersections):
         color = isec['val'][0]
+        row = i // 19
+        col = i % 19
+        vert_edge = ( col == 0 or col == 18 )
+        horiz_edge = ( row == 0 or row == 18 )
+        edge = ( vert_edge or horiz_edge )
+        corner = ( vert_edge and horiz_edge )
+        stone = ( color in ['B','W'] )
+
+        # Somewhat stratify class frequency
+        freq = 1
+        if corner:
+            freq = 20
+        elif edge:
+            freq = 4
+        elif stone:
+            freq = 2
+
         x = isec['x']
         y = isec['y']
         hood = img[y-dy:y+dy+1, x-dx:x+dx+1]
-        # fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i)
-        fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i)
-        if color in ['B','W','E'] and not 'off_screen' in isec:
-            cv2.imwrite( fname, hood)
+        # fname = "%s/%s_rgb_%s_hood_%03d.jpg" % (folder, color, basename, i, k)
+        for k in range(freq):
+            fname = "%s/%s_rgb_%s_hood_%03d_%02d.jpg" % (folder, color, basename, i, k)
+            if color in ['B','W','E'] and not 'off_screen' in isec:
+                cv2.imwrite( fname, hood)
 
 # e.g for board size, call get_sgf_tag( sgf, "SZ")
 #---------------------------------------------------

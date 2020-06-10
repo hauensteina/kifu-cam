@@ -154,20 +154,28 @@ class Generator:
         self.batch_size = batch_size
         self.datadir = data_directory #  + '/all_files'
         # Data Augmentation
-        self.gen = kp.ImageDataGenerator( rotation_range=5,
-                                          width_shift_range=0.2,
-                                          height_shift_range=0.2,
-                                          horizontal_flip=True,
-                                          vertical_flip=True,
-                                          channel_shift_range=0.1)
-                                          #channel_shift_range=0.2)
+        if batch_size > 1: # training
+            self.gen = kp.ImageDataGenerator( rotation_range=5,
+                                              width_shift_range=0.2,
+                                              height_shift_range=0.2,
+                                              horizontal_flip=True,
+                                              vertical_flip=True,
+                                              channel_shift_range=0.1) # 0.2
+        else: # batch_size 1 => validation
+            self.gen = kp.ImageDataGenerator( rotation_range=0,
+                                              width_shift_range=0,
+                                              height_shift_range=0,
+                                              horizontal_flip=False,
+                                              vertical_flip=False,
+                                              channel_shift_range=0)
+
         self.get_one_batch_iter = self.gen.flow_from_directory( self.datadir,
-                                                           target_size = (args.resolution, args.resolution),
-                                                           class_mode  = None,
-                                                           shuffle     = shuffle,
-                                                           batch_size  = self.batch_size,
-                                                           color_mode  = 'rgb',
-                                                           save_to_dir = None)
+                                                                target_size = (args.resolution, args.resolution),
+                                                                class_mode  = None,
+                                                                shuffle     = shuffle,
+                                                                batch_size  = self.batch_size,
+                                                                color_mode  = 'rgb',
+                                                                save_to_dir = None)
         self.class_vectors = { 'B':np.array([1,0,0]), 'E':np.array([0,1,0]), 'W':np.array([0,0,1]) }
 
 
