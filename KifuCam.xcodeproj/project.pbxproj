@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5587A33D3780040F87ABFBF6 /* Pods_KifuCam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */; };
-		AC0230212487423400893B32 /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC0230202487423400893B32 /* nn_bew.mlmodel */; };
 		AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */; };
 		AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */; };
 		AC13BB29200BD38600369CAE /* LGSideMenuHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */; };
@@ -29,6 +28,7 @@
 		AC37A08C24804E55002A995C /* nn_io.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC37A08B24804E55002A995C /* nn_io.mlmodel */; };
 		AC3A1888203B8FE000A413A8 /* KerasStoneModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */; };
 		AC3C5EBC1FBC942000BB8B4F /* Ocv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */; };
+		AC3F62D02492C295009CEA6B /* nn_bew.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AC3F62CF2492C294009CEA6B /* nn_bew.mlmodel */; };
 		AC5540771F9BE71900922557 /* CppInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC5540761F9BE71800922557 /* CppInterface.mm */; };
 		AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F339F200FD370002FEF06 /* EditTestCaseVC.m */; };
 		AC5F33A720128576002FEF06 /* TestResultsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AC5F33A620128576002FEF06 /* TestResultsVC.m */; };
@@ -77,7 +77,6 @@
 /* Begin PBXFileReference section */
 		2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.debug.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.debug.xcconfig"; sourceTree = "<group>"; };
 		6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KifuCam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AC0230202487423400893B32 /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameExtractor.h; sourceTree = "<group>"; };
 		AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameExtractor.m; sourceTree = "<group>"; };
 		AC043D331F9BB9AB006CF7F0 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -117,6 +116,7 @@
 		AC3A1887203B8FE000A413A8 /* KerasStoneModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KerasStoneModel.m; sourceTree = "<group>"; };
 		AC3C5EBA1FBC942000BB8B4F /* Ocv.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ocv.cpp; sourceTree = "<group>"; };
 		AC3C5EBB1FBC942000BB8B4F /* Ocv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Ocv.hpp; sourceTree = "<group>"; };
+		AC3F62CF2492C294009CEA6B /* nn_bew.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = nn_bew.mlmodel; sourceTree = "<group>"; };
 		AC5540751F9BE71800922557 /* CppInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CppInterface.h; sourceTree = "<group>"; };
 		AC5540761F9BE71800922557 /* CppInterface.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CppInterface.mm; sourceTree = "<group>"; };
 		AC5F339E200FD370002FEF06 /* EditTestCaseVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditTestCaseVC.h; sourceTree = "<group>"; };
@@ -336,8 +336,8 @@
 		ACD9EB161FAD0B160049BBDE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				AC3F62CF2492C294009CEA6B /* nn_bew.mlmodel */,
 				AC37A08B24804E55002A995C /* nn_io.mlmodel */,
-				AC0230202487423400893B32 /* nn_bew.mlmodel */,
 				AC785344202B6D0400E565F3 /* radio_off.png */,
 				AC785343202B6D0400E565F3 /* radio_on.png */,
 				ACA86B71202508E700939F1A /* Icon-120.png */,
@@ -561,7 +561,7 @@
 				AC9702181FBC87DF0057C4C2 /* Globals.mm in Sources */,
 				AC13BB2E200BD38700369CAE /* LGSideMenuSegue.m in Sources */,
 				AC8ACF8C1FBF5553005D5722 /* BlobFinder.cpp in Sources */,
-				AC0230212487423400893B32 /* nn_bew.mlmodel in Sources */,
+				AC3F62D02492C295009CEA6B /* nn_bew.mlmodel in Sources */,
 				AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */,
 				AC5F33A0200FD370002FEF06 /* EditTestCaseVC.m in Sources */,
 				AC37A08C24804E55002A995C /* nn_io.mlmodel in Sources */,
@@ -710,7 +710,7 @@
 				);
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.9;
+				MARKETING_VERSION = 4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";
@@ -735,7 +735,7 @@
 				);
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.9;
+				MARKETING_VERSION = 4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";

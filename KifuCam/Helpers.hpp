@@ -743,6 +743,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         if (i > BOARD_SZ) break;
         synth_lines.push_back( line);
     } // ILOOP
+    
     // Lines above
     left_rho = y_from_x( left_x, med_line);
     right_rho = y_from_x( right_x, med_line);
@@ -762,6 +763,7 @@ inline void fix_horizontal_lines( std::vector<cv::Vec2f> &lines, const std::vect
         if (i > BOARD_SZ) break;
         synth_lines.push_back( line);
     } // ILOOP
+     
     std::sort( synth_lines.begin(), synth_lines.end(),
               [right_x](cv::Vec2f a, cv::Vec2f b) {
                   return y_from_x( right_x, a) < y_from_x( right_x, b);

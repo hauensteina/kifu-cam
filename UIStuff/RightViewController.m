@@ -207,6 +207,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
             fullfname = changeExtension( fullfname, @".sgf");
             NSString *sgf = [NSString stringWithContentsOfFile:fullfname encoding:NSUTF8StringEncoding error:NULL];
             // Classify
+            NSLog( @"%@", fname);
             int nerrs = [g_app.mainVC.cppInterface runTestImg:img withSgf: sgf];
             if (overwrite) {
                 if ([getProp( @"opt_overwrite_sgf", @"off") isEqualToString:@"on"]) {

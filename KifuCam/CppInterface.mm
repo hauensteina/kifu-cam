@@ -426,7 +426,7 @@ extern cv::Mat mat_dbg;
 //        }
         case 2:
         {
-            const double y_thresh = CROPSIZE / 4.0; // 3.5; // 3.0; // 2.0; //4.0;
+            const double y_thresh = CROPSIZE / 2.5; // 4.0; // 3.5; // 3.0; // 2.0; //4.0;
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
