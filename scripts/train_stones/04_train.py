@@ -160,7 +160,7 @@ class Generator:
                                               height_shift_range=0.2,
                                               horizontal_flip=True,
                                               vertical_flip=True,
-                                              channel_shift_range=0.1) # 0.2
+                                              channel_shift_range=0.1)
         else: # batch_size 1 => validation
             self.gen = kp.ImageDataGenerator( rotation_range=0,
                                               width_shift_range=0,
