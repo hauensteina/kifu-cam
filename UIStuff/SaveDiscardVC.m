@@ -220,17 +220,12 @@
 // Score position and display result.
 //--------------------------------------
 - (void) displayResult:(int)turn {
+    // Set self.terrmap from remote bot
     [self askRemoteBotTerr:turn
                       komi:[_tfKomi.text doubleValue]
                   handicap:[_tfHandi.text intValue]
                 completion:^{
-        double *terrmap = cterrmap( self.terrmap);
-        _scoreImg = [CppInterface nextmove2img:_sgf
-                                         coord:self.botmove
-                                         color:turn
-                                       terrmap:terrmap
-                     ];
-        [_sgfView setImage:_scoreImg];
+        // Get next move and score from remote bot
         [self askRemoteBotMove:turn
                           komi:[_tfKomi.text doubleValue]
                       handicap:[_tfHandi.text intValue]
@@ -242,6 +237,13 @@
                 tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
             }
             _lbInfo.text = tstr;
+            double *terrmap = cterrmap( self.terrmap);
+            _scoreImg = [CppInterface nextmove2img:_sgf
+                                             coord:self.botmove
+                                             color:turn
+                                           terrmap:terrmap
+                         ];
+            [_sgfView setImage:_scoreImg];
         }]; // askRemoteBotMove
     }]; // askRemoteBotTerr
 } // displayResult()
