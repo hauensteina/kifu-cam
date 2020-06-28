@@ -235,14 +235,14 @@ inline cv::Point rc2p (int innerwidth, int marg, int row, int col)
     return res;
 } // rc2p()
 
-// Draw gray sgf on a square single channel Mat
+// Draw gray sgf on a square single channel Mat @@@
 //----------------------------------------------------------------------
 inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
 {
     std::string sgf = std::regex_replace( sgf_, std::regex("\\s+"), "" ); // no whitespace
     int height = width;
-    dst = cv::Mat( height, width, CV_8UC1);
-    dst = 180; // gray background
+    dst = cv::Mat( height, width, CV_8UC3);
+    dst = cv::Scalar::all(180); // gray background
     std::vector<int> diagram( BOARD_SZ*BOARD_SZ,EEMPTY);
     int marg = width * 0.05;
     int innerwidth = width - 2*marg;
@@ -294,19 +294,18 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
         int c = i % BOARD_SZ;
         cv::Point p = rc2p( innerwidth, marg, r, c);
         if (diagram[i] == WWHITE) {
-            cv::circle( dst, p, rad, 255, -1, cv::LINE_AA);
-            cv::circle( dst, p, rad, 0, 1, cv::LINE_AA);
+            cv::circle( dst, p, rad, cv::Scalar::all(255), -1, cv::LINE_AA);
+            cv::circle( dst, p, rad, cv::Scalar::all(0), 1, cv::LINE_AA);
         }
         else if (diagram[i] == BBLACK) {
-            cv::circle( dst, p, rad, 0, -1, cv::LINE_AA);
+            cv::circle( dst, p, rad, cv::Scalar::all(0), -1, cv::LINE_AA);
         }
     } // ISLOOP
 } // draw_sgf()
 
 // Draw next move on the board
-//-------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 inline void draw_next_move( const std::string &coord, int color, cv::Mat &dst) {
-    //draw_sgf( sgf, dst, width);
     auto width = dst.cols;
     if (coord.length() > 3) { return; }
     std::string colchars = "ABCDEFGHJKLMNOPQRST";
@@ -329,6 +328,33 @@ inline void draw_next_move( const std::string &coord, int color, cv::Mat &dst) {
     }
 } // draw_next_move()
 
+// Draw letter on intersection
+//-------------------------------------------------------------------------------------
+inline void mark_next_move( const std::string &coord, char letter, cv::Mat &dst) {
+    std::string txt( 1, letter);
+    auto width = dst.cols;
+    if (coord.length() > 3) { return; }
+    std::string colchars = "ABCDEFGHJKLMNOPQRST";
+    int row = BOARD_SZ - atoi( coord.c_str() + 1);
+    auto col = (int)colchars.find( coord.c_str()[0]);
+    int marg = width * 0.05;
+    int innerwidth = width - 2*marg;
+    auto p = rc2p( innerwidth, marg, row, col);
+    
+    int fontFace = cv::FONT_HERSHEY_DUPLEX;
+    double fontScale = 0.8;
+    int thickness = 1;
+    int baseline=0;
+    auto textSize = cv::getTextSize( txt, fontFace,
+                                fontScale, thickness, &baseline);
+    p.x -= textSize.width / 2;
+    p.y += textSize.height / 2;
+
+    cv::putText( dst, txt, p, fontFace, fontScale,
+                cv::Scalar( 255,0,0), thickness);
+} // mark_next_move()
+
+
 // Draw score map on position image
 //------------------------------------------------------
 inline void draw_score( cv::Mat &img, double *terrmap)
@@ -344,10 +370,10 @@ inline void draw_score( cv::Mat &img, double *terrmap)
         int c = i % BOARD_SZ;
         cv::Point p = rc2p( innerwidth, marg, r,c);
         if (prob < 0) { // white
-            draw_alpha_square( p, rad, img, 255, fabs(prob));
+            draw_alpha_square( p, rad, img, cv::Scalar(255,255,255), fabs(prob));
         } // for
         else { // black
-            draw_alpha_square( p, rad, img, 0, fabs(prob));
+            draw_alpha_square( p, rad, img, cv::Scalar(0,0,0), fabs(prob));
         } // for
     } // ILOOP
 } // draw_score()

@@ -1002,14 +1002,24 @@ extern cv::Mat mat_dbg;
 } // sgf2img()
 
 // Convert sgf + next move to UIImage
-//------------------------------------------------------------------------------------------------------------
-+ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(double *)terrmap
+//-----------------------------------------------------------------------------------------
++ (UIImage *) nextmove2img:(NSString *)sgf coords:(NSArray *)coords color:(int)color
+                   terrmap:(double *)terrmap
 {
     if (!sgf) sgf = @"";
     cv::Mat m;
     draw_sgf( [sgf UTF8String], m,  1.5 * IMG_WIDTH);
     if (terrmap) { draw_score( m, terrmap); }
-    draw_next_move( [coord UTF8String], color, m);
+    double mmax = [coords[0][@"psv"] doubleValue];
+    char letter = 'A';
+    for ( NSDictionary *coord in coords) {
+        double psv = [coord[@"psv"] doubleValue];
+        if (psv < mmax * 0.25) {
+            break;
+        }
+        mark_next_move( [coord[@"move"] UTF8String], letter, m);
+        letter += 1;
+    }
     UIImage *res = MatToUIImage( m);
     return res;
 } // nextmove2img()

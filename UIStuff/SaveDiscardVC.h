@@ -46,5 +46,6 @@ typedef void (^SDCompletionHandler)(void);
 @property NSMutableArray *terrmap;
 @property NSString *botmove;
 @property double winprob;
+@property NSDictionary *best_ten_moves;
 
 @end

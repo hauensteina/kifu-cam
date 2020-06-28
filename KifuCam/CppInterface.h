@@ -83,7 +83,7 @@ typedef void (^CICompletionHandler)(UIImage *img);
 // Make a diagram from sgf
 + (UIImage *) sgf2img:(NSString *)sgf;
 // Make a diagram with the next move
-+ (UIImage *) nextmove2img:(NSString *)sgf coord:(NSString *)coord color:(int)color terrmap:(double *)terrmap;
++ (UIImage *) nextmove2img:(NSString *)sgf coords:(NSArray *)coords color:(int)color terrmap:(double *)terrmap;
 // Draw scoring map on sgf img
 + (UIImage *) scoreimg:(NSString *)sgf terrmap:(double *)terrmap;
 // Extract an sgf tag

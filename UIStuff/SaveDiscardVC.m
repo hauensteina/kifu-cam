@@ -239,7 +239,7 @@
             _lbInfo.text = tstr;
             double *terrmap = cterrmap( self.terrmap);
             _scoreImg = [CppInterface nextmove2img:_sgf
-                                             coord:self.botmove
+                                            coords:self.best_ten_moves
                                              color:turn
                                            terrmap:terrmap
                          ];
@@ -262,7 +262,7 @@
         _lbInfo.text = @"Katago timed out";
     }];
     
-    NSString *urlstr = @"https://ahaux.com/katago_server/score/katago_gtp_bot";
+    NSString *urlstr = @"http://www.ahaux.com/katago_server_x/score/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
     NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
@@ -334,7 +334,7 @@
         _lbInfo.text = @"Katago timed out";
     }];
     
-    NSString *urlstr = @"https://ahaux.com/katago_server/select-move/katago_gtp_bot";
+    NSString *urlstr = @"http://www.ahaux.com/katago_server_x/select-move/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
     NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
@@ -373,6 +373,7 @@
                                                                  options:kNilOptions
                                                                    error:nil];
             self.botmove = json[@"diagnostics"][@"bot_move"];
+            self.best_ten_moves = json[@"diagnostics"][@"best_ten"];
             self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
             self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
             self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];

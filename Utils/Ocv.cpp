@@ -1094,7 +1094,7 @@ void draw_alpha_square( cv::Point p, int r, cv::Mat &dst, cv::Scalar col, double
                   2*r + 1,
                   2*r + 1);
     cv::Mat roi = dst( rect);
-    cv::Mat color( roi.size(), CV_8UC1, col);
+    cv::Mat color( roi.size(), CV_8UC3, col);
     cv::addWeighted( color, alpha, roi, 1.0 - alpha , 0.0, roi);
 } // draw_alpha_square()
 
