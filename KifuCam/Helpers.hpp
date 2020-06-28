@@ -351,7 +351,7 @@ inline void mark_next_move( const std::string &coord, char letter, cv::Mat &dst)
     p.y += textSize.height / 2;
 
     cv::putText( dst, txt, p, fontFace, fontScale,
-                cv::Scalar( 255,0,0), thickness);
+                cv::Scalar( 0,0,255), thickness, cv::LINE_AA);
 } // mark_next_move()
 
 
