@@ -37,6 +37,10 @@ typedef void (^SDCompletionHandler)(void);
                      komi:(double)komi
                  handicap:(int)handicap
                completion:(SDCompletionHandler)completion;
+- (void) askRemoteBotMove:(int)turn
+                     komi:(double)komi
+                 handicap:(int)handicap
+               completion:(SDCompletionHandler)completion;
 
 // Set this before pushing VC
 @property NSString *sgf;
@@ -46,6 +50,6 @@ typedef void (^SDCompletionHandler)(void);
 @property NSMutableArray *terrmap;
 @property NSString *botmove;
 @property double winprob;
-@property NSDictionary *best_ten_moves;
+@property NSArray *best_ten_moves;
 
 @end

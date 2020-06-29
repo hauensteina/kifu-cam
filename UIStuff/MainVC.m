@@ -71,7 +71,6 @@
     self.frameExtractor = [FrameExtractor new];
     self.cppInterface = [CppInterface new];
     self.frameExtractor.delegate = self;
-    //self.frame_grabber_on = YES;
     self.debugstate = 0;
 }
 
@@ -317,7 +316,6 @@
 - (void)captured:(UIImage *)image
 {
     if ([g_app.menuVC debugMode]) {
-        //self.frame_grabber_on = NO;
         [self.frameExtractor suspend];
         return;
     } // debugMode

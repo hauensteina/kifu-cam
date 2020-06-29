@@ -126,8 +126,8 @@
 - (void) suspend
 {
     if (_suspended) return;
-    _suspended = true;
     dispatch_suspend( self.bufferQ);
+    _suspended = true;
 }
 
 // Resume capturing frames

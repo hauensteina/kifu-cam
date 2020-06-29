@@ -35,6 +35,9 @@
 #include <iostream>
 #include <vector>
 #include <regex>
+#include <numeric>
+#include <algorithm>
+#include <random>
 
 #include "Common.hpp"
 #include "Clust1D.hpp"
@@ -114,8 +117,16 @@ inline std::string generate_sgf( const std::string &title,
              ,title.c_str(), BOARD_SZ, local_date_stamp().c_str(), komi,
              coords.c_str(), phistr.c_str(), thetastr.c_str());
 
+    // Randomize diagram order
+    std::vector<int> order( SZ(diagram)) ;
+    std::iota (std::begin(order), std::end(order), 0); // Fill with 0, 1, ...
+    std::random_device rd;
+    std::mt19937 g( rd());
+    std::shuffle( order.begin(), order.end(), g);
+    
     std::string moves="";
-    ISLOOP (diagram) {
+    KSLOOP (order) {
+        int i = order[k];
         int row = i / BOARD_SZ;
         int col = i % BOARD_SZ;
         char ccol = 'a' + col;
@@ -125,7 +136,7 @@ inline std::string generate_sgf( const std::string &title,
         else if (diagram[i] == BBLACK) { tag = "AB"; }
         else continue;
         moves += tag + "[" + ccol + crow + "]";
-    }
+    } // KSLOOP
     return buf + moves + ")\n";
 } // generate_sgf()
 
@@ -353,7 +364,7 @@ inline void mark_next_move( const std::string &coord, char letter, cv::Mat &dst)
     p.x -= textSize.width / 2;
     p.y += textSize.height / 2;
     cv::putText( dst, txt, p, fontFace, fontScale,
-                cv::Scalar( 0xd0,0,0), thickness, cv::LINE_AA);
+                cv::Scalar( 0xe0,0,0), thickness, cv::LINE_AA);
 } // mark_next_move()
 
 // Draw score map on position image

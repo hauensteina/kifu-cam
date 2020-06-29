@@ -624,19 +624,29 @@ extern cv::Mat mat_dbg;
                                      komi:7.5
                                  handicap:0
                                completion:^{
-        NSString *tstr = nsprintf( @"P(B wins)=%.2f", g_app.saveDiscardVC.winprob);
-        double score = g_app.saveDiscardVC.score;
-         if (score > 0) {
-             tstr = nsprintf( @" %@ B+%.1f", tstr, fabs( score));
-         } else {
-             tstr = nsprintf( @" %@ W+%.1f", tstr, fabs( score));
-         }
-        g_app.mainVC.lbBottom.text = tstr;
-        double *terrmap = cterrmap( g_app.saveDiscardVC.terrmap);
-        NSString *sgf = [self get_sgf];
-        UIImage *scoreImg = [CppInterface scoreimg:sgf terrmap:terrmap];
-        completion( scoreImg);
-    }];
+        // Get next move and score from remote bot
+        [g_app.saveDiscardVC askRemoteBotMove:turn
+                          komi:7.5
+                      handicap:0
+                    completion:^{
+            NSString *tstr = nsprintf( @"P(B wins)=%.2f", g_app.saveDiscardVC.winprob);
+            double score = g_app.saveDiscardVC.score;
+             if (score > 0) {
+                 tstr = nsprintf( @" %@ B+%.1f", tstr, fabs( score));
+             } else {
+                 tstr = nsprintf( @" %@ W+%.1f", tstr, fabs( score));
+             }
+            g_app.mainVC.lbBottom.text = tstr;
+            double *terrmap = cterrmap( g_app.saveDiscardVC.terrmap);
+            NSString *sgf = [self get_sgf];
+            UIImage *scoreImg = [CppInterface nextmove2img:sgf
+                                            coords:g_app.saveDiscardVC.best_ten_moves
+                                             color:turn
+                                           terrmap:terrmap
+                         ];
+            completion( scoreImg);
+        }]; // askRemoteBotMove
+    }]; // askRemoteBotTerr
 } // f09_score_dbg()
 
 //=== Production Flow ===
