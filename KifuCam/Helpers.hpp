@@ -242,7 +242,7 @@ inline void draw_sgf( const std::string &sgf_, cv::Mat &dst, int width)
     std::string sgf = std::regex_replace( sgf_, std::regex("\\s+"), "" ); // no whitespace
     int height = width;
     dst = cv::Mat( height, width, CV_8UC3);
-    dst = cv::Scalar::all(180); // gray background
+    dst = cv::Scalar::all(BOARD_GRAY);
     std::vector<int> diagram( BOARD_SZ*BOARD_SZ,EEMPTY);
     int marg = width * 0.05;
     int innerwidth = width - 2*marg;
@@ -347,13 +347,14 @@ inline void mark_next_move( const std::string &coord, char letter, cv::Mat &dst)
     int baseline=0;
     auto textSize = cv::getTextSize( txt, fontFace,
                                 fontScale, thickness, &baseline);
+    int rad = ROUND( 0.5 * innerwidth / (BOARD_SZ-1.0)) - 1;
+    double alpha = 1.0;
+    draw_alpha_square( p, rad, dst, cv::Scalar::all(BOARD_GRAY), alpha);
     p.x -= textSize.width / 2;
     p.y += textSize.height / 2;
-
     cv::putText( dst, txt, p, fontFace, fontScale,
-                cv::Scalar( 0,0,255), thickness, cv::LINE_AA);
+                cv::Scalar( 0xd0,0,0), thickness, cv::LINE_AA);
 } // mark_next_move()
-
 
 // Draw score map on position image
 //------------------------------------------------------

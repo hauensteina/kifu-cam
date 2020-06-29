@@ -47,6 +47,7 @@ extern cv::Mat mat_dbg;
 // Always
 //---------------
 #define BOARD_SZ 19
+#define BOARD_GRAY 180
 enum { BBLACK=0, EEMPTY=1, WWHITE=2, DDONTKNOW=3 };
 #define TESTCASE_PREFIX ""
 #define TESTCASE_FOLDER "testcases"

@@ -1011,7 +1011,7 @@ extern cv::Mat mat_dbg;
     draw_sgf( [sgf UTF8String], m,  1.5 * IMG_WIDTH);
     if (terrmap) { draw_score( m, terrmap); }
     double mmax = [coords[0][@"psv"] doubleValue];
-    char letter = 'A';
+    char letter = 'a';
     for ( NSDictionary *coord in coords) {
         double psv = [coord[@"psv"] doubleValue];
         if (psv < mmax * 0.25) {
