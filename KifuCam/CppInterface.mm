@@ -958,7 +958,8 @@ extern cv::Mat mat_dbg;
         else continue;
     }
     wmoves = vec_shuffle( wmoves);
-    
+    bmoves = vec_shuffle( bmoves);
+
     auto blen = SZ(bmoves); auto wlen = SZ(wmoves) + handicap - 1;
     auto maxlen = std::max( blen, wlen);
     NSMutableArray *res = [NSMutableArray new];
