@@ -98,6 +98,7 @@ r = int(rr * 255); g = int(gg * 255); b = int(bb * 255); \
 #import <complex>
 #import <vector>
 #import <algorithm>
+#include <random>
 
 typedef std::complex<double> cplx;
 extern cplx I;
@@ -250,6 +251,24 @@ std::vector<T> flatten(const std::vector<std::vector<T>>& v)
         result.insert(result.end(), sub.begin(), sub.end());
     return result;
 }
+
+// Shuffle a vector
+//-------------------------------------------------
+template <typename T>
+std::vector<T> vec_shuffle( std::vector<T> &vec)
+{
+    std::vector<int> order( SZ(vec)) ;
+    std::iota (std::begin(order), std::end(order), 0); // Fill with 0, 1, ...
+    std::random_device rd;
+    std::mt19937 g( rd());
+    std::shuffle( order.begin(), order.end(), g);
+    
+    std::vector<T> res( SZ(vec)) ;
+    ISLOOP (order) {
+        res[i] = vec[order[i]];
+    }
+    return res;
+} // vec_shuffle()
 
 // Append a vector to another
 //--------------------------------------------------------

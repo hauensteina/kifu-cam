@@ -35,9 +35,6 @@
 #include <iostream>
 #include <vector>
 #include <regex>
-#include <numeric>
-#include <algorithm>
-#include <random>
 
 #include "Common.hpp"
 #include "Clust1D.hpp"
@@ -74,7 +71,7 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
  */
 // The GC tag has the pixel coordinates of the intersections.
 // Couldn't use json because sgf chokes on brackets.
-//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
 inline std::string generate_sgf( const std::string &title,
                                 const std::vector<int> diagram = std::vector<int>(),
                                 const Points2f &intersections = Points2f(),
@@ -82,9 +79,6 @@ inline std::string generate_sgf( const std::string &title,
 {
     const int BUFSZ = 10000;
     char buf[BUFSZ+1];
-//    int boardsz = 19; // default
-//    if (SZ(diagram) == 13*13) boardsz = 13;
-//    else if (SZ(diagram) == 9*9) boardsz = 9;
     
     // Intersection coordinate string
     std::string coords = "intersections:(";
@@ -117,16 +111,8 @@ inline std::string generate_sgf( const std::string &title,
              ,title.c_str(), BOARD_SZ, local_date_stamp().c_str(), komi,
              coords.c_str(), phistr.c_str(), thetastr.c_str());
 
-    // Randomize diagram order
-    std::vector<int> order( SZ(diagram)) ;
-    std::iota (std::begin(order), std::end(order), 0); // Fill with 0, 1, ...
-    std::random_device rd;
-    std::mt19937 g( rd());
-    std::shuffle( order.begin(), order.end(), g);
-    
     std::string moves="";
-    KSLOOP (order) {
-        int i = order[k];
+    ISLOOP (diagram) {
         int row = i / BOARD_SZ;
         int col = i % BOARD_SZ;
         char ccol = 'a' + col;
@@ -136,7 +122,7 @@ inline std::string generate_sgf( const std::string &title,
         else if (diagram[i] == BBLACK) { tag = "AB"; }
         else continue;
         moves += tag + "[" + ccol + crow + "]";
-    } // KSLOOP
+    }
     return buf + moves + ")\n";
 } // generate_sgf()
 
@@ -1175,7 +1161,6 @@ void get_intersections_from_corners( const Points_ &corners, int boardsz, // in
         }
     }
 } // get_intersections_from_corners()
-
 
 #endif /* __clusplus */
 #endif /* Helpers_hpp */

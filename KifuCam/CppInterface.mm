@@ -957,12 +957,14 @@ extern cv::Mat mat_dbg;
         else if (_diagram[i] == BBLACK) { bmoves.push_back( movestr); }
         else continue;
     }
+    wmoves = vec_shuffle( wmoves);
+    
     auto blen = SZ(bmoves); auto wlen = SZ(wmoves) + handicap - 1;
     auto maxlen = std::max( blen, wlen);
     NSMutableArray *res = [NSMutableArray new];
     int i_white = 0;
     ILOOP (maxlen) {
-        i_white = i - handicap + 1; // Games starts with black handi stones and white passes
+        i_white = i - handicap + 1; // Game starts with black handi stones and white passes
         if (i < blen) {
             [res addObject: @(bmoves[i].c_str())];
         } else {
