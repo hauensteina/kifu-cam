@@ -126,8 +126,8 @@
 - (void) suspend
 {
     if (_suspended) return;
-    dispatch_suspend( self.bufferQ);
     _suspended = true;
+    dispatch_suspend( self.bufferQ);
 }
 
 // Resume capturing frames
@@ -161,6 +161,7 @@
     CGImageRef cgImage = [context createCGImage:ciImage fromRect:ciImage.extent];
     UIImage *uiImage = [UIImage imageWithCGImage:cgImage];
     CVPixelBufferUnlockBaseAddress( imageBuffer,0);
+    CFRelease(cgImage);
     if (uiImage == NULL) return;
     
     dispatch_async(dispatch_get_main_queue(),
@@ -171,7 +172,7 @@
                            [self.delegate captured:uiImage];
                        }
 //                       CGImageRelease( newCgIm);
-                       CFRelease(cgImage);
+                       //CFRelease(cgImage);
                        s_suspended = false;
                    });
 }
