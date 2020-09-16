@@ -43,6 +43,7 @@
 @property UIButton *btnB2Play;
 @property UIButton *btnW2Play;
 @property UILabel *lbInfo;
+@property UILabel *lbTurn;
 
 // Komi
 @property UILabel *lbKomi;
@@ -80,7 +81,15 @@
         l.textColor = UIColor.blackColor;
         [v addSubview:l];
         self.lbInfo = l;
-        
+
+        // Turn label
+        UILabel *t = [UILabel new];
+        t.text = @"";
+        t.backgroundColor = BGCOLOR;
+        t.textColor = UIColor.blackColor;
+        [v addSubview:t];
+        self.lbTurn = t;
+
         // Buttons
         //=========
         // Black to play
@@ -237,6 +246,8 @@
                 tstr = nsprintf( @" %@ W+%.1f", tstr, fabs(self.score));
             }
             _lbInfo.text = tstr;
+            _lbTurn.text = @"Black to Move";
+            if (turn == WWHITE) { _lbTurn.text = @"White to Move"; }
             double *terrmap = cterrmap( self.terrmap);
             _scoreImg = [CppInterface nextmove2img:_sgf
                                             coords:self.best_ten_moves
@@ -262,7 +273,6 @@
         _lbInfo.text = @"Katago timed out";
     }];
     
-    //NSString *urlstr = @"http://www.ahaux.com/katago_server_x/score/katago_gtp_bot";
     NSString *urlstr = @"https://katagui.herokuapp.com/score/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
@@ -418,7 +428,7 @@
 - (void) btnW2Play:(id)sender
 {
     [self displayResult:WWHITE];
-    // Regex to insert PL[W] rigth after the SZ tag
+    // Regex to insert PL[W] right after the SZ tag
     NSString *re = @"(.*SZ\\[[0-9]+\\])(.*)";
     NSString *templ = @"$1 PL[W] $2";
     _sgf = replaceRegex( re, _sgf, templ);
@@ -477,7 +487,13 @@
     _lbInfo.frame = CGRectMake( 0, y, W, 0.04 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
-    
+
+    // Turn label
+    y = topmarg + 40 + boardWidth + 40;
+    _lbTurn.frame = CGRectMake( 0, y, W, 0.04 * H);
+    _lbTurn.textAlignment = NSTextAlignmentCenter;
+    _lbTurn.text = @"";
+
     // Buttons
     float btnWidth, btnHeight;
     y = topmarg + 40 + boardWidth + 50;

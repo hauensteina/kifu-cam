@@ -166,13 +166,9 @@
     
     dispatch_async(dispatch_get_main_queue(),
                    ^{
-//                       CGImageRef newCgIm = CGImageCreateCopy( uiImage.CGImage);
-//                       UIImage *imgCopy = [UIImage imageWithCGImage:newCgIm scale:uiImage.scale orientation:uiImage.imageOrientation];
                        if (uiImage != NULL) {
                            [self.delegate captured:uiImage];
                        }
-//                       CGImageRelease( newCgIm);
-                       //CFRelease(cgImage);
                        s_suspended = false;
                    });
 }
