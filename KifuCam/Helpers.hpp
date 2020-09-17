@@ -75,7 +75,7 @@ inline void thresh_dilate( const cv::Mat &img, cv::Mat &dst, int thresh = 8)
 inline std::string generate_sgf( const std::string &title,
                                 const std::vector<int> diagram = std::vector<int>(),
                                 const Points2f &intersections = Points2f(),
-                                float phi=0, float theta=0, double komi=0.0)
+                                float phi=0, float theta=0)
 {
     const int BUFSZ = 10000;
     char buf[BUFSZ+1];
@@ -106,9 +106,10 @@ inline std::string generate_sgf( const std::string &title,
              " BS[0]WS[0]"
              " SZ[%d]"
              " DT[%s]"
-             " KM[%f]"
+             " KM[0]"
+             " HA[0]"
              " GC[%s#%s#%s#]"
-             ,title.c_str(), BOARD_SZ, local_date_stamp().c_str(), komi,
+             ,title.c_str(), BOARD_SZ, local_date_stamp().c_str(),
              coords.c_str(), phistr.c_str(), thetastr.c_str());
 
     std::string moves="";

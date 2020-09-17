@@ -229,6 +229,9 @@
 // Score position and display result.
 //--------------------------------------
 - (void) displayResult:(int)turn {
+    // Store komi and handicap in sgf
+    _sgf = replaceStr( @"KM[0]", nsprintf( @"KM[%.1f]", [_tfKomi.text doubleValue]), _sgf);
+    _sgf = replaceStr( @"HA[0]", nsprintf( @"HA[%d]", [_tfHandi.text intValue]), _sgf);
     // Set self.terrmap from remote bot
     [self askRemoteBotTerr:turn
                       komi:[_tfKomi.text doubleValue]

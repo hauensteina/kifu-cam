@@ -143,6 +143,15 @@ NSString *nscat (id a, id b)
     return [NSString stringWithFormat:@"%@%@",a,b];
 }
 
+// Replace substring target with repl in source
+//---------------------------------------------------------------------------
+NSString* replaceStr( NSString *target, NSString *repl, NSString *source)
+{
+    NSString *res = [source stringByReplacingOccurrencesOfString:target
+                                                      withString:repl];
+    return res;
+} // replaceStr()
+
 // Replace regular expression
 //----------------------------------------------------------------------
 NSString* replaceRegex( NSString *re, NSString *str, NSString *newStr)

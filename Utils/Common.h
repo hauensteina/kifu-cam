@@ -1,5 +1,5 @@
 //
-//  Common.hpp
+//  Common.h
 //  KifuCam
 //
 // The MIT License (MIT)
@@ -68,6 +68,8 @@ extern "C" {
     NSString *nscat (id a, id b);
     // Replace regular expression
     NSString* replaceRegex( NSString *re, NSString *str, NSString *newStr);
+    // Replace substring target with repl in source
+    NSString* replaceStr( NSString *target, NSString *repl, NSString *source);
 
     // Date
     //=========
