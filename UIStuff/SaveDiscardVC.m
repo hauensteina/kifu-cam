@@ -44,6 +44,7 @@
 @property UIButton *btnW2Play;
 @property UILabel *lbInfo;
 @property UILabel *lbTurn;
+@property UILabel *lbHandiKomi;
 
 // Komi
 @property UILabel *lbKomi;
@@ -81,6 +82,14 @@
         l.textColor = UIColor.blackColor;
         [v addSubview:l];
         self.lbInfo = l;
+
+        // Handicap and Komi label
+        UILabel *h = [UILabel new];
+        h.text = @"";
+        h.backgroundColor = BGCOLOR;
+        h.textColor = UIColor.blackColor;
+        [v addSubview:h];
+        self.lbHandiKomi = h;
 
         // Turn label
         UILabel *t = [UILabel new];
@@ -171,10 +180,14 @@
  {
      [super viewDidAppear: animated];
      [self doLayout];
-     if (_turn == BBLACK) {
+     if (_turn == BBLACK) { // coming from handleRerun()
+         _tfHandi.text = _parm_handicap;
+         _tfKomi.text = _parm_komi;
          [self btnB2Play:nil];
      }
-     else if (_turn == WWHITE) {
+     else if (_turn == WWHITE) { // coming from handleRerun()
+         _tfHandi.text = _parm_handicap;
+         _tfKomi.text = _parm_komi;
          [self btnW2Play:nil];
      }
  }
@@ -250,6 +263,8 @@
             }
             _lbInfo.text = tstr;
             _lbTurn.text = @"Black to Move";
+            _lbHandiKomi.text = nsprintf( @"Handicap:%d Komi:%.1f",
+                                         [_tfHandi.text intValue], [_tfKomi.text doubleValue]);
             if (turn == WWHITE) { _lbTurn.text = @"White to Move"; }
             double *terrmap = cterrmap( self.terrmap);
             _scoreImg = [CppInterface nextmove2img:_sgf
@@ -491,8 +506,14 @@
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
 
-    // Turn label
+    // Handicap and Komi label
     y = topmarg + 40 + boardWidth + 40;
+    _lbHandiKomi.frame = CGRectMake( 0, y, W, 0.04 * H);
+    _lbHandiKomi.textAlignment = NSTextAlignmentCenter;
+    _lbHandiKomi.text = @"";
+
+    // Turn label
+    y = topmarg + 40 + boardWidth + 70;
     _lbTurn.frame = CGRectMake( 0, y, W, 0.04 * H);
     _lbTurn.textAlignment = NSTextAlignmentCenter;
     _lbTurn.text = @"";

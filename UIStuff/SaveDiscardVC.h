@@ -51,5 +51,6 @@ typedef void (^SDCompletionHandler)(void);
 @property NSString *botmove;
 @property double winprob;
 @property NSArray *best_ten_moves;
-
+@property NSString *parm_handicap;
+@property NSString *parm_komi;
 @end

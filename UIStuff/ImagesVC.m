@@ -327,6 +327,9 @@
     g_app.saveDiscardVC.sgf = sgf;
     g_app.saveDiscardVC.turn = turn;
     [g_app.navVC popViewControllerAnimated:NO];
+    
+    g_app.saveDiscardVC.parm_komi = [CppInterface get_sgf_tag:@"KM" sgf:oldsgf];
+    g_app.saveDiscardVC.parm_handicap = [CppInterface get_sgf_tag:@"HA" sgf:oldsgf];
     [g_app.navVC pushViewController:g_app.saveDiscardVC animated:YES];
 } // handleRerun()
 
