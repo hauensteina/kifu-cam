@@ -1,110 +1,106 @@
 PODS:
-  - AWSAutoScaling (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSCloudWatch (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSCognito (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSCognitoIdentityProvider (2.13.6):
-    - AWSCognitoIdentityProviderASF (= 1.0.1)
-    - AWSCore (= 2.13.6)
-  - AWSCognitoIdentityProviderASF (1.0.1)
-  - AWSCore (2.13.6)
-  - AWSDynamoDB (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSEC2 (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSElasticLoadBalancing (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSIoT (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSKinesis (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSLambda (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSMachineLearning (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSMobileAnalytics (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSS3 (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSSES (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSSimpleDB (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSSNS (2.13.6):
-    - AWSCore (= 2.13.6)
-  - AWSSQS (2.13.6):
-    - AWSCore (= 2.13.6)
+  - AWSAutoScaling (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSCloudWatch (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSCognito (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSCognitoIdentityProvider (2.16.0):
+    - AWSCognitoIdentityProviderASF (= 1.0.2)
+    - AWSCore (= 2.16.0)
+  - AWSCognitoIdentityProviderASF (1.0.2)
+  - AWSCore (2.16.0)
+  - AWSDynamoDB (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSEC2 (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSElasticLoadBalancing (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSIoT (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSKinesis (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSLambda (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSMachineLearning (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSS3 (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSSES (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSSimpleDB (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSSNS (2.16.0):
+    - AWSCore (= 2.16.0)
+  - AWSSQS (2.16.0):
+    - AWSCore (= 2.16.0)
   - Crashlytics (3.14.0):
     - Fabric (~> 1.10.2)
   - Fabric (1.10.2)
-  - Firebase/Analytics (6.27.0):
+  - Firebase/Analytics (6.32.2):
     - Firebase/Core
-  - Firebase/Core (6.27.0):
+  - Firebase/Core (6.32.2):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 6.6.1)
-  - Firebase/CoreOnly (6.27.0):
-    - FirebaseCore (= 6.8.0)
-  - FirebaseAnalytics (6.6.1):
-    - FirebaseCore (~> 6.8)
-    - FirebaseInstallations (~> 1.4)
-    - GoogleAppMeasurement (= 6.6.1)
-    - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
-    - GoogleUtilities/MethodSwizzler (~> 6.0)
-    - GoogleUtilities/Network (~> 6.0)
-    - "GoogleUtilities/NSData+zlib (~> 6.0)"
-    - nanopb (~> 1.30905.0)
-  - FirebaseCore (6.8.0):
-    - FirebaseCoreDiagnostics (~> 1.3)
-    - GoogleUtilities/Environment (~> 6.5)
-    - GoogleUtilities/Logger (~> 6.5)
-  - FirebaseCoreDiagnostics (1.4.0):
-    - GoogleDataTransportCCTSupport (~> 3.1)
-    - GoogleUtilities/Environment (~> 6.5)
-    - GoogleUtilities/Logger (~> 6.5)
-    - nanopb (~> 1.30905.0)
-  - FirebaseInstallations (1.4.0):
-    - FirebaseCore (~> 6.8)
-    - GoogleUtilities/Environment (~> 6.6)
-    - GoogleUtilities/UserDefaults (~> 6.6)
+    - FirebaseAnalytics (= 6.8.2)
+  - Firebase/CoreOnly (6.32.2):
+    - FirebaseCore (= 6.10.2)
+  - FirebaseAnalytics (6.8.2):
+    - FirebaseCore (~> 6.10)
+    - FirebaseInstallations (~> 1.6)
+    - GoogleAppMeasurement (= 6.8.2)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
+    - GoogleUtilities/MethodSwizzler (~> 6.7)
+    - GoogleUtilities/Network (~> 6.7)
+    - "GoogleUtilities/NSData+zlib (~> 6.7)"
+    - nanopb (~> 1.30906.0)
+  - FirebaseCore (6.10.2):
+    - FirebaseCoreDiagnostics (~> 1.6)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/Logger (~> 6.7)
+  - FirebaseCoreDiagnostics (1.6.0):
+    - GoogleDataTransport (~> 7.2)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/Logger (~> 6.7)
+    - nanopb (~> 1.30906.0)
+  - FirebaseInstallations (1.7.0):
+    - FirebaseCore (~> 6.10)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/UserDefaults (~> 6.7)
     - PromisesObjC (~> 1.2)
-  - GoogleAppMeasurement (6.6.1):
-    - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
-    - GoogleUtilities/MethodSwizzler (~> 6.0)
-    - GoogleUtilities/Network (~> 6.0)
-    - "GoogleUtilities/NSData+zlib (~> 6.0)"
-    - nanopb (~> 1.30905.0)
-  - GoogleDataTransport (6.2.1)
-  - GoogleDataTransportCCTSupport (3.2.0):
-    - GoogleDataTransport (~> 6.1)
-    - nanopb (~> 1.30905.0)
-  - GoogleUtilities/AppDelegateSwizzler (6.6.0):
+  - GoogleAppMeasurement (6.8.2):
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
+    - GoogleUtilities/MethodSwizzler (~> 6.7)
+    - GoogleUtilities/Network (~> 6.7)
+    - "GoogleUtilities/NSData+zlib (~> 6.7)"
+    - nanopb (~> 1.30906.0)
+  - GoogleDataTransport (7.3.0):
+    - nanopb (~> 1.30906.0)
+  - GoogleUtilities/AppDelegateSwizzler (6.7.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (6.6.0):
+  - GoogleUtilities/Environment (6.7.2):
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/Logger (6.6.0):
+  - GoogleUtilities/Logger (6.7.2):
     - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (6.6.0):
+  - GoogleUtilities/MethodSwizzler (6.7.2):
     - GoogleUtilities/Logger
-  - GoogleUtilities/Network (6.6.0):
+  - GoogleUtilities/Network (6.7.2):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (6.6.0)"
-  - GoogleUtilities/Reachability (6.6.0):
+  - "GoogleUtilities/NSData+zlib (6.7.2)"
+  - GoogleUtilities/Reachability (6.7.2):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (6.6.0):
+  - GoogleUtilities/UserDefaults (6.7.2):
     - GoogleUtilities/Logger
-  - nanopb (1.30905.0):
-    - nanopb/decode (= 1.30905.0)
-    - nanopb/encode (= 1.30905.0)
-  - nanopb/decode (1.30905.0)
-  - nanopb/encode (1.30905.0)
+  - nanopb (1.30906.0):
+    - nanopb/decode (= 1.30906.0)
+    - nanopb/encode (= 1.30906.0)
+  - nanopb/decode (1.30906.0)
+  - nanopb/encode (1.30906.0)
   - OpenCV (4.1.0)
-  - PromisesObjC (1.2.9)
+  - PromisesObjC (1.2.10)
 
 DEPENDENCIES:
   - AWSAutoScaling
@@ -118,7 +114,6 @@ DEPENDENCIES:
   - AWSKinesis
   - AWSLambda
   - AWSMachineLearning
-  - AWSMobileAnalytics
   - AWSS3
   - AWSSES
   - AWSSimpleDB
@@ -144,7 +139,6 @@ SPEC REPOS:
     - AWSKinesis
     - AWSLambda
     - AWSMachineLearning
-    - AWSMobileAnalytics
     - AWSS3
     - AWSSES
     - AWSSimpleDB
@@ -159,47 +153,44 @@ SPEC REPOS:
     - FirebaseInstallations
     - GoogleAppMeasurement
     - GoogleDataTransport
-    - GoogleDataTransportCCTSupport
     - GoogleUtilities
     - nanopb
     - OpenCV
     - PromisesObjC
 
 SPEC CHECKSUMS:
-  AWSAutoScaling: 2619e9232daae2713151fbbb74ae17379ef76edc
-  AWSCloudWatch: d7abd441904b19528c1832d2d9ead6c90a32358b
-  AWSCognito: a993c057d32173a7c7a9776684972d4073a6c7f5
-  AWSCognitoIdentityProvider: 05f14f7c892df9ff764268d2ac33b4e95288e603
-  AWSCognitoIdentityProviderASF: f94f1a502e72ef3d0a1de93e10bf7a79c8698118
-  AWSCore: 2b6015f278770e745b4863ac5f45e007e647f298
-  AWSDynamoDB: c501630cdfbf997e756f7879a8c434292706ce88
-  AWSEC2: 33e4767518ceb7282e35e8bb24af327f927250d6
-  AWSElasticLoadBalancing: fc78e72ff251c9fd659431c6e1ca6300f5ddb6f1
-  AWSIoT: 787064f45f8ea567077b32dbf8ff98dba3723f05
-  AWSKinesis: c5f539f94977a5c60cf19837775558513b826bfe
-  AWSLambda: 9cf4356ef67d90bdecc5c7babe9ca074d787e47e
-  AWSMachineLearning: 02ec4868a235fe3d03e5503129ab2cb1cc3276ca
-  AWSMobileAnalytics: cb49cd4ea2aea805051aff02602837d851d87329
-  AWSS3: ab6da163329bc03fb68e866aab130103453accd2
-  AWSSES: f230b87d689d467ca065523073fbbf2c524de4c6
-  AWSSimpleDB: 5cc94c105de802267b77b4dd8faa84015daba3d7
-  AWSSNS: 138e5fc8a47a9c410faba06049ff625f00548a0b
-  AWSSQS: 19563f069ef05bb38d83f9ed83d16697bae763d2
+  AWSAutoScaling: 2594ff0b2c8743388cba6291234994802b92011e
+  AWSCloudWatch: 87955e53bdfb1d82ea86d2227fc59f8017bf73a9
+  AWSCognito: efaeb576bb94747945762394e75a1b5175ab033c
+  AWSCognitoIdentityProvider: 8d77fd2adf666b58b4826b12f78c9202295bb0ca
+  AWSCognitoIdentityProviderASF: 0fb6ea671c05a63276e320726f680cd880522442
+  AWSCore: 439de29e3423c637a0c475f9ea329262fd2acc67
+  AWSDynamoDB: 6ca22bd461133db3c7de399a6d4c50c741a89ca5
+  AWSEC2: 3209ff74cc56b28fc6ba642fbd51ea30cf490a44
+  AWSElasticLoadBalancing: 4dcefe982dadf64c2e786e41fb4477a26c40d2d1
+  AWSIoT: ffd60c84cc3f00263d2426c2071cce9521648c6f
+  AWSKinesis: f7dd64ead76d30d77a5cfa1648397daa8f8e392c
+  AWSLambda: 339d0a1ba1062318a331362614b87cdc1bcf3676
+  AWSMachineLearning: 1bc5ee41503143b75dba87d206b45778909a22f4
+  AWSS3: 6df833615e2b2f8313b585e2090e80a3e97c550f
+  AWSSES: e03968be50b3c778da176a0243989d82fedcfbcd
+  AWSSimpleDB: 4c320a981bca37d74c69eb9241a8fd0ced91761a
+  AWSSNS: 1154afd70f040b5ad33ae16b675884a6c31a9332
+  AWSSQS: d462b4d3c86297464e630b4c9b43178880205e2e
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
-  Firebase: fc4cbf6f1592636431821ef9a3c557e4dfd9f268
-  FirebaseAnalytics: 0ea640473474f036cabbc2576e20c2d63671c92f
-  FirebaseCore: feda061cb1ee6d8ad4824f4a4a8ffbcfe284f595
-  FirebaseCoreDiagnostics: 4505e4d4009b1d93f605088ee7d7764d5f0d1c84
-  FirebaseInstallations: 293f567159b6d66d1c990f13bb868066096c94ec
-  GoogleAppMeasurement: 2fd5c5a56c069db635c8e7b92d4809a9591d0a69
-  GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
-  GoogleDataTransportCCTSupport: 489c1265d2c85b68187a83a911913d190012158d
-  GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
-  nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
+  Firebase: 47176280bfba198e531f909cfb1612dad216cb96
+  FirebaseAnalytics: 3c2fee6a922023ccfda7af87e4e641bad1fc11ba
+  FirebaseCore: 1d697bb944bf2af5fc248f1a66e165c9dd88bf97
+  FirebaseCoreDiagnostics: 7415bfb3883b3500c5a95c42b6ba66baae78f600
+  FirebaseInstallations: 466c7b4d1f58fe16707693091da253726a731ed2
+  GoogleAppMeasurement: 1a66f478c68ecd6c16ee63ee60c7c3a648e6b337
+  GoogleDataTransport: e85fb700c9b027079ce182c3d08e12e0f9618bb4
+  GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
+  nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   OpenCV: 52cd4d72ff29e2be83421477aec5447320b7fb19
-  PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
+  PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
 
-PODFILE CHECKSUM: 95230705fb7c6d2addf37d32f91866343227d741
+PODFILE CHECKSUM: c80d717cd2342ea0334873ece01f1da6f173259f
 
 COCOAPODS: 1.9.2
