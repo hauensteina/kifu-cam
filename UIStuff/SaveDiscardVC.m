@@ -502,26 +502,29 @@
     
     // Info label
     int y = topmarg + 40 + boardWidth + 10;
-    _lbInfo.frame = CGRectMake( 0, y, W, 0.04 * H);
+    _lbInfo.frame = CGRectMake( 0, y, W, 0.03 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
 
     // Handicap and Komi label
     y = topmarg + 40 + boardWidth + 40;
-    _lbHandiKomi.frame = CGRectMake( 0, y, W, 0.04 * H);
+    _lbHandiKomi.frame = CGRectMake( 0, y, W, 0.03 * H);
     _lbHandiKomi.textAlignment = NSTextAlignmentCenter;
     _lbHandiKomi.text = @"";
 
     // Turn label
     y = topmarg + 40 + boardWidth + 70;
-    _lbTurn.frame = CGRectMake( 0, y, W, 0.04 * H);
+    _lbTurn.frame = CGRectMake( 0, y, W, 0.03 * H);
     _lbTurn.textAlignment = NSTextAlignmentCenter;
     _lbTurn.text = @"";
 
     // Buttons
     float btnWidth, btnHeight;
-    y = topmarg + 40 + boardWidth + 50;
-    
+    //y = topmarg + 40 + boardWidth + H*0.1;
+    float d = H*0.04;
+    y = CGRectGetMaxY( _sgfView.frame) + d;
+
+    // Black to play
     _btnB2Play.hidden = NO;
     [_btnB2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];
     // Keep size (auto), change origin
@@ -529,21 +532,23 @@
     btnHeight = _btnB2Play.frame.size.height;
     _btnB2Play.frame = CGRectMake( W/2 - btnWidth/2, y, btnWidth, btnHeight);
     
-    y += btnHeight * 1.3;
+    // White to play
+    y = CGRectGetMaxY( _btnB2Play.frame);
     _btnW2Play.hidden = NO;
     [_btnW2Play setTitleColor:self.view.tintColor forState:UIControlStateNormal];
     btnWidth = _btnW2Play.frame.size.width;
     btnHeight = _btnW2Play.frame.size.height;
     _btnW2Play.frame = CGRectMake( W/2 - btnWidth/2, y, btnWidth, btnHeight);
     
+    // Save
     y += btnHeight * 1.3;
-
     _btnSave.hidden = YES;
     [_btnSave setTitleColor:DARKGREEN forState:UIControlStateNormal];
     btnWidth = _btnSave.frame.size.width;
     btnHeight = _btnSave.frame.size.height;
     _btnSave.frame = CGRectMake( W/2 - btnWidth - W/20 - 0.04 * W, y, btnWidth, btnHeight);
 
+    // Discard
     _btnDiscard.hidden = YES;
     [_btnDiscard setTitleColor:RED forState:UIControlStateNormal];
     btnWidth = _btnDiscard.frame.size.width;
@@ -551,8 +556,7 @@
     _btnDiscard.frame = CGRectMake( W/2 + W/20 - 0.04 * W, y, btnWidth, btnHeight);
 
     // Dropdowns
-    y = _btnW2Play.frame.origin.y;
-    y += 2 * _btnW2Play.frame.size.height;
+    y = CGRectGetMaxY( _btnW2Play.frame);
     int lrmarg = 0.33 * W;
     
     // Komi Heading
@@ -567,10 +571,10 @@
     _lbHandi.frame = CGRectMake( W - lrmarg - 0.5 * _lbHandi.frame.size.width, y,
                                 _lbHandi.frame.size.width, _btnW2Play.frame.size.height);
 
+    // Komi Dropdown
     y += _btnW2Play.frame.size.height;
     int ddw = 0.33 * W;
 
-    // Komi Dropdown
     _tfKomi.hidden = NO;
     _tfKomi.frame = CGRectMake( lrmarg - 0.5 * ddw, y,
                                ddw, _btnW2Play.frame.size.height);

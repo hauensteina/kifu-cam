@@ -690,6 +690,9 @@ extern cv::Mat mat_dbg;
 - (bool)recognize_position:(cv::Mat)small_img breakIfBad:(bool)breakIfBad
 {
     bool success = false;
+    if (small_img.rows == 0 || small_img.cols == 0) {
+        return false;
+    }
     _diagram = std::vector<int> ( BOARD_SZ * BOARD_SZ, EEMPTY);
     do {
         success = [self find_board:small_img breakIfBad:breakIfBad];
