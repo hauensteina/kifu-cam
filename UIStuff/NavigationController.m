@@ -50,7 +50,7 @@
 }
 
 - (BOOL)prefersStatusBarHidden {
-    return UIInterfaceOrientationIsLandscape(UIApplication.sharedApplication.statusBarOrientation) && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone;
+    return NO;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {

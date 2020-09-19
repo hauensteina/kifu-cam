@@ -120,10 +120,7 @@
 {
     [super rightViewWillLayoutSubviewsWithSize:size];
 
-    if (!self.isRightViewStatusBarHidden ||
-        (self.rightViewAlwaysVisibleOptions & LGSideMenuAlwaysVisibleOnPadLandscape &&
-         UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad &&
-         UIInterfaceOrientationIsLandscape(UIApplication.sharedApplication.statusBarOrientation))) {
+    if (!self.isRightViewStatusBarHidden) {
         self.rightView.frame = CGRectMake(0.0, 20.0, size.width, size.height-20.0);
     }
 }

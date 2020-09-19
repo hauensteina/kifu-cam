@@ -563,19 +563,7 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (BOOL)isRootViewStatusBarHidden {
-    if (self.isUserRootViewStatusBarHidden) {
-        return _rootViewStatusBarHidden;
-    }
-
-    if (!LGSideMenuHelper.isViewControllerBasedStatusBarAppearance) {
-        return UIApplication.sharedApplication.statusBarHidden;
-    }
-
-    if (self.rootViewController) {
-        return self.rootViewController.prefersStatusBarHidden;
-    }
-
-    return super.prefersStatusBarHidden;
+    return NO;
 }
 
 - (void)setLeftViewStatusBarHidden:(BOOL)leftViewStatusBarHidden {
@@ -584,23 +572,7 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (BOOL)isLeftViewStatusBarHidden {
-    if (self.isUserLeftViewStatusBarHidden) {
-        return _leftViewStatusBarHidden;
-    }
-
-    if (!LGSideMenuHelper.isViewControllerBasedStatusBarAppearance) {
-        return UIApplication.sharedApplication.statusBarHidden;
-    }
-
-    if (self.leftViewController) {
-        return self.leftViewController.prefersStatusBarHidden;
-    }
-
-    if (self.rootViewController) {
-        return self.rootViewController.prefersStatusBarHidden;
-    }
-
-    return super.prefersStatusBarHidden;
+    return NO;
 }
 
 - (void)setRightViewStatusBarHidden:(BOOL)rightViewStatusBarHidden {
@@ -609,23 +581,7 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (BOOL)isRightViewStatusBarHidden {
-    if (self.isUserRightViewStatusBarHidden) {
-        return _rightViewStatusBarHidden;
-    }
-
-    if (!LGSideMenuHelper.isViewControllerBasedStatusBarAppearance) {
-        return UIApplication.sharedApplication.statusBarHidden;
-    }
-
-    if (self.rightViewController) {
-        return self.rightViewController.prefersStatusBarHidden;
-    }
-
-    if (self.rootViewController) {
-        return self.rootViewController.prefersStatusBarHidden;
-    }
-
-    return super.prefersStatusBarHidden;
+    return NO;
 }
 
 - (void)setRootViewStatusBarStyle:(UIStatusBarStyle)rootViewStatusBarStyle {
@@ -634,18 +590,6 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (UIStatusBarStyle)rootViewStatusBarStyle {
-    if (self.isUserRootViewStatusBarStyle) {
-        return _rootViewStatusBarStyle;
-    }
-
-    if (!LGSideMenuHelper.isViewControllerBasedStatusBarAppearance) {
-        return UIApplication.sharedApplication.statusBarStyle;
-    }
-
-    if (self.rootViewController) {
-        return self.rootViewController.preferredStatusBarStyle;
-    }
-
     return super.preferredStatusBarStyle;
 }
 
@@ -655,22 +599,6 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (UIStatusBarStyle)leftViewStatusBarStyle {
-    if (self.isUserLeftViewStatusBarStyle) {
-        return _leftViewStatusBarStyle;
-    }
-
-    if (!LGSideMenuHelper.isViewControllerBasedStatusBarAppearance) {
-        return UIApplication.sharedApplication.statusBarStyle;
-    }
-
-    if (self.leftViewController) {
-        return self.leftViewController.preferredStatusBarStyle;
-    }
-
-    if (self.rootViewController) {
-        return self.rootViewController.preferredStatusBarStyle;
-    }
-
     return super.preferredStatusBarStyle;
 }
 
@@ -680,22 +608,6 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (UIStatusBarStyle)rightViewStatusBarStyle {
-    if (self.isUserRightViewStatusBarStyle) {
-        return _rightViewStatusBarStyle;
-    }
-
-    if (!LGSideMenuHelper.isViewControllerBasedStatusBarAppearance) {
-        return UIApplication.sharedApplication.statusBarStyle;
-    }
-
-    if (self.rightViewController) {
-        return self.rightViewController.preferredStatusBarStyle;
-    }
-
-    if (self.rootViewController) {
-        return self.rootViewController.preferredStatusBarStyle;
-    }
-
     return super.preferredStatusBarStyle;
 }
 
@@ -1169,11 +1081,11 @@ rightViewBackgroundImageFinalScale = _rightViewBackgroundImageFinalScale;
 }
 
 - (BOOL)isLeftViewAlwaysVisibleForCurrentOrientation {
-    return [self isLeftViewAlwaysVisibleForOrientation:UIApplication.sharedApplication.statusBarOrientation];
+    return NO;
 }
 
 - (BOOL)isRightViewAlwaysVisibleForCurrentOrientation {
-    return [self isRightViewAlwaysVisibleForOrientation:UIApplication.sharedApplication.statusBarOrientation];
+    return NO;
 }
 
 - (BOOL)isLeftViewAlwaysVisibleForOrientation:(UIInterfaceOrientation)orientation {

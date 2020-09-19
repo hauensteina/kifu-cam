@@ -1,8 +1,4 @@
 PODS:
-  - AWSAutoScaling (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSCloudWatch (2.16.0):
-    - AWSCore (= 2.16.0)
   - AWSCognito (2.16.0):
     - AWSCore (= 2.16.0)
   - AWSCognitoIdentityProvider (2.16.0):
@@ -10,29 +6,7 @@ PODS:
     - AWSCore (= 2.16.0)
   - AWSCognitoIdentityProviderASF (1.0.2)
   - AWSCore (2.16.0)
-  - AWSDynamoDB (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSEC2 (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSElasticLoadBalancing (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSIoT (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSKinesis (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSLambda (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSMachineLearning (2.16.0):
-    - AWSCore (= 2.16.0)
   - AWSS3 (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSSES (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSSimpleDB (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSSNS (2.16.0):
-    - AWSCore (= 2.16.0)
-  - AWSSQS (2.16.0):
     - AWSCore (= 2.16.0)
   - Crashlytics (3.14.0):
     - Fabric (~> 1.10.2)
@@ -103,47 +77,21 @@ PODS:
   - PromisesObjC (1.2.10)
 
 DEPENDENCIES:
-  - AWSAutoScaling
-  - AWSCloudWatch
   - AWSCognito
   - AWSCognitoIdentityProvider
-  - AWSDynamoDB
-  - AWSEC2
-  - AWSElasticLoadBalancing
-  - AWSIoT
-  - AWSKinesis
-  - AWSLambda
-  - AWSMachineLearning
   - AWSS3
-  - AWSSES
-  - AWSSimpleDB
-  - AWSSNS
-  - AWSSQS
-  - Crashlytics (~> 3.14.0)
-  - Fabric (~> 1.10.2)
+  - Crashlytics
+  - Fabric
   - Firebase/Analytics
   - OpenCV
 
 SPEC REPOS:
   trunk:
-    - AWSAutoScaling
-    - AWSCloudWatch
     - AWSCognito
     - AWSCognitoIdentityProvider
     - AWSCognitoIdentityProviderASF
     - AWSCore
-    - AWSDynamoDB
-    - AWSEC2
-    - AWSElasticLoadBalancing
-    - AWSIoT
-    - AWSKinesis
-    - AWSLambda
-    - AWSMachineLearning
     - AWSS3
-    - AWSSES
-    - AWSSimpleDB
-    - AWSSNS
-    - AWSSQS
     - Crashlytics
     - Fabric
     - Firebase
@@ -159,24 +107,11 @@ SPEC REPOS:
     - PromisesObjC
 
 SPEC CHECKSUMS:
-  AWSAutoScaling: 2594ff0b2c8743388cba6291234994802b92011e
-  AWSCloudWatch: 87955e53bdfb1d82ea86d2227fc59f8017bf73a9
   AWSCognito: efaeb576bb94747945762394e75a1b5175ab033c
   AWSCognitoIdentityProvider: 8d77fd2adf666b58b4826b12f78c9202295bb0ca
   AWSCognitoIdentityProviderASF: 0fb6ea671c05a63276e320726f680cd880522442
   AWSCore: 439de29e3423c637a0c475f9ea329262fd2acc67
-  AWSDynamoDB: 6ca22bd461133db3c7de399a6d4c50c741a89ca5
-  AWSEC2: 3209ff74cc56b28fc6ba642fbd51ea30cf490a44
-  AWSElasticLoadBalancing: 4dcefe982dadf64c2e786e41fb4477a26c40d2d1
-  AWSIoT: ffd60c84cc3f00263d2426c2071cce9521648c6f
-  AWSKinesis: f7dd64ead76d30d77a5cfa1648397daa8f8e392c
-  AWSLambda: 339d0a1ba1062318a331362614b87cdc1bcf3676
-  AWSMachineLearning: 1bc5ee41503143b75dba87d206b45778909a22f4
   AWSS3: 6df833615e2b2f8313b585e2090e80a3e97c550f
-  AWSSES: e03968be50b3c778da176a0243989d82fedcfbcd
-  AWSSimpleDB: 4c320a981bca37d74c69eb9241a8fd0ced91761a
-  AWSSNS: 1154afd70f040b5ad33ae16b675884a6c31a9332
-  AWSSQS: d462b4d3c86297464e630b4c9b43178880205e2e
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   Firebase: 47176280bfba198e531f909cfb1612dad216cb96
@@ -191,6 +126,6 @@ SPEC CHECKSUMS:
   OpenCV: 52cd4d72ff29e2be83421477aec5447320b7fb19
   PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
 
-PODFILE CHECKSUM: c80d717cd2342ea0334873ece01f1da6f173259f
+PODFILE CHECKSUM: 8a6e279986cb6b4255ff6ed069901af357b947f1
 
-COCOAPODS: 1.9.2
+COCOAPODS: 1.9.3
