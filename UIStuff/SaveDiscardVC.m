@@ -291,7 +291,7 @@
         _lbInfo.text = @"Katago timed out";
     }];
     
-    NSString *urlstr = @"https://katagui.herokuapp.com/score/katago_gtp_bot";
+    NSString *urlstr = @"https://katagui.baduk.club/score/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
     NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
@@ -363,7 +363,7 @@
         _lbInfo.text = @"Katago timed out";
     }];
     
-    NSString *urlstr = @"https://katagui.herokuapp.com/select-move-x/katago_gtp_bot";
+    NSString *urlstr = @"https://katagui.baduk.club/select-move-x/katago_gtp_bot";
     NSString *uniq = nsprintf( @"%d", rand());
     urlstr = nsprintf( @"%@?tt=%@",urlstr,uniq);
     NSArray *botMoves = [g_app.mainVC.cppInterface get_bot_moves:turn
