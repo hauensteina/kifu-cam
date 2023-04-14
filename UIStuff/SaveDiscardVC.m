@@ -299,7 +299,7 @@
                                                         handicap:[_tfHandi.text intValue]];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
-      @"config":@{@"komi": @(komi) }};
+      @"config":@{@"komi": @(komi), @"client":@"kifucam"}};
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
@@ -371,7 +371,7 @@
                                                         handicap:[_tfHandi.text intValue]];
     NSDictionary *parms =
     @{@"board_size":@(19), @"moves":botMoves,
-      @"config":@{@"komi": @(komi) }};
+      @"config":@{@"komi": @(komi), @"client":@"kifucam"}};
     NSError *err;
     NSData *jsonBodyData = [NSJSONSerialization dataWithJSONObject:parms options:kNilOptions error:&err];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
@@ -493,28 +493,29 @@
     
     const float boardWidth = MIN( W, H * 0.5);
     
+    int y = topmarg + 50;
     // Sgf View
     _sgfView.hidden = NO;
-    _sgfView.frame = CGRectMake( 0, topmarg + 40, W , boardWidth);
+    _sgfView.frame = CGRectMake( 0, y, W , boardWidth);
     if (_sgf) {
         _sgfImg = [CppInterface sgf2img:_sgf];
         [_sgfView setImage:_sgfImg];
     }
     
     // Info label
-    int y = topmarg + 40 + boardWidth + 10;
+    y += boardWidth + 10;
     _lbInfo.frame = CGRectMake( 0, y, W, 0.03 * H);
     _lbInfo.textAlignment = NSTextAlignmentCenter;
     _lbInfo.text = @"";
 
     // Handicap and Komi label
-    y = topmarg + 40 + boardWidth + 40;
+    y += 30;
     _lbHandiKomi.frame = CGRectMake( 0, y, W, 0.03 * H);
     _lbHandiKomi.textAlignment = NSTextAlignmentCenter;
     _lbHandiKomi.text = @"";
 
     // Turn label
-    y = topmarg + 40 + boardWidth + 70;
+    y += 30;
     _lbTurn.frame = CGRectMake( 0, y, W, 0.03 * H);
     _lbTurn.textAlignment = NSTextAlignmentCenter;
     _lbTurn.text = @"";
