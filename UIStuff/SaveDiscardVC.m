@@ -31,7 +31,7 @@
 #import "Globals.h"
 #import "ImagesVC.h"
 #import "KifuCam-Swift.h"
-#import <Crashlytics/Crashlytics.h>
+//#import <Crashlytics/Crashlytics.h>
 
 
 @interface SaveDiscardVC ()
@@ -180,6 +180,7 @@
  {
      [super viewDidAppear: animated];
      [self doLayout];
+     // @[][1]; // Force a crash
      if (_turn == BBLACK) { // coming from handleRerun()
          _tfHandi.text = _parm_handicap;
          _tfKomi.text = _parm_komi;

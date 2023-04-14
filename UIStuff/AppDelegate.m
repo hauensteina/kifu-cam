@@ -32,7 +32,7 @@
 #import "MainVC.h"
 #import "TopViewController.h"
 #import "NavigationController.h"
-#import "Firebase.h"
+@import Firebase;
 
 @interface AppDelegate ()
 @end

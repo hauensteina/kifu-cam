@@ -37,7 +37,7 @@ static AWSServiceConfiguration *s_configuration = nil;
 
 // Authenticate with AWS for access to kifu-cam bucket
 //-------------------------------------------------------
-void S3_login()
+void S3_login(void)
 {
     if (s_credentialsProvider) return;
     s_credentialsProvider = [[AWSCognitoCredentialsProvider alloc]

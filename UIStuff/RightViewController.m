@@ -71,7 +71,7 @@ enum {ITEM_NOT_SELECTED=0, ITEM_SELECTED=1};
         self.view.backgroundColor = [UIColor clearColor];
 
         [self.tableView registerClass:[RightViewCell class] forCellReuseIdentifier:@"cell"];
-        self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.tableView.contentInset = UIEdgeInsetsMake(44.0, 0.0, 44.0, 0.0);
         self.tableView.showsVerticalScrollIndicator = NO;
         self.tableView.backgroundColor = [UIColor clearColor];

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5587A33D3780040F87ABFBF6 /* Pods_KifuCam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */; };
 		AC043D2F1F9AC580006CF7F0 /* FrameExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */; };
 		AC13BB28200BD38600369CAE /* LGSideMenuBorderView.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1A200BD38500369CAE /* LGSideMenuBorderView.m */; };
 		AC13BB29200BD38600369CAE /* LGSideMenuHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AC13BB1B200BD38500369CAE /* LGSideMenuHelper.m */; };
@@ -58,6 +57,7 @@
 		ACB76EEB2360FEFC00B0445B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ACB76EEA2360FEFB00B0445B /* GoogleService-Info.plist */; };
 		ACC91313201694C700B62682 /* SaveDiscardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC91312201694C600B62682 /* SaveDiscardVC.m */; };
 		ACC913162017F4F400B62682 /* ImagesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ACC913142017F4F300B62682 /* ImagesVC.m */; };
+		CBA6B698B666D12BA4C6A115 /* Pods_KifuCam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F8F2AAC415DFDB3A7C5206 /* Pods_KifuCam.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,8 +74,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.debug.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.debug.xcconfig"; sourceTree = "<group>"; };
-		6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KifuCam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		07E9A373555732AAD63F16E0 /* Pods-KifuCam.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.release.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.release.xcconfig"; sourceTree = "<group>"; };
 		AC043D2D1F9AC580006CF7F0 /* FrameExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameExtractor.h; sourceTree = "<group>"; };
 		AC043D2E1F9AC580006CF7F0 /* FrameExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrameExtractor.m; sourceTree = "<group>"; };
 		AC043D331F9BB9AB006CF7F0 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
@@ -164,7 +163,8 @@
 		ACC913142017F4F300B62682 /* ImagesVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagesVC.m; sourceTree = "<group>"; };
 		ACC913152017F4F300B62682 /* ImagesVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagesVC.h; sourceTree = "<group>"; };
 		ACEF735F1FBDF53200DA4AD8 /* Clust1D.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clust1D.hpp; sourceTree = "<group>"; };
-		E99BC187D34273EA781AD5C4 /* Pods-KifuCam.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.release.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.release.xcconfig"; sourceTree = "<group>"; };
+		B1F8F2AAC415DFDB3A7C5206 /* Pods_KifuCam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KifuCam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC968C5F13CBAEB7FF6B8E78 /* Pods-KifuCam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KifuCam.debug.xcconfig"; path = "Target Support Files/Pods-KifuCam/Pods-KifuCam.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,7 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC80400A1FA92613000088D2 /* Accelerate.framework in Frameworks */,
-				5587A33D3780040F87ABFBF6 /* Pods_KifuCam.framework in Frameworks */,
+				CBA6B698B666D12BA4C6A115 /* Pods_KifuCam.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,8 +242,8 @@
 		AC59F7EE10A42170F409F458 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */,
-				E99BC187D34273EA781AD5C4 /* Pods-KifuCam.release.xcconfig */,
+				FC968C5F13CBAEB7FF6B8E78 /* Pods-KifuCam.debug.xcconfig */,
+				07E9A373555732AAD63F16E0 /* Pods-KifuCam.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -324,7 +324,7 @@
 			isa = PBXGroup;
 			children = (
 				AC8040091FA92604000088D2 /* Accelerate.framework */,
-				6BBB9DA6166687033F12018B /* Pods_KifuCam.framework */,
+				B1F8F2AAC415DFDB3A7C5206 /* Pods_KifuCam.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -356,13 +356,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC628C2A1F9A7D3F0043FCEE /* Build configuration list for PBXNativeTarget "KifuCam" */;
 			buildPhases = (
-				BCDEB81BF9E9826CA6ECDC52 /* [CP] Check Pods Manifest.lock */,
+				526D363F7BBB1E3CDA4A6465 /* [CP] Check Pods Manifest.lock */,
 				AC628C0F1F9A7D3F0043FCEE /* Sources */,
 				AC628C101F9A7D3F0043FCEE /* Frameworks */,
 				AC628C111F9A7D3F0043FCEE /* Resources */,
 				AC5F340B201513F8002FEF06 /* Embed Frameworks */,
-				1D229E5B053EFD0233E481C7 /* [CP] Embed Pods Frameworks */,
 				AC844B1523610A87005AC814 /* ShellScript */,
+				2B19BE1062777E5701627857 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -434,7 +434,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1D229E5B053EFD0233E481C7 /* [CP] Embed Pods Frameworks */ = {
+		2B19BE1062777E5701627857 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -446,6 +446,11 @@
 				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProviderASF/AWSCognitoIdentityProviderASF.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
@@ -457,6 +462,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProviderASF.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
@@ -466,24 +476,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KifuCam/Pods-KifuCam-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AC844B1523610A87005AC814 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"./Pods/Fabric/run\"\n\n        \n";
-		};
-		BCDEB81BF9E9826CA6ECDC52 /* [CP] Check Pods Manifest.lock */ = {
+		526D363F7BBB1E3CDA4A6465 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -504,6 +497,25 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		AC844B1523610A87005AC814 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n\n        \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -665,11 +677,11 @@
 		};
 		AC628C2B1F9A7D3F0043FCEE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2014658FF2E2F3364BBA01AA /* Pods-KifuCam.debug.xcconfig */;
+			baseConfigurationReference = FC968C5F13CBAEB7FF6B8E78 /* Pods-KifuCam.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -680,7 +692,7 @@
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 4.7;
+				MARKETING_VERSION = 4.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";
@@ -692,11 +704,11 @@
 		};
 		AC628C2C1F9A7D3F0043FCEE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E99BC187D34273EA781AD5C4 /* Pods-KifuCam.release.xcconfig */;
+			baseConfigurationReference = 07E9A373555732AAD63F16E0 /* Pods-KifuCam.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = J26TJ8F6WP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -707,7 +719,7 @@
 				INFOPLIST_FILE = KifuCam/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 4.7;
+				MARKETING_VERSION = 4.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ahn.KifuCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "UIStuff/KifuCam-Bridging-Header.h";
