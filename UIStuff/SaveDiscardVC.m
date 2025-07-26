@@ -326,7 +326,7 @@
         // The endpoint comes back with resp
         NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
         if (resp.statusCode == 200) {
-            NSLog(@"The response is:\n%@", resp);
+            //NSLog(@"The response is:\n%@", resp);
             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                                                  options:kNilOptions
                                                                    error:nil];
@@ -398,14 +398,21 @@
         // The endpoint comes back with resp
         NSHTTPURLResponse *resp = (NSHTTPURLResponse *) response;
         if (resp.statusCode == 200) {
-            NSLog(@"The response is:\n%@", resp);
+            // NSLog(@"The response is:\n%@", resp);
             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data
                                                                  options:kNilOptions
                                                                    error:nil];
             self.botmove = json[@"diagnostics"][@"bot_move"];
             self.best_ten_moves = json[@"diagnostics"][@"best_ten"];
+            NSLog(@"Score:\n%@", json[@"diagnostics"][@"score"]);
             self.score = [(NSNumber *)(json[@"diagnostics"][@"score"]) doubleValue];
-            self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
+            
+            if (komi == floor(komi)) { // whole number komi
+                self.score = sign(self.score) * ((int)(fabs(self.score) + 0.5)); // 2.1 -> 2.0,  2.9 -> 3.0
+            } else { // x.5 komi
+                self.score = sign(self.score) * ((int)(fabs(self.score)) + 0.5);  // 2.1 -> 2.5 2.9 -> 2.5
+            }
+            //self.score = sign(self.score) * (int)(2 * fabs(self.score) + 0.5) / 2.0; // round to 0.5
             self.winprob = [(NSNumber *)(json[@"diagnostics"][@"winprob"]) doubleValue];
             _lbInfo.text = @"";
             completion();
