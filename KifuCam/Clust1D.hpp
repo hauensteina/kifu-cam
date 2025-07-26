@@ -48,7 +48,11 @@ public:
         WinFunc winf = bell;
         
         std::vector<double> vals;
-        ISLOOP (seq_) { vals.push_back( getter(seq_[i] )); }
+        ISLOOP (seq_) {
+            if (seq_[i].val[0] > 0 && seq_[i].val[1] > 0 ) {
+                vals.push_back( getter(seq_[i] ));
+            }
+        }
         std::sort( vals.begin(), vals.end(), [](double a, double b) { return a<b; });
         std::vector<double> freq(vals.size());
         

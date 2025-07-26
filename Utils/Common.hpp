@@ -121,6 +121,13 @@ void sswap( T &x1, T &x2)
     T tmp = x1; x1 = x2; x2 = tmp;
 }
 
+// Check whether string ends in digit
+//----------------------------------------------------
+inline bool endsInDigit(const std::string& str)
+{
+    return !str.empty() && std::isdigit(str.back());
+}
+
 // Count inversions in a vector of int
 //-----------------------------------------------
 inline int count_inversions ( std::vector<int> a)

@@ -331,7 +331,8 @@ inline void draw_next_move( const std::string &coord, int color, cv::Mat &dst) {
 inline void mark_next_move( const std::string &coord, char letter, cv::Mat &dst) {
     std::string txt( 1, letter);
     auto width = dst.cols;
-    if (coord.length() > 3) { return; }
+    if (!endsInDigit(coord)) return;
+    
     std::string colchars = "ABCDEFGHJKLMNOPQRST";
     int row = BOARD_SZ - atoi( coord.c_str() + 1);
     auto col = (int)colchars.find( coord.c_str()[0]);
@@ -997,6 +998,10 @@ Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vect
             }
         } // CSLOOP
     } // RSLOOP
+    
+    if (best_r < 0) return Points2f();
+    if (best_c < 0) return Points2f();
+    
     auto rc2pf = [&](int r, int c) { return intersections[r * SZ(vert_lines) + c]; };
     Point2f tl = rc2pf( best_r, best_c);
     Point2f tr = rc2pf( best_r, best_c + board_sz - 1);
