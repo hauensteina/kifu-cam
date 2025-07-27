@@ -999,7 +999,7 @@ Points2f find_corners_from_score( std::vector<cv::Vec2f> &horiz_lines, std::vect
         } // CSLOOP
     } // RSLOOP
     
-    if (best_r < 0) return Points2f();
+    if (best_r < 0) return Points2f(); // crash fix
     if (best_c < 0) return Points2f();
     
     auto rc2pf = [&](int r, int c) { return intersections[r * SZ(vert_lines) + c]; };
@@ -1046,6 +1046,21 @@ inline void zoom_in( const Points2f &corners, cv::Mat &M)
         cv::Point( lmarg, IMG_WIDTH - tmarg) };
     M = cv::getPerspectiveTransform( corners, square);
 } // zoom_in()
+
+// Check if the corners are inside M
+//-----------------------------------------------------------
+bool corners_on_image(const Points2f &corners, const cv::Mat &M)
+{
+    int width = M.cols;
+    int height = M.rows;
+
+    for (const auto& pt : corners) {
+        if (pt.x < 0 || pt.x >= width || pt.y < 0 || pt.y >= height) {
+            return false;
+        }
+    }
+    return true;
+} // corners_on_image()
 
 // Fill image outside of board with average. Helps with adaptive thresholds.
 //----------------------------------------------------------------------------------

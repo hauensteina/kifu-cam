@@ -37,7 +37,7 @@ class Clust1D
 //================
 {
 public:
-    // One dim clustering. Return the cutting points.
+    // One dim clustering. Return the cluster borders aka cuts.
     //---------------------------------------------------------------------------
     template <typename T, typename G>
     static inline std::vector<double> cluster( const std::vector<T> &seq_, double width, G getter)
@@ -48,11 +48,16 @@ public:
         WinFunc winf = bell;
         
         std::vector<double> vals;
+        // A line is represented by the middle x(for horiz) or middle y(for vert).
         ISLOOP (seq_) {
-            if (seq_[i].val[0] > 0 && seq_[i].val[1] > 0 ) {
                 vals.push_back( getter(seq_[i] ));
-            }
         }
+        // Make sure they are all positive. Crash fix.
+        auto minval = vec_min(vals);
+        ISLOOP (vals) {
+            vals[i] -= minval;
+        }
+        
         std::sort( vals.begin(), vals.end(), [](double a, double b) { return a<b; });
         std::vector<double> freq(vals.size());
         
@@ -96,6 +101,10 @@ public:
                 cuts.push_back( (maxes[i] + maxes[i-1]) / 2.0);
             }
         } while(0);
+        // Move back to original position.
+        ISLOOP (cuts) {
+            cuts[i] += minval;
+        }
         return cuts;
     } // cluster()
     

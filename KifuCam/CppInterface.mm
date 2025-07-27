@@ -114,7 +114,7 @@ extern cv::Mat mat_dbg;
     resize( m, m, IMG_WIDTH);
     cv::cvtColor( m, m, cv::COLOR_RGBA2RGB);
     int keep_n_frames = 4;
-    ringpush( _imgQ , m, keep_n_frames); // keep 4 frames
+    ringpush( _imgQ , m, keep_n_frames);
 }
 
 //-----------------
@@ -342,7 +342,7 @@ extern cv::Mat mat_dbg;
 //        }
         case 2:
         {
-            const double x_thresh = CROPSIZE / 4.0; // 3.0; // / 2.0; // 4.0;
+            const double x_thresh = CROPSIZE * 0.2; // small values prefer synthesized lines over real ones
             fix_vertical_lines( _vertical_lines, all_vert_lines, _gray, x_thresh);
             break;
         }
@@ -426,7 +426,7 @@ extern cv::Mat mat_dbg;
 //        }
         case 2:
         {
-            const double y_thresh = CROPSIZE / 2.5; // 4.0; // 3.5; // 3.0; // 2.0; //4.0;
+            const double y_thresh = CROPSIZE * 0.2; // small values prefer synthesized lines over real ones
             fix_horizontal_lines( _horizontal_lines, all_horiz_lines, _gray, y_thresh);
             break;
         }
@@ -496,9 +496,9 @@ extern cv::Mat mat_dbg;
     cv::Mat boardness;
     do {
         if (SZ( _horizontal_lines) > 55) break;
-        if (SZ( _horizontal_lines) < 5) break;
+        if (SZ( _horizontal_lines) < 19) break; // @change
         if (SZ( _vertical_lines) > 55) break;
-        if (SZ( _vertical_lines) < 5) break;
+        if (SZ( _vertical_lines) < 19) break; // @change
         // Get boardness per pixel
         [self nn_boardness:_small_img dst:boardness];
         // Corners maximize boardness
@@ -661,8 +661,8 @@ extern cv::Mat mat_dbg;
     do {
         _orig_small = small_img;
         [self f00_dots_and_verticals];
-        if (breakIfBad && SZ( _vertical_lines) < 5) break;
-        if (breakIfBad && SZ( _horizontal_lines) < 5) break;
+        if (breakIfBad && SZ( _vertical_lines) < 19) break;
+        if (breakIfBad && SZ( _horizontal_lines) < 19) break;
         [self f02_warp];
         [self f03_houghlines];
         if (breakIfBad && SZ(_stone_or_empty) < 0.5 * SQR(BOARD_SZ)) break;
@@ -671,14 +671,21 @@ extern cv::Mat mat_dbg;
         [self f04_vert_lines:2];
         //[self f04_vert_lines:3];
         if (breakIfBad && SZ( _vertical_lines) > 55) break;
-        if (breakIfBad && SZ( _vertical_lines) < 5) break;
+        if (breakIfBad && SZ( _vertical_lines) < 19) break;
         [self f05_horiz_lines:0];
         [self f05_horiz_lines:1];
         [self f05_horiz_lines:2];
         //[self f05_horiz_lines:3];
         if (breakIfBad && SZ( _horizontal_lines) > 55) break;
-        if (breakIfBad && SZ( _horizontal_lines) < 5) break;
+        if (breakIfBad && SZ( _horizontal_lines) < 19) break;
         [self f06_corners];
+//        if (SZ(_corners) == 4) {
+//            NSLog( @"---------------------------------");
+//            NSLog( @"tl: %f %f", _corners[0].x, _corners[0].y);
+//            NSLog( @"tr: %f %f", _corners[1].x, _corners[1].y);
+//            NSLog( @"br: %f %f", _corners[2].x, _corners[2].y);
+//            NSLog( @"bl: %f %f", _corners[3].x, _corners[3].y);
+//        }
         success = true;
     } while(0);
     return success;
@@ -722,17 +729,19 @@ extern cv::Mat mat_dbg;
         unwarp_points( _invProj, _invRot, _invMd, _corners, my_corners);
         unwarp_points( _invProj, _invRot, _invMd, _intersections, my_intersections);
         if (SZ(my_corners) == 4) {
-            draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
-                      canvas, cv::Scalar( 255,0,0,255));
-            draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
-                      canvas, cv::Scalar( 255,0,0,255));
-            draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
-                      canvas, cv::Scalar( 255,0,0,255));
-            draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
-                      canvas, cv::Scalar( 255,0,0,255));
-            
-            ISLOOP (my_intersections) {
-                draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
+            if (corners_on_image(my_corners, _orig_small)) {
+                draw_line( cv::Vec4f( my_corners[0].x, my_corners[0].y, my_corners[1].x, my_corners[1].y),
+                          canvas, cv::Scalar( 255,0,0,255));
+                draw_line( cv::Vec4f( my_corners[1].x, my_corners[1].y, my_corners[2].x, my_corners[2].y),
+                          canvas, cv::Scalar( 255,0,0,255));
+                draw_line( cv::Vec4f( my_corners[2].x, my_corners[2].y, my_corners[3].x, my_corners[3].y),
+                          canvas, cv::Scalar( 255,0,0,255));
+                draw_line( cv::Vec4f( my_corners[3].x, my_corners[3].y, my_corners[0].x, my_corners[0].y),
+                          canvas, cv::Scalar( 255,0,0,255));
+                
+                ISLOOP (my_intersections) {
+                    draw_point( my_intersections[i], canvas, 2, cv::Scalar(0,0,255,255));
+                }
             }
         } // if (SZ(my_corners) == 4)
     }
