@@ -959,11 +959,12 @@ extern cv::Mat mat_dbg;
     auto colchars = "ABCDEFGHJKLMNOPQRST";
     std::vector<std::string> wmoves;
     std::vector<std::string> bmoves;
+    
     ISLOOP (_diagram) {
         int row = i / BOARD_SZ;
         int col = i % BOARD_SZ;
         char buf[10];
-        sprintf( buf, "%c%d", colchars[col], BOARD_SZ-row);
+        snprintf( buf, 10, "%c%d", colchars[col], BOARD_SZ-row);
         std::string movestr = buf;
         if (_diagram[i] == WWHITE) { wmoves.push_back( movestr); }
         else if (_diagram[i] == BBLACK) { bmoves.push_back( movestr); }
@@ -972,7 +973,9 @@ extern cv::Mat mat_dbg;
     wmoves = vec_shuffle( wmoves);
     bmoves = vec_shuffle( bmoves);
 
-    auto blen = SZ(bmoves); auto wlen = SZ(wmoves) + handicap - 1;
+    auto blen = SZ(bmoves);
+    // Add handicap - 1 for the W passes between the B handi stones.
+    auto wlen = SZ(wmoves) + handicap - 1;
     auto maxlen = std::max( blen, wlen);
     NSMutableArray *res = [NSMutableArray new];
     int i_white = 0;
